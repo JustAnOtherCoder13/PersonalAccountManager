@@ -1,4 +1,4 @@
-package com.example.personalaccountmanager.ui.theme
+package com.piconemarc.personalaccountmanager.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
