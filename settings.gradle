@@ -19,3 +19,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Personal Account Manager"
 include ':app'
+include ':core'
+include ':viewmodel'

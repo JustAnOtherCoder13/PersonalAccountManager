@@ -7,7 +7,7 @@ android {
     compileSdk 30
 
     defaultConfig {
-        applicationId "com.example.personalaccountmanager"
+        applicationId "com.piconemarc.personalaccountmanager"
         minSdk 23
         targetSdk 30
         versionCode 1
@@ -58,4 +58,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
+    //view model ref
+    implementation project(':viewmodel')
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.personalaccountmanager">
+    package="com.piconemarc.personalaccountmanager">
 
     <application
         android:allowBackup="true"
@@ -10,9 +10,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PersonalAccountManager">
         <activity
-            android:name=".MainActivity"
+            android:name="com.piconemarc.personalaccountmanager.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.PersonalAccountManager">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
