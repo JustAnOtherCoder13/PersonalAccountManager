@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Personal Account Manager</string>
+    <string name="homeIconContentDescription">Home icon button</string>
+    <string name="operationIconContentDescription">Operation icon button</string>
+    <string name="paymentIconContentDescription">Payment operation icon button</string>
+    <string name="transferIconContentDescription">Transfer operation icon button</string>
+    <string name="chartIconContentDescription">Chart icon button</string>
+    <string name="addIconContentDescription">Add icon button</string>
 </resources>
