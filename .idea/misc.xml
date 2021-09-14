@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/picon/AndroidStudioProjects/PersonalAccountManager/app/src/main/res/drawable/ic_baseline_swap_horiz_24.xml" value="0.115" />
+        <entry key="..\:/Users/picon/AndroidStudioProjects/PersonalAccountManager/app/src/main/res/drawable/ic_outline_bar_chart_24.xml" value="0.115" />
+        <entry key="..\:/Users/picon/AndroidStudioProjects/PersonalAccountManager/app/src/main/res/drawable/ic_outline_payments_24.xml" value="0.115" />
+      </map>
+    </option>
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
