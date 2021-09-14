@@ -6,4 +6,6 @@
     <string name="transferIconContentDescription">Transfer operation icon button</string>
     <string name="chartIconContentDescription">Chart icon button</string>
     <string name="addIconContentDescription">Add icon button</string>
+    <string name="deleteBaseMsg">"Are you sure you want to delete this "</string>
+    <string name="operation">operation</string>
 </resources>
