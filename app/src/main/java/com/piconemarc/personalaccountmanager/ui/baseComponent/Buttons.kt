@@ -1,13 +1,11 @@
 package com.piconemarc.personalaccountmanager.ui.baseComponent
 
-import android.content.res.Resources
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Surface
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Home
@@ -15,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,7 +45,7 @@ fun PamIconButton(
         {
             Icon(
                 imageVector = imageVectorIcon,
-                contentDescription = Resources.getSystem().getString(iconButtons.contentDescription()),
+                contentDescription = stringResource(iconButtons.contentDescription()),
                 modifier = Modifier
                     .background(Color.Transparent, CircleShape)
                     .padding(4.dp),
@@ -97,5 +96,54 @@ fun BaseIconPreview() {
     PamIconButton(
         onIconButtonClicked = {},
         iconButtons = IconButtons.CHART
+    )
+}
+
+@Composable
+fun BaseButton(
+    text: String,
+    onButtonClicked: () -> Unit
+) {
+    Button(
+        onClick = onButtonClicked,
+        shape = RoundedCornerShape(10.dp, 10.dp, 0.dp, 0.dp),
+        modifier = Modifier
+            .width(100.dp)
+        ,
+        colors = ButtonDefaults.textButtonColors(
+            backgroundColor = Color.White,
+            contentColor = Color.Black
+        )
+    ) {
+        Text(
+            text = text,
+            modifier = Modifier.paddingFromBaseline(top = 0.dp,bottom =  20.dp)
+        )
+    }
+}
+
+@Composable
+fun AcceptOrDismissButtons(
+    onAcceptButtonClicked: () -> Unit,
+    onDismissButtonClicked: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .background(Color.Black, RoundedCornerShape(20.dp))
+            .fillMaxWidth()
+            .padding(start = 30.dp, end = 30.dp, top = 20.dp ),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        BaseButton(text = stringResource(android.R.string.ok)) { onAcceptButtonClicked() }
+        BaseButton(text = stringResource(android.R.string.cancel).uppercase()) { onDismissButtonClicked() }
+    }
+}
+
+@Preview
+@Composable
+fun AcceptOrDismissPreview() {
+    AcceptOrDismissButtons(
+        onAcceptButtonClicked = { },
+        onDismissButtonClicked = { }
     )
 }
