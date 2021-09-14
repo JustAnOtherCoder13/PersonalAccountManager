@@ -106,7 +106,7 @@ fun BaseButton(
 ) {
     Button(
         onClick = onButtonClicked,
-        shape = RoundedCornerShape(10.dp, 10.dp, 0.dp, 0.dp),
+        shape = RoundedCornerShape(topStart = 10.dp, topEnd =  10.dp, bottomStart = 0.dp, bottomEnd =  0.dp),
         modifier = Modifier
             .width(100.dp)
         ,
