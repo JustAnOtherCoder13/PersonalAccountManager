@@ -21,17 +21,9 @@ import com.piconemarc.personalaccountmanager.R
 
 @Composable
 fun PamIconButton(
-    iconButtons: IconButtons,
+    iconButton: IconButtons,
     onIconButtonClicked: () -> Unit
 ) {
-    val imageVectorIcon: ImageVector = when (iconButtons) {
-        IconButtons.HOME -> Icons.Outlined.Home
-        IconButtons.OPERATION -> ImageVector.vectorResource(id = R.drawable.ic_outline_payments_24)
-        IconButtons.PAYMENT -> ImageVector.vectorResource(id = R.drawable.ic_outline_ios_share_24)
-        IconButtons.TRANSFER -> ImageVector.vectorResource(id = R.drawable.ic_baseline_swap_horiz_24)
-        IconButtons.CHART -> ImageVector.vectorResource(id = R.drawable.ic_outline_bar_chart_24)
-        IconButtons.ADD -> Icons.Outlined.Add
-    }
     IconButton(onClick = onIconButtonClicked)
     {
         Surface(
@@ -44,8 +36,8 @@ fun PamIconButton(
         )
         {
             Icon(
-                imageVector = imageVectorIcon,
-                contentDescription = stringResource(iconButtons.contentDescription()),
+                imageVector = ImageVector.vectorResource(iconButton.vectorIcon()),
+                contentDescription = stringResource(iconButton.contentDescription()),
                 modifier = Modifier
                     .background(Color.Transparent, CircleShape)
                     .padding(4.dp),
@@ -60,34 +52,59 @@ enum class IconButtons {
         override fun contentDescription(): Int {
             return R.string.homeIconContentDescription
         }
+
+        override fun vectorIcon(): Int {
+           return R.drawable.ic_outline_home_24
+        }
     },
     OPERATION {
         override fun contentDescription(): Int {
             return R.string.operationIconContentDescription
+        }
+
+        override fun vectorIcon(): Int {
+            return R.drawable.ic_outline_payments_24
         }
     },
     PAYMENT {
         override fun contentDescription(): Int {
             return R.string.paymentIconContentDescription
         }
+
+        override fun vectorIcon(): Int {
+            return R.drawable.ic_outline_ios_share_24
+        }
     },
     TRANSFER {
         override fun contentDescription(): Int {
             return R.string.transferIconContentDescription
+        }
+
+        override fun vectorIcon(): Int {
+            return R.drawable.ic_baseline_swap_horiz_24
         }
     },
     CHART {
         override fun contentDescription(): Int {
             return R.string.chartIconContentDescription
         }
+
+        override fun vectorIcon(): Int {
+            return R.drawable.ic_outline_bar_chart_24
+        }
     },
     ADD {
         override fun contentDescription(): Int {
             return R.string.addIconContentDescription
         }
+
+        override fun vectorIcon(): Int {
+            return R.drawable.ic_baseline_add_24
+        }
     };
 
     abstract fun contentDescription(): Int
+    abstract fun vectorIcon(): Int
 }
 
 @Preview
@@ -95,7 +112,7 @@ enum class IconButtons {
 fun BaseIconPreview() {
     PamIconButton(
         onIconButtonClicked = {},
-        iconButtons = IconButtons.CHART
+        iconButton = IconButtons.CHART
     )
 }
 
