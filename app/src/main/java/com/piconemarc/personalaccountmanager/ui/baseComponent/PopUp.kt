@@ -17,23 +17,22 @@ import com.piconemarc.personalaccountmanager.ui.theme.popUpClickableItemModifier
 
 @Composable
 fun DeleteOperationPopUp(
-    onAcceptButtonClicked: () -> Unit,
     showDeleteOperationPopUp: Boolean,
     operationName: String,
-    operationAmount: Double
+    operationAmount: Double,
+    onDeleteOperation: () -> Unit,
+    onDismiss: () -> Unit
 ) {
-    var showPopUp: Boolean by remember {
-        mutableStateOf(showDeleteOperationPopUp)
-    }
-    if (showPopUp)
+
+    if (showDeleteOperationPopUp)
         BaseDeletePopUp(
             elementToDelete = stringResource(R.string.operation),
             onAcceptButtonClicked = {
-                showPopUp = false
-                onAcceptButtonClicked()
+                onDismiss()
+                onDeleteOperation()
             },
             onCancelButtonClicked = {
-                showPopUp = false
+                onDismiss()
             },
             body = {
                 Column(
@@ -58,10 +57,12 @@ fun DeleteOperationPopUp(
 @Composable
 fun AddOperationPopUp(
     showAddOperationPopUp: Boolean,
+    onAddOperation: () -> Unit,
     onDismiss: () -> Unit
 ) {
     val operationTitle = stringResource(id = R.string.operation)
     var popUpTitle: String by remember { mutableStateOf(operationTitle) }
+
 
     if (showAddOperationPopUp)
         Row {
@@ -70,58 +71,52 @@ fun AddOperationPopUp(
                     popUpTitle = popUpTitle_
                 }
             )
-
             BasePopUp(
                 title = popUpTitle,
                 onAcceptButtonClicked = {
                     onDismiss()
-                    //todo send addOperationEvent
+                    onAddOperation()
                 },
-                onCancelButtonClicked = {
-                    onDismiss()
-                }
+                onCancelButtonClicked = onDismiss
             ) {
                 Row(
-                    modifier = Modifier.popUpClickableItemModifier(popUpTextFieldColorSelector()),
+                    modifier = Modifier.popUpClickableItemModifier(),
                     horizontalArrangement = Arrangement.Center
                 ) {
                     BaseDropDownMenu(
                         hint = stringResource(R.string.category),
                         itemList = testList,
                         onItemSelected = { item ->
-                            //todo consume item
+
                         }
                     )
                 }
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     BasePopUpTextFieldItem(
                         title = stringResource(R.string.operationName),
-                        onTextChange = {
-                            //todo consume text
-                        },
-                        modifier = Modifier.popUpClickableItemModifier(popUpTextFieldColorSelector())
+                        onTextChange = { operationName ->
+
+                        }
                     )
-                    var operationAmount: Double by remember {
-                        mutableStateOf(0.00)
-                    }
-                    BasePopUpTextFieldItem(
+                    BasePopUpAmountTextFieldItem(
                         title = stringResource(R.string.operationAmount),
                         onTextChange = { amount ->
-                            operationAmount = amount.toDouble()
-                        },
-                        modifier = Modifier.popUpClickableItemModifier(
-                            popUpTextFieldColorSelector(
-                                isAmount = true,
-                                amount = operationAmount
-                            )
 
-                        ),
-                        textColor = MaterialTheme.colors.primary
+                        },
                     )
+
+                    if (popUpTitle != stringResource(R.string.operation)) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(1f)
+                        ) {
+                            //todo switch between punctual and recurent
+                        }
+                        Text(text = "test")
+                    }
                 }
             }
         }
@@ -132,7 +127,8 @@ fun AddOperationPopUp(
 fun PopUpPreview() {
     Column {
         DeleteOperationPopUp(
-            onAcceptButtonClicked = { },
+            onDeleteOperation = { },
+            onDismiss = {},
             showDeleteOperationPopUp = true,
             operationName = stringResource(R.string.operationName),
             operationAmount = 100.00
@@ -140,7 +136,8 @@ fun PopUpPreview() {
         Spacer(modifier = Modifier.height(10.dp))
         AddOperationPopUp(
             showAddOperationPopUp = true,
-            onDismiss = {}
+            onDismiss = {},
+            onAddOperation = {}
         )
     }
 }

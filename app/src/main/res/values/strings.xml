@@ -11,7 +11,7 @@
 
 
     <string name="deleteBaseMsg">"Are you sure you want to delete this "</string>
-    <string name="operation">operation</string>
+    <string name="operation">Operation</string>
     <string name="payment">Payment Operation</string>
     <string name="transfer">Transfer Operation</string>
     <string name="category">Category</string>

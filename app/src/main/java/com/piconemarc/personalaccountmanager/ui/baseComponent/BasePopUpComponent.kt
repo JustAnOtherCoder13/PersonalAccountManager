@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
@@ -13,12 +14,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import com.piconemarc.personalaccountmanager.R
-import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
-import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
-import com.piconemarc.personalaccountmanager.ui.theme.ThinBorder
-import com.piconemarc.personalaccountmanager.ui.theme.ThinMarge
+import com.piconemarc.personalaccountmanager.ui.theme.*
 
 @Composable
 fun BasePopUp(
@@ -27,20 +25,19 @@ fun BasePopUp(
     onCancelButtonClicked: () -> Unit,
     body: @Composable () -> Unit,
 ) {
-    Column(
-        modifier = Modifier
-            .wrapContentSize()
-            .background(color = MaterialTheme.colors.secondary, shape = MaterialTheme.shapes.large)
-            .padding(ThinMarge)
+    Card(
+        elevation = BigMarge,
+        backgroundColor = MaterialTheme.colors.secondary,
+        shape = MaterialTheme.shapes.large
     ) {
-        PopUpTitle(title)
-        body()
-        AcceptOrDismissButtons(
-            onAcceptButtonClicked = {
-                onAcceptButtonClicked()
-            },
-            onDismissButtonClicked = onCancelButtonClicked
-        )
+        Column() {
+            PopUpTitle(title)
+            body()
+            AcceptOrDismissButtons(
+                onAcceptButtonClicked = onAcceptButtonClicked,
+                onDismissButtonClicked = onCancelButtonClicked
+            )
+        }
     }
 }
 
@@ -70,7 +67,8 @@ fun BaseDropDownMenu(
         Text(
             text = selectedItem,
             color = MaterialTheme.colors.onPrimary,
-            modifier = Modifier.padding(start = RegularMarge, end = RegularMarge)
+            modifier = Modifier.padding(start = RegularMarge, end = RegularMarge),
+            style = MaterialTheme.typography.h3
         )
         Spacer(modifier = Modifier.width(LittleMarge))
         Icon(
@@ -88,8 +86,12 @@ fun BaseDropDownMenu(
                 DropdownMenuItem(onClick = {
                     onItemSelected(item)
                     selectedItem = item
+                    expanded = false
                 }) {
-                    Text(text = item)
+                    Text(
+                        text = item,
+                        style = MaterialTheme.typography.body1
+                    )
                 }
             }
         }
@@ -146,17 +148,52 @@ fun BaseDeletePopUp(
 fun BasePopUpTextFieldItem(
     title: String,
     onTextChange: (text: String) -> Unit,
-    modifier: Modifier,
-    textColor: Color = MaterialTheme.colors.onPrimary
 ) {
-    Text(text = title)
-    Column(modifier = modifier) {
+    var textValue: String by remember {
+        mutableStateOf("")
+    }
+    Text(
+        text = title,
+        style = MaterialTheme.typography.h3
+    )
+    Column(modifier = Modifier.popUpClickableItemModifier()) {
         TextField(
-            value = title,
+            value = textValue,
             onValueChange = { text ->
                 onTextChange(text)
+                textValue = text
             },
-            textStyle = TextStyle(color = textColor),
+            textStyle = MaterialTheme.typography.body1.copy(color = MaterialTheme.colors.onPrimary),
+            label = { Text(text = title) },
+        )
+    }
+}
+
+@Composable
+fun BasePopUpAmountTextFieldItem(
+    title: String,
+    onTextChange: (text: String) -> Unit,
+) {
+    var amountValue: String by remember {
+        mutableStateOf("")
+    }
+    Text(
+        text = title,
+        style = MaterialTheme.typography.h3
+    )
+    Column(
+        modifier = Modifier.popUpAmountItemModifier(amountValue)
+    ) {
+        TextField(
+            value = amountValue,
+            onValueChange = { amount ->
+                amountValue = amount
+                onTextChange(amountValue)
+            },
+            textStyle = MaterialTheme.typography.body1,
+            label = { Text(text = title) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = Modifier.background(Color.Transparent)
         )
     }
 }

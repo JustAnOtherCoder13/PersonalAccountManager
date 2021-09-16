@@ -11,8 +11,10 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.tooling.preview.Preview
 import com.piconemarc.personalaccountmanager.ui.baseComponent.AddOperationPopUp
+import com.piconemarc.personalaccountmanager.ui.baseComponent.DeleteOperationPopUp
 import com.piconemarc.personalaccountmanager.ui.theme.PersonalAccountManagerTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,12 +22,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             PersonalAccountManagerTheme {
+                var showPopUp: Boolean by remember {
+                    mutableStateOf(false)
+                }
                 // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.secondary) {
+                Surface(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    color = MaterialTheme.colors.secondary
+                ) {
                     Column {
-                        var showPopUp: Boolean by remember {
-                            mutableStateOf(false)
-                        }
+
                         Button(onClick = {
                             showPopUp = true
                         }) {
@@ -33,7 +40,15 @@ class MainActivity : ComponentActivity() {
                         }
                         AddOperationPopUp(
                             showAddOperationPopUp = showPopUp,
-                            onDismiss = { showPopUp = false }
+                            onDismiss = { showPopUp = false },
+                            onAddOperation = {}
+                        )
+                        DeleteOperationPopUp(
+                            onDeleteOperation = { },
+                            onDismiss = { showPopUp = false },
+                            showDeleteOperationPopUp = false,
+                            operationName = "test operation",
+                            operationAmount = 50.00
                         )
                     }
                 }

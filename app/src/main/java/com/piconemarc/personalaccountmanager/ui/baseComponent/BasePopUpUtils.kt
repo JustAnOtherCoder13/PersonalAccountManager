@@ -25,22 +25,11 @@ fun PopUpTitle(title: String) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = RegularMarge),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.h2
         )
     }
 }
 
-@Composable
-fun popUpTextFieldColorSelector(
-    isAmount: Boolean = false,
-    amount: Double = 0.00
-): Color {
-    return when (isAmount) {
-        false -> MaterialTheme.colors.primary
-        true -> if (amount <= 0) {
-            Color.Red
-        } else Color.Green
-    }
-}
 
 val testList = mutableListOf("test 1", "test 2", "test 3")
