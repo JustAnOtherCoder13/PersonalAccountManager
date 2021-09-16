@@ -1,6 +1,9 @@
 package com.piconemarc.personalaccountmanager.ui.baseComponent
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -8,7 +11,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.theme.Positive
 import com.piconemarc.personalaccountmanager.ui.theme.deleteOperationTextModifier
@@ -63,14 +65,15 @@ fun AddOperationPopUp(
     val operationTitle = stringResource(id = R.string.operation)
     var popUpTitle: String by remember { mutableStateOf(operationTitle) }
 
-
     if (showAddOperationPopUp)
+        //Left menu-----------------------------------------------------
         Row {
             OperationPopUpLeftSideIcon(
                 onIconButtonClicked = { popUpTitle_ ->
                     popUpTitle = popUpTitle_
                 }
             )
+            //base operation --------------------------------------------
             BasePopUp(
                 title = popUpTitle,
                 onAcceptButtonClicked = {
@@ -83,6 +86,7 @@ fun AddOperationPopUp(
                     modifier = Modifier.popUpClickableItemModifier(),
                     horizontalArrangement = Arrangement.Center
                 ) {
+                    //category drop down -----------------------------------
                     BaseDropDownMenu(
                         hint = stringResource(R.string.category),
                         itemList = testList,
@@ -91,6 +95,7 @@ fun AddOperationPopUp(
                         }
                     )
                 }
+                // operation and amount text field--------------------------
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -107,14 +112,16 @@ fun AddOperationPopUp(
 
                         },
                     )
-
+                    //Payment Operation-------------------------------------
                     if (popUpTitle != stringResource(R.string.operation)) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth(1f)
-                        ) {
-                            //todo switch between punctual and recurent
-                        }
+                        PunctualOrRecurrentSwitchButton(
+                            onEndDateSelected = {month_year ->
+
+                            }
+                        )
+                    }
+                    //Transfer Operation------------------------------------
+                    if (popUpTitle == stringResource(R.string.transfer)){
                         Text(text = "test")
                     }
                 }
@@ -122,18 +129,11 @@ fun AddOperationPopUp(
         }
 }
 
+
 @Preview
 @Composable
 fun PopUpPreview() {
     Column {
-        DeleteOperationPopUp(
-            onDeleteOperation = { },
-            onDismiss = {},
-            showDeleteOperationPopUp = true,
-            operationName = stringResource(R.string.operationName),
-            operationAmount = 100.00
-        )
-        Spacer(modifier = Modifier.height(10.dp))
         AddOperationPopUp(
             showAddOperationPopUp = true,
             onDismiss = {},

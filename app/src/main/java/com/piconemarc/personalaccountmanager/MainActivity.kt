@@ -11,7 +11,6 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.tooling.preview.Preview
 import com.piconemarc.personalaccountmanager.ui.baseComponent.AddOperationPopUp
 import com.piconemarc.personalaccountmanager.ui.baseComponent.DeleteOperationPopUp

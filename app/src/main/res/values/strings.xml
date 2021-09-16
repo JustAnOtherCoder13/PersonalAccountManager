@@ -17,4 +17,8 @@
     <string name="category">Category</string>
     <string name="operationName">Operation name</string>
     <string name="operationAmount">Operation Amount</string>
+    <string name="punctualSwitchButton">Punctual</string>
+    <string name="recurrentSwitchButton">Recurrent</string>
+    <string name="month">Month</string>
+    <string name="year">Year</string>
 </resources>

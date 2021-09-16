@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -13,8 +14,12 @@ import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.theme.*
 
@@ -195,5 +200,128 @@ fun BasePopUpAmountTextFieldItem(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.background(Color.Transparent)
         )
+    }
+}
+
+@Composable
+fun SwitchButton(
+    onButtonSelected: () -> Unit,
+    isSelected: Boolean,
+    title: String,
+    switchShape: Shape,
+    bottomPadding : Dp = RegularMarge
+) {
+    Button(
+        modifier = Modifier
+            .wrapContentSize()
+            .background(
+                color = if (isSelected) MaterialTheme.colors.primary else MaterialTheme.colors.primaryVariant,
+                shape = switchShape
+            )
+            .padding(end = RegularMarge),
+        onClick = onButtonSelected,
+        colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+        elevation = ButtonDefaults.elevation(0.dp)
+
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.h3,
+            modifier = Modifier.padding(top = RegularMarge,bottom = bottomPadding, end = RegularMarge),
+            color = if (isSelected) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSecondary
+        )
+    }
+}
+
+@Composable
+fun PunctualOrRecurrentSwitchButton(
+    onEndDateSelected : (Pair<String,String>)-> Unit
+) {
+    var selectedButton: Int by remember {
+        mutableStateOf(0)
+    }
+    var selectedDate : Pair<String, String> by remember {
+        mutableStateOf(Pair("",""))
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = RegularMarge)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = RegularMarge, bottom = if (selectedButton == 0) BigMarge else 0.dp)
+        ) {
+            SwitchButton(
+                onButtonSelected = { selectedButton = 0 },
+                isSelected = selectedButton == 0,
+                title = stringResource(R.string.punctualSwitchButton),
+                switchShape = LeftSwitchShape
+            )
+            SwitchButton(
+                onButtonSelected = { selectedButton = 1 },
+                isSelected = selectedButton == 1,
+                title = stringResource(R.string.recurrentSwitchButton),
+                switchShape = if (selectedButton == 1) RightSwitchShape.copy(
+                    bottomStart = CornerSize(
+                        0.dp
+                    )
+                ) else RightSwitchShape,
+                bottomPadding = if (selectedButton == 1) BigMarge else RegularMarge
+            )
+        }
+        //Recurrent options
+        if (selectedButton == 1)
+            RecurrentOptionPanel(
+                onMonthSelected = {month->
+                    selectedDate = selectedDate.copy(first = month)
+                    onEndDateSelected(selectedDate)
+                },
+                onYearSelected = {year ->
+                    selectedDate = selectedDate.copy(second = year)
+                    onEndDateSelected(selectedDate)
+                }
+            )
+    }
+
+}
+@Composable
+private fun RecurrentOptionPanel(
+    onMonthSelected : (month : String)->Unit,
+    onYearSelected : (year : String)-> Unit
+) {
+    Column(
+        modifier = Modifier
+            .background(
+                color = MaterialTheme.colors.primary,
+                shape = RecurrentOptionPanelShape
+            )
+    ) {
+        Text(
+            text = "End Date",
+            style = MaterialTheme.typography.h3,
+            color = MaterialTheme.colors.onPrimary,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = RegularMarge),
+            textAlign = TextAlign.Center
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(BigMarge),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            BaseDropDownMenu(
+                hint = stringResource(R.string.month),
+                itemList = mutableListOf("Janvier", "Fevrier"),
+                onItemSelected = {month -> onMonthSelected(month)})
+            BaseDropDownMenu(
+                hint = stringResource(R.string.year),
+                itemList = mutableListOf("2000", "2001"),
+                onItemSelected = {year-> onYearSelected(year)})
+        }
     }
 }
