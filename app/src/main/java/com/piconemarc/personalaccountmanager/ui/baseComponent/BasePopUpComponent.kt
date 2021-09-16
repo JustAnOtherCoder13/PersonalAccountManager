@@ -14,37 +14,34 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.piconemarc.personalaccountmanager.R
+import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
+import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
+import com.piconemarc.personalaccountmanager.ui.theme.ThinBorder
+import com.piconemarc.personalaccountmanager.ui.theme.ThinMarge
 
 @Composable
 fun BasePopUp(
     title: String,
     onAcceptButtonClicked: () -> Unit,
-    showPopUp_: Boolean,
+    onCancelButtonClicked: () -> Unit,
     body: @Composable () -> Unit,
 ) {
-    var showPopUp: Boolean by remember {
-        mutableStateOf(showPopUp_)
+    Column(
+        modifier = Modifier
+            .wrapContentSize()
+            .background(color = MaterialTheme.colors.secondary, shape = MaterialTheme.shapes.large)
+            .padding(ThinMarge)
+    ) {
+        PopUpTitle(title)
+        body()
+        AcceptOrDismissButtons(
+            onAcceptButtonClicked = {
+                onAcceptButtonClicked()
+            },
+            onDismissButtonClicked = onCancelButtonClicked
+        )
     }
-    if (showPopUp)
-        Column(
-            modifier = Modifier
-                .wrapContentSize()
-                .background(color = Color.White, shape = RoundedCornerShape(20.dp))
-                .padding(2.dp)
-        ) {
-            PopUpTitle(title)
-            body()
-            AcceptOrDismissButtons(
-                onAcceptButtonClicked = {
-                    onAcceptButtonClicked()
-                    showPopUp = false
-                },
-                onDismissButtonClicked = { showPopUp = false }
-            )
-        }
 }
 
 @Composable
@@ -62,24 +59,24 @@ fun BaseDropDownMenu(
     Row(
         modifier = Modifier
             .wrapContentSize()
-            .padding(top = 10.dp, bottom = 10.dp)
+            .padding(top = RegularMarge, bottom = RegularMarge)
             .border(
-                width = 1.dp,
-                color = Color.White,
-                shape = RoundedCornerShape(10.dp)
+                width = ThinBorder,
+                color = MaterialTheme.colors.onPrimary,
+                shape = RoundedCornerShape(RegularMarge)
             )
             .clickable { expanded = !expanded }
     ) {
         Text(
             text = selectedItem,
-            color = Color.White,
-            modifier = Modifier.padding(start = 10.dp, end = 10.dp)
+            color = MaterialTheme.colors.onPrimary,
+            modifier = Modifier.padding(start = RegularMarge, end = RegularMarge)
         )
-        Spacer(modifier = Modifier.width(5.dp))
+        Spacer(modifier = Modifier.width(LittleMarge))
         Icon(
             imageVector = if (expanded) Icons.Outlined.KeyboardArrowUp else Icons.Outlined.KeyboardArrowDown,
-            contentDescription = "Pop up expanded or collapsed icon",
-            tint = Color.White
+            contentDescription = stringResource(R.string.collapseIconContentDescription),
+            tint = MaterialTheme.colors.onPrimary
         )
         DropdownMenu(
             expanded = expanded,
@@ -103,25 +100,28 @@ fun BaseDropDownMenu(
 fun OperationPopUpLeftSideIcon(
     onIconButtonClicked: (popUpTitle: String) -> Unit
 ) {
+    val operation = stringResource(R.string.operation)
+    val payment = stringResource(R.string.payment)
+    val transfer = stringResource(R.string.transfer)
     Column {
         PamIconButton(
             iconButton = IconButtons.OPERATION,
             onIconButtonClicked = {
-                onIconButtonClicked("Operation")
+                onIconButtonClicked(operation)
             }
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(RegularMarge))
         PamIconButton(
             iconButton = IconButtons.PAYMENT,
             onIconButtonClicked = {
-                onIconButtonClicked("Payment Operation")
+                onIconButtonClicked(payment)
             }
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(RegularMarge))
         PamIconButton(
             iconButton = IconButtons.TRANSFER,
             onIconButtonClicked = {
-                onIconButtonClicked("Transfer Operation")
+                onIconButtonClicked(transfer)
             }
         )
     }
@@ -131,13 +131,13 @@ fun OperationPopUpLeftSideIcon(
 fun BaseDeletePopUp(
     elementToDelete: String,
     onAcceptButtonClicked: () -> Unit,
-    showPopUp: Boolean,
+    onCancelButtonClicked: () -> Unit,
     body: @Composable () -> Unit
 ) {
     BasePopUp(
         title = stringResource(R.string.deleteBaseMsg) + elementToDelete,
         onAcceptButtonClicked = onAcceptButtonClicked,
-        showPopUp_ = showPopUp,
+        onCancelButtonClicked = onCancelButtonClicked,
         body = body
     )
 }
@@ -147,7 +147,7 @@ fun BasePopUpTextFieldItem(
     title: String,
     onTextChange: (text: String) -> Unit,
     modifier: Modifier,
-    textColor: Color = Color.White
+    textColor: Color = MaterialTheme.colors.onPrimary
 ) {
     Text(text = title)
     Column(modifier = modifier) {

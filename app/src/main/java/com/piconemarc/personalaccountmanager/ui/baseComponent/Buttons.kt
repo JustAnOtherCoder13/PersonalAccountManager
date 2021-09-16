@@ -4,11 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Home
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,6 +14,10 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.piconemarc.personalaccountmanager.R
+import com.piconemarc.personalaccountmanager.ui.theme.BigMarge
+import com.piconemarc.personalaccountmanager.ui.theme.ButtonShape
+import com.piconemarc.personalaccountmanager.ui.theme.PersonalAccountManagerTheme
+import com.piconemarc.personalaccountmanager.ui.theme.XlMarge
 
 @Composable
 fun PamIconButton(
@@ -28,11 +28,11 @@ fun PamIconButton(
     {
         Surface(
             modifier = Modifier
-                .background(Color.Black, CircleShape)
+                .background(MaterialTheme.colors.primary, CircleShape)
                 .padding(5.dp),
             shape = CircleShape,
-            color = Color.Black,
-            border = BorderStroke(1.dp, Color.White),
+            color = MaterialTheme.colors.primary,
+            border = BorderStroke(1.dp, MaterialTheme.colors.onPrimary),
         )
         {
             Icon(
@@ -41,7 +41,7 @@ fun PamIconButton(
                 modifier = Modifier
                     .background(Color.Transparent, CircleShape)
                     .padding(4.dp),
-                tint = Color.White
+                tint = MaterialTheme.colors.onPrimary
             )
         }
     }
@@ -54,7 +54,7 @@ enum class IconButtons {
         }
 
         override fun vectorIcon(): Int {
-           return R.drawable.ic_outline_home_24
+            return R.drawable.ic_outline_home_24
         }
     },
     OPERATION {
@@ -123,18 +123,17 @@ fun BaseButton(
 ) {
     Button(
         onClick = onButtonClicked,
-        shape = RoundedCornerShape(topStart = 10.dp, topEnd =  10.dp, bottomStart = 0.dp, bottomEnd =  0.dp),
+        shape = ButtonShape,
         modifier = Modifier
-            .width(100.dp)
-        ,
+            .width(130.dp),
         colors = ButtonDefaults.textButtonColors(
-            backgroundColor = Color.White,
-            contentColor = Color.Black
+            backgroundColor = MaterialTheme.colors.secondary,
+            contentColor = MaterialTheme.colors.onSecondary
         )
     ) {
         Text(
             text = text,
-            modifier = Modifier.paddingFromBaseline(top = 0.dp,bottom =  20.dp)
+            modifier = Modifier.paddingFromBaseline(bottom = BigMarge)
         )
     }
 }
@@ -146,9 +145,9 @@ fun AcceptOrDismissButtons(
 ) {
     Row(
         modifier = Modifier
-            .background(Color.Black, RoundedCornerShape(20.dp))
+            .background(MaterialTheme.colors.primary, MaterialTheme.shapes.large)
             .fillMaxWidth()
-            .padding(start = 30.dp, end = 30.dp, top = 20.dp ),
+            .padding(start = XlMarge, end = XlMarge, top = BigMarge),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         BaseButton(text = stringResource(android.R.string.ok)) { onAcceptButtonClicked() }
@@ -159,8 +158,10 @@ fun AcceptOrDismissButtons(
 @Preview
 @Composable
 fun AcceptOrDismissPreview() {
-    AcceptOrDismissButtons(
-        onAcceptButtonClicked = { },
-        onDismissButtonClicked = { }
-    )
+    PersonalAccountManagerTheme {
+        AcceptOrDismissButtons(
+            onAcceptButtonClicked = { },
+            onDismissButtonClicked = { }
+        )
+    }
 }

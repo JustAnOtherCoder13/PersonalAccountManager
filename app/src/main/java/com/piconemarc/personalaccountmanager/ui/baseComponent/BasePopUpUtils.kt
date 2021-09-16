@@ -4,52 +4,43 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-
-fun Modifier.popUpClickableItemModifier(
-    isAmount: Boolean = false,
-    amount: Double = 0.00
-) = this
-    .fillMaxWidth()
-    .padding(top = 10.dp, bottom = 10.dp, end = 10.dp)
-    .background(
-        color = when (isAmount) {
-            false -> Color.Black
-            true -> if (amount <= 0) {
-                Color.Red
-            } else Color.Green
-        },
-        shape = RoundedCornerShape(
-            topStart = 0.dp,
-            bottomStart = 0.dp,
-            topEnd = 20.dp,
-            bottomEnd = 20.dp
-        )
-    )
+import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
 
 @Composable
 fun PopUpTitle(title: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(color = Color.Black, shape = RoundedCornerShape(20.dp))
+            .background(color = MaterialTheme.colors.primary, shape = MaterialTheme.shapes.large)
     ) {
         Text(
             text = title,
-            color = Color.White,
+            color = MaterialTheme.colors.onPrimary,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 10.dp),
+                .padding(vertical = RegularMarge),
             textAlign = TextAlign.Center
         )
     }
 }
 
-val deleteOperationTextModifier = Modifier.padding(horizontal = 0.dp, vertical = 10.dp)
+@Composable
+fun popUpTextFieldColorSelector(
+    isAmount: Boolean = false,
+    amount: Double = 0.00
+): Color {
+    return when (isAmount) {
+        false -> MaterialTheme.colors.primary
+        true -> if (amount <= 0) {
+            Color.Red
+        } else Color.Green
+    }
+}
+
 val testList = mutableListOf("test 1", "test 2", "test 3")
