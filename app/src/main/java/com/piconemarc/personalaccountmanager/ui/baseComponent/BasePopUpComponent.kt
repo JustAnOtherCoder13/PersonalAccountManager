@@ -291,3 +291,26 @@ fun RecurrentOptionPanel(
         }
     }
 }
+
+@Composable
+fun TransferOptionPanel(
+    onSenderAccountSelected : (senderAccount:String)-> Unit,
+    onBeneficiaryAccountSelected : (beneficiaryAccount : String) -> Unit
+) {
+    Column {
+        BaseDropDownMenuWithBackGround(
+            hint = stringResource(R.string.senderAccount),
+            itemList = testList,
+            onItemSelected = { item ->
+                onSenderAccountSelected(item)
+            }
+        )
+        BaseDropDownMenuWithBackGround(
+            hint = stringResource(R.string.beneficiaryAccount),
+            itemList = testList,
+            onItemSelected = { item ->
+                onBeneficiaryAccountSelected(item)
+            }
+        )
+    }
+}

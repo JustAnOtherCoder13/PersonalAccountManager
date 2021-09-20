@@ -1,9 +1,8 @@
 package com.piconemarc.personalaccountmanager.ui.baseComponent
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.*
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,9 +10,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -180,11 +177,13 @@ fun SwitchButton(
     switchShape: Shape,
     bottomPadding: Dp = RegularMarge
 ) {
+    val buttonColor by animateColorAsState(targetValue = if (isSelected) MaterialTheme.colors.primary else MaterialTheme.colors.primaryVariant,animationSpec = if (!isSelected) tween(delayMillis = 120) else tween(delayMillis = 0) )
+    val textColor by animateColorAsState(targetValue = if (isSelected) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSecondary, animationSpec = if (!isSelected) tween(delayMillis = 120) else tween(delayMillis = 0))
     Button(
         modifier = Modifier
             .wrapContentSize()
             .background(
-                color = if (isSelected) MaterialTheme.colors.primary else MaterialTheme.colors.primaryVariant,
+                color = buttonColor,
                 shape = switchShape
             )
             .padding(end = RegularMarge),
@@ -201,7 +200,7 @@ fun SwitchButton(
                 bottom = bottomPadding,
                 end = RegularMarge
             ),
-            color = if (isSelected) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSecondary
+            color = textColor
         )
     }
 }
@@ -210,8 +209,7 @@ fun SwitchButton(
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun PunctualOrRecurrentSwitchButton(
-    onEndDateSelected: (date: Pair<String, String>) -> Unit,
-    isVisible: Boolean
+    onEndDateSelected: (date: Pair<String, String>) -> Unit
 ) {
     var selectedButton: Int by remember {
         mutableStateOf(0)
@@ -221,56 +219,51 @@ fun PunctualOrRecurrentSwitchButton(
     }
     val recurrent = 1
     val punctual = 0
-    AnimatedVisibility(
-        visible = isVisible,
-        enter = expandVertically(expandFrom = Alignment.Top),
-        exit = shrinkVertically(shrinkTowards = Alignment.Top),
-        modifier = Modifier.expandablePopUpOptionAnimation()
-    ) {
 
-        Column(
+    Column ( modifier = Modifier.padding(bottom = RegularMarge)) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
-                .padding(bottom = RegularMarge)
+                .fillMaxWidth()
+                .padding(
+                    top = RegularMarge,
+                    //bottom = if (selectedButton == punctual) RegularMarge else 0.dp
+                )
         ) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        top = RegularMarge,
-                        bottom = if (selectedButton == punctual) RegularMarge else 0.dp
+            val shapeSize by animateDpAsState(targetValue = if (selectedButton == recurrent) BigMarge else RegularMarge, animationSpec = if (selectedButton != recurrent) tween(delayMillis = 120) else tween(delayMillis = 0) )
+            val shapeCorner by animateDpAsState(targetValue = if (selectedButton == recurrent) 0.dp else XlMarge, animationSpec = if (selectedButton != recurrent) tween(delayMillis = 120) else tween(delayMillis = 0))
+            SwitchButton(
+                onButtonSelected = { selectedButton = punctual },
+                isSelected = selectedButton == punctual,
+                title = stringResource(R.string.punctualSwitchButton),
+                switchShape = LeftSwitchShape
+            )
+            SwitchButton(
+                onButtonSelected = { selectedButton = recurrent },
+                isSelected = selectedButton == recurrent,
+                title = stringResource(R.string.recurrentSwitchButton),
+                switchShape =  RightSwitchShape.copy(
+                    bottomStart = CornerSize(
+                        shapeCorner
                     )
-            ) {
-                SwitchButton(
-                    onButtonSelected = { selectedButton = punctual },
-                    isSelected = selectedButton == punctual,
-                    title = stringResource(R.string.punctualSwitchButton),
-                    switchShape = LeftSwitchShape
-                )
-                SwitchButton(
-                    onButtonSelected = { selectedButton = recurrent },
-                    isSelected = selectedButton == recurrent,
-                    title = stringResource(R.string.recurrentSwitchButton),
-                    switchShape = if (selectedButton == recurrent) RightSwitchShape.copy(
-                        bottomStart = CornerSize(
-                            0.dp
-                        )
-                    ) else RightSwitchShape,
-                    bottomPadding = if (selectedButton == recurrent) BigMarge else RegularMarge
-                )
-            }
-            //Recurrent options
-            if (selectedButton == 1)
-                RecurrentOptionPanel(
-                    onMonthSelected = { month ->
-                        selectedDate = selectedDate.copy(first = month)
-                        onEndDateSelected(selectedDate)
-                    },
-                    onYearSelected = { year ->
-                        selectedDate = selectedDate.copy(second = year)
-                        onEndDateSelected(selectedDate)
-                    }
-                )
+                ) ,
+                bottomPadding = shapeSize
+            )
         }
+        //Recurrent options
+        ExpandCollapsePopUpOptionAnimation(isVisible = selectedButton==recurrent) {
+            RecurrentOptionPanel(
+                onMonthSelected = { month ->
+                    selectedDate = selectedDate.copy(first = month)
+                    onEndDateSelected(selectedDate)
+                },
+                onYearSelected = { year ->
+                    selectedDate = selectedDate.copy(second = year)
+                    onEndDateSelected(selectedDate)
+                }
+            )
+        }
+
     }
+
 }
