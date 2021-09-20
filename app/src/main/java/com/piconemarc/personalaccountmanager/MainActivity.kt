@@ -24,14 +24,9 @@ class MainActivity : ComponentActivity() {
                 var showPopUp: Boolean by remember {
                     mutableStateOf(false)
                 }
-                // A surface container using the 'background' color from the theme
                 Surface(
-                    modifier = Modifier
-                        .fillMaxSize(),
                     color = MaterialTheme.colors.secondary
                 ) {
-                    Column {
-
                         Button(onClick = {
                             showPopUp = true
                         }) {
@@ -50,7 +45,7 @@ class MainActivity : ComponentActivity() {
                             operationAmount = 50.00
                         )
                     }
-                }
+
             }
         }
     }

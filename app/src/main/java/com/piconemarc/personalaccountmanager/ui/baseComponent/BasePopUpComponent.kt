@@ -1,10 +1,13 @@
 package com.piconemarc.personalaccountmanager.ui.baseComponent
 
+import android.annotation.SuppressLint
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -12,8 +15,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -32,7 +36,7 @@ fun BasePopUp(
     Card(
         elevation = BigMarge,
         backgroundColor = MaterialTheme.colors.secondary,
-        shape = MaterialTheme.shapes.large,
+        shape = MaterialTheme.shapes.large.copy(topStart = CornerSize(0.dp)),
         border = BorderStroke(LittleMarge, MaterialTheme.colors.primaryVariant),
     ) {
         Column() {
@@ -122,6 +126,7 @@ fun BaseDropDownMenuWithBackGround(
 }
 
 
+
 @Composable
 fun OperationPopUpLeftSideIcon(
     onIconButtonClicked: (popUpTitle: String) -> Unit
@@ -129,28 +134,22 @@ fun OperationPopUpLeftSideIcon(
     val operation = stringResource(R.string.operation)
     val payment = stringResource(R.string.payment)
     val transfer = stringResource(R.string.transfer)
-
     var selectedOperationOption: String by remember {
         mutableStateOf(operation)
     }
 
-    Box() {
+    Box {
         Box(
             modifier = Modifier
+                .selectorOffsetAnimation(
+                    selectedOperationOption = selectedOperationOption
+                )
                 .background(
                     color = MaterialTheme.colors.primaryVariant,
                     shape = RoundedCornerShape(topStart = BigMarge, bottomStart = BigMarge)
                 )
                 .height(48.dp)
                 .width(48.dp)
-                .align(when (selectedOperationOption) {
-                        payment -> Alignment.Center
-                        transfer -> Alignment.BottomCenter
-                        else -> Alignment.TopCenter
-                    }
-                ),
-
-
         )
         Column {
             PamIconButton(

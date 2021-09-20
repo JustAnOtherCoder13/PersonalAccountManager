@@ -1,5 +1,9 @@
 package com.piconemarc.personalaccountmanager.ui.baseComponent
 
+import android.annotation.SuppressLint
+import androidx.compose.animation.*
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -7,7 +11,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -172,7 +178,7 @@ fun SwitchButton(
     isSelected: Boolean,
     title: String,
     switchShape: Shape,
-    bottomPadding : Dp = RegularMarge
+    bottomPadding: Dp = RegularMarge
 ) {
     Button(
         modifier = Modifier
@@ -190,65 +196,81 @@ fun SwitchButton(
         Text(
             text = title,
             style = MaterialTheme.typography.h3,
-            modifier = Modifier.padding(top = RegularMarge,bottom = bottomPadding, end = RegularMarge),
+            modifier = Modifier.padding(
+                top = RegularMarge,
+                bottom = bottomPadding,
+                end = RegularMarge
+            ),
             color = if (isSelected) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSecondary
         )
     }
 }
 
+
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun PunctualOrRecurrentSwitchButton(
-    onEndDateSelected : (date : Pair<String,String>)-> Unit
+    onEndDateSelected: (date: Pair<String, String>) -> Unit,
+    isVisible: Boolean
 ) {
     var selectedButton: Int by remember {
         mutableStateOf(0)
     }
-    var selectedDate : Pair<String, String> by remember {
-        mutableStateOf(Pair("",""))
+    var selectedDate: Pair<String, String> by remember {
+        mutableStateOf(Pair("", ""))
     }
     val recurrent = 1
     val punctual = 0
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = RegularMarge)
+    AnimatedVisibility(
+        visible = isVisible,
+        enter = expandVertically(expandFrom = Alignment.Top),
+        exit = shrinkVertically(shrinkTowards = Alignment.Top),
+        modifier = Modifier.expandablePopUpOptionAnimation()
     ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = RegularMarge, bottom = if (selectedButton == punctual) RegularMarge else 0.dp)
-        ) {
-            SwitchButton(
-                onButtonSelected = { selectedButton = punctual },
-                isSelected = selectedButton == punctual,
-                title = stringResource(R.string.punctualSwitchButton),
-                switchShape = LeftSwitchShape
-            )
-            SwitchButton(
-                onButtonSelected = { selectedButton = recurrent },
-                isSelected = selectedButton == recurrent,
-                title = stringResource(R.string.recurrentSwitchButton),
-                switchShape = if (selectedButton == recurrent) RightSwitchShape.copy(
-                    bottomStart = CornerSize(
-                        0.dp
-                    )
-                ) else RightSwitchShape,
-                bottomPadding = if (selectedButton == recurrent) BigMarge else RegularMarge
-            )
-        }
-        //Recurrent options
-        if (selectedButton == 1)
-            RecurrentOptionPanel(
-                onMonthSelected = {month->
-                    selectedDate = selectedDate.copy(first = month)
-                    onEndDateSelected(selectedDate)
-                },
-                onYearSelected = {year ->
-                    selectedDate = selectedDate.copy(second = year)
-                    onEndDateSelected(selectedDate)
-                }
-            )
-    }
 
+        Column(
+            modifier = Modifier
+                .padding(bottom = RegularMarge)
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        top = RegularMarge,
+                        bottom = if (selectedButton == punctual) RegularMarge else 0.dp
+                    )
+            ) {
+                SwitchButton(
+                    onButtonSelected = { selectedButton = punctual },
+                    isSelected = selectedButton == punctual,
+                    title = stringResource(R.string.punctualSwitchButton),
+                    switchShape = LeftSwitchShape
+                )
+                SwitchButton(
+                    onButtonSelected = { selectedButton = recurrent },
+                    isSelected = selectedButton == recurrent,
+                    title = stringResource(R.string.recurrentSwitchButton),
+                    switchShape = if (selectedButton == recurrent) RightSwitchShape.copy(
+                        bottomStart = CornerSize(
+                            0.dp
+                        )
+                    ) else RightSwitchShape,
+                    bottomPadding = if (selectedButton == recurrent) BigMarge else RegularMarge
+                )
+            }
+            //Recurrent options
+            if (selectedButton == 1)
+                RecurrentOptionPanel(
+                    onMonthSelected = { month ->
+                        selectedDate = selectedDate.copy(first = month)
+                        onEndDateSelected(selectedDate)
+                    },
+                    onYearSelected = { year ->
+                        selectedDate = selectedDate.copy(second = year)
+                        onEndDateSelected(selectedDate)
+                    }
+                )
+        }
+    }
 }
