@@ -1,10 +1,10 @@
 package com.piconemarc.personalaccountmanager.ui.baseComponent
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -12,13 +12,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.theme.*
@@ -33,7 +32,8 @@ fun BasePopUp(
     Card(
         elevation = BigMarge,
         backgroundColor = MaterialTheme.colors.secondary,
-        shape = MaterialTheme.shapes.large
+        shape = MaterialTheme.shapes.large,
+        border = BorderStroke(LittleMarge, MaterialTheme.colors.primaryVariant),
     ) {
         Column() {
             PopUpTitle(title)
@@ -104,33 +104,79 @@ fun BaseDropDownMenu(
 }
 
 @Composable
+fun BaseDropDownMenuWithBackGround(
+    hint: String,
+    itemList: List<String>,
+    onItemSelected: (item: String) -> Unit
+) {
+    Row(
+        modifier = Modifier.popUpClickableItemModifier(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        BaseDropDownMenu(
+            hint = hint,
+            itemList = itemList,
+            onItemSelected = onItemSelected
+        )
+    }
+}
+
+
+@Composable
 fun OperationPopUpLeftSideIcon(
     onIconButtonClicked: (popUpTitle: String) -> Unit
 ) {
     val operation = stringResource(R.string.operation)
     val payment = stringResource(R.string.payment)
     val transfer = stringResource(R.string.transfer)
-    Column {
-        PamIconButton(
-            iconButton = IconButtons.OPERATION,
-            onIconButtonClicked = {
-                onIconButtonClicked(operation)
-            }
+
+    var selectedOperationOption: String by remember {
+        mutableStateOf(operation)
+    }
+
+    Box() {
+        Box(
+            modifier = Modifier
+                .background(
+                    color = MaterialTheme.colors.primaryVariant,
+                    shape = RoundedCornerShape(topStart = BigMarge, bottomStart = BigMarge)
+                )
+                .height(48.dp)
+                .width(48.dp)
+                .align(when (selectedOperationOption) {
+                        payment -> Alignment.Center
+                        transfer -> Alignment.BottomCenter
+                        else -> Alignment.TopCenter
+                    }
+                ),
+
+
         )
-        Spacer(modifier = Modifier.height(RegularMarge))
-        PamIconButton(
-            iconButton = IconButtons.PAYMENT,
-            onIconButtonClicked = {
-                onIconButtonClicked(payment)
-            }
-        )
-        Spacer(modifier = Modifier.height(RegularMarge))
-        PamIconButton(
-            iconButton = IconButtons.TRANSFER,
-            onIconButtonClicked = {
-                onIconButtonClicked(transfer)
-            }
-        )
+        Column {
+            PamIconButton(
+                iconButton = IconButtons.OPERATION,
+                onIconButtonClicked = {
+                    selectedOperationOption = operation
+                    onIconButtonClicked(operation)
+                }
+            )
+            Spacer(modifier = Modifier.height(RegularMarge))
+            PamIconButton(
+                iconButton = IconButtons.PAYMENT,
+                onIconButtonClicked = {
+                    selectedOperationOption = payment
+                    onIconButtonClicked(payment)
+                }
+            )
+            Spacer(modifier = Modifier.height(RegularMarge))
+            PamIconButton(
+                iconButton = IconButtons.TRANSFER,
+                onIconButtonClicked = {
+                    selectedOperationOption = transfer
+                    onIconButtonClicked(transfer)
+                }
+            )
+        }
     }
 }
 
@@ -157,10 +203,6 @@ fun BasePopUpTextFieldItem(
     var textValue: String by remember {
         mutableStateOf("")
     }
-    Text(
-        text = title,
-        style = MaterialTheme.typography.h3
-    )
     Column(modifier = Modifier.popUpClickableItemModifier()) {
         TextField(
             value = textValue,
@@ -168,8 +210,16 @@ fun BasePopUpTextFieldItem(
                 onTextChange(text)
                 textValue = text
             },
-            textStyle = MaterialTheme.typography.body1.copy(color = MaterialTheme.colors.onPrimary),
+            textStyle = MaterialTheme.typography.body1.copy(
+                color = MaterialTheme.colors.onPrimary
+            ),
             label = { Text(text = title) },
+            colors = TextFieldDefaults.textFieldColors(
+                focusedLabelColor = MaterialTheme.colors.onPrimary,
+                unfocusedLabelColor = MaterialTheme.colors.onPrimary,
+                cursorColor = MaterialTheme.colors.onPrimary,
+                backgroundColor = Color.Transparent
+            )
         )
     }
 }
@@ -182,10 +232,6 @@ fun BasePopUpAmountTextFieldItem(
     var amountValue: String by remember {
         mutableStateOf("")
     }
-    Text(
-        text = title,
-        style = MaterialTheme.typography.h3
-    )
     Column(
         modifier = Modifier.popUpAmountItemModifier(amountValue)
     ) {
@@ -198,99 +244,20 @@ fun BasePopUpAmountTextFieldItem(
             textStyle = MaterialTheme.typography.body1,
             label = { Text(text = title) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.background(Color.Transparent)
+            colors = TextFieldDefaults.textFieldColors(
+                focusedLabelColor = MaterialTheme.colors.primary,
+                unfocusedLabelColor = MaterialTheme.colors.primary,
+                backgroundColor = Color.Transparent
+            )
         )
     }
 }
 
-@Composable
-fun SwitchButton(
-    onButtonSelected: () -> Unit,
-    isSelected: Boolean,
-    title: String,
-    switchShape: Shape,
-    bottomPadding : Dp = RegularMarge
-) {
-    Button(
-        modifier = Modifier
-            .wrapContentSize()
-            .background(
-                color = if (isSelected) MaterialTheme.colors.primary else MaterialTheme.colors.primaryVariant,
-                shape = switchShape
-            )
-            .padding(end = RegularMarge),
-        onClick = onButtonSelected,
-        colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
-        elevation = ButtonDefaults.elevation(0.dp)
-
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.h3,
-            modifier = Modifier.padding(top = RegularMarge,bottom = bottomPadding, end = RegularMarge),
-            color = if (isSelected) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSecondary
-        )
-    }
-}
 
 @Composable
-fun PunctualOrRecurrentSwitchButton(
-    onEndDateSelected : (Pair<String,String>)-> Unit
-) {
-    var selectedButton: Int by remember {
-        mutableStateOf(0)
-    }
-    var selectedDate : Pair<String, String> by remember {
-        mutableStateOf(Pair("",""))
-    }
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = RegularMarge)
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = RegularMarge, bottom = if (selectedButton == 0) BigMarge else 0.dp)
-        ) {
-            SwitchButton(
-                onButtonSelected = { selectedButton = 0 },
-                isSelected = selectedButton == 0,
-                title = stringResource(R.string.punctualSwitchButton),
-                switchShape = LeftSwitchShape
-            )
-            SwitchButton(
-                onButtonSelected = { selectedButton = 1 },
-                isSelected = selectedButton == 1,
-                title = stringResource(R.string.recurrentSwitchButton),
-                switchShape = if (selectedButton == 1) RightSwitchShape.copy(
-                    bottomStart = CornerSize(
-                        0.dp
-                    )
-                ) else RightSwitchShape,
-                bottomPadding = if (selectedButton == 1) BigMarge else RegularMarge
-            )
-        }
-        //Recurrent options
-        if (selectedButton == 1)
-            RecurrentOptionPanel(
-                onMonthSelected = {month->
-                    selectedDate = selectedDate.copy(first = month)
-                    onEndDateSelected(selectedDate)
-                },
-                onYearSelected = {year ->
-                    selectedDate = selectedDate.copy(second = year)
-                    onEndDateSelected(selectedDate)
-                }
-            )
-    }
-
-}
-@Composable
-private fun RecurrentOptionPanel(
-    onMonthSelected : (month : String)->Unit,
-    onYearSelected : (year : String)-> Unit
+fun RecurrentOptionPanel(
+    onMonthSelected: (month: String) -> Unit,
+    onYearSelected: (year: String) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -300,7 +267,7 @@ private fun RecurrentOptionPanel(
             )
     ) {
         Text(
-            text = "End Date",
+            text = stringResource(R.string.endDate),
             style = MaterialTheme.typography.h3,
             color = MaterialTheme.colors.onPrimary,
             modifier = Modifier
@@ -317,11 +284,11 @@ private fun RecurrentOptionPanel(
             BaseDropDownMenu(
                 hint = stringResource(R.string.month),
                 itemList = mutableListOf("Janvier", "Fevrier"),
-                onItemSelected = {month -> onMonthSelected(month)})
+                onItemSelected = { month -> onMonthSelected(month) })
             BaseDropDownMenu(
                 hint = stringResource(R.string.year),
                 itemList = mutableListOf("2000", "2001"),
-                onItemSelected = {year-> onYearSelected(year)})
+                onItemSelected = { year -> onYearSelected(year) })
         }
     }
 }

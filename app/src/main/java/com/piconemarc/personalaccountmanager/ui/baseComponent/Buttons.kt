@@ -4,20 +4,20 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.piconemarc.personalaccountmanager.R
-import com.piconemarc.personalaccountmanager.ui.theme.BigMarge
-import com.piconemarc.personalaccountmanager.ui.theme.ButtonShape
-import com.piconemarc.personalaccountmanager.ui.theme.PersonalAccountManagerTheme
-import com.piconemarc.personalaccountmanager.ui.theme.XlMarge
+import com.piconemarc.personalaccountmanager.ui.theme.*
 
 @Composable
 fun PamIconButton(
@@ -164,4 +164,91 @@ fun AcceptOrDismissPreview() {
             onDismissButtonClicked = { }
         )
     }
+}
+
+@Composable
+fun SwitchButton(
+    onButtonSelected: () -> Unit,
+    isSelected: Boolean,
+    title: String,
+    switchShape: Shape,
+    bottomPadding : Dp = RegularMarge
+) {
+    Button(
+        modifier = Modifier
+            .wrapContentSize()
+            .background(
+                color = if (isSelected) MaterialTheme.colors.primary else MaterialTheme.colors.primaryVariant,
+                shape = switchShape
+            )
+            .padding(end = RegularMarge),
+        onClick = onButtonSelected,
+        colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+        elevation = ButtonDefaults.elevation(0.dp)
+
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.h3,
+            modifier = Modifier.padding(top = RegularMarge,bottom = bottomPadding, end = RegularMarge),
+            color = if (isSelected) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSecondary
+        )
+    }
+}
+
+@Composable
+fun PunctualOrRecurrentSwitchButton(
+    onEndDateSelected : (date : Pair<String,String>)-> Unit
+) {
+    var selectedButton: Int by remember {
+        mutableStateOf(0)
+    }
+    var selectedDate : Pair<String, String> by remember {
+        mutableStateOf(Pair("",""))
+    }
+    val recurrent = 1
+    val punctual = 0
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = RegularMarge)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = RegularMarge, bottom = if (selectedButton == punctual) RegularMarge else 0.dp)
+        ) {
+            SwitchButton(
+                onButtonSelected = { selectedButton = punctual },
+                isSelected = selectedButton == punctual,
+                title = stringResource(R.string.punctualSwitchButton),
+                switchShape = LeftSwitchShape
+            )
+            SwitchButton(
+                onButtonSelected = { selectedButton = recurrent },
+                isSelected = selectedButton == recurrent,
+                title = stringResource(R.string.recurrentSwitchButton),
+                switchShape = if (selectedButton == recurrent) RightSwitchShape.copy(
+                    bottomStart = CornerSize(
+                        0.dp
+                    )
+                ) else RightSwitchShape,
+                bottomPadding = if (selectedButton == recurrent) BigMarge else RegularMarge
+            )
+        }
+        //Recurrent options
+        if (selectedButton == 1)
+            RecurrentOptionPanel(
+                onMonthSelected = {month->
+                    selectedDate = selectedDate.copy(first = month)
+                    onEndDateSelected(selectedDate)
+                },
+                onYearSelected = {year ->
+                    selectedDate = selectedDate.copy(second = year)
+                    onEndDateSelected(selectedDate)
+                }
+            )
+    }
+
 }

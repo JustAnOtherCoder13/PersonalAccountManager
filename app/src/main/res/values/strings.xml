@@ -21,4 +21,7 @@
     <string name="recurrentSwitchButton">Recurrent</string>
     <string name="month">Month</string>
     <string name="year">Year</string>
+    <string name="endDate">End Date</string>
+    <string name="senderAccount">Sender account</string>
+    <string name="beneficiaryAccount">Beneficiary account</string>
 </resources>

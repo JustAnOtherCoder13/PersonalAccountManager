@@ -1,9 +1,7 @@
 package com.piconemarc.personalaccountmanager.ui.baseComponent
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -13,8 +11,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.theme.Positive
+import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
 import com.piconemarc.personalaccountmanager.ui.theme.deleteOperationTextModifier
-import com.piconemarc.personalaccountmanager.ui.theme.popUpClickableItemModifier
 
 
 @Composable
@@ -66,63 +64,76 @@ fun AddOperationPopUp(
     var popUpTitle: String by remember { mutableStateOf(operationTitle) }
 
     if (showAddOperationPopUp)
-        //Left menu-----------------------------------------------------
-        Row {
+        Row(modifier = Modifier.padding(horizontal = RegularMarge, vertical = RegularMarge)) {
+            //Left menu-----------------------------------------------------
             OperationPopUpLeftSideIcon(
                 onIconButtonClicked = { popUpTitle_ ->
                     popUpTitle = popUpTitle_
                 }
             )
             //base operation --------------------------------------------
-            BasePopUp(
-                title = popUpTitle,
-                onAcceptButtonClicked = {
-                    onDismiss()
-                    onAddOperation()
-                },
-                onCancelButtonClicked = onDismiss
-            ) {
-                Row(
-                    modifier = Modifier.popUpClickableItemModifier(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    //category drop down -----------------------------------
-                    BaseDropDownMenu(
-                        hint = stringResource(R.string.category),
-                        itemList = testList,
-                        onItemSelected = { item ->
-
-                        }
-                    )
-                }
-                // operation and amount text field--------------------------
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    BasePopUpTextFieldItem(
-                        title = stringResource(R.string.operationName),
-                        onTextChange = { operationName ->
-
-                        }
-                    )
-                    BasePopUpAmountTextFieldItem(
-                        title = stringResource(R.string.operationAmount),
-                        onTextChange = { amount ->
-
+            LazyColumn {
+                item {
+                    BasePopUp(
+                        title = popUpTitle,
+                        onAcceptButtonClicked = {
+                            onDismiss()
+                            onAddOperation()
                         },
-                    )
-                    //Payment Operation-------------------------------------
-                    if (popUpTitle != stringResource(R.string.operation)) {
-                        PunctualOrRecurrentSwitchButton(
-                            onEndDateSelected = {month_year ->
+                        onCancelButtonClicked = onDismiss
+                    ) {
+                        //category drop down -----------------------------------
+                        BaseDropDownMenuWithBackGround(
+                            hint = stringResource(R.string.category),
+                            itemList = testList,
+                            onItemSelected = { item ->
 
                             }
                         )
-                    }
-                    //Transfer Operation------------------------------------
-                    if (popUpTitle == stringResource(R.string.transfer)){
-                        Text(text = "test")
+                        // operation and amount text field--------------------------
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            BasePopUpTextFieldItem(
+                                title = stringResource(R.string.operationName),
+                                onTextChange = { operationName ->
+
+                                }
+                            )
+                            BasePopUpAmountTextFieldItem(
+                                title = stringResource(R.string.operationAmount),
+                                onTextChange = { amount ->
+
+                                },
+                            )
+                            //Payment Operation option--------------------------
+                            if (popUpTitle != stringResource(R.string.operation)) {
+                                PunctualOrRecurrentSwitchButton(
+                                    onEndDateSelected = { month_year ->
+
+                                    }
+                                )
+                            }
+                            //Transfer Operation option---------------------------
+                            if (popUpTitle == stringResource(R.string.transfer)) {
+
+                                BaseDropDownMenuWithBackGround(
+                                    hint = stringResource(R.string.senderAccount),
+                                    itemList = testList,
+                                    onItemSelected = { item ->
+
+                                    }
+                                )
+                                BaseDropDownMenuWithBackGround(
+                                    hint = stringResource(R.string.beneficiaryAccount),
+                                    itemList = testList,
+                                    onItemSelected = { item ->
+
+                                    }
+                                )
+                            }
+                        }
                     }
                 }
             }
