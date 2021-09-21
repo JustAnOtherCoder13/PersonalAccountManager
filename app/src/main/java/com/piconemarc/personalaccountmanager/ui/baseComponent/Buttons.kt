@@ -1,7 +1,10 @@
 package com.piconemarc.personalaccountmanager.ui.baseComponent
 
-import androidx.compose.animation.*
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -209,7 +212,9 @@ fun SwitchButton(
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun PunctualOrRecurrentSwitchButton(
-    onEndDateSelected: (date: Pair<String, String>) -> Unit
+    onEndDateSelected: (date: Pair<String, String>) -> Unit,
+    modifier : Modifier,
+    isRecurrent : (Boolean)->Unit
 ) {
     var selectedButton: Int by remember {
         mutableStateOf(0)
@@ -219,15 +224,15 @@ fun PunctualOrRecurrentSwitchButton(
     }
     val recurrent = 1
     val punctual = 0
+    isRecurrent ( selectedButton==1)
 
-    Column ( modifier = Modifier.padding(bottom = RegularMarge)) {
+    Column ( modifier = modifier.padding(bottom = RegularMarge)) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
                     top = RegularMarge,
-                    //bottom = if (selectedButton == punctual) RegularMarge else 0.dp
                 )
         ) {
             val shapeSize by animateDpAsState(targetValue = if (selectedButton == recurrent) BigMarge else RegularMarge, animationSpec = if (selectedButton != recurrent) tween(delayMillis = 120) else tween(delayMillis = 0) )
@@ -251,8 +256,9 @@ fun PunctualOrRecurrentSwitchButton(
             )
         }
         //Recurrent options
-        ExpandCollapsePopUpOptionAnimation(isVisible = selectedButton==recurrent) {
+
             RecurrentOptionPanel(
+                modifier = Modifier.height(expandCollapseEndDatePanel(isSelected = selectedButton == recurrent).value),
                 onMonthSelected = { month ->
                     selectedDate = selectedDate.copy(first = month)
                     onEndDateSelected(selectedDate)
@@ -262,8 +268,14 @@ fun PunctualOrRecurrentSwitchButton(
                     onEndDateSelected(selectedDate)
                 }
             )
-        }
+
 
     }
 
+
 }
+@Composable
+fun expandCollapseEndDatePanel(isSelected : Boolean):State<Dp> = animateDpAsState(
+    targetValue = if (isSelected) 100.dp else 0.dp,
+    animationSpec = spring(dampingRatio = Spring.DampingRatioLowBouncy, stiffness = Spring.StiffnessLow)
+)

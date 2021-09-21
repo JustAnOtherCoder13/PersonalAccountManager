@@ -1,15 +1,12 @@
 package com.piconemarc.personalaccountmanager.ui.baseComponent
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.*
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
@@ -17,7 +14,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.piconemarc.personalaccountmanager.R
-import com.piconemarc.personalaccountmanager.ui.theme.Black
 
 @SuppressLint("UnnecessaryComposedModifier")
 fun Modifier.selectorOffsetAnimation(selectedOperationOption: String): Modifier =
@@ -42,72 +38,66 @@ fun Modifier.selectorOffsetAnimation(selectedOperationOption: String): Modifier 
         this.offset(y = selectorOffset.y.dp)
     }
 
-
-@SuppressLint("UnnecessaryComposedModifier")
-fun Modifier.expandablePopUpOptionAnimation(): Modifier =
-    this.composed {
-        this
-            .animateContentSize(
-                animationSpec = spring(
-                    stiffness = Spring.StiffnessLow,
-                    dampingRatio = Spring.DampingRatioLowBouncy
-                )
-            )
-            .fillMaxSize()
-    }
-
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun ShowHidePopUpAnimation(
-    isVisible: Boolean,
-    content: @Composable (enterExitPopUpAnimationModifier: Modifier) -> Unit
+fun expandCollapsePaymentAnimation(popUpTitle: String): State<Dp> = animateDpAsState(
+    targetValue = if (popUpTitle != stringResource(id = R.string.operation)) {
+        if (!isRecurrent.value) 90.dp
+        else 190.dp
+    } else 0.dp,
+    animationSpec = spring(
+        dampingRatio = Spring.DampingRatioLowBouncy,
+        stiffness = Spring.StiffnessLow
+    )
+)
 
-) {
+@Composable
+fun expandCollapseTransferAnimation(popUpTitle: String): State<Dp> = animateDpAsState(
+    targetValue = if (popUpTitle == stringResource(id = R.string.transfer)) 130.dp else 1.dp,
+    animationSpec = spring(
+        dampingRatio = Spring.DampingRatioLowBouncy,
+        stiffness = Spring.StiffnessLow
+    )
+)
 
-    AnimatedVisibility(
-        visible = isVisible,
-        enter = fadeIn(
-            animationSpec = tween(
-                durationMillis = 700
-            )
-        ),
-        exit = fadeOut(
-            animationSpec = tween(
-                durationMillis = 700
-            )
-        )
+@Composable
+fun addOperationPopUpAnimation(addOperationPopUpState: AddOperationPopUpState): TransitionData {
+    val transition = updateTransition(targetState = addOperationPopUpState, label = "")
+    val alpha = transition.animateFloat(
+        transitionSpec = { tween(durationMillis = 500) }, label = ""
     ) {
-        Column(
-            modifier = Modifier
-                .background(Black.copy(alpha = 0.7f))
-                .fillMaxSize()
-        ) {
-            content(
-                enterExitPopUpAnimationModifier = Modifier
-                    .animateEnterExit(
-                        enter = expandVertically(
-                            animationSpec = tween(delayMillis = 200)
-                        ),
-                        exit = shrinkVertically(),
-                    )
-            )
+        when (it) {
+            AddOperationPopUpState.COLLAPSED -> 0f
+            AddOperationPopUpState.EXPANDED -> 0.7f
         }
     }
+    val size = transition.animateDp(
+        transitionSpec = {
+            spring(
+                dampingRatio = Spring.DampingRatioNoBouncy,
+                stiffness = Spring.StiffnessMedium
+            )
+        }, label = ""
+    ) {
+        when (it) {
+            AddOperationPopUpState.COLLAPSED -> 0.dp
+            AddOperationPopUpState.EXPANDED -> 800.dp
+        }
+    }
+    val position = transition.animateDp(
+
+        transitionSpec = {
+            spring(
+                dampingRatio = Spring.DampingRatioLowBouncy,
+                stiffness = Spring.StiffnessLow
+            )
+        }, label = ""
+    ) {
+        when (it) {
+            AddOperationPopUpState.COLLAPSED -> (-50).dp
+            AddOperationPopUpState.EXPANDED -> 100.dp
+        }
+    }
+    return remember(transition) { TransitionData(alpha, size, position) }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
-@Composable
-fun ExpandCollapsePopUpOptionAnimation(
-    isVisible: Boolean,
-    content: @Composable () -> Unit
-) {
-    AnimatedVisibility(
-        visible = isVisible,
-        enter = expandVertically(),
-        exit = shrinkVertically(),
-        modifier = Modifier.expandablePopUpOptionAnimation()
-    ) {
-        content()
-    }
-}
 

@@ -1,7 +1,5 @@
 package com.piconemarc.personalaccountmanager.ui.baseComponent
 
-import android.annotation.SuppressLint
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,8 +14,6 @@ import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -255,15 +251,17 @@ fun BasePopUpAmountTextFieldItem(
 
 @Composable
 fun RecurrentOptionPanel(
+    modifier: Modifier,
     onMonthSelected: (month: String) -> Unit,
-    onYearSelected: (year: String) -> Unit
+    onYearSelected: (year: String) -> Unit,
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .background(
                 color = MaterialTheme.colors.primary,
                 shape = RecurrentOptionPanelShape
             )
+
     ) {
         Text(
             text = stringResource(R.string.endDate),
@@ -277,7 +275,7 @@ fun RecurrentOptionPanel(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(BigMarge),
+                .padding(horizontal = BigMarge),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             BaseDropDownMenu(
@@ -294,10 +292,11 @@ fun RecurrentOptionPanel(
 
 @Composable
 fun TransferOptionPanel(
+    modifier: Modifier,
     onSenderAccountSelected : (senderAccount:String)-> Unit,
     onBeneficiaryAccountSelected : (beneficiaryAccount : String) -> Unit
 ) {
-    Column {
+    Column(modifier = modifier) {
         BaseDropDownMenuWithBackGround(
             hint = stringResource(R.string.senderAccount),
             itemList = testList,

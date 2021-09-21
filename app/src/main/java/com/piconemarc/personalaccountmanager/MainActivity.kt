@@ -3,8 +3,8 @@ package com.piconemarc.personalaccountmanager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -12,7 +12,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.piconemarc.personalaccountmanager.ui.baseComponent.AddOperationPopUp
+import com.piconemarc.personalaccountmanager.ui.baseComponent.AddOperationPopUpState
 import com.piconemarc.personalaccountmanager.ui.baseComponent.DeleteOperationPopUp
 import com.piconemarc.personalaccountmanager.ui.theme.PersonalAccountManagerTheme
 
@@ -21,25 +23,27 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             PersonalAccountManagerTheme {
-                var showPopUp: Boolean by remember {
-                    mutableStateOf(false)
+                var addOperationPopUpState by remember {
+                    mutableStateOf(AddOperationPopUpState.COLLAPSED)
                 }
                 Surface(
                     color = MaterialTheme.colors.secondary
                 ) {
                         Button(onClick = {
-                            showPopUp = true
-                        }) {
+                            addOperationPopUpState = AddOperationPopUpState.EXPANDED
+                        },
+                            modifier = Modifier.fillMaxWidth().height(200.dp)
+                        ) {
                             Text(text = "Click")
                         }
                         AddOperationPopUp(
-                            showAddOperationPopUp = showPopUp,
-                            onDismiss = { showPopUp = false },
+                            addOperationPopUpState = addOperationPopUpState,
+                            onDismiss = { addOperationPopUpState = AddOperationPopUpState.COLLAPSED },
                             onAddOperation = {}
                         )
                         DeleteOperationPopUp(
                             onDeleteOperation = { },
-                            onDismiss = { showPopUp = false },
+                            onDismiss = { addOperationPopUpState = AddOperationPopUpState.COLLAPSED },
                             showDeleteOperationPopUp = false,
                             operationName = "test operation",
                             operationAmount = 50.00
