@@ -13,9 +13,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.piconemarc.personalaccountmanager.ui.baseComponent.AddOperationPopUp
-import com.piconemarc.personalaccountmanager.ui.baseComponent.AddOperationPopUpState
 import com.piconemarc.personalaccountmanager.ui.baseComponent.DeleteOperationPopUp
+import com.piconemarc.personalaccountmanager.ui.baseComponent.addOperationPopUp.AddOperationLeftSideIconEvent
+import com.piconemarc.personalaccountmanager.ui.baseComponent.addOperationPopUp.AddOperationPopUp
+import com.piconemarc.personalaccountmanager.ui.baseComponent.addOperationPopUp.AddOperationPopUpState
+import com.piconemarc.personalaccountmanager.ui.baseComponent.addOperationPopUp.addOperationLeftSideIconEventManager
 import com.piconemarc.personalaccountmanager.ui.theme.PersonalAccountManagerTheme
 
 class MainActivity : ComponentActivity() {
@@ -31,6 +33,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                         Button(onClick = {
                             addOperationPopUpState = AddOperationPopUpState.EXPANDED
+                            addOperationLeftSideIconEventManager(AddOperationLeftSideIconEvent.OnInitPopUp())
                         },
                             modifier = Modifier.fillMaxWidth().height(200.dp)
                         ) {

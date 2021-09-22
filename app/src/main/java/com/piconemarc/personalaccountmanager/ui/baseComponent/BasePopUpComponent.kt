@@ -122,59 +122,6 @@ fun BaseDropDownMenuWithBackGround(
 }
 
 
-
-@Composable
-fun OperationPopUpLeftSideIcon(
-    onIconButtonClicked: (popUpTitle: String) -> Unit
-) {
-    val operation = stringResource(R.string.operation)
-    val payment = stringResource(R.string.payment)
-    val transfer = stringResource(R.string.transfer)
-    var selectedOperationOption: String by remember {
-        mutableStateOf(operation)
-    }
-
-    Box {
-        Box(
-            modifier = Modifier
-                .selectorOffsetAnimation(
-                    selectedOperationOption = selectedOperationOption
-                )
-                .background(
-                    color = MaterialTheme.colors.primaryVariant,
-                    shape = RoundedCornerShape(topStart = BigMarge, bottomStart = BigMarge)
-                )
-                .height(48.dp)
-                .width(48.dp)
-        )
-        Column {
-            PamIconButton(
-                iconButton = IconButtons.OPERATION,
-                onIconButtonClicked = {
-                    selectedOperationOption = operation
-                    onIconButtonClicked(operation)
-                }
-            )
-            Spacer(modifier = Modifier.height(RegularMarge))
-            PamIconButton(
-                iconButton = IconButtons.PAYMENT,
-                onIconButtonClicked = {
-                    selectedOperationOption = payment
-                    onIconButtonClicked(payment)
-                }
-            )
-            Spacer(modifier = Modifier.height(RegularMarge))
-            PamIconButton(
-                iconButton = IconButtons.TRANSFER,
-                onIconButtonClicked = {
-                    selectedOperationOption = transfer
-                    onIconButtonClicked(transfer)
-                }
-            )
-        }
-    }
-}
-
 @Composable
 fun BaseDeletePopUp(
     elementToDelete: String,
@@ -293,8 +240,8 @@ fun RecurrentOptionPanel(
 @Composable
 fun TransferOptionPanel(
     modifier: Modifier,
-    onSenderAccountSelected : (senderAccount:String)-> Unit,
-    onBeneficiaryAccountSelected : (beneficiaryAccount : String) -> Unit
+    onSenderAccountSelected: (senderAccount: String) -> Unit,
+    onBeneficiaryAccountSelected: (beneficiaryAccount: String) -> Unit
 ) {
     Column(modifier = modifier) {
         BaseDropDownMenuWithBackGround(
