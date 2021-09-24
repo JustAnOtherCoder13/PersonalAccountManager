@@ -1,9 +1,7 @@
-package com.piconemarc.personalaccountmanager.ui.baseComponent.addOperationPopUp
+package com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.addOperationPopUp
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -20,7 +18,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.piconemarc.personalaccountmanager.R
-import com.piconemarc.personalaccountmanager.ui.baseComponent.RecurrentOptionPanel
+import com.piconemarc.personalaccountmanager.ui.baseComponent.expandCollapseEndDatePanel
+import com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.RecurrentOptionPanel
 import com.piconemarc.personalaccountmanager.ui.theme.*
 
 @Composable
@@ -31,6 +30,7 @@ fun SwitchButton(
     switchShape: Shape,
     bottomPadding: Dp = RegularMarge
 ) {
+    //TODO pass with transition
     val buttonColor by animateColorAsState(
         targetValue = if (isSelected) MaterialTheme.colors.primary else MaterialTheme.colors.primaryVariant,
         animationSpec = if (!isSelected) tween(delayMillis = 120) else tween(delayMillis = 0)
@@ -68,15 +68,15 @@ fun SwitchButton(
 
 @Composable
 fun PunctualOrRecurrentSwitchButton(
-    onEndDateSelected: (date: Pair<String, String>) -> Unit,
     modifier: Modifier,
-    isRecurrent: (Boolean) -> Unit
+    isRecurrent: (Boolean) -> Unit,
+    onMonthSelected: (String) -> Unit,
+    onYearSelected: (String) -> Unit,
+    selectedMonth: String,
+    selectedYear: String
 ) {
     var selectedButton: Int by remember {
         mutableStateOf(0)
-    }
-    var selectedDate: Pair<String, String> by remember {
-        mutableStateOf(Pair("", ""))
     }
     val recurrent = 1
     val punctual = 0
@@ -90,7 +90,7 @@ fun PunctualOrRecurrentSwitchButton(
                 .padding(
                     top = RegularMarge,
                 )
-        ) {
+        ) {//TODO pass with Transition
             val shapeSize by animateDpAsState(
                 targetValue = if (selectedButton == recurrent) BigMarge else RegularMarge,
                 animationSpec = if (selectedButton != recurrent) tween(delayMillis = 120) else tween(
@@ -113,35 +113,17 @@ fun PunctualOrRecurrentSwitchButton(
                 onButtonSelected = { selectedButton = recurrent },
                 isSelected = selectedButton == recurrent,
                 title = stringResource(R.string.recurrentSwitchButton),
-                switchShape = RightSwitchShape.copy(
-                    bottomStart = CornerSize(
-                        shapeCorner
-                    )
-                ),
+                switchShape = RightSwitchShape.copy(bottomStart = CornerSize(shapeCorner)),
                 bottomPadding = shapeSize
             )
         }
         //Recurrent options
-
         RecurrentOptionPanel(
             modifier = Modifier.height(expandCollapseEndDatePanel(isSelected = selectedButton == recurrent).value),
-            onMonthSelected = { month ->
-                selectedDate = selectedDate.copy(first = month)
-                onEndDateSelected(selectedDate)
-            },
-            onYearSelected = { year ->
-                selectedDate = selectedDate.copy(second = year)
-                onEndDateSelected(selectedDate)
-            }
+            onMonthSelected = onMonthSelected,
+            onYearSelected = onYearSelected,
+            selectedMonth = selectedMonth,
+            selectedYear = selectedYear,
         )
     }
 }
-
-@Composable
-fun expandCollapseEndDatePanel(isSelected: Boolean): State<Dp> = animateDpAsState(
-    targetValue = if (isSelected) 100.dp else 0.dp,
-    animationSpec = spring(
-        dampingRatio = Spring.DampingRatioLowBouncy,
-        stiffness = Spring.StiffnessLow
-    )
-)

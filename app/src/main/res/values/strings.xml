@@ -24,4 +24,6 @@
     <string name="endDate">End Date</string>
     <string name="senderAccount">Sender account</string>
     <string name="beneficiaryAccount">Beneficiary account</string>
+    <string name="cancel">CANCEL</string>
+    <string name="ok">OK</string>
 </resources>

@@ -1,51 +1,6 @@
-package com.piconemarc.personalaccountmanager.ui.baseComponent.addOperationPopUp
+package com.piconemarc.personalaccountmanager.ui
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import com.piconemarc.personalaccountmanager.R
-import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
-import com.piconemarc.personalaccountmanager.ui.theme.ThinBorder
-
-//Work well if pop up is not init on app start, add if condition on AddOperationPopUp
-@Composable
-fun PAMIconButton(
-    onIconButtonClicked: (iconName: Int) -> Unit,
-    iconButton: IconButtons
-) {
-    IconButton(onClick = { onIconButtonClicked(iconButton.getIconName()) })
-    {
-        Surface(
-            modifier = Modifier
-                .background(MaterialTheme.colors.primary, CircleShape)
-                .padding(LittleMarge),
-            shape = CircleShape,
-            color = MaterialTheme.colors.primary,
-            border = BorderStroke(ThinBorder, MaterialTheme.colors.onPrimary),
-        )
-        {
-            Icon(
-                imageVector = ImageVector.vectorResource(iconButton.getVectorIcon()),
-                contentDescription = stringResource(iconButton.getIconContentDescription()),
-                modifier = Modifier
-                    .background(Color.Transparent, CircleShape)
-                    .padding(LittleMarge),
-                tint = MaterialTheme.colors.onPrimary
-            )
-        }
-    }
-}
 
 enum class IconButtons {
     HOME {

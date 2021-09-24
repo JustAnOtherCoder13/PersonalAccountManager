@@ -1,4 +1,4 @@
-package com.piconemarc.personalaccountmanager.ui.baseComponent
+package com.piconemarc.personalaccountmanager.ui.baseComponent.popUp
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -35,7 +35,7 @@ fun BasePopUp(
         shape = MaterialTheme.shapes.large.copy(topStart = CornerSize(0.dp)),
         border = BorderStroke(LittleMarge, MaterialTheme.colors.primaryVariant),
     ) {
-        Column() {
+        Column{
             PopUpTitle(title)
             body()
             AcceptOrDismissButtons(
@@ -48,15 +48,12 @@ fun BasePopUp(
 
 @Composable
 fun BaseDropDownMenu(
-    hint: String,
+    selectedItem : String,
     itemList: List<String>,
     onItemSelected: (item: String) -> Unit
 ) {
     var expanded: Boolean by remember {
         mutableStateOf(false)
-    }
-    var selectedItem: String by remember {
-        mutableStateOf(hint)
     }
     Row(
         modifier = Modifier
@@ -90,7 +87,6 @@ fun BaseDropDownMenu(
             itemList.forEachIndexed { _, item ->
                 DropdownMenuItem(onClick = {
                     onItemSelected(item)
-                    selectedItem = item
                     expanded = false
                 }) {
                     Text(
@@ -104,8 +100,8 @@ fun BaseDropDownMenu(
 }
 
 @Composable
-fun BaseDropDownMenuWithBackGround(
-    hint: String,
+fun BaseDropDownMenuWithBackground(
+    selectedItem : String,
     itemList: List<String>,
     onItemSelected: (item: String) -> Unit
 ) {
@@ -114,7 +110,7 @@ fun BaseDropDownMenuWithBackGround(
         horizontalArrangement = Arrangement.Center
     ) {
         BaseDropDownMenu(
-            hint = hint,
+            selectedItem = selectedItem,
             itemList = itemList,
             onItemSelected = onItemSelected
         )
@@ -141,17 +137,12 @@ fun BaseDeletePopUp(
 fun BasePopUpTextFieldItem(
     title: String,
     onTextChange: (text: String) -> Unit,
+    textValue :String
 ) {
-    var textValue: String by remember {
-        mutableStateOf("")
-    }
     Column(modifier = Modifier.popUpClickableItemModifier()) {
         TextField(
             value = textValue,
-            onValueChange = { text ->
-                onTextChange(text)
-                textValue = text
-            },
+            onValueChange =  onTextChange,
             textStyle = MaterialTheme.typography.body1.copy(
                 color = MaterialTheme.colors.onPrimary
             ),
@@ -170,19 +161,14 @@ fun BasePopUpTextFieldItem(
 fun BasePopUpAmountTextFieldItem(
     title: String,
     onTextChange: (text: String) -> Unit,
+    amountValue : String
 ) {
-    var amountValue: String by remember {
-        mutableStateOf("")
-    }
     Column(
         modifier = Modifier.popUpAmountItemModifier(amountValue)
     ) {
         TextField(
             value = amountValue,
-            onValueChange = { amount ->
-                amountValue = amount
-                onTextChange(amountValue)
-            },
+            onValueChange = onTextChange,
             textStyle = MaterialTheme.typography.body1,
             label = { Text(text = title) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -201,6 +187,8 @@ fun RecurrentOptionPanel(
     modifier: Modifier,
     onMonthSelected: (month: String) -> Unit,
     onYearSelected: (year: String) -> Unit,
+    selectedMonth : String,
+    selectedYear : String
 ) {
     Column(
         modifier = modifier
@@ -208,7 +196,6 @@ fun RecurrentOptionPanel(
                 color = MaterialTheme.colors.primary,
                 shape = RecurrentOptionPanelShape
             )
-
     ) {
         Text(
             text = stringResource(R.string.endDate),
@@ -226,11 +213,11 @@ fun RecurrentOptionPanel(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             BaseDropDownMenu(
-                hint = stringResource(R.string.month),
+                selectedItem = selectedMonth,
                 itemList = mutableListOf("Janvier", "Fevrier"),
                 onItemSelected = { month -> onMonthSelected(month) })
             BaseDropDownMenu(
-                hint = stringResource(R.string.year),
+                selectedItem = selectedYear,
                 itemList = mutableListOf("2000", "2001"),
                 onItemSelected = { year -> onYearSelected(year) })
         }
@@ -238,25 +225,20 @@ fun RecurrentOptionPanel(
 }
 
 @Composable
-fun TransferOptionPanel(
-    modifier: Modifier,
-    onSenderAccountSelected: (senderAccount: String) -> Unit,
-    onBeneficiaryAccountSelected: (beneficiaryAccount: String) -> Unit
-) {
-    Column(modifier = modifier) {
-        BaseDropDownMenuWithBackGround(
-            hint = stringResource(R.string.senderAccount),
-            itemList = testList,
-            onItemSelected = { item ->
-                onSenderAccountSelected(item)
-            }
-        )
-        BaseDropDownMenuWithBackGround(
-            hint = stringResource(R.string.beneficiaryAccount),
-            itemList = testList,
-            onItemSelected = { item ->
-                onBeneficiaryAccountSelected(item)
-            }
+fun PopUpTitle(title: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = MaterialTheme.colors.primary, shape = MaterialTheme.shapes.large)
+    ) {
+        Text(
+            text = title,
+            color = MaterialTheme.colors.onPrimary,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = RegularMarge),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.h2
         )
     }
 }

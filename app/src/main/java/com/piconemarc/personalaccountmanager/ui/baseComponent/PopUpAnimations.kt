@@ -10,15 +10,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.piconemarc.personalaccountmanager.R
-import com.piconemarc.personalaccountmanager.ui.baseComponent.addOperationPopUp.AddOperationPopUpState
-import com.piconemarc.personalaccountmanager.ui.baseComponent.addOperationPopUp.TransitionData
-import com.piconemarc.personalaccountmanager.ui.baseComponent.addOperationPopUp.isRecurrent
+import com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.addOperationPopUp.AddOperationPopUpState
 
+//TODO pass with classic function
 @SuppressLint("UnnecessaryComposedModifier")
-fun Modifier.selectorOffsetAnimation(selectedOperationType: Int): Modifier =
+fun Modifier.selectorOffsetAnimation(selectedOperationType: String): Modifier =
     this.composed {
 
         val popUpLeftSidePanelIconSelectorTransition =
@@ -34,8 +34,8 @@ fun Modifier.selectorOffsetAnimation(selectedOperationType: Int): Modifier =
             }
         ) { selectedOperationOption_ ->
             when (selectedOperationOption_) {
-                R.string.payment -> Offset(0f, 58f)
-                R.string.transfer -> Offset(0f, 116f)
+               stringResource(id =  R.string.payment) -> Offset(0f, 58f)
+               stringResource(id =  R.string.transfer) -> Offset(0f, 116f)
                 else -> Offset(0f, 0f)
             }
         }
@@ -43,9 +43,9 @@ fun Modifier.selectorOffsetAnimation(selectedOperationType: Int): Modifier =
     }
 
 @Composable
-fun expandCollapsePaymentAnimation(popUpTitle: Int): State<Dp> = animateDpAsState(
-    targetValue = if (popUpTitle != R.string.operation) {
-        if (!isRecurrent.value) 90.dp
+fun expandCollapsePaymentAnimation(popUpTitle: String, isRecurrent : Boolean): State<Dp> = animateDpAsState(
+    targetValue = if (popUpTitle != stringResource(id =  R.string.operation)) {
+        if (!isRecurrent) 90.dp
         else 190.dp
     } else 0.dp,
     animationSpec = spring(
@@ -55,8 +55,8 @@ fun expandCollapsePaymentAnimation(popUpTitle: Int): State<Dp> = animateDpAsStat
 )
 
 @Composable
-fun expandCollapseTransferAnimation(popUpTitle: Int): State<Dp> = animateDpAsState(
-    targetValue = if (popUpTitle == R.string.transfer) 130.dp else 0.dp,
+fun expandCollapseTransferAnimation(popUpTitle: String): State<Dp> = animateDpAsState(
+    targetValue = if (popUpTitle == stringResource(id = R.string.transfer)) 130.dp else 0.dp,
     animationSpec = spring(
         dampingRatio = Spring.DampingRatioLowBouncy,
         stiffness = Spring.StiffnessLow
@@ -104,4 +104,21 @@ fun addOperationPopUpAnimation(addOperationPopUpState: AddOperationPopUpState): 
     return remember(transition) { TransitionData(alpha, size, position) }
 }
 
+class TransitionData(
+    alpha: State<Float>,
+    size: State<Dp>,
+    position: State<Dp>
+) {
+    val alpha by alpha
+    val size by size
+    val position by position
+}
 
+@Composable
+fun expandCollapseEndDatePanel(isSelected: Boolean): State<Dp> = animateDpAsState(
+    targetValue = if (isSelected) 100.dp else 0.dp,
+    animationSpec = spring(
+        dampingRatio = Spring.DampingRatioLowBouncy,
+        stiffness = Spring.StiffnessLow
+    )
+)

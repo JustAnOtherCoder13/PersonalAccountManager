@@ -1,4 +1,4 @@
-package com.piconemarc.personalaccountmanager.ui.baseComponent
+package com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.deletePopUp
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,10 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import com.piconemarc.personalaccountmanager.R
-import com.piconemarc.personalaccountmanager.ui.baseComponent.addOperationPopUp.AddOperationPopUp
-import com.piconemarc.personalaccountmanager.ui.baseComponent.addOperationPopUp.AddOperationPopUpState
+import com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.BaseDeletePopUp
 import com.piconemarc.personalaccountmanager.ui.theme.Positive
 import com.piconemarc.personalaccountmanager.ui.theme.deleteOperationTextModifier
 
@@ -53,16 +51,4 @@ fun DeleteOperationPopUp(
             }
         )
 
-}
-
-@Preview
-@Composable
-fun PopUpPreview() {
-    Column {
-        AddOperationPopUp(
-            addOperationPopUpState = AddOperationPopUpState.EXPANDED,
-            onDismiss = {},
-            onAddOperation = {}
-        )
-    }
 }
