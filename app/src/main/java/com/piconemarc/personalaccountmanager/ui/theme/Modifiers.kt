@@ -1,17 +1,17 @@
 package com.piconemarc.personalaccountmanager.ui.theme
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
-import java.lang.NumberFormatException
 
 fun Modifier.deleteOperationTextModifier() = this.padding(vertical = RegularMarge)
 
+@SuppressLint("UnnecessaryComposedModifier")
 fun Modifier.popUpClickableItemModifier() = composed {
     this
         .fillMaxWidth()

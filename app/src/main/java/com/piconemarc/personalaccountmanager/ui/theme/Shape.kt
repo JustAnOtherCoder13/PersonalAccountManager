@@ -15,3 +15,6 @@ val PopUpFieldBackgroundShape = RoundedCornerShape(
     topEnd = BigMarge,
     bottomEnd = BigMarge
 )
+val LeftSwitchShape = RoundedCornerShape(topEnd = XlMarge, bottomEnd = XlMarge)
+val RightSwitchShape = RoundedCornerShape(topStart = XlMarge, bottomStart = XlMarge)
+val RecurrentOptionPanelShape = RoundedCornerShape(bottomStart = BigMarge, bottomEnd = BigMarge)
