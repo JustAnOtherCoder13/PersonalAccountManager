@@ -13,7 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.piconemarc.personalaccountmanager.R
-import com.piconemarc.personalaccountmanager.ui.IconButtons
+import com.piconemarc.personalaccountmanager.ui.baseComponent.stateManager.states.UiStates
 import com.piconemarc.personalaccountmanager.ui.theme.BigMarge
 import com.piconemarc.personalaccountmanager.ui.theme.ButtonShape
 import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
@@ -60,10 +60,10 @@ fun AcceptOrDismissButtons(
 
 @Composable
 fun PAMIconButton(
-    onIconButtonClicked: (iconName: Int) -> Unit,
-    iconButton: IconButtons
+    onIconButtonClicked: (iconName: UiStates.AddOperationPopUpLeftSideIconState) -> Unit,
+    iconButtonType: UiStates.AddOperationPopUpLeftSideIconState
 ) {
-    IconButton(onClick = { onIconButtonClicked(iconButton.getIconName()) })
+    IconButton(onClick = { onIconButtonClicked(iconButtonType) })
     {
         Surface(
             modifier = Modifier
@@ -75,8 +75,8 @@ fun PAMIconButton(
         )
         {
             Icon(
-                imageVector = ImageVector.vectorResource(iconButton.getVectorIcon()),
-                contentDescription = stringResource(iconButton.getIconContentDescription()),
+                imageVector = ImageVector.vectorResource(iconButtonType.getIcon().getVectorIcon()),
+                contentDescription = stringResource(iconButtonType.getIcon().getIconContentDescription()),
                 modifier = Modifier
                     .background(Color.Transparent, CircleShape)
                     .padding(LittleMarge),

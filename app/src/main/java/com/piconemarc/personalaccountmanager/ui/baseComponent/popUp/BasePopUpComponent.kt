@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -14,12 +15,19 @@ import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.piconemarc.personalaccountmanager.R
+import com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.animation.amountTextFieldAnimation
+import com.piconemarc.personalaccountmanager.ui.baseComponent.stateManager.UiState
+import com.piconemarc.personalaccountmanager.ui.baseComponent.stateManager.events.PopUpTitleStates
+import com.piconemarc.personalaccountmanager.ui.baseComponent.stateManager.states.UiStates
 import com.piconemarc.personalaccountmanager.ui.theme.*
 
 @Composable
@@ -137,8 +145,11 @@ fun BaseDeletePopUp(
 fun BasePopUpTextFieldItem(
     title: String,
     onTextChange: (text: String) -> Unit,
-    textValue :String
+    textValue :String,
+    addOperationPopUpState: UiStates.AddOperationPopUpState
 ) {
+    val focusManager = LocalFocusManager.current
+    if (addOperationPopUpState== UiStates.AddOperationPopUpState.COLLAPSED)focusManager.clearFocus()
     Column(modifier = Modifier.popUpClickableItemModifier()) {
         TextField(
             value = textValue,
@@ -152,31 +163,51 @@ fun BasePopUpTextFieldItem(
                 unfocusedLabelColor = MaterialTheme.colors.onPrimary,
                 cursorColor = MaterialTheme.colors.onPrimary,
                 backgroundColor = Color.Transparent
-            )
+            ),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions (onNext = { focusManager.moveFocus(FocusDirection.Down)
+            } )
         )
+
     }
 }
+
 
 @Composable
 fun BasePopUpAmountTextFieldItem(
     title: String,
     onTextChange: (text: String) -> Unit,
-    amountValue : String
+    amountValue : String,
+    addOperationPopUpState: UiStates.AddOperationPopUpState
 ) {
+    val focusManager = LocalFocusManager.current
+    val transition = amountTextFieldAnimation(amountValue)
+    if (addOperationPopUpState== UiStates.AddOperationPopUpState.COLLAPSED)focusManager.clearFocus()
     Column(
-        modifier = Modifier.popUpAmountItemModifier(amountValue)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = RegularMarge, bottom = RegularMarge, end = RegularMarge)
+            .background(
+                color = transition.backgroundColor,
+                shape = PopUpFieldBackgroundShape
+            )
     ) {
         TextField(
             value = amountValue,
             onValueChange = onTextChange,
             textStyle = MaterialTheme.typography.body1,
             label = { Text(text = title) },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
+            ),
             colors = TextFieldDefaults.textFieldColors(
-                focusedLabelColor = MaterialTheme.colors.primary,
-                unfocusedLabelColor = MaterialTheme.colors.primary,
-                backgroundColor = Color.Transparent
-            )
+                focusedLabelColor = transition.textColor,
+                unfocusedLabelColor = transition.textColor,
+                backgroundColor = Color.Transparent,
+                textColor = transition.textColor
+            ),
+            keyboardActions = KeyboardActions(onDone = {focusManager.clearFocus()})
         )
     }
 }
@@ -223,6 +254,7 @@ fun RecurrentOptionPanel(
         }
     }
 }
+
 
 @Composable
 fun PopUpTitle(title: String) {

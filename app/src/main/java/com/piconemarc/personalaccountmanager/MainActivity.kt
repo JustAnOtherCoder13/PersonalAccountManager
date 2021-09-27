@@ -11,11 +11,10 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.piconemarc.personalaccountmanager.ui.*
-import com.piconemarc.personalaccountmanager.ui.baseComponent.expandCollapsePaymentAnimation
-import com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.addOperationPopUp.AddOperationPopUp
+import com.piconemarc.personalaccountmanager.newUi.popUp.PAMDeleteOperationPopUp
+import com.piconemarc.personalaccountmanager.newUi.stateManager.deletePopUp.DeleteOperationPopUpEvents
+import com.piconemarc.personalaccountmanager.newUi.stateManager.deletePopUp.deleteOperationEventHandler
 import com.piconemarc.personalaccountmanager.ui.theme.PersonalAccountManagerTheme
 
 class MainActivity : ComponentActivity() {
@@ -36,20 +35,23 @@ class MainActivity : ComponentActivity() {
         val testList = mutableListOf("test 1", "test 2", "test 3")
         setContent {
             PersonalAccountManagerTheme {
+
                 Surface(
                     color = MaterialTheme.colors.secondary
                 ) {
                     Button(
-                        onClick = { popUpEventHandler(AddPopUpUiEvent.InitPopUp) },
+                        onClick = { deleteOperationEventHandler(DeleteOperationPopUpEvents.OnInit) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(200.dp)
                     ) { Text(text = "Click") }
 
-                    AddOperationPopUp(
+                    PAMDeleteOperationPopUp()
+
+                    /*AddOperationPopUp(
                         addOperationPopUpState = addOperationPopUpState.value,
                         popUpOnDismiss = { popUpEventHandler(AddPopUpUiEvent.OnDismiss) },
-                        popUpTitle = stringResource(id = popUpOperationType.value),
+                        popUpTitle = PopUpTitleStates.PopUpTitle().addOperationPopUpTitleState,
                         popUpAccountList = listOf("Account1", "Account2", "Account3"),
                         popUpCategory = popUpCategory.value,
                         popUpCategoryList = testList,
@@ -59,15 +61,9 @@ class MainActivity : ComponentActivity() {
                         popUpBeneficiarySelectedAccount = popUpBeneficiarySelectedAccount.value,
                         popUpSelectedMonth = popUpSelectedMonth.value,
                         popUpSelectedYear = popUpSelectedYear.value,
-                        popUpPunctualOrRecurrentSwitchButtonModifier = Modifier.height(
-                            expandCollapsePaymentAnimation(
-                                getString(popUpOperationType.value),
-                                popUpIsRecurrent.value
-                            ).value
-                        ),
-                        popUpOnRecurrentOrPunctualSwitched = { isRecurrent ->
+                        popUpOnRecurrentOrPunctualSwitched = { switchButtonState ->
                             popUpEventHandler(
-                                AddPopUpUiEvent.OnRecurrentOrPunctualSwitched(isRecurrent = isRecurrent)
+                                AddPopUpUiEvent.RecurrentSwitchButtonState(recurrentSwitchButtonState = switchButtonState)
                             )
                         },
                         popUpOnBeneficiaryAccountSelected = { beneficiaryAccount ->
@@ -117,7 +113,9 @@ class MainActivity : ComponentActivity() {
                                 )
                             )
                         },
-                    )
+                        switchButtonState = recurrentSwitchButtonState.value,
+                        leftSideMenuIconPanelState = leftSideIconState.value
+                    )*/
                 }
             }
         }

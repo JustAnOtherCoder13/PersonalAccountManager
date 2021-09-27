@@ -1,8 +1,9 @@
 package com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.addOperationPopUp
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CornerSize
@@ -10,7 +11,9 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -18,8 +21,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.piconemarc.personalaccountmanager.R
-import com.piconemarc.personalaccountmanager.ui.baseComponent.expandCollapseEndDatePanel
 import com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.RecurrentOptionPanel
+import com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.animation.TransitionsData
+import com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.animation.expandCollapseEndDatePanel
+import com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.animation.expandCollapsePaymentAnimation
+import com.piconemarc.personalaccountmanager.ui.baseComponent.stateManager.events.popUpOperationType
+import com.piconemarc.personalaccountmanager.ui.baseComponent.stateManager.states.UiStates
 import com.piconemarc.personalaccountmanager.ui.theme.*
 
 @Composable
@@ -68,62 +75,86 @@ fun SwitchButton(
 
 @Composable
 fun PunctualOrRecurrentSwitchButton(
-    modifier: Modifier,
-    isRecurrent: (Boolean) -> Unit,
+    updateSwitchButtonState: (UiStates.SwitchButtonState) -> Unit,
     onMonthSelected: (String) -> Unit,
     onYearSelected: (String) -> Unit,
     selectedMonth: String,
-    selectedYear: String
+    selectedYear: String,
+    switchButtonState: UiStates.SwitchButtonState
 ) {
-    var selectedButton: Int by remember {
-        mutableStateOf(0)
-    }
-    val recurrent = 1
-    val punctual = 0
-    isRecurrent(selectedButton == 1)
+    val transition = recurrentOptionPanelAnimation(recurrentSwitchButtonState = switchButtonState)
 
-    Column(modifier = modifier.padding(bottom = RegularMarge)) {
+    Column(
+        modifier =
+        Modifier
+            .height(
+                expandCollapsePaymentAnimation(
+                    stringResource(popUpOperationType.value),
+                    switchButtonState
+                ).value
+            )
+
+            .padding(bottom = RegularMarge)
+    ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(
-                    top = RegularMarge,
-                )
-        ) {//TODO pass with Transition
-            val shapeSize by animateDpAsState(
-                targetValue = if (selectedButton == recurrent) BigMarge else RegularMarge,
-                animationSpec = if (selectedButton != recurrent) tween(delayMillis = 120) else tween(
-                    delayMillis = 0
-                )
-            )
-            val shapeCorner by animateDpAsState(
-                targetValue = if (selectedButton == recurrent) 0.dp else XlMarge,
-                animationSpec = if (selectedButton != recurrent) tween(delayMillis = 120) else tween(
-                    delayMillis = 0
-                )
-            )
+                .padding(top = RegularMarge)
+        ) {
             SwitchButton(
-                onButtonSelected = { selectedButton = punctual },
-                isSelected = selectedButton == punctual,
+                onButtonSelected = { updateSwitchButtonState(UiStates.SwitchButtonState.PUNCTUAL) },
+                isSelected = switchButtonState == UiStates.SwitchButtonState.PUNCTUAL,
                 title = stringResource(R.string.punctualSwitchButton),
                 switchShape = LeftSwitchShape
             )
             SwitchButton(
-                onButtonSelected = { selectedButton = recurrent },
-                isSelected = selectedButton == recurrent,
+                onButtonSelected = { updateSwitchButtonState(UiStates.SwitchButtonState.RECURRENT) },
+                isSelected = switchButtonState == UiStates.SwitchButtonState.RECURRENT,
                 title = stringResource(R.string.recurrentSwitchButton),
-                switchShape = RightSwitchShape.copy(bottomStart = CornerSize(shapeCorner)),
-                bottomPadding = shapeSize
+                switchShape = RightSwitchShape.copy(bottomStart = CornerSize(transition.leftBottomCornerSize)),
+                bottomPadding = transition.buttonSize
             )
         }
         //Recurrent options
         RecurrentOptionPanel(
-            modifier = Modifier.height(expandCollapseEndDatePanel(isSelected = selectedButton == recurrent).value),
+            modifier = Modifier.height(expandCollapseEndDatePanel(isSelected = switchButtonState == UiStates.SwitchButtonState.RECURRENT).value),
             onMonthSelected = onMonthSelected,
             onYearSelected = onYearSelected,
             selectedMonth = selectedMonth,
             selectedYear = selectedYear,
+        )
+    }
+}
+
+@Composable
+fun recurrentOptionPanelAnimation(recurrentSwitchButtonState: UiStates.SwitchButtonState): TransitionsData.RecurrentButtonTransitionData {
+    val transition = updateTransition(targetState = recurrentSwitchButtonState, label = "")
+    val buttonSize = transition.animateDp(
+        transitionSpec = {
+            tween(delayMillis = if (recurrentSwitchButtonState != UiStates.SwitchButtonState.PUNCTUAL) 120 else 0)
+        }, label = ""
+    ) {
+        when (it) {
+            UiStates.SwitchButtonState.PUNCTUAL -> RegularMarge
+            UiStates.SwitchButtonState.RECURRENT -> BigMarge
+        }
+    }
+    val leftBottomCornerSize = transition.animateDp(
+        transitionSpec = {
+            tween(delayMillis = if (recurrentSwitchButtonState != UiStates.SwitchButtonState.RECURRENT) 120 else 0)
+        }, label = ""
+    ) {
+        when (it) {
+            UiStates.SwitchButtonState.PUNCTUAL -> XlMarge
+            UiStates.SwitchButtonState.RECURRENT -> 0.dp
+        }
+    }
+
+    return remember(transition) {
+        TransitionsData.RecurrentButtonTransitionData(
+            buttonSize = buttonSize,
+            leftBottomCornerSize = leftBottomCornerSize
         )
     }
 }

@@ -2,6 +2,7 @@ package com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.addOperatio
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,29 +13,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.piconemarc.personalaccountmanager.R
-import com.piconemarc.personalaccountmanager.ui.IconButtons
-import com.piconemarc.personalaccountmanager.ui.baseComponent.addOperationPopUpAnimation
-import com.piconemarc.personalaccountmanager.ui.baseComponent.expandCollapseTransferAnimation
 import com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.*
-import com.piconemarc.personalaccountmanager.ui.baseComponent.selectorOffsetAnimation
+import com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.animation.addOperationPopUpAnimation
+import com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.animation.expandCollapseTransferAnimation
+import com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.animation.selectorOffsetAnimation
+import com.piconemarc.personalaccountmanager.ui.baseComponent.stateManager.states.UiStates
 import com.piconemarc.personalaccountmanager.ui.theme.BigMarge
 import com.piconemarc.personalaccountmanager.ui.theme.Black
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
 
-enum class AddOperationPopUpState {
-    COLLAPSED,
-    EXPANDED
-}
 
 @Composable
 fun AddOperationPopUpLeftSideIcon(
-    onIconButtonClicked: (operationType: Int) -> Unit,
-    operationType: String
+    onIconButtonClicked: (operationType: UiStates.AddOperationPopUpLeftSideIconState) -> Unit,
+    operationTypeState: UiStates.AddOperationPopUpLeftSideIconState
 ) {
     Box {
         Box(
             modifier = Modifier
-                .selectorOffsetAnimation(selectedOperationType = operationType)
+                .selectorOffsetAnimation(selectedOperationType = operationTypeState)
                 .background(
                     color = MaterialTheme.colors.primaryVariant,
                     shape = RoundedCornerShape(topStart = BigMarge, bottomStart = BigMarge)
@@ -44,17 +41,17 @@ fun AddOperationPopUpLeftSideIcon(
         )
         Column {
             PAMIconButton(
-                iconButton = IconButtons.OPERATION,
+                iconButtonType = UiStates.AddOperationPopUpLeftSideIconState.OPERATION,
                 onIconButtonClicked = { onIconButtonClicked(it) }
             )
             Spacer(modifier = Modifier.height(RegularMarge))
             PAMIconButton(
-                iconButton = IconButtons.PAYMENT,
+                iconButtonType = UiStates.AddOperationPopUpLeftSideIconState.PAYMENT,
                 onIconButtonClicked = { onIconButtonClicked(it) }
             )
             Spacer(modifier = Modifier.height(RegularMarge))
             PAMIconButton(
-                iconButton = IconButtons.TRANSFER,
+                iconButtonType = UiStates.AddOperationPopUpLeftSideIconState.TRANSFER,
                 onIconButtonClicked = { onIconButtonClicked(it) }
             )
         }
@@ -87,8 +84,7 @@ fun TransferOptionPanel(
 @SuppressLint("ModifierParameter")
 @Composable
 fun AddOperationPopUp(
-    addOperationPopUpState: AddOperationPopUpState,
-    popUpPunctualOrRecurrentSwitchButtonModifier: Modifier,
+    addOperationPopUpState: UiStates.AddOperationPopUpState,
     popUpTitle: String,
     popUpCategory: String,
     popUpOperationName: String,
@@ -101,21 +97,26 @@ fun AddOperationPopUp(
     popUpSelectedYear: String,
     popUpOnAddOperation: () -> Unit,
     popUpOnDismiss: () -> Unit,
-    popUpOnIconButtonClicked: (operationType: Int) -> Unit,
+    popUpOnIconButtonClicked: (operationType: UiStates.AddOperationPopUpLeftSideIconState) -> Unit,
     popUpOnCategorySelected: (category: String) -> Unit,
     popUpOnEnterOperationName: (operationName: String) -> Unit,
     popUpOnEnterOperationAmount: (operationAmount: String) -> Unit,
-    popUpOnRecurrentOrPunctualSwitched: (Boolean) -> Unit,
+    popUpOnRecurrentOrPunctualSwitched: (UiStates.SwitchButtonState) -> Unit,
     popUpOnMonthSelected: (String) -> Unit,
     popUpOnYearSelected: (String) -> Unit,
     popUpOnSenderAccountSelected: (senderAccount: String) -> Unit,
-    popUpOnBeneficiaryAccountSelected: (beneficiaryAccount: String) -> Unit
+    popUpOnBeneficiaryAccountSelected: (beneficiaryAccount: String) -> Unit,
+    switchButtonState: UiStates.SwitchButtonState,
+    leftSideMenuIconPanelState : UiStates.AddOperationPopUpLeftSideIconState
 ) {
     val transition = addOperationPopUpAnimation(addOperationPopUpState = addOperationPopUpState)
+
+    if (transition.alpha!=0f)
     Column(
         modifier = Modifier
             .background(Black.copy(alpha = transition.alpha))
             .fillMaxSize()
+            .clickable { popUpOnDismiss()}
 
     ) {
         Row(
@@ -127,7 +128,7 @@ fun AddOperationPopUp(
             //Left menu-----------------------------------------------------
             AddOperationPopUpLeftSideIcon(
                 onIconButtonClicked = popUpOnIconButtonClicked,
-                operationType = popUpTitle
+                operationTypeState = leftSideMenuIconPanelState
             )
             //Pop up Body --------------------------------------------
             LazyColumn {
@@ -151,21 +152,23 @@ fun AddOperationPopUp(
                             BasePopUpTextFieldItem(
                                 title = stringResource(R.string.operationName),
                                 onTextChange = popUpOnEnterOperationName,
-                                textValue = popUpOperationName
+                                textValue = popUpOperationName,
+                                addOperationPopUpState = addOperationPopUpState
                             )
                             BasePopUpAmountTextFieldItem(
                                 title = stringResource(R.string.operationAmount),
                                 onTextChange = popUpOnEnterOperationAmount,
-                                amountValue = popUpOperationAmount
+                                amountValue = popUpOperationAmount,
+                                addOperationPopUpState = addOperationPopUpState
                             )
                             //Payment Operation option--------------------------
                             PunctualOrRecurrentSwitchButton(
-                                modifier = popUpPunctualOrRecurrentSwitchButtonModifier,
-                                isRecurrent = popUpOnRecurrentOrPunctualSwitched,
+                                updateSwitchButtonState = popUpOnRecurrentOrPunctualSwitched,
                                 selectedYear = popUpSelectedYear,
                                 selectedMonth = popUpSelectedMonth,
                                 onYearSelected = popUpOnYearSelected,
-                                onMonthSelected = popUpOnMonthSelected
+                                onMonthSelected = popUpOnMonthSelected,
+                                switchButtonState = switchButtonState
                             )
                             //Transfer Operation option---------------------------
                             TransferOptionPanel(

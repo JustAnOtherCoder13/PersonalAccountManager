@@ -1,0 +1,5 @@
+package com.piconemarc.personalaccountmanager.newUi.stateManager
+
+interface PAMUiState
+interface PAMUiEvent
+interface PAMUiDataAnimation

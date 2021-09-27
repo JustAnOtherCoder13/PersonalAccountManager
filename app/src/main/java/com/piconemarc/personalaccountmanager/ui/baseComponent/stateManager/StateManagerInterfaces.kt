@@ -1,0 +1,5 @@
+package com.piconemarc.personalaccountmanager.ui.baseComponent.stateManager
+
+interface UiEvent
+interface UiState
+interface UiAction

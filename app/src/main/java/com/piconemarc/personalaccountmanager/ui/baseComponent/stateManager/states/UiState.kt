@@ -1,21 +1,50 @@
-package com.piconemarc.personalaccountmanager.ui
+package com.piconemarc.personalaccountmanager.ui.baseComponent.stateManager.states
 
 import com.piconemarc.personalaccountmanager.R
+import com.piconemarc.personalaccountmanager.ui.baseComponent.stateManager.UiState
 
-enum class IconButtons {
-    HOME {
-        override fun getIconContentDescription(): Int {
-            return R.string.homeIconContentDescription
-        }
 
-        override fun getVectorIcon(): Int {
-            return R.drawable.ic_outline_home_24
-        }
+object UiStates : UiState {
 
-        override fun getIconName(): Int {
-            return R.string.homeIconContentDescription
-        }
-    },
+    enum class AmountTextFieldState : UiState {
+        NAN,
+        POSITIVE,
+        NEGATIVE
+    }
+
+    enum class AddOperationPopUpState :UiState {
+        COLLAPSED,
+        EXPANDED
+    }
+
+    enum class SwitchButtonState : UiState {
+        PUNCTUAL,
+        RECURRENT
+    }
+
+    enum class AddOperationPopUpLeftSideIconState : UiState {
+        OPERATION {
+            override fun getIcon(): PAMIconButtons {
+                return PAMIconButtons.OPERATION
+            }
+        },
+        PAYMENT {
+            override fun getIcon(): PAMIconButtons {
+                return PAMIconButtons.PAYMENT
+            }
+        },
+        TRANSFER {
+            override fun getIcon(): PAMIconButtons {
+                return PAMIconButtons.TRANSFER
+            }
+        };
+
+        abstract fun getIcon () : PAMIconButtons
+    }
+
+}
+
+enum class PAMIconButtons{
     OPERATION {
         override fun getIconContentDescription(): Int {
             return R.string.operationIconContentDescription
@@ -53,6 +82,19 @@ enum class IconButtons {
 
         override fun getIconName(): Int {
             return R.string.transfer
+        }
+    },
+    HOME {
+        override fun getIconContentDescription(): Int {
+            return R.string.homeIconContentDescription
+        }
+
+        override fun getVectorIcon(): Int {
+            return R.drawable.ic_outline_home_24
+        }
+
+        override fun getIconName(): Int {
+            return R.string.homeIconContentDescription
         }
     },
     CHART {
