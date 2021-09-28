@@ -12,8 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.piconemarc.personalaccountmanager.R
-import com.piconemarc.personalaccountmanager.newUi.stateManager.deletePopUp.DeleteOperationPopUpState
-import com.piconemarc.personalaccountmanager.newUi.stateManager.deletePopUp.DeleteOperationPopUpStates
 import com.piconemarc.personalaccountmanager.newUi.stateManager.pAMBasePopUpEnterExitAnimation
 import com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.AcceptOrDismissButtons
 import com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.PopUpTitle
@@ -61,7 +59,6 @@ fun PAMBasePopUp(
                 }
             }
         }
-
     }
 }
 
@@ -82,4 +79,3 @@ fun PAMBaseDeletePopUp(
         isExpanded = isExpanded
     )
 }
-

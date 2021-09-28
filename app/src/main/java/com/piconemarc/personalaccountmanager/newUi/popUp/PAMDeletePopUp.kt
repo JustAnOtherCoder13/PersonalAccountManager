@@ -11,34 +11,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.newUi.component.PAMBaseDeletePopUp
-import com.piconemarc.personalaccountmanager.newUi.stateManager.deletePopUp.DeleteOperationPopUpEvents
-import com.piconemarc.personalaccountmanager.newUi.stateManager.deletePopUp.DeleteOperationPopUpState
-import com.piconemarc.personalaccountmanager.newUi.stateManager.deletePopUp.DeleteOperationPopUpStates
-import com.piconemarc.personalaccountmanager.newUi.stateManager.deletePopUp.deleteOperationEventHandler
+import com.piconemarc.personalaccountmanager.newUi.stateManager.ConfirmDeleteOperationPopUpScreenModel
 import com.piconemarc.personalaccountmanager.ui.theme.Positive
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
-import com.piconemarc.personalaccountmanager.ui.theme.deleteOperationTextModifier
 
 @Composable
 fun PAMDeleteOperationPopUp() {
         PAMBaseDeletePopUp(
             elementToDelete = stringResource(R.string.operation),
-            onAcceptButtonClicked = { deleteOperationEventHandler(DeleteOperationPopUpEvents.OnDeleteOperation) },
-            onCancelButtonClicked = { deleteOperationEventHandler(DeleteOperationPopUpEvents.OnDismiss)},
-            isExpanded = DeleteOperationPopUpStates.deleteOperationPopUpState == DeleteOperationPopUpState.EXPAND,
+            onAcceptButtonClicked = { ConfirmDeleteOperationPopUpScreenModel().deleteOperation() },
+            onCancelButtonClicked = { ConfirmDeleteOperationPopUpScreenModel().collapse()},
+            isExpanded = ConfirmDeleteOperationPopUpScreenModel().state().isExpanded,
             body = {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = DeleteOperationPopUpStates.operationToDeleteName,
+                        text = ConfirmDeleteOperationPopUpScreenModel().state().operation.operationName,
                         modifier = Modifier.padding(vertical = RegularMarge)
                     )
                     Text(
                         modifier = Modifier.padding(vertical = RegularMarge),
-                        text = DeleteOperationPopUpStates.operationToDeleteAmount.toString(),
-                        color = if (DeleteOperationPopUpStates.operationToDeleteAmount < 0) MaterialTheme.colors.error else Positive
+                        text = ConfirmDeleteOperationPopUpScreenModel().state().operation.operationAmount.toString(),
+                        color = if (ConfirmDeleteOperationPopUpScreenModel().state().operation.operationAmount < 0) MaterialTheme.colors.error else Positive
                     )
                 }
             }

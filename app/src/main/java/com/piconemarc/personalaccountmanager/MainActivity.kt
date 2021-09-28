@@ -4,23 +4,28 @@ import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import com.piconemarc.personalaccountmanager.entity.testOperation
 import com.piconemarc.personalaccountmanager.newUi.popUp.PAMDeleteOperationPopUp
-import com.piconemarc.personalaccountmanager.newUi.stateManager.deletePopUp.DeleteOperationPopUpEvents
-import com.piconemarc.personalaccountmanager.newUi.stateManager.deletePopUp.deleteOperationEventHandler
+import com.piconemarc.personalaccountmanager.newUi.stateManager.ConfirmDeleteOperationPopUpScreenModel
 import com.piconemarc.personalaccountmanager.ui.theme.PersonalAccountManagerTheme
 
 class MainActivity : ComponentActivity() {
 
     init {
         instance = this
+
     }
 
     companion object {
@@ -32,19 +37,33 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val testList = mutableListOf("test 1", "test 2", "test 3")
+
+
         setContent {
             PersonalAccountManagerTheme {
-
+                val testList by remember {
+                    mutableStateOf(testOperation)
+                }
                 Surface(
                     color = MaterialTheme.colors.secondary
                 ) {
-                    Button(
-                        onClick = { deleteOperationEventHandler(DeleteOperationPopUpEvents.OnInit) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                    ) { Text(text = "Click") }
+                    LazyColumn() {
+                        items(testList) { item ->
+                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                Column {
+                                    Text(text = item.operationName)
+                                    Text(text = item.operationAmount.toString())
+                                }
+                                Button(
+                                    onClick = {
+                                        ConfirmDeleteOperationPopUpScreenModel().expand(
+                                            operation = item
+                                        )
+                                    }
+                                ) { Text(text = "Click") }
+                            }
+                        }
+                    }
 
                     PAMDeleteOperationPopUp()
 

@@ -55,8 +55,6 @@ fun pAMBasePopUpEnterExitAnimation(isExpended: Boolean): PAMUiDataAnimations.Bas
     }
 }
 
-
-
 object PAMUiDataAnimations : PAMUiDataAnimation {
 
     class BasePopUpAnimationData(

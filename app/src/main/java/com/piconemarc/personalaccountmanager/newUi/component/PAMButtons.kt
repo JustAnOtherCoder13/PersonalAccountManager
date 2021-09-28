@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.piconemarc.personalaccountmanager.R
-import com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.BaseButton
 import com.piconemarc.personalaccountmanager.ui.theme.BigMarge
 import com.piconemarc.personalaccountmanager.ui.theme.ButtonShape
 
