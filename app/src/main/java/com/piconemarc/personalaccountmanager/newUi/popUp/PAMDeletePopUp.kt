@@ -21,20 +21,20 @@ fun PAMDeleteOperationPopUp() {
             elementToDelete = stringResource(R.string.operation),
             onAcceptButtonClicked = { ConfirmDeleteOperationPopUpScreenModel().deleteOperation() },
             onCancelButtonClicked = { ConfirmDeleteOperationPopUpScreenModel().collapse()},
-            isExpanded = ConfirmDeleteOperationPopUpScreenModel().state().isExpanded,
+            isExpanded = ConfirmDeleteOperationPopUpScreenModel().getState().isExpanded,
             body = {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = ConfirmDeleteOperationPopUpScreenModel().state().operation.operationName,
+                        text = ConfirmDeleteOperationPopUpScreenModel().getState().operation.operationName,
                         modifier = Modifier.padding(vertical = RegularMarge)
                     )
                     Text(
                         modifier = Modifier.padding(vertical = RegularMarge),
-                        text = ConfirmDeleteOperationPopUpScreenModel().state().operation.operationAmount.toString(),
-                        color = if (ConfirmDeleteOperationPopUpScreenModel().state().operation.operationAmount < 0) MaterialTheme.colors.error else Positive
+                        text = ConfirmDeleteOperationPopUpScreenModel().getState().operation.operationAmount.toString(),
+                        color = if (ConfirmDeleteOperationPopUpScreenModel().getState().operation.operationAmount < 0) MaterialTheme.colors.error else Positive
                     )
                 }
             }

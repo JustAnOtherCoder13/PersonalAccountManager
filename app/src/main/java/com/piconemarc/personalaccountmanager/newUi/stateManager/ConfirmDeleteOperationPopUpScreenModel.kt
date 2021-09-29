@@ -13,20 +13,22 @@ private val deletePopUpScreenState: MutableState<DeletePopUpState> =
 private val operation_: MutableState<Operation> =
     mutableStateOf(Operation())
 
-class ConfirmDeleteOperationPopUpScreenModel {
+class ConfirmDeleteOperationPopUpScreenModel : BaseScreenModel() {
+    override val currentState: PAMUiState = getState()
+    override val getTargetState: (PAMUiState) -> Unit={ deletePopUpScreenState.value = it as DeletePopUpState}
 
     fun expand(operation: Operation) {
-        onEvent(
+        onUiEvent(
             runBefore = { operation_.value = operation },
             event = DeletePopUpEvent.OnExpand)
     }
 
     fun collapse() {
-        onEvent(DeletePopUpEvent.OnCollapse)
+        onUiEvent(DeletePopUpEvent.OnCollapse)
     }
 
     fun deleteOperation() {
-        onEvent(
+        onUiEvent(
             runBefore = {
                 /*todo delete operation here*/
                 Toast.makeText(
@@ -39,21 +41,7 @@ class ConfirmDeleteOperationPopUpScreenModel {
         )
     }
 
-    fun state(): DeletePopUpState = deletePopUpScreenState.value
-
-    private fun  onEvent(
-        event: DeletePopUpEvent,
-        runBefore: () -> Unit = {},
-        runAfter: () -> Unit = {}
-    ) {
-        onUiEvent(
-            currentState = state(),
-            getMutableState = { deletePopUpScreenState.value = it as DeletePopUpState },
-            event_ = event,
-            runBefore = runBefore,
-            runAfter = runAfter
-        )
-    }
+    override fun getState(): DeletePopUpState = deletePopUpScreenState.value
 }
 //-------------------------------STATES-------------------------------------------
 

@@ -3,13 +3,14 @@ package com.piconemarc.personalaccountmanager.newUi.stateManager
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 
-private val addOperationPopUpState : MutableState<AddOperationPopUpState> = mutableStateOf(AddOperationPopUpState.Idle)
+private val addOperationPopUpState: MutableState<AddOperationPopUpState> =
+    mutableStateOf(AddOperationPopUpState.Idle)
 
 
-sealed class AddOperationPopUpState : PAMUiState{
+sealed class AddOperationPopUpState : PAMUiState {
     open val isExpanded = false
 
-    object Idle :AddOperationPopUpState()
+    object Idle : AddOperationPopUpState()
 
     object Operation : AddOperationPopUpState()
 
@@ -21,50 +22,71 @@ sealed class AddOperationPopUpState : PAMUiState{
 sealed class AddOperationPopUpEvent(
     override val source: PAMUiState,
     override val target: PAMUiState
-) : PAMUiEvent{
-    object Operation :AddOperationPopUpEvent(
+) : PAMUiEvent {
+
+    object OnExpand : AddOperationPopUpEvent(
         source = AddOperationPopUpState.Idle,
         target = AddOperationPopUpState.Operation
     )
+
+    object OnClose : AddOperationPopUpEvent(
+        source = AddOperationPopUpState.Operation,
+        target = AddOperationPopUpState.Idle
+    )
+
+    object OnOperationOptionRequire : AddOperationPopUpEvent(
+        source = AddOperationPopUpState.Payment,
+        target = AddOperationPopUpState.Operation
+    )
+
     object OnPaymentOptionRequire : AddOperationPopUpEvent(
         source = AddOperationPopUpState.Operation,
         target = AddOperationPopUpState.Payment
     )
+
     object OnTransferOptionRequire : AddOperationPopUpEvent(
         source = AddOperationPopUpState.Payment,
         target = AddOperationPopUpState.Transfer
     )
 }
 
-class AddOperationPopUpScreenModel(){
+class AddOperationPopUpScreenModel() : BaseScreenModel() {
+    override val currentState: PAMUiState = getState()
+    override val getTargetState: (PAMUiState) -> Unit = { addOperationPopUpState.value = it as AddOperationPopUpState}
 
-    fun operationToPaymentOption(){
-        onEvent(AddOperationPopUpEvent.OnPaymentOptionRequire)
+    fun expand (){
+        onUiEvent(AddOperationPopUpEvent.OnExpand,
+            )
     }
-    fun paymentOptionToOperation(){
-        onEvent(AddOperationPopUpEvent.Operation)
-    }
-    fun transferOptionToPaymentOption(){
-        onEvent(AddOperationPopUpEvent.OnPaymentOptionRequire)
-    }
-    fun paymentToTransferOption(){
-        onEvent(AddOperationPopUpEvent.OnTransferOptionRequire)
+    fun openPaymentOption() {
+        onUiEvent(AddOperationPopUpEvent.OnPaymentOptionRequire)
     }
 
-    private fun onEvent(
-        event: AddOperationPopUpEvent,
-        runBefore: () -> Unit = {},
-        runAfter: () -> Unit = {}
-    ){
+    fun closeOption() {
         onUiEvent(
-            currentState = state(),
-            getMutableState = { addOperationPopUpState.value = it as AddOperationPopUpState },
-            event_ = event,
-            runBefore = runBefore,
-            runAfter = runAfter
+            event = AddOperationPopUpEvent.OnOperationOptionRequire,
+            runBefore = {
+                if (addOperationPopUpState.value == AddOperationPopUpState.Transfer){
+                    onUiEvent(AddOperationPopUpEvent.OnPaymentOptionRequire)
+                }
+            }
+            )
+    }
+
+    fun openTransferOption() {
+        onUiEvent(
+            event = AddOperationPopUpEvent.OnTransferOptionRequire,
+        runBefore={
+            if (addOperationPopUpState.value == AddOperationPopUpState.Operation){
+                onUiEvent(AddOperationPopUpEvent.OnPaymentOptionRequire)
+            }
+        }
         )
     }
 
-    fun state(): AddOperationPopUpState = addOperationPopUpState.value
-}
+    fun close(){
+        onUiEvent(AddOperationPopUpEvent.OnClose)
+    }
 
+    override fun getState(): AddOperationPopUpState = addOperationPopUpState.value
+}

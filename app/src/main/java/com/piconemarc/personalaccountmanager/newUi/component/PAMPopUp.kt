@@ -13,12 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.piconemarc.personalaccountmanager.R
-import com.piconemarc.personalaccountmanager.newUi.stateManager.AddOperationPopUpState
+import com.piconemarc.personalaccountmanager.newUi.stateManager.AddOperationPopUpScreenModel
 import com.piconemarc.personalaccountmanager.newUi.stateManager.pAMAddOperationPopUpIconMenuPanelSelectorAnimation
 import com.piconemarc.personalaccountmanager.newUi.stateManager.pAMBasePopUpEnterExitAnimation
 import com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.PopUpTitle
-import com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.animation.selectorOffsetAnimation
-import com.piconemarc.personalaccountmanager.ui.baseComponent.stateManager.states.UiStates
 import com.piconemarc.personalaccountmanager.ui.theme.BigMarge
 import com.piconemarc.personalaccountmanager.ui.theme.Black
 import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
@@ -34,36 +32,36 @@ fun PAMBasePopUp(
 ) {
     val transition = pAMBasePopUpEnterExitAnimation(isExpended = isExpanded)
     if (transition.alpha > 0f)
-    Column(
-        modifier = Modifier
-            .background(Black.copy(alpha = transition.alpha))
-            .fillMaxSize()
-            .clickable { onDismiss() }
-
-    ) {
-        Row(
+        Column(
             modifier = Modifier
-                .height(transition.size)
-                .offset(y = transition.position)
-                .padding(horizontal = RegularMarge, vertical = RegularMarge)
+                .background(Black.copy(alpha = transition.alpha))
+                .fillMaxSize()
+                .clickable { onDismiss() }
+
         ) {
-            Card(
-                elevation = BigMarge,
-                backgroundColor = MaterialTheme.colors.secondary,
-                shape = MaterialTheme.shapes.large.copy(topStart = CornerSize(0.dp)),
-                border = BorderStroke(LittleMarge, MaterialTheme.colors.primaryVariant),
+            Row(
+                modifier = Modifier
+                    .height(transition.size)
+                    .offset(y = transition.position)
+                    .padding(horizontal = RegularMarge, vertical = RegularMarge)
             ) {
-                Column {
-                    PopUpTitle(title)
-                    body()
-                    PAMAcceptOrDismissButtons(
-                        onAcceptButtonClicked = onAcceptButtonClicked,
-                        onDismissButtonClicked = onDismiss
-                    )
+                Card(
+                    elevation = BigMarge,
+                    backgroundColor = MaterialTheme.colors.secondary,
+                    shape = MaterialTheme.shapes.large.copy(topStart = CornerSize(0.dp)),
+                    border = BorderStroke(LittleMarge, MaterialTheme.colors.primaryVariant),
+                ) {
+                    Column {
+                        PopUpTitle(title)
+                        body()
+                        PAMAcceptOrDismissButtons(
+                            onAcceptButtonClicked = onAcceptButtonClicked,
+                            onDismissButtonClicked = onDismiss
+                        )
+                    }
                 }
             }
         }
-    }
 }
 
 
@@ -85,14 +83,15 @@ fun PAMBaseDeletePopUp(
 }
 
 @Composable
-fun PAMAddOperationPopUpLeftSideMenuIconPanel(
-    onIconButtonClicked: () -> Unit,
-    operationTypeState: AddOperationPopUpState
-) {
+fun PAMAddOperationPopUpLeftSideMenuIconPanel() {
     Box {
         Box(
             modifier = Modifier
-                .offset( y = pAMAddOperationPopUpIconMenuPanelSelectorAnimation(isExpended = operationTypeState).offset.y.dp)
+                .offset(
+                    y = pAMAddOperationPopUpIconMenuPanelSelectorAnimation(
+                        addOperationPopUpState = AddOperationPopUpScreenModel().getState()
+                    ).offset.y.dp
+                )
                 .background(
                     color = MaterialTheme.colors.primaryVariant,
                     shape = RoundedCornerShape(topStart = BigMarge, bottomStart = BigMarge)
@@ -103,17 +102,17 @@ fun PAMAddOperationPopUpLeftSideMenuIconPanel(
         Column {
             PAMIconButton(
                 iconButton = PAMIconButtons.Operation,
-                onIconButtonClicked = { onIconButtonClicked() }
+                onIconButtonClicked = { AddOperationPopUpScreenModel().closeOption() }
             )
             Spacer(modifier = Modifier.height(RegularMarge))
             PAMIconButton(
                 iconButton = PAMIconButtons.Payment,
-                onIconButtonClicked = { onIconButtonClicked() }
+                onIconButtonClicked = { AddOperationPopUpScreenModel().openPaymentOption() }
             )
             Spacer(modifier = Modifier.height(RegularMarge))
             PAMIconButton(
                 iconButton = PAMIconButtons.Transfer,
-                onIconButtonClicked = { onIconButtonClicked() }
+                onIconButtonClicked = { AddOperationPopUpScreenModel().openTransferOption() }
             )
         }
     }
