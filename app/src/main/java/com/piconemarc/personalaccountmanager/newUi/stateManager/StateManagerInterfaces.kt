@@ -4,14 +4,14 @@ interface PAMUiState
 
 interface PAMUiDataAnimation
 
-interface PAMUiEvent{
-    val source : PAMUiState
-    val target : PAMUiState
+interface PAMUiEvent {
+    val source: PAMUiState
+    val target: PAMUiState
 }
 
-fun  onUiEvent(
-    currentState : PAMUiState,
-    getMutableState : (PAMUiState)->Unit,
+fun onUiEvent(
+    currentState: PAMUiState,
+    getMutableState: (PAMUiState) -> Unit,
     event_: PAMUiEvent,
     runBefore: () -> Unit = {},
     runAfter: () -> Unit = {}

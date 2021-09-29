@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -12,9 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.piconemarc.personalaccountmanager.R
+import com.piconemarc.personalaccountmanager.newUi.stateManager.AddOperationPopUpState
+import com.piconemarc.personalaccountmanager.newUi.stateManager.pAMAddOperationPopUpIconMenuPanelSelectorAnimation
 import com.piconemarc.personalaccountmanager.newUi.stateManager.pAMBasePopUpEnterExitAnimation
-import com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.AcceptOrDismissButtons
 import com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.PopUpTitle
+import com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.animation.selectorOffsetAnimation
+import com.piconemarc.personalaccountmanager.ui.baseComponent.stateManager.states.UiStates
 import com.piconemarc.personalaccountmanager.ui.theme.BigMarge
 import com.piconemarc.personalaccountmanager.ui.theme.Black
 import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
@@ -52,7 +56,7 @@ fun PAMBasePopUp(
                 Column {
                     PopUpTitle(title)
                     body()
-                    AcceptOrDismissButtons(
+                    PAMAcceptOrDismissButtons(
                         onAcceptButtonClicked = onAcceptButtonClicked,
                         onDismissButtonClicked = onDismiss
                     )
@@ -78,4 +82,39 @@ fun PAMBaseDeletePopUp(
         body = body,
         isExpanded = isExpanded
     )
+}
+
+@Composable
+fun PAMAddOperationPopUpLeftSideMenuIconPanel(
+    onIconButtonClicked: () -> Unit,
+    operationTypeState: AddOperationPopUpState
+) {
+    Box {
+        Box(
+            modifier = Modifier
+                .offset( y = pAMAddOperationPopUpIconMenuPanelSelectorAnimation(isExpended = operationTypeState).offset.y.dp)
+                .background(
+                    color = MaterialTheme.colors.primaryVariant,
+                    shape = RoundedCornerShape(topStart = BigMarge, bottomStart = BigMarge)
+                )
+                .height(48.dp)
+                .width(48.dp)
+        )
+        Column {
+            PAMIconButton(
+                iconButton = PAMIconButtons.Operation,
+                onIconButtonClicked = { onIconButtonClicked() }
+            )
+            Spacer(modifier = Modifier.height(RegularMarge))
+            PAMIconButton(
+                iconButton = PAMIconButtons.Payment,
+                onIconButtonClicked = { onIconButtonClicked() }
+            )
+            Spacer(modifier = Modifier.height(RegularMarge))
+            PAMIconButton(
+                iconButton = PAMIconButtons.Transfer,
+                onIconButtonClicked = { onIconButtonClicked() }
+            )
+        }
+    }
 }

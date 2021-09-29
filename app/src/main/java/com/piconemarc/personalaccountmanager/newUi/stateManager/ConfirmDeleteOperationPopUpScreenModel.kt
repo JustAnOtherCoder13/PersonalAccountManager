@@ -16,8 +16,9 @@ private val operation_: MutableState<Operation> =
 class ConfirmDeleteOperationPopUpScreenModel {
 
     fun expand(operation: Operation) {
-        operation_.value = operation
-        onEvent(DeletePopUpEvent.OnExpand)
+        onEvent(
+            runBefore = { operation_.value = operation },
+            event = DeletePopUpEvent.OnExpand)
     }
 
     fun collapse() {
@@ -27,25 +28,29 @@ class ConfirmDeleteOperationPopUpScreenModel {
     fun deleteOperation() {
         onEvent(
             runBefore = {
-                        /*todo delete operation here*/
-                    Toast.makeText(MainActivity.applicationContext(),"Operation delete ${operation.operationName}",Toast.LENGTH_SHORT).show()
-                        },
+                /*todo delete operation here*/
+                Toast.makeText(
+                    MainActivity.applicationContext(),
+                    "Operation delete ${operation.operationName}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            },
             event = DeletePopUpEvent.OnDelete
         )
     }
 
     fun state(): DeletePopUpState = deletePopUpScreenState.value
 
-    private fun onEvent(
+    private fun  onEvent(
         event: DeletePopUpEvent,
-        runBefore : ()-> Unit = {},
-        runAfter : ()-> Unit = {}
-        ) {
+        runBefore: () -> Unit = {},
+        runAfter: () -> Unit = {}
+    ) {
         onUiEvent(
             currentState = state(),
             getMutableState = { deletePopUpScreenState.value = it as DeletePopUpState },
             event_ = event,
-            runBefore =runBefore,
+            runBefore = runBefore,
             runAfter = runAfter
         )
     }
@@ -53,7 +58,7 @@ class ConfirmDeleteOperationPopUpScreenModel {
 //-------------------------------STATES-------------------------------------------
 
 sealed class DeletePopUpState : PAMUiState {
-    open val operation : Operation = Operation()
+    open val operation: Operation = Operation()
     open val isExpanded: Boolean = false
 
     object Idle : DeletePopUpState()
