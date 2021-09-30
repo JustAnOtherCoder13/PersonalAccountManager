@@ -14,13 +14,16 @@ import com.piconemarc.personalaccountmanager.newUi.component.PAMBaseDeletePopUp
 import com.piconemarc.personalaccountmanager.ui.theme.Positive
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
 import com.piconemarc.viewmodel.viewModel.ConfirmDeleteOperationPopUpScreenModel
+import com.piconemarc.viewmodel.viewModel.DeletePopUpEvent
+import com.piconemarc.viewmodel.viewModel.DeletePopUpState
 
 @Composable
 fun PAMDeleteOperationPopUp() {
     val screenModel = ConfirmDeleteOperationPopUpScreenModel()
+    //if (screenModel.getState().isExpanded)
         PAMBaseDeletePopUp(
             elementToDelete = stringResource(R.string.operation),
-            onAcceptButtonClicked = { screenModel.deleteOperation() },
+            onAcceptButtonClicked = { screenModel.deleteOperation()},
             onCancelButtonClicked = { screenModel.collapse()},
             isExpanded = screenModel.getState().isExpanded,
             body = {
@@ -29,13 +32,13 @@ fun PAMDeleteOperationPopUp() {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = screenModel.getState().operationName,
+                        text = screenModel.getState().operation.operationName,
                         modifier = Modifier.padding(vertical = RegularMarge)
                     )
                     Text(
                         modifier = Modifier.padding(vertical = RegularMarge),
-                        text = screenModel.getState().operationAmount.toString(),
-                        color = if (screenModel.getState().operationAmount < 0) MaterialTheme.colors.error else Positive
+                        text = screenModel.getState().operation.operationAmount.toString(),
+                        color = if (screenModel.getState().operation.operationAmount < 0) MaterialTheme.colors.error else Positive
                     )
                 }
             }

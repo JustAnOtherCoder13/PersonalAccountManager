@@ -8,6 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.piconemarc.personalaccountmanager.R
+import com.piconemarc.personalaccountmanager.newUi.component.PAMAddOperationPopUpLeftSideMenuIconPanel
 import com.piconemarc.personalaccountmanager.newUi.component.PAMBaseDropDownMenuWithBackground
 import com.piconemarc.personalaccountmanager.newUi.component.PAMBasePopUp
 import com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.BasePopUpAmountTextFieldItem
@@ -27,14 +28,11 @@ fun PAMAddOperationPopUp(
     popUpTitle: String,
     popUpOperationName: String,
     popUpOperationAmount: String,
-    popUpCategoryList: List<String>,
     popUpAccountList: List<String>,
     popUpSenderSelectedAccount: String,
     popUpBeneficiarySelectedAccount: String,
     popUpSelectedMonth: String,
     popUpSelectedYear: String,
-    popUpOnIconButtonClicked: (operationType: UiStates.AddOperationPopUpLeftSideIconState) -> Unit,
-    popUpOnCategorySelected: (category: String) -> Unit,
     popUpOnEnterOperationName: (operationName: String) -> Unit,
     popUpOnEnterOperationAmount: (operationAmount: String) -> Unit,
     popUpOnRecurrentOrPunctualSwitched: (UiStates.SwitchButtonState) -> Unit,
@@ -43,77 +41,69 @@ fun PAMAddOperationPopUp(
     popUpOnSenderAccountSelected: (senderAccount: String) -> Unit,
     popUpOnBeneficiaryAccountSelected: (beneficiaryAccount: String) -> Unit,
     switchButtonState: UiStates.SwitchButtonState,
-    leftSideMenuIconPanelState: UiStates.AddOperationPopUpLeftSideIconState
 ) {
     val screenModel = AddOperationPopUpScreenModel()
 
-    Row(
-        modifier = Modifier
-            .padding(horizontal = RegularMarge, vertical = RegularMarge)
-    ) {
-        //Left menu-----------------------------------------------------
-        AddOperationPopUpLeftSideIcon(
-            onIconButtonClicked = popUpOnIconButtonClicked,
-            operationTypeState = leftSideMenuIconPanelState
-        )
-        //Pop up Body --------------------------------------------
-        LazyColumn {
-            item {
-                PAMBasePopUp(
-                    title = screenModel.getState().popUpTitle,
-                    onAcceptButtonClicked = { screenModel.addOperation()},
-                    onDismiss = { screenModel.close() },
-                    isExpanded = screenModel.getState().isExpanded
-                ) {
-                    //category drop down -----------------------------------
-                    PAMBaseDropDownMenuWithBackground(
-                        selectedItem = screenModel.getState().category.name,
-                        itemList = popUpCategoryList,
-                        onItemSelected = popUpOnCategorySelected
-                    )
-                    // operation and amount text field--------------------------
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        BasePopUpTextFieldItem(
-                            title = stringResource(R.string.operationName),
-                            onTextChange = popUpOnEnterOperationName,
-                            textValue = popUpOperationName,
-                            addOperationPopUpState = addOperationPopUpState
-                        )
-                        BasePopUpAmountTextFieldItem(
-                            title = stringResource(R.string.operationAmount),
-                            onTextChange = popUpOnEnterOperationAmount,
-                            amountValue = popUpOperationAmount,
-                            addOperationPopUpState = addOperationPopUpState
-                        )
-                        //Payment Operation option--------------------------
-                        PunctualOrRecurrentSwitchButton(
-                            updateSwitchButtonState = popUpOnRecurrentOrPunctualSwitched,
-                            selectedYear = popUpSelectedYear,
-                            selectedMonth = popUpSelectedMonth,
-                            onYearSelected = popUpOnYearSelected,
-                            onMonthSelected = popUpOnMonthSelected,
-                            switchButtonState = switchButtonState
-                        )
-                        //Transfer Operation option---------------------------
-                        TransferOptionPanel(
-                            modifier = Modifier.height(
-                                expandCollapseTransferAnimation(
-                                    popUpTitle
-                                ).value
-                            ),
-                            accountList = popUpAccountList,
-                            senderSelectedAccount = popUpSenderSelectedAccount,
-                            beneficiarySelectedAccount = popUpBeneficiarySelectedAccount,
-                            onSenderAccountSelected = popUpOnSenderAccountSelected,
-                            onBeneficiaryAccountSelected = popUpOnBeneficiaryAccountSelected
-                        )
+    //Pop up Body --------------------------------------------
+    LazyColumn {
+        item {
+            PAMBasePopUp(
+                title = screenModel.getState().popUpTitle,
+                onAcceptButtonClicked = { screenModel.addOperation() },
+                onDismiss = { screenModel.closeAddPopUp() },
+                isExpanded = screenModel.getState().isExpanded,
+                menuIconPanel = { PAMAddOperationPopUpLeftSideMenuIconPanel() }
+            ) {
+                //category drop down -----------------------------------
+                PAMBaseDropDownMenuWithBackground(
+                    selectedItem = screenModel.getState().category.name,
+                    itemList = screenModel.getState().allCategories,
+                    onItemSelected = {
+                        screenModel.selectCategory(it)
                     }
+                )
+                // operation and amount text field--------------------------
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    BasePopUpTextFieldItem(
+                        title = stringResource(R.string.operationName),
+                        onTextChange = popUpOnEnterOperationName,
+                        textValue = popUpOperationName,
+                        addOperationPopUpState = addOperationPopUpState
+                    )
+                    BasePopUpAmountTextFieldItem(
+                        title = stringResource(R.string.operationAmount),
+                        onTextChange = popUpOnEnterOperationAmount,
+                        amountValue = popUpOperationAmount,
+                        addOperationPopUpState = addOperationPopUpState
+                    )
+                    //Payment Operation option--------------------------
+                    PunctualOrRecurrentSwitchButton(
+                        updateSwitchButtonState = popUpOnRecurrentOrPunctualSwitched,
+                        selectedYear = popUpSelectedYear,
+                        selectedMonth = popUpSelectedMonth,
+                        onYearSelected = popUpOnYearSelected,
+                        onMonthSelected = popUpOnMonthSelected,
+                        switchButtonState = switchButtonState
+                    )
+                    //Transfer Operation option---------------------------
+                    TransferOptionPanel(
+                        modifier = Modifier.height(
+                            expandCollapseTransferAnimation(
+                                popUpTitle
+                            ).value
+                        ),
+                        accountList = popUpAccountList,
+                        senderSelectedAccount = popUpSenderSelectedAccount,
+                        beneficiarySelectedAccount = popUpBeneficiarySelectedAccount,
+                        onSenderAccountSelected = popUpOnSenderAccountSelected,
+                        onBeneficiaryAccountSelected = popUpOnBeneficiaryAccountSelected
+                    )
                 }
-
             }
+
         }
     }
 }

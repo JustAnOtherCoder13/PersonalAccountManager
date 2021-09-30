@@ -28,6 +28,7 @@ fun PAMBasePopUp(
     onAcceptButtonClicked: () -> Unit,
     onDismiss: () -> Unit,
     isExpanded: Boolean,
+    menuIconPanel : @Composable () -> Unit = {},
     body: @Composable () -> Unit
 ) {
     val transition = pAMBasePopUpEnterExitAnimation(isExpended = isExpanded)
@@ -45,6 +46,7 @@ fun PAMBasePopUp(
                     .offset(y = transition.position)
                     .padding(horizontal = RegularMarge, vertical = RegularMarge)
             ) {
+                menuIconPanel()
                 Card(
                     elevation = BigMarge,
                     backgroundColor = MaterialTheme.colors.secondary,

@@ -1,6 +1,7 @@
 package com.piconemarc.viewmodel.viewModel
 
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import com.piconemarc.model.entity.OperationModel
 
@@ -44,16 +45,14 @@ class ConfirmDeleteOperationPopUpScreenModel : BaseScreenModel() {
 //-------------------------------STATES-------------------------------------------
 
 sealed class DeletePopUpState : PAMUiState {
-    open val operationName : String = ""
-    open val operationAmount : Double = 0.0
+    open val operation :OperationModel = OperationModel()
     open val isExpanded: Boolean = false
 
     object Idle : DeletePopUpState()
 
     object Expand : DeletePopUpState() {
-        override val operationName : String = operationModel_.value.operationName
-        override val operationAmount : Double = operationModel_.value.operationAmount
-        override val isExpanded: Boolean get() = true
+        override val isExpanded = true
+        override val operation by operationModel_
     }
 }
 

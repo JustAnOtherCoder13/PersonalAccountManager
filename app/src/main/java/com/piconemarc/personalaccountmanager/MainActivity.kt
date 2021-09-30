@@ -17,8 +17,12 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.piconemarc.model.entity.TEST_OPERATION_MODEL
+import com.piconemarc.personalaccountmanager.newUi.popUp.PAMAddOperationPopUp
 import com.piconemarc.personalaccountmanager.newUi.popUp.PAMDeleteOperationPopUp
+import com.piconemarc.personalaccountmanager.ui.baseComponent.stateManager.events.*
 import com.piconemarc.personalaccountmanager.ui.theme.PersonalAccountManagerTheme
+import com.piconemarc.viewmodel.viewModel.AddOperationPopUpScreenModel
+import com.piconemarc.viewmodel.viewModel.ConfirmDeleteOperationPopUpScreenModel
 
 class MainActivity : ComponentActivity() {
 
@@ -46,94 +50,53 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     color = MaterialTheme.colors.secondary
                 ) {
-                    LazyColumn() {
-                        items(testList) { item ->
-                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                Column {
-                                    Text(text = item.operationName)
-                                    Text(text = item.operationAmount.toString())
-                                }
-                                Button(
-                                    onClick = {
-                                        com.piconemarc.viewmodel.viewModel.ConfirmDeleteOperationPopUpScreenModel().expand(
-                                            operationModel = item
-                                        )
+                    Column() {
+
+
+                        LazyColumn() {
+                            items(testList) { item ->
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Column {
+                                        Text(text = item.operationName)
+                                        Text(text = item.operationAmount.toString())
                                     }
-                                ) { Text(text = "Click") }
+                                    Button(
+                                        onClick = {
+                                            ConfirmDeleteOperationPopUpScreenModel().expand(
+                                                operationModel = item
+                                            )
+                                        }
+                                    ) { Text(text = "Click") }
+                                }
                             }
                         }
+                        Button(onClick = { AddOperationPopUpScreenModel().expand() }) {
+                            Text(text = "add operation")
+                        }
+                        PAMDeleteOperationPopUp()
+                        PAMAddOperationPopUp(
+                            addOperationPopUpState = addOperationPopUpState.value,
+                            popUpTitle = PopUpTitleStates.PopUpTitle().addOperationPopUpTitleState,
+                            popUpOperationName = popUpOperationName.value,
+                            popUpOperationAmount = popUpOperationAmount.value,
+                            popUpAccountList = listOf(),
+                            popUpSenderSelectedAccount = popUpSenderSelectedAccount.value,
+                            popUpBeneficiarySelectedAccount = popUpBeneficiarySelectedAccount.value,
+                            popUpSelectedMonth = popUpSelectedMonth.value,
+                            popUpSelectedYear = popUpSelectedYear.value,
+                            popUpOnEnterOperationName = {},
+                            popUpOnEnterOperationAmount = {},
+                            popUpOnRecurrentOrPunctualSwitched = {},
+                            popUpOnMonthSelected = {},
+                            popUpOnYearSelected = {},
+                            popUpOnSenderAccountSelected = {},
+                            popUpOnBeneficiaryAccountSelected = {},
+                            switchButtonState = recurrentSwitchButtonState.value,
+                        )
                     }
-
-                    PAMDeleteOperationPopUp()
-
-                    /*AddOperationPopUp(
-                        addOperationPopUpState = addOperationPopUpState.value,
-                        popUpOnDismiss = { popUpEventHandler(AddPopUpUiEvent.OnDismiss) },
-                        popUpTitle = PopUpTitleStates.PopUpTitle().addOperationPopUpTitleState,
-                        popUpAccountList = listOf("Account1", "Account2", "Account3"),
-                        popUpCategory = popUpCategory.value,
-                        popUpCategoryList = testList,
-                        popUpOperationAmount = popUpOperationAmount.value,
-                        popUpOperationName = popUpOperationName.value,
-                        popUpSenderSelectedAccount = popUpSenderSelectedAccount.value,
-                        popUpBeneficiarySelectedAccount = popUpBeneficiarySelectedAccount.value,
-                        popUpSelectedMonth = popUpSelectedMonth.value,
-                        popUpSelectedYear = popUpSelectedYear.value,
-                        popUpOnRecurrentOrPunctualSwitched = { switchButtonState ->
-                            popUpEventHandler(
-                                AddPopUpUiEvent.RecurrentSwitchButtonState(recurrentSwitchButtonState = switchButtonState)
-                            )
-                        },
-                        popUpOnBeneficiaryAccountSelected = { beneficiaryAccount ->
-                            popUpEventHandler(
-                                AddPopUpUiEvent.OnBeneficiaryAccountSelected(beneficiaryAccount = beneficiaryAccount)
-                            )
-                        },
-                        popUpOnCategorySelected = { category ->
-                            popUpEventHandler(
-                                AddPopUpUiEvent.OnCategorySelected(
-                                    selectedCategory = category
-                                )
-                            )
-                        },
-                        popUpOnEnterOperationAmount = { amount ->
-                            popUpEventHandler(
-                                AddPopUpUiEvent.OnEnterOperationAmount(
-                                    operationAmount = amount
-                                )
-                            )
-                        },
-                        popUpOnEnterOperationName = { name ->
-                            popUpEventHandler(
-                                AddPopUpUiEvent.OnEnterOperationName(
-                                    operationName = name
-                                )
-                            )
-                        },
-                        popUpOnMonthSelected = { selectedMonth ->
-                            popUpEventHandler(
-                                AddPopUpUiEvent.OnMonthSelected(selectedMonth = selectedMonth)
-                            )
-                        },
-                        popUpOnYearSelected = { selectedYear ->
-                            popUpEventHandler(AddPopUpUiEvent.OnYearSelected(selectedYear = selectedYear))
-                        },
-                        popUpOnSenderAccountSelected = { senderAccount ->
-                            popUpEventHandler(
-                                AddPopUpUiEvent.OnSenderAccountSelected(senderAccount = senderAccount)
-                            )
-                        },
-                        popUpOnAddOperation = { popUpEventHandler(AddPopUpUiEvent.OnAddOperation) },
-                        popUpOnIconButtonClicked = { operationType ->
-                            popUpEventHandler(
-                                AddPopUpUiEvent.OnLeftSideIconButtonClicked(
-                                    operationType = operationType
-                                )
-                            )
-                        },
-                        switchButtonState = recurrentSwitchButtonState.value,
-                        leftSideMenuIconPanelState = leftSideIconState.value
-                    )*/
                 }
             }
         }
