@@ -11,30 +11,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.newUi.component.PAMBaseDeletePopUp
-import com.piconemarc.personalaccountmanager.newUi.stateManager.ConfirmDeleteOperationPopUpScreenModel
 import com.piconemarc.personalaccountmanager.ui.theme.Positive
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
+import com.piconemarc.viewmodel.viewModel.ConfirmDeleteOperationPopUpScreenModel
 
 @Composable
 fun PAMDeleteOperationPopUp() {
+    val screenModel = ConfirmDeleteOperationPopUpScreenModel()
         PAMBaseDeletePopUp(
             elementToDelete = stringResource(R.string.operation),
-            onAcceptButtonClicked = { ConfirmDeleteOperationPopUpScreenModel().deleteOperation() },
-            onCancelButtonClicked = { ConfirmDeleteOperationPopUpScreenModel().collapse()},
-            isExpanded = ConfirmDeleteOperationPopUpScreenModel().getState().isExpanded,
+            onAcceptButtonClicked = { screenModel.deleteOperation() },
+            onCancelButtonClicked = { screenModel.collapse()},
+            isExpanded = screenModel.getState().isExpanded,
             body = {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = ConfirmDeleteOperationPopUpScreenModel().getState().operation.operationName,
+                        text = screenModel.getState().operationName,
                         modifier = Modifier.padding(vertical = RegularMarge)
                     )
                     Text(
                         modifier = Modifier.padding(vertical = RegularMarge),
-                        text = ConfirmDeleteOperationPopUpScreenModel().getState().operation.operationAmount.toString(),
-                        color = if (ConfirmDeleteOperationPopUpScreenModel().getState().operation.operationAmount < 0) MaterialTheme.colors.error else Positive
+                        text = screenModel.getState().operationAmount.toString(),
+                        color = if (screenModel.getState().operationAmount < 0) MaterialTheme.colors.error else Positive
                     )
                 }
             }

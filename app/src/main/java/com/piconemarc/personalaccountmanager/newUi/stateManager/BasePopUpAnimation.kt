@@ -8,6 +8,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.piconemarc.viewmodel.viewModel.AddOperationPopUpState
+import com.piconemarc.viewmodel.viewModel.PAMUiDataAnimation
 
 @Composable
 fun pAMBasePopUpEnterExitAnimation(isExpended: Boolean): PAMUiDataAnimations.BasePopUpAnimationData {
@@ -67,6 +69,7 @@ object PAMUiDataAnimations : PAMUiDataAnimation {
         val size by size
         val position by position
     }
+
     class AddOperationPopUpIconMenuPanelAnimationData(
         offset: State<Offset>
     ):PAMUiDataAnimation{

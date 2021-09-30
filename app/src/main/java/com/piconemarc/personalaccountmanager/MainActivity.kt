@@ -16,9 +16,8 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import com.piconemarc.personalaccountmanager.entity.testOperation
+import com.piconemarc.model.entity.TEST_OPERATION_MODEL
 import com.piconemarc.personalaccountmanager.newUi.popUp.PAMDeleteOperationPopUp
-import com.piconemarc.personalaccountmanager.newUi.stateManager.ConfirmDeleteOperationPopUpScreenModel
 import com.piconemarc.personalaccountmanager.ui.theme.PersonalAccountManagerTheme
 
 class MainActivity : ComponentActivity() {
@@ -42,7 +41,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             PersonalAccountManagerTheme {
                 val testList by remember {
-                    mutableStateOf(testOperation)
+                    mutableStateOf(TEST_OPERATION_MODEL)
                 }
                 Surface(
                     color = MaterialTheme.colors.secondary
@@ -56,8 +55,8 @@ class MainActivity : ComponentActivity() {
                                 }
                                 Button(
                                     onClick = {
-                                        ConfirmDeleteOperationPopUpScreenModel().expand(
-                                            operation = item
+                                        com.piconemarc.viewmodel.viewModel.ConfirmDeleteOperationPopUpScreenModel().expand(
+                                            operationModel = item
                                         )
                                     }
                                 ) { Text(text = "Click") }

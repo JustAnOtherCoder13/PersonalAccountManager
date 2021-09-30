@@ -1,4 +1,4 @@
-package com.piconemarc.personalaccountmanager.newUi.stateManager
+package com.piconemarc.viewmodel.viewModel
 
 interface PAMUiState
 

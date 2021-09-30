@@ -2,6 +2,7 @@ package com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.deletePopUp
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -11,7 +12,7 @@ import androidx.compose.ui.res.stringResource
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.BaseDeletePopUp
 import com.piconemarc.personalaccountmanager.ui.theme.Positive
-import com.piconemarc.personalaccountmanager.ui.theme.deleteOperationTextModifier
+import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
 
 
 @Composable
@@ -40,10 +41,10 @@ fun DeleteOperationPopUp(
                 ) {
                     Text(
                         text = operationName,
-                        modifier = Modifier.deleteOperationTextModifier()
+                        modifier = Modifier.padding(vertical = RegularMarge)
                     )
                     Text(
-                        modifier = Modifier.deleteOperationTextModifier(),
+                        modifier = Modifier.padding(vertical = RegularMarge),
                         text = operationAmount.toString(),
                         color = if (operationAmount < 0) MaterialTheme.colors.error else Positive
                     )

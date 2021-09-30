@@ -1,26 +1,24 @@
-package com.piconemarc.personalaccountmanager.newUi.stateManager
+package com.piconemarc.viewmodel.viewModel
 
-import android.widget.Toast
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import com.piconemarc.personalaccountmanager.MainActivity
-import com.piconemarc.personalaccountmanager.entity.Operation
-import com.piconemarc.personalaccountmanager.newUi.stateManager.DeletePopUpState.Expand.operation
+import com.piconemarc.model.entity.OperationModel
+
 
 private val deletePopUpScreenState: MutableState<DeletePopUpState> =
     mutableStateOf(DeletePopUpState.Idle)
-private val operation_: MutableState<Operation> =
-    mutableStateOf(Operation())
+private val operationModel_: MutableState<OperationModel> =
+    mutableStateOf(OperationModel())
 
 class ConfirmDeleteOperationPopUpScreenModel : BaseScreenModel() {
     override val currentState: PAMUiState = getState()
-    override val getTargetState: (PAMUiState) -> Unit={ deletePopUpScreenState.value = it as DeletePopUpState}
+    override val getTargetState: (PAMUiState) -> Unit={ deletePopUpScreenState.value = it as DeletePopUpState }
 
-    fun expand(operation: Operation) {
+    fun expand(operationModel: OperationModel) {
         onUiEvent(
-            runBefore = { operation_.value = operation },
-            event = DeletePopUpEvent.OnExpand)
+            runBefore = { operationModel_.value = operationModel },
+            event = DeletePopUpEvent.OnExpand
+        )
     }
 
     fun collapse() {
@@ -31,11 +29,11 @@ class ConfirmDeleteOperationPopUpScreenModel : BaseScreenModel() {
         onUiEvent(
             runBefore = {
                 /*todo delete operation here*/
-                Toast.makeText(
+                /*Toast.makeText(
                     MainActivity.applicationContext(),
-                    "Operation delete ${operation.operationName}",
+                    "Operation delete ${operationModel.operationName}",
                     Toast.LENGTH_SHORT
-                ).show()
+                ).show()*/
             },
             event = DeletePopUpEvent.OnDelete
         )
@@ -46,13 +44,15 @@ class ConfirmDeleteOperationPopUpScreenModel : BaseScreenModel() {
 //-------------------------------STATES-------------------------------------------
 
 sealed class DeletePopUpState : PAMUiState {
-    open val operation: Operation = Operation()
+    open val operationName : String = ""
+    open val operationAmount : Double = 0.0
     open val isExpanded: Boolean = false
 
     object Idle : DeletePopUpState()
 
     object Expand : DeletePopUpState() {
-        override val operation: Operation by operation_
+        override val operationName : String = operationModel_.value.operationName
+        override val operationAmount : Double = operationModel_.value.operationAmount
         override val isExpanded: Boolean get() = true
     }
 }

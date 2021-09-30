@@ -16,7 +16,6 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 
-fun Modifier.deleteOperationTextModifier() = this.padding(vertical = RegularMarge)
 
 @SuppressLint("UnnecessaryComposedModifier")
 fun Modifier.popUpClickableItemModifier() = composed {

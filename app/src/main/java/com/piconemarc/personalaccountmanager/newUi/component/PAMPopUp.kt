@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.piconemarc.personalaccountmanager.R
-import com.piconemarc.personalaccountmanager.newUi.stateManager.AddOperationPopUpScreenModel
 import com.piconemarc.personalaccountmanager.newUi.stateManager.pAMAddOperationPopUpIconMenuPanelSelectorAnimation
 import com.piconemarc.personalaccountmanager.newUi.stateManager.pAMBasePopUpEnterExitAnimation
 import com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.PopUpTitle
@@ -21,14 +20,15 @@ import com.piconemarc.personalaccountmanager.ui.theme.BigMarge
 import com.piconemarc.personalaccountmanager.ui.theme.Black
 import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
+import com.piconemarc.viewmodel.viewModel.AddOperationPopUpScreenModel
 
 @Composable
 fun PAMBasePopUp(
     title: String,
     onAcceptButtonClicked: () -> Unit,
     onDismiss: () -> Unit,
-    body: @Composable () -> Unit,
-    isExpanded: Boolean
+    isExpanded: Boolean,
+    body: @Composable () -> Unit
 ) {
     val transition = pAMBasePopUpEnterExitAnimation(isExpended = isExpanded)
     if (transition.alpha > 0f)
@@ -84,12 +84,13 @@ fun PAMBaseDeletePopUp(
 
 @Composable
 fun PAMAddOperationPopUpLeftSideMenuIconPanel() {
+    val screenModel = AddOperationPopUpScreenModel()
     Box {
         Box(
             modifier = Modifier
                 .offset(
                     y = pAMAddOperationPopUpIconMenuPanelSelectorAnimation(
-                        addOperationPopUpState = AddOperationPopUpScreenModel().getState()
+                        addOperationPopUpState = screenModel.getState()
                     ).offset.y.dp
                 )
                 .background(
@@ -102,17 +103,17 @@ fun PAMAddOperationPopUpLeftSideMenuIconPanel() {
         Column {
             PAMIconButton(
                 iconButton = PAMIconButtons.Operation,
-                onIconButtonClicked = { AddOperationPopUpScreenModel().closeOption() }
+                onIconButtonClicked = { screenModel.closeOption() }
             )
             Spacer(modifier = Modifier.height(RegularMarge))
             PAMIconButton(
                 iconButton = PAMIconButtons.Payment,
-                onIconButtonClicked = { AddOperationPopUpScreenModel().openPaymentOption() }
+                onIconButtonClicked = { screenModel.openPaymentOption() }
             )
             Spacer(modifier = Modifier.height(RegularMarge))
             PAMIconButton(
                 iconButton = PAMIconButtons.Transfer,
-                onIconButtonClicked = { AddOperationPopUpScreenModel().openTransferOption() }
+                onIconButtonClicked = { screenModel.openTransferOption() }
             )
         }
     }
