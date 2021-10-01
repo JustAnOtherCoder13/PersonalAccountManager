@@ -1,8 +1,5 @@
 package com.piconemarc.model.entity
 
-import com.piconemarc.model.entity.CategoryModel
-import com.piconemarc.model.entity.OperationModel
-
 val TEST_OPERATION_MODEL : MutableList<OperationModel> = mutableListOf(
     OperationModel("first", 10.00),
     OperationModel("second",50.00),

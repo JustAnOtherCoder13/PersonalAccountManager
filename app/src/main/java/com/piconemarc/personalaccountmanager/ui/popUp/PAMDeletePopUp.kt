@@ -1,4 +1,4 @@
-package com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.deletePopUp
+package com.piconemarc.personalaccountmanager.ui.popUp
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,46 +10,33 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.piconemarc.personalaccountmanager.R
-import com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.BaseDeletePopUp
+import com.piconemarc.personalaccountmanager.ui.component.PAMBaseDeletePopUp
 import com.piconemarc.personalaccountmanager.ui.theme.Positive
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
-
+import com.piconemarc.viewmodel.viewModel.deletePopUp.ConfirmDeleteOperationPopUpScreenModel
 
 @Composable
-fun DeleteOperationPopUp(
-    showDeleteOperationPopUp: Boolean,
-    operationName: String,
-    operationAmount: Double,
-    onDeleteOperation: () -> Unit,
-    onDismiss: () -> Unit
-) {
-
-    if (showDeleteOperationPopUp)
-        BaseDeletePopUp(
+fun PAMDeleteOperationPopUp(screenModel : ConfirmDeleteOperationPopUpScreenModel) {
+        PAMBaseDeletePopUp(
             elementToDelete = stringResource(R.string.operation),
-            onAcceptButtonClicked = {
-                onDismiss()
-                onDeleteOperation()
-            },
-            onCancelButtonClicked = {
-                onDismiss()
-            },
+            onAcceptButtonClicked = { screenModel.deleteOperation()},
+            onDismiss = { screenModel.collapse()},
+            isExpanded = screenModel.getState().isExpanded,
             body = {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = operationName,
+                        text = screenModel.getState().operation.operationName,
                         modifier = Modifier.padding(vertical = RegularMarge)
                     )
                     Text(
                         modifier = Modifier.padding(vertical = RegularMarge),
-                        text = operationAmount.toString(),
-                        color = if (operationAmount < 0) MaterialTheme.colors.error else Positive
+                        text = screenModel.getState().operation.operationAmount.toString(),
+                        color = if (screenModel.getState().operation.operationAmount < 0) MaterialTheme.colors.error else Positive
                     )
                 }
             }
         )
-
 }

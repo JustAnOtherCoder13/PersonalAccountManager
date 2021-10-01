@@ -14,21 +14,26 @@ import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.piconemarc.model.entity.TEST_OPERATION_MODEL
-import com.piconemarc.personalaccountmanager.newUi.popUp.PAMAddOperationPopUp
-import com.piconemarc.personalaccountmanager.newUi.popUp.PAMDeleteOperationPopUp
-import com.piconemarc.personalaccountmanager.ui.baseComponent.stateManager.events.*
+import com.piconemarc.personalaccountmanager.ui.popUp.PAMAddOperationPopUp
+import com.piconemarc.personalaccountmanager.ui.popUp.PAMDeleteOperationPopUp
 import com.piconemarc.personalaccountmanager.ui.theme.PersonalAccountManagerTheme
-import com.piconemarc.viewmodel.viewModel.AddOperationPopUpScreenModel
-import com.piconemarc.viewmodel.viewModel.ConfirmDeleteOperationPopUpScreenModel
+import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationPopUpScreenModel
+import com.piconemarc.viewmodel.viewModel.deletePopUp.ConfirmDeleteOperationPopUpScreenModel
 
 class MainActivity : ComponentActivity() {
 
+    private var addOperationPopUpScreenModel: AddOperationPopUpScreenModel
+    private var deleteOperationPopUpScreenModel : ConfirmDeleteOperationPopUpScreenModel
+
     init {
         instance = this
-
+        addOperationPopUpScreenModel = AddOperationPopUpScreenModel()
+        deleteOperationPopUpScreenModel =  ConfirmDeleteOperationPopUpScreenModel()
     }
 
     companion object {
@@ -51,8 +56,6 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.secondary
                 ) {
                     Column() {
-
-
                         LazyColumn() {
                             items(testList) { item ->
                                 Row(
@@ -65,7 +68,7 @@ class MainActivity : ComponentActivity() {
                                     }
                                     Button(
                                         onClick = {
-                                            ConfirmDeleteOperationPopUpScreenModel().expand(
+                                            deleteOperationPopUpScreenModel.expand(
                                                 operationModel = item
                                             )
                                         }
@@ -73,30 +76,12 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
-                        Button(onClick = { AddOperationPopUpScreenModel().expand() }) {
+                        Button(onClick = { addOperationPopUpScreenModel.expand() }) {
                             Text(text = "add operation")
                         }
-                        PAMDeleteOperationPopUp()
-                        PAMAddOperationPopUp(
-                            addOperationPopUpState = addOperationPopUpState.value,
-                            popUpTitle = PopUpTitleStates.PopUpTitle().addOperationPopUpTitleState,
-                            popUpOperationName = popUpOperationName.value,
-                            popUpOperationAmount = popUpOperationAmount.value,
-                            popUpAccountList = listOf(),
-                            popUpSenderSelectedAccount = popUpSenderSelectedAccount.value,
-                            popUpBeneficiarySelectedAccount = popUpBeneficiarySelectedAccount.value,
-                            popUpSelectedMonth = popUpSelectedMonth.value,
-                            popUpSelectedYear = popUpSelectedYear.value,
-                            popUpOnEnterOperationName = {},
-                            popUpOnEnterOperationAmount = {},
-                            popUpOnRecurrentOrPunctualSwitched = {},
-                            popUpOnMonthSelected = {},
-                            popUpOnYearSelected = {},
-                            popUpOnSenderAccountSelected = {},
-                            popUpOnBeneficiaryAccountSelected = {},
-                            switchButtonState = recurrentSwitchButtonState.value,
-                        )
                     }
+                    PAMDeleteOperationPopUp(deleteOperationPopUpScreenModel)
+                    PAMAddOperationPopUp(addOperationPopUpScreenModel)
                 }
             }
         }
