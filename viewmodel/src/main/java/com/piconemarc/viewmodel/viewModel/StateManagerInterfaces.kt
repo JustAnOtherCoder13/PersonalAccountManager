@@ -1,6 +1,7 @@
 package com.piconemarc.viewmodel.viewModel
 
-interface PAMUiState
+import com.piconemarc.core.domain.PAMUiState
+
 
 interface PAMUiDataAnimation
 
@@ -23,6 +24,7 @@ class DefaultStore<S : PAMUiState>(
 ) : Store<S> {
 
     private val subscribers = mutableSetOf<StoreSubscriber<S>>()
+
     private var state: S = initialState
         set(value) {
             field = value

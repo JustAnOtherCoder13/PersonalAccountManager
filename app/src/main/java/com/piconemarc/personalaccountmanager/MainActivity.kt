@@ -22,19 +22,15 @@ import com.piconemarc.model.entity.TEST_OPERATION_MODEL
 import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMAddOperationPopUp
 import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMDeleteOperationPopUp
 import com.piconemarc.personalaccountmanager.ui.theme.PersonalAccountManagerTheme
-import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationPopUpScreenModel
+import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationScreenEvent
 import com.piconemarc.viewmodel.viewModel.deletePopUp.ConfirmDeleteOperationPopUpScreenModel
-import com.piconemarc.viewmodel.viewModel.test.AddOperationPopUpAction
-import com.piconemarc.viewmodel.viewModel.test.DI
 
 class MainActivity : ComponentActivity() {
 
-    private val addOperationPopUpScreenModel: AddOperationPopUpScreenModel
     private val deleteOperationPopUpScreenModel : ConfirmDeleteOperationPopUpScreenModel
 
     init {
         instance = this
-        addOperationPopUpScreenModel = AddOperationPopUpScreenModel()
         deleteOperationPopUpScreenModel =  ConfirmDeleteOperationPopUpScreenModel()
     }
 
@@ -53,9 +49,6 @@ class MainActivity : ComponentActivity() {
             PersonalAccountManagerTheme {
                 val testList by remember {
                     mutableStateOf(TEST_OPERATION_MODEL)
-                }
-                DI.store.add {
-
                 }
                 Surface(
                     color = MaterialTheme.colors.secondary
@@ -81,12 +74,12 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
-                        Button(onClick = { DI.store.dispatch(action = AddOperationPopUpAction.Init) }) {
+                        Button(onClick = { AddOperationScreenEvent.initPopUp() }) {
                             Text(text = "add operation")
                         }
                     }
                     PAMDeleteOperationPopUp(deleteOperationPopUpScreenModel)
-                    PAMAddOperationPopUp(addOperationPopUpScreenModel)
+                    PAMAddOperationPopUp()
                 }
             }
         }

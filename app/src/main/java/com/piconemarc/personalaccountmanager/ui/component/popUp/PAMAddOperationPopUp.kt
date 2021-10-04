@@ -9,45 +9,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.component.*
-import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationPopUpScreenModel
-import com.piconemarc.viewmodel.viewModel.test.AddOperationPopUpAction
-import com.piconemarc.viewmodel.viewModel.test.DI
+import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationScreenEvent
+import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationScreenViewState
+import com.piconemarc.viewmodel.viewModel.addOperationPopUp.observeAddPopUpValues
 
 @SuppressLint("ModifierParameter")
 @Composable
-fun PAMAddOperationPopUp(screenModel: AddOperationPopUpScreenModel) {
-    var isPopUpExpanded  by remember {
-        mutableStateOf(false)
-    }
-    var isRecurrentOptionExpanded by remember {
-        mutableStateOf(false)
-    }
-    var isPaymentOptionExpanded by remember {
-        mutableStateOf(false)
-    }
-    var isTransferOptionExpanded by remember {
-        mutableStateOf(false)
-    }
-    DI.store.add {
-        isPopUpExpanded = it.addOperationPopUpOperationOptionState.isPopUpExpanded
-        isRecurrentOptionExpanded = it.addOperationPopUpPaymentOptionState.isRecurrentOptionExpanded
-        isPaymentOptionExpanded = it.addOperationPopUpPaymentOptionState.isPaymentExpanded
-        isTransferOptionExpanded = it.addOperationPopUpTransferOptionState.isTransferExpanded
-    }
+fun PAMAddOperationPopUp() {
+    observeAddPopUpValues()
 
     //Pop up Body --------------------------------------------
     PAMBasePopUp(
-        title = screenModel.getState().popUpTitle,
-        onAcceptButtonClicked = { screenModel.addOperation() },
-        onDismiss = { DI.store.dispatch(AddOperationPopUpAction.ClosePopUp) },
-        isExpanded = isPopUpExpanded ,
-        menuIconPanel = { PAMAddOperationPopUpLeftSideMenuIconPanel(isTransferOptionExpanded = isTransferOptionExpanded, isPaymentOptionExpanded = isPaymentOptionExpanded) }
+        title = "",
+        onAcceptButtonClicked = { },
+        onDismiss = { AddOperationScreenEvent.closePopUp() },
+        isExpanded = AddOperationScreenViewState.isPopUpExpanded,
+        menuIconPanel = {
+            PAMAddOperationPopUpLeftSideMenuIconPanel(
+                isTransferOptionExpanded = AddOperationScreenViewState.isTransferExpanded,
+                isPaymentOptionExpanded = AddOperationScreenViewState.isPaymentExpanded
+            )
+        }
     ) {
         //category drop down -----------------------------------
         PAMBaseDropDownMenuWithBackground(
-            selectedItem = screenModel.getState().category.name,
-            itemList = screenModel.getState().allCategories,
-            onItemSelected = { screenModel.selectCategory(it) }
+            selectedItem = "",
+            itemList = listOf(),
+            onItemSelected = { }
         )
         // operation and amount text field--------------------------
         Column(
@@ -56,19 +44,21 @@ fun PAMAddOperationPopUp(screenModel: AddOperationPopUpScreenModel) {
         ) {
             PAMBlackBackgroundTextFieldItem(
                 title = stringResource(R.string.operationName),
-                onTextChange = { screenModel.enterOperationName(it) },
-                textValue = screenModel.getState().operationName,
+                onTextChange = { },
+                textValue = "",
             )
             PAMAmountTextFieldItem(
                 title = stringResource(R.string.operationAmount),
-                onTextChange = { screenModel.enterAmountValue(it) },
-                amountValue = screenModel.getState().operationAmount,
-                screenModel = screenModel
+                onTextChange = { },
+                amountValue = "",
             )
             //Payment Operation option--------------------------
-            PAMPunctualOrRecurrentSwitchButton(isRecurrentOptionExpanded = isRecurrentOptionExpanded, isPaymentOptionExpanded = isPaymentOptionExpanded )
+            PAMPunctualOrRecurrentSwitchButton(
+                isRecurrentOptionExpanded = AddOperationScreenViewState.isRecurrentOptionExpanded,
+                isPaymentOptionExpanded = AddOperationScreenViewState.isPaymentExpanded
+            )
             //Transfer Operation option---------------------------
-            PAMTransferOptionPanel(isTransferOptionExpanded = isTransferOptionExpanded)
+            PAMTransferOptionPanel(isTransferOptionExpanded = AddOperationScreenViewState.isTransferExpanded)
         }
     }
 }

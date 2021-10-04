@@ -1,45 +1,16 @@
-package com.piconemarc.viewmodel.viewModel.test
+package com.piconemarc.viewmodel.viewModel.addOperationPopUp
 
-import com.piconemarc.model.entity.AccountModel
-import com.piconemarc.model.entity.CategoryModel
+import com.piconemarc.core.domain.AddOperationPopUpGlobalState
+import com.piconemarc.core.domain.AddOperationPopUpOperationOptionState
+import com.piconemarc.core.domain.AddOperationPopUpPaymentOptionState
+import com.piconemarc.core.domain.AddOperationPopUpTransferOptionState
 import com.piconemarc.viewmodel.viewModel.DefaultStore
-import com.piconemarc.viewmodel.viewModel.PAMUiState
 import com.piconemarc.viewmodel.viewModel.Reducer
 import com.piconemarc.viewmodel.viewModel.UiAction
 
-
-//-------------------------------------------------------STATES-------------------------------------
-data class AddOperationPopUpOperationOptionState(
-    val isPopUpExpanded: Boolean = false,
-    val operationCategories: List<CategoryModel> = listOf(),
-    val selectedCategory: String = "",
-    val operationName: String = "",
-    val operationAmount: String = "",
-) : PAMUiState
-
-data class AddOperationPopUpPaymentOptionState(
-    val isPaymentExpanded: Boolean = false,
-    val isRecurrentOptionExpanded: Boolean = false,
-    val enDateSelectedMonth: String = "",
-    val endDateSelectedYear: String = ""
-) : PAMUiState
-
-data class AddOperationPopUpTransferOptionState(
-    val isTransferExpanded: Boolean = false,
-    val accountList: List<AccountModel> = listOf(),
-    val senderAccount: String = "",
-    val beneficiaryAccount: String = ""
-) : PAMUiState
-
-data class AddOperationPopUpGlobalState(
-    val addOperationPopUpOperationOptionState: AddOperationPopUpOperationOptionState = AddOperationPopUpOperationOptionState(),
-    val addOperationPopUpPaymentOptionState: AddOperationPopUpPaymentOptionState = AddOperationPopUpPaymentOptionState(),
-    val addOperationPopUpTransferOptionState: AddOperationPopUpTransferOptionState = AddOperationPopUpTransferOptionState()
-) : PAMUiState
-
 //---------------------------------------------------------ACTIONS----------------------------------
 
-sealed class AddOperationPopUpAction : UiAction {
+internal sealed class AddOperationPopUpAction : UiAction {
     object Init : AddOperationPopUpAction()
     object ExpandPaymentOption : AddOperationPopUpAction()
     object CollapseOptions : AddOperationPopUpAction()
@@ -51,7 +22,7 @@ sealed class AddOperationPopUpAction : UiAction {
 
 //-------------------------------------------------------------------REDUCERS-----------------------
 
-val OperationStateReducer: Reducer<AddOperationPopUpOperationOptionState> = { old, action ->
+private val OperationStateReducer: Reducer<AddOperationPopUpOperationOptionState> = { old, action ->
     when (action) {
         is AddOperationPopUpAction.Init -> old.copy(isPopUpExpanded = true)
         is AddOperationPopUpAction.ClosePopUp -> old.copy(isPopUpExpanded = false)
@@ -59,7 +30,7 @@ val OperationStateReducer: Reducer<AddOperationPopUpOperationOptionState> = { ol
     }
 }
 
-val PaymentStateReducer: Reducer<AddOperationPopUpPaymentOptionState> = { old, action ->
+private val PaymentStateReducer: Reducer<AddOperationPopUpPaymentOptionState> = { old, action ->
     when (action) {
         is AddOperationPopUpAction.ExpandPaymentOption -> old.copy(isPaymentExpanded = true)
         is AddOperationPopUpAction.CollapseOptions -> old.copy(
@@ -77,7 +48,7 @@ val PaymentStateReducer: Reducer<AddOperationPopUpPaymentOptionState> = { old, a
     }
 }
 
-val TransferStateReducer: Reducer<AddOperationPopUpTransferOptionState> = { old, action ->
+private val TransferStateReducer: Reducer<AddOperationPopUpTransferOptionState> = { old, action ->
     when (action) {
         is AddOperationPopUpAction.ExpandTransferOption -> old.copy(isTransferExpanded = true)
         is AddOperationPopUpAction.CollapseOptions -> old.copy(isTransferExpanded = false)
@@ -87,7 +58,7 @@ val TransferStateReducer: Reducer<AddOperationPopUpTransferOptionState> = { old,
     }
 }
 
-val AddOperationStateReducer: Reducer<AddOperationPopUpGlobalState> = { old, action ->
+private val AddOperationStateReducer: Reducer<AddOperationPopUpGlobalState> = { old, action ->
     AddOperationPopUpGlobalState(
         addOperationPopUpOperationOptionState = OperationStateReducer(
             old.addOperationPopUpOperationOptionState,
@@ -106,8 +77,8 @@ val AddOperationStateReducer: Reducer<AddOperationPopUpGlobalState> = { old, act
 
 //di to extract later
 
-object DI {
-    val store =
+ internal object DI {
+    val addOperationPopUpStore =
         DefaultStore(
             initialState = AddOperationPopUpGlobalState(),
             reducer = AddOperationStateReducer

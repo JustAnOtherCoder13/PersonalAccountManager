@@ -27,10 +27,8 @@ import androidx.compose.ui.unit.dp
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.animation.*
 import com.piconemarc.personalaccountmanager.ui.theme.*
-import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationPopUpScreenModel
-import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationPopUpState
-import com.piconemarc.viewmodel.viewModel.test.AddOperationPopUpAction
-import com.piconemarc.viewmodel.viewModel.test.DI
+import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationScreenEvent
+import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationScreenViewState
 
 @Composable
 fun PAMBasePopUp(
@@ -114,17 +112,17 @@ fun PAMAddOperationPopUpLeftSideMenuIconPanel(isTransferOptionExpanded: Boolean,
         Column {
             PAMIconButton(
                 iconButton = PAMIconButtons.Operation,
-                onIconButtonClicked = { DI.store.dispatch(AddOperationPopUpAction.CollapseOptions) }
+                onIconButtonClicked = { AddOperationScreenEvent.collapseOptions() }
             )
             Spacer(modifier = Modifier.height(RegularMarge))
             PAMIconButton(
                 iconButton = PAMIconButtons.Payment,
-                onIconButtonClicked = { DI.store.dispatch(AddOperationPopUpAction.ExpandPaymentOption) }
+                onIconButtonClicked = { AddOperationScreenEvent.expandPaymentOption() }
             )
             Spacer(modifier = Modifier.height(RegularMarge))
             PAMIconButton(
                 iconButton = PAMIconButtons.Transfer,
-                onIconButtonClicked = { DI.store.dispatch(AddOperationPopUpAction.ExpandTransferOption) }
+                onIconButtonClicked = { AddOperationScreenEvent.expandTransferOption() }
             )
         }
     }
@@ -137,7 +135,7 @@ fun PAMBlackBackgroundTextFieldItem(
     textValue :String
 ) {
     val focusManager = LocalFocusManager.current
-    if (AddOperationPopUpScreenModel().getState() == AddOperationPopUpState.Idle)focusManager.clearFocus()
+    if (AddOperationScreenViewState.isPopUpExpanded)focusManager.clearFocus()
     Column(modifier = Modifier.popUpClickableItemModifier()) {
         TextField(
             value = textValue,
@@ -165,11 +163,10 @@ fun PAMAmountTextFieldItem(
     title: String,
     onTextChange: (text: String) -> Unit,
     amountValue : String,
-    screenModel: AddOperationPopUpScreenModel
 ) {
     val focusManager = LocalFocusManager.current
     val transition = pAMAmountTextFieldAnimation(amountValue)
-    if (!screenModel.getState().isExpanded)focusManager.clearFocus()
+    if (!AddOperationScreenViewState.isPopUpExpanded)focusManager.clearFocus()
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -222,13 +219,13 @@ fun PAMPunctualOrRecurrentSwitchButton(
                 .padding(top = RegularMarge)
         ) {
             SwitchButton(
-                onButtonSelected = { DI.store.dispatch(AddOperationPopUpAction.CloseRecurrentOption) },
+                onButtonSelected = { AddOperationScreenEvent.collapseRecurrentOption() },
                 isSelected = !isRecurrentOptionExpanded,
                 title = stringResource(R.string.punctualSwitchButton),
                 switchShape = LeftSwitchShape
             )
             SwitchButton(
-                onButtonSelected = { DI.store.dispatch(AddOperationPopUpAction.ExpandRecurrentOption) },
+                onButtonSelected = { AddOperationScreenEvent.expandRecurrentOption() },
                 isSelected = isRecurrentOptionExpanded,
                 title = stringResource(R.string.recurrentSwitchButton),
                 switchShape = RightSwitchShape.copy(bottomStart = CornerSize(transition.leftBottomCornerSize)),
