@@ -1,12 +1,12 @@
 package com.piconemarc.viewmodel.viewModel.addOperationPopUp
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.piconemarc.model.entity.CategoryModel
 import com.piconemarc.model.entity.testCategory
 import com.piconemarc.viewmodel.viewModel.BaseScreenModel
 import com.piconemarc.viewmodel.viewModel.PAMUiEvent
-import com.piconemarc.viewmodel.viewModel.PAMUiState
 
 internal val addOperationPopUpState_: MutableState<AddOperationPopUpState> =
     mutableStateOf(AddOperationPopUpState.Idle)
@@ -16,7 +16,6 @@ internal val addOperationPopUpIconMenuState_: MutableState<AddOperationPopUpStat
 
 internal val addOperationRecurrentOptionState_: MutableState<AddOperationPopUpState.RecurrentSwitchButtonState> =
     mutableStateOf(AddOperationPopUpState.RecurrentSwitchButtonState.Punctual)
-
 
 internal val selectedCategory_: MutableState<CategoryModel> =
     mutableStateOf(CategoryModel("Category"))
@@ -41,10 +40,6 @@ internal val beneficiaryAccount_ : MutableState<String> =
 
 
 class AddOperationPopUpScreenModel : BaseScreenModel() {
-    override val currentState: PAMUiState = getState()
-    override val getTargetState: (PAMUiState) -> Unit =
-        { addOperationPopUpState_.value = it as AddOperationPopUpState }
-
     //------------------------Event handler------------------------------------
     override fun onUiEvent(
         event: PAMUiEvent,
@@ -99,12 +94,13 @@ class AddOperationPopUpScreenModel : BaseScreenModel() {
 
     //-------------------------------icon menu option action-------------------------------------
     fun closeOption() {
+        Log.i("TAG", "closeOption: ${getState().isTransferExpanded}  ${getState().menuIconPopUpState}")
         onUiEvent(
             runBefore = {
                 addOperationRecurrentOptionState_.value =
                     AddOperationPopUpState.RecurrentSwitchButtonState.Punctual
             },
-            event = if (getState().menuIconPopUpState == AddOperationPopUpState.AddOperationPopUpMenuIconState.Transfer) {
+            event = if (getState().isTransferExpanded) {
                 AddOperationPopUpEvent.AddOperationPopUpMenuIconEvent.OnCloseAllOptions
             } else {
                 AddOperationPopUpEvent.AddOperationPopUpMenuIconEvent.OnPaymentOptionCollapse
@@ -114,7 +110,7 @@ class AddOperationPopUpScreenModel : BaseScreenModel() {
 
     fun openPaymentOption() {
         onUiEvent(
-            event = if (getState().menuIconPopUpState == AddOperationPopUpState.AddOperationPopUpMenuIconState.Transfer) {
+            event = if (getState().isTransferExpanded) {
                 AddOperationPopUpEvent.AddOperationPopUpMenuIconEvent.OnTransferOptionCollapse
             } else {
                 AddOperationPopUpEvent.AddOperationPopUpMenuIconEvent.OnPaymentOptionRequire
@@ -124,7 +120,7 @@ class AddOperationPopUpScreenModel : BaseScreenModel() {
 
     fun openTransferOption() {
         onUiEvent(
-            event = if (getState().menuIconPopUpState == AddOperationPopUpState.AddOperationPopUpMenuIconState.Operation) {
+            event = if (!getState().isPaymentExpanded) {
                 AddOperationPopUpEvent.AddOperationPopUpMenuIconEvent.OnOpenAllOptions
             } else {
                 AddOperationPopUpEvent.AddOperationPopUpMenuIconEvent.OnTransferOptionRequire
@@ -137,13 +133,9 @@ class AddOperationPopUpScreenModel : BaseScreenModel() {
         selectedCategory_.value = testCategory.filter { it.name == categoryName }[0]
     }
 
-    fun enterOperationName(name: String) {
-        operationName_.value = name
-    }
+    fun enterOperationName(name: String) { operationName_.value = name }
 
-    fun enterAmountValue(amount: String) {
-        operationAmount_.value = amount
-    }
+    fun enterAmountValue(amount: String) { operationAmount_.value = amount }
 
     //---------------------------------payment option actions----------------------------
     fun selectPunctualOption() {
@@ -158,23 +150,15 @@ class AddOperationPopUpScreenModel : BaseScreenModel() {
         )
     }
 
-    fun selectEndDateMonth(month : String) {
-        endDateMonth_.value = month
-    }
+    fun selectEndDateMonth(month : String) { endDateMonth_.value = month }
 
-    fun selectEndDateYear(year : String) {
-        endDateYear_.value = year
-    }
+    fun selectEndDateYear(year : String) { endDateYear_.value = year }
 
     //---------------------------Transfer option action-------------------------------------
 
-    fun selectSenderAccount(senderAccount : String) {
-        senderAccount_.value = senderAccount
-    }
+    fun selectSenderAccount(senderAccount : String) { senderAccount_.value = senderAccount }
 
-    fun selectBeneficiaryAccount(beneficiaryAccount :  String) {
-        beneficiaryAccount_.value = beneficiaryAccount
-    }
+    fun selectBeneficiaryAccount(beneficiaryAccount :  String) { beneficiaryAccount_.value = beneficiaryAccount }
 
     override fun getState(): AddOperationPopUpState = addOperationPopUpState_.value
 }

@@ -19,16 +19,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.piconemarc.model.entity.TEST_OPERATION_MODEL
-import com.piconemarc.personalaccountmanager.ui.popUp.PAMAddOperationPopUp
-import com.piconemarc.personalaccountmanager.ui.popUp.PAMDeleteOperationPopUp
+import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMAddOperationPopUp
+import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMDeleteOperationPopUp
 import com.piconemarc.personalaccountmanager.ui.theme.PersonalAccountManagerTheme
 import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationPopUpScreenModel
 import com.piconemarc.viewmodel.viewModel.deletePopUp.ConfirmDeleteOperationPopUpScreenModel
+import com.piconemarc.viewmodel.viewModel.test.AddOperationPopUpAction
+import com.piconemarc.viewmodel.viewModel.test.DI
 
 class MainActivity : ComponentActivity() {
 
-    private var addOperationPopUpScreenModel: AddOperationPopUpScreenModel
-    private var deleteOperationPopUpScreenModel : ConfirmDeleteOperationPopUpScreenModel
+    private val addOperationPopUpScreenModel: AddOperationPopUpScreenModel
+    private val deleteOperationPopUpScreenModel : ConfirmDeleteOperationPopUpScreenModel
 
     init {
         instance = this
@@ -51,6 +53,9 @@ class MainActivity : ComponentActivity() {
             PersonalAccountManagerTheme {
                 val testList by remember {
                     mutableStateOf(TEST_OPERATION_MODEL)
+                }
+                DI.store.add {
+
                 }
                 Surface(
                     color = MaterialTheme.colors.secondary
@@ -76,7 +81,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
-                        Button(onClick = { addOperationPopUpScreenModel.expand() }) {
+                        Button(onClick = { DI.store.dispatch(action = AddOperationPopUpAction.Init) }) {
                             Text(text = "add operation")
                         }
                     }

@@ -8,6 +8,9 @@ import com.piconemarc.viewmodel.viewModel.PAMUiState
 
 sealed class AddOperationPopUpState : PAMUiState {
     open val isExpanded = false
+    open val isPaymentExpanded = false
+    open val isTransferExpanded = false
+    open val isRecurrentOptionExpanded = false
     open val popUpTitle = "Operation"
     open val operation = OperationModel()
     open val category by selectedCategory_
@@ -20,6 +23,7 @@ sealed class AddOperationPopUpState : PAMUiState {
     open val senderAccount by senderAccount_
     open val beneficiaryAccount by beneficiaryAccount_
     val allCategories: List<String> = mapAllCategoriesToStringList()
+    open val menuIconSelectorPosition = 0f
 
 
     object Idle : AddOperationPopUpState() {
@@ -46,17 +50,24 @@ sealed class AddOperationPopUpState : PAMUiState {
 
         object Payment : AddOperationPopUpMenuIconState() {
             override val popUpTitle: String = "Payment"
+            override val isPaymentExpanded: Boolean = true
+            override val menuIconSelectorPosition = 58f
         }
 
         object Transfer : AddOperationPopUpMenuIconState() {
             override val popUpTitle: String = "Transfer"
+            override val isPaymentExpanded: Boolean = true
+            override val isTransferExpanded: Boolean = true
+            override val menuIconSelectorPosition = 116f
         }
     }
 
     sealed class RecurrentSwitchButtonState : AddOperationPopUpState() {
         override val isExpanded = true
 
-        object Recurrent : RecurrentSwitchButtonState()
+        object Recurrent : RecurrentSwitchButtonState(){
+            override val isRecurrentOptionExpanded = true
+        }
 
         object Punctual : RecurrentSwitchButtonState()
     }

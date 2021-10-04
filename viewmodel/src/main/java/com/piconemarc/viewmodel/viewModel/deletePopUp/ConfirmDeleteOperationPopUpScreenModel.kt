@@ -15,10 +15,6 @@ private val operationModel_: MutableState<OperationModel> =
     mutableStateOf(OperationModel())
 
 class ConfirmDeleteOperationPopUpScreenModel : BaseScreenModel() {
-    override val currentState: PAMUiState = getState()
-    override val getTargetState: (PAMUiState) -> Unit = {
-        deletePopUpScreenState.value = it as DeleteOperationPopUpState
-    }
 
     fun expand(operationModel: OperationModel) {
         onUiEvent(
@@ -32,6 +28,7 @@ class ConfirmDeleteOperationPopUpScreenModel : BaseScreenModel() {
     fun deleteOperation() { onUiEvent(DeletePopUpEvent.OnDelete) }
 
     override fun getState(): DeleteOperationPopUpState = deletePopUpScreenState.value
+
     override fun onUiEvent(
         event: PAMUiEvent,
         runBefore: () -> Unit,

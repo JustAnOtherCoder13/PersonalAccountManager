@@ -67,8 +67,8 @@ fun pAMBasePopUpEnterExitAnimation(isExpended: Boolean): PAMUiDataAnimations.Bas
 
 
 @Composable
-fun pAMAddOperationPopUpIconMenuPanelSelectorAnimation(addOperationPopUpMenuIconState: AddOperationPopUpState.AddOperationPopUpMenuIconState):PAMUiDataAnimations.AddOperationPopUpIconMenuPanelAnimationData{
-    val transition = updateTransition(targetState = addOperationPopUpMenuIconState, label = "")
+fun pAMAddOperationPopUpIconMenuPanelSelectorAnimation(expandedOptions: Pair<Boolean, Boolean>): PAMUiDataAnimations.AddOperationPopUpIconMenuPanelAnimationData {
+    val transition = updateTransition(targetState = expandedOptions, label = "")
 
     val offset = transition.animateOffset(
         transitionSpec = {
@@ -79,11 +79,15 @@ fun pAMAddOperationPopUpIconMenuPanelSelectorAnimation(addOperationPopUpMenuIcon
         },
         label = ""
     ) {
-        when(it){
-            AddOperationPopUpState.AddOperationPopUpMenuIconState.Payment-> Offset(0f, 58f)
-            AddOperationPopUpState.AddOperationPopUpMenuIconState.Transfer->  Offset(0f, 116f)
-            else -> Offset(0f,0f)
-        }
+
+        Offset(
+            0f, if (it.second && it.first) {
+                116f
+            } else if (it.first) {
+                58f
+            }  else
+                0f
+        )
     }
 
     return remember(transition) {
@@ -94,27 +98,21 @@ fun pAMAddOperationPopUpIconMenuPanelSelectorAnimation(addOperationPopUpMenuIcon
 }
 
 @Composable
-fun pAMRecurrentOptionButtonAnimation(screenModel: AddOperationPopUpScreenModel): PAMUiDataAnimations.AddOperationPopUpRecurrentButtonTransitionData {
-    val transition = updateTransition(targetState = screenModel.getState().recurrentSwitchButtonState, label = "")
+fun pAMRecurrentOptionButtonAnimation(isRecurrentOptionExpanded: Boolean): PAMUiDataAnimations.AddOperationPopUpRecurrentButtonTransitionData {
+    val transition = updateTransition(targetState = isRecurrentOptionExpanded, label = "")
     val buttonSize = transition.animateDp(
         transitionSpec = {
-            tween(delayMillis = if (screenModel.getState().recurrentSwitchButtonState != AddOperationPopUpState.RecurrentSwitchButtonState.Punctual) 120 else 0)
+            tween(delayMillis = if (isRecurrentOptionExpanded) 0 else 120)
         }, label = ""
     ) {
-        when (it) {
-            AddOperationPopUpState.RecurrentSwitchButtonState.Punctual -> RegularMarge
-            AddOperationPopUpState.RecurrentSwitchButtonState.Recurrent -> BigMarge
-        }
+        if (it) BigMarge else RegularMarge
     }
     val leftBottomCornerSize = transition.animateDp(
         transitionSpec = {
-            tween(delayMillis = if (screenModel.getState().recurrentSwitchButtonState != AddOperationPopUpState.RecurrentSwitchButtonState.Recurrent) 120 else 0)
+            tween(delayMillis = if (isRecurrentOptionExpanded) 120 else 0)
         }, label = ""
     ) {
-        when (it) {
-            AddOperationPopUpState.RecurrentSwitchButtonState.Punctual -> XlMarge
-            AddOperationPopUpState.RecurrentSwitchButtonState.Recurrent -> 0.dp
-        }
+        if (it) 0.dp else XlMarge
     }
 
     return remember(transition) {
@@ -126,21 +124,23 @@ fun pAMRecurrentOptionButtonAnimation(screenModel: AddOperationPopUpScreenModel)
 }
 
 @Composable
-fun pAMExpandCollapseTransferPanelAnimation(): State<Dp> = animateDpAsState(
-targetValue = if (AddOperationPopUpScreenModel().getState().menuIconPopUpState == AddOperationPopUpState.AddOperationPopUpMenuIconState.Transfer) 130.dp else 0.dp,
-    animationSpec = spring(
-        dampingRatio = Spring.DampingRatioLowBouncy,
-        stiffness = Spring.StiffnessLow
+fun pAMExpandCollapseTransferPanelAnimation(isTransferOptionExpanded: Boolean): State<Dp> =
+    animateDpAsState(
+        targetValue = if (isTransferOptionExpanded) 130.dp else 0.dp,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioLowBouncy,
+            stiffness = Spring.StiffnessLow
+        )
     )
-)
 
 @Composable
 fun pAMExpandCollapsePaymentAnimation(
-    screenModel: AddOperationPopUpScreenModel
+    isPaymentOptionExpanded: Boolean,
+    isRecurrentOptionExpanded: Boolean
 ): State<Dp> = animateDpAsState(
-    targetValue = if (screenModel.getState().menuIconPopUpState != AddOperationPopUpState.AddOperationPopUpMenuIconState.Operation) {
-        if (screenModel.getState().recurrentSwitchButtonState == AddOperationPopUpState.RecurrentSwitchButtonState.Punctual) 90.dp
-        else 190.dp
+    targetValue = if (isPaymentOptionExpanded) {
+        if (isRecurrentOptionExpanded) 190.dp
+        else 90.dp
     } else 0.dp,
     animationSpec = spring(
         dampingRatio = Spring.DampingRatioLowBouncy,
@@ -197,7 +197,7 @@ fun getAmountState(amount: String): AmountTextFieldState {
     }
 }
 
-enum class AmountTextFieldState{
+enum class AmountTextFieldState {
     NEGATIVE,
     POSITIVE,
     NAN
@@ -218,7 +218,7 @@ object PAMUiDataAnimations : PAMUiDataAnimation {
 
     class AddOperationPopUpIconMenuPanelAnimationData(
         offset: State<Offset>
-    ):PAMUiDataAnimation{
+    ) : PAMUiDataAnimation {
         val offset by offset
     }
 
