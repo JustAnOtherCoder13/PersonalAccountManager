@@ -11,12 +11,10 @@ import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.component.*
 import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationScreenEvent
 import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationScreenViewState
-import com.piconemarc.viewmodel.viewModel.addOperationPopUp.observeAddPopUpValues
 
 @SuppressLint("ModifierParameter")
 @Composable
 fun PAMAddOperationPopUp() {
-    observeAddPopUpValues()
 
     //Pop up Body --------------------------------------------
     PAMBasePopUp(
@@ -33,9 +31,9 @@ fun PAMAddOperationPopUp() {
     ) {
         //category drop down -----------------------------------
         PAMBaseDropDownMenuWithBackground(
-            selectedItem = "",
-            itemList = listOf(),
-            onItemSelected = { }
+            selectedItem = AddOperationScreenViewState.selectedCategoryName,
+            itemList = AddOperationScreenViewState.operationCategories,
+            onItemSelected = {category -> AddOperationScreenEvent.selectCategory(category) }
         )
         // operation and amount text field--------------------------
         Column(

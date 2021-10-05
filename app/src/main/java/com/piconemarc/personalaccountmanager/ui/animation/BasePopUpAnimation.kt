@@ -15,8 +15,6 @@ import com.piconemarc.personalaccountmanager.ui.theme.BigMarge
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
 import com.piconemarc.personalaccountmanager.ui.theme.XlMarge
 import com.piconemarc.viewmodel.viewModel.PAMUiDataAnimation
-import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationPopUpScreenModel
-import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationPopUpState
 
 @Composable
 fun pAMBasePopUpEnterExitAnimation(isExpended: Boolean): PAMUiDataAnimations.BasePopUpAnimationData {

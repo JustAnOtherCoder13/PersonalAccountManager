@@ -16,8 +16,6 @@ interface Store<S : PAMUiState> {
     fun remove(subscriber: StoreSubscriber<S>): Boolean
 }
 
-
-
 class DefaultStore<S : PAMUiState>(
     initialState: S,
     private val reducer: Reducer<S>
@@ -36,6 +34,7 @@ class DefaultStore<S : PAMUiState>(
     }
 
     override fun add(subscriber: StoreSubscriber<S>): Boolean = subscribers.add(subscriber)
+
     override fun remove(subscriber: StoreSubscriber<S>): Boolean = subscribers.remove(subscriber)
 }
 

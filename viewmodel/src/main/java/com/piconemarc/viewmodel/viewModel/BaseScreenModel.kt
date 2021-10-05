@@ -1,5 +1,7 @@
 package com.piconemarc.viewmodel.viewModel
 
+import com.piconemarc.core.domain.PAMUiState
+
 abstract class BaseScreenModel() {
 
     abstract fun getState(): PAMUiState
