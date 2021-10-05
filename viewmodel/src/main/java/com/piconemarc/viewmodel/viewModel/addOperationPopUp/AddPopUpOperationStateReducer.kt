@@ -4,6 +4,8 @@ import com.piconemarc.core.domain.AddOperationPopUpGlobalState
 import com.piconemarc.core.domain.AddOperationPopUpOperationOptionState
 import com.piconemarc.core.domain.AddOperationPopUpPaymentOptionState
 import com.piconemarc.core.domain.AddOperationPopUpTransferOptionState
+import com.piconemarc.model.entity.CategoryModel
+import com.piconemarc.model.entity.OperationModel
 import com.piconemarc.viewmodel.viewModel.DefaultStore
 import com.piconemarc.viewmodel.viewModel.Reducer
 import com.piconemarc.viewmodel.viewModel.UiAction
@@ -18,14 +20,22 @@ internal sealed class AddOperationPopUpAction : UiAction {
     object ExpandRecurrentOption : AddOperationPopUpAction()
     object CloseRecurrentOption : AddOperationPopUpAction()
     object ClosePopUp : AddOperationPopUpAction()
+    data class SelectCategory(val category : CategoryModel) : AddOperationPopUpAction()
+    data class FillOperation(val operation : OperationModel) : AddOperationPopUpAction()
 }
 
 //-------------------------------------------------------------------REDUCERS-----------------------
 
 private val OperationStateReducer: Reducer<AddOperationPopUpOperationOptionState> = { old, action ->
     when (action) {
-        is AddOperationPopUpAction.Init -> old.copy(isPopUpExpanded = true)
+        is AddOperationPopUpAction.Init -> old.copy(
+            isPopUpExpanded = true,
+            operationCategories = listOf(CategoryModel("category 1"), CategoryModel("category 2")),
+            selectedCategory = CategoryModel("Category")
+        )
         is AddOperationPopUpAction.ClosePopUp -> old.copy(isPopUpExpanded = false)
+        is AddOperationPopUpAction.SelectCategory -> old.copy(selectedCategory = action.category )
+        is AddOperationPopUpAction.FillOperation -> old.copy(operationName = action.operation.operationName, operationAmount = action.operation.operationAmount.toString())
         else -> old
     }
 }

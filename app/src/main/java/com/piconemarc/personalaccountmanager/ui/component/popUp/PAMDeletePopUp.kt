@@ -1,5 +1,6 @@
 package com.piconemarc.personalaccountmanager.ui.component.popUp
 
+/*
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -39,4 +40,4 @@ fun PAMDeleteOperationPopUp(screenModel : ConfirmDeleteOperationPopUpScreenModel
                 }
             }
         )
-}
+}*/

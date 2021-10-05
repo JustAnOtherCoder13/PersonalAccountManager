@@ -8,7 +8,7 @@ interface PAMUiState
 data class AddOperationPopUpOperationOptionState(
     val isPopUpExpanded: Boolean = false,
     val operationCategories: List<CategoryModel> = listOf(),
-    val selectedCategory: String = "",
+    val selectedCategory: CategoryModel = CategoryModel(),
     val operationName: String = "",
     val operationAmount: String = "",
 ) : PAMUiState

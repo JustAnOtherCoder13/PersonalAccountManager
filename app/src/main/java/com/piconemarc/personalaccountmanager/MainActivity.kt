@@ -2,6 +2,7 @@ package com.piconemarc.personalaccountmanager
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -20,18 +21,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.piconemarc.model.entity.TEST_OPERATION_MODEL
 import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMAddOperationPopUp
-import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMDeleteOperationPopUp
 import com.piconemarc.personalaccountmanager.ui.theme.PersonalAccountManagerTheme
 import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationScreenEvent
-import com.piconemarc.viewmodel.viewModel.deletePopUp.ConfirmDeleteOperationPopUpScreenModel
+import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationScreenViewState
 
 class MainActivity : ComponentActivity() {
 
-    private val deleteOperationPopUpScreenModel : ConfirmDeleteOperationPopUpScreenModel
+   // private val deleteOperationPopUpScreenModel : ConfirmDeleteOperationPopUpScreenModel
 
     init {
         instance = this
-        deleteOperationPopUpScreenModel =  ConfirmDeleteOperationPopUpScreenModel()
+        //deleteOperationPopUpScreenModel =  ConfirmDeleteOperationPopUpScreenModel()
     }
 
     companion object {
@@ -66,9 +66,9 @@ class MainActivity : ComponentActivity() {
                                     }
                                     Button(
                                         onClick = {
-                                            deleteOperationPopUpScreenModel.expand(
+                                           /* deleteOperationPopUpScreenModel.expand(
                                                 operationModel = item
-                                            )
+                                            )*/
                                         }
                                     ) { Text(text = "Click") }
                                 }
@@ -78,7 +78,7 @@ class MainActivity : ComponentActivity() {
                             Text(text = "add operation")
                         }
                     }
-                    PAMDeleteOperationPopUp(deleteOperationPopUpScreenModel)
+                    //PAMDeleteOperationPopUp(deleteOperationPopUpScreenModel)
                     PAMAddOperationPopUp()
                 }
             }

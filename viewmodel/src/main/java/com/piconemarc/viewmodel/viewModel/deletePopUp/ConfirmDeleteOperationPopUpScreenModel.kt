@@ -1,12 +1,13 @@
-package com.piconemarc.viewmodel.viewModel.deletePopUp
 
+package com.piconemarc.viewmodel.viewModel.deletePopUp
+/*
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import com.piconemarc.core.domain.PAMUiState
 import com.piconemarc.model.entity.OperationModel
 import com.piconemarc.viewmodel.viewModel.BaseScreenModel
 import com.piconemarc.viewmodel.viewModel.PAMUiEvent
-import com.piconemarc.viewmodel.viewModel.PAMUiState
 
 
 private val deletePopUpScreenState: MutableState<DeleteOperationPopUpState> =
@@ -76,4 +77,4 @@ sealed class DeletePopUpEvent(
         DeleteOperationPopUpState.Expand,
         DeleteOperationPopUpState.Idle
     )
-}
+}*/
