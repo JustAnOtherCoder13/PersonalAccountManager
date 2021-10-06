@@ -42,8 +42,8 @@ fun PAMAddOperationPopUp() {
         ) {
             PAMBlackBackgroundTextFieldItem(
                 title = stringResource(R.string.operationName),
-                onTextChange = { },
-                textValue = "",
+                onTextChange = {operationName-> AddOperationScreenEvent.fillOperationName(operationName) },
+                textValue = AddOperationScreenViewState.operationName,
             )
             PAMAmountTextFieldItem(
                 title = stringResource(R.string.operationAmount),

@@ -2,7 +2,6 @@ package com.piconemarc.personalaccountmanager
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -19,11 +18,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import com.piconemarc.model.entity.TEST_OPERATION_MODEL
+import com.piconemarc.model.entity.GeneratedOperation
 import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMAddOperationPopUp
 import com.piconemarc.personalaccountmanager.ui.theme.PersonalAccountManagerTheme
 import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationScreenEvent
-import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationScreenViewState
 
 class MainActivity : ComponentActivity() {
 
@@ -48,7 +46,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             PersonalAccountManagerTheme {
                 val testList by remember {
-                    mutableStateOf(TEST_OPERATION_MODEL)
+                    mutableStateOf(GeneratedOperation)
                 }
                 Surface(
                     color = MaterialTheme.colors.secondary
@@ -61,8 +59,8 @@ class MainActivity : ComponentActivity() {
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
                                     Column {
-                                        Text(text = item.operationName)
-                                        Text(text = item.operationAmount.toString())
+                                        Text(text = item.name)
+                                        Text(text = item.amount.toString())
                                     }
                                     Button(
                                         onClick = {

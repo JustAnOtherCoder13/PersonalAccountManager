@@ -75,6 +75,14 @@ object AddOperationScreenEvent {
             )
         )
     }
+
+    fun fillOperationName(operationName : String){
+        DI.addOperationPopUpStore.dispatch(
+            AddOperationPopUpAction.FillOperationName(
+                operationName
+            )
+        )
+    }
 }
 
 private val subscriber: StoreSubscriber<AddOperationPopUpGlobalState> = {
@@ -106,6 +114,3 @@ private fun mapCategoriesToString(it: AddOperationPopUpGlobalState): MutableList
 
 private fun getCategoryForName(selectedCategory: String) =
     allCategories_.value.find { selectedCategory == it.name } ?: selectedCategory_.value
-
-
-
