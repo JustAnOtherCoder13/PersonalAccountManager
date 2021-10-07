@@ -1,13 +1,20 @@
 package com.piconemarc.model.entity
 
-val TEST_OPERATION_MODEL : MutableList<OperationModel> = mutableListOf(
-    OperationModel("first", 10.00),
-    OperationModel("second",50.00),
-    OperationModel("third",-40.00)
+
+val GeneratedAccount : MutableList<AccountModel> =  mutableListOf(
+    AccountModel(id = 1,name = "myName1"),
+    AccountModel(id = 2,name = "myName2"),
+    AccountModel(id = 3,name = "myName3"),
 )
 
-val testCategory : MutableList<CategoryModel> = mutableListOf(
-    CategoryModel("cat1"),
-    CategoryModel("cat2"),
-    CategoryModel("cat3")
+val GeneratedOperation : MutableList<OperationModel> = mutableListOf(
+    OperationModel(id = 1,name = "first", amount = 10.00),
+    OperationModel(id = 2,name = "second",amount = 50.00),
+    OperationModel(id = 3,name = "third",amount = -40.00)
+)
+
+val GeneratedCategory : MutableList<CategoryModel> = mutableListOf(
+    CategoryModel(id = 1,name = "cat1"),
+    CategoryModel(id = 2,name = "cat2"),
+    CategoryModel(id = 3,name = "cat3")
 )

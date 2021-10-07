@@ -1,6 +1,8 @@
 package com.piconemarc.viewmodel.viewModel.addOperationPopUp
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import com.piconemarc.core.domain.AddOperationPopUpGlobalState
 import com.piconemarc.model.entity.AccountModel
 import com.piconemarc.model.entity.CategoryModel
@@ -20,6 +22,9 @@ private val operationAmount_: MutableState<String> = mutableStateOf("")
 private val allCategories_: MutableState<List<CategoryModel>> = mutableStateOf(listOf())
 private val selectedCategory_: MutableState<CategoryModel> = mutableStateOf(CategoryModel())
 private val operation_: MutableState<OperationModel> = mutableStateOf(OperationModel())
+
+
+
 
 object AddOperationScreenViewState {
     val isPopUpExpanded by isPoUpExpanded_
@@ -75,6 +80,14 @@ object AddOperationScreenEvent {
             )
         )
     }
+
+    fun fillOperationName(operationName : String){
+        DI.addOperationPopUpStore.dispatch(
+            AddOperationPopUpAction.FillOperationName(
+                operationName
+            )
+        )
+    }
 }
 
 private val subscriber: StoreSubscriber<AddOperationPopUpGlobalState> = {
@@ -106,6 +119,3 @@ private fun mapCategoriesToString(it: AddOperationPopUpGlobalState): MutableList
 
 private fun getCategoryForName(selectedCategory: String) =
     allCategories_.value.find { selectedCategory == it.name } ?: selectedCategory_.value
-
-
-

@@ -3,7 +3,7 @@ package com.piconemarc.personalaccountmanager.ui.component.popUp
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -42,8 +42,8 @@ fun PAMAddOperationPopUp() {
         ) {
             PAMBlackBackgroundTextFieldItem(
                 title = stringResource(R.string.operationName),
-                onTextChange = { },
-                textValue = "",
+                onTextChange = {operationName-> AddOperationScreenEvent.fillOperationName(operationName) },
+                textValue = AddOperationScreenViewState.operationName,
             )
             PAMAmountTextFieldItem(
                 title = stringResource(R.string.operationAmount),
