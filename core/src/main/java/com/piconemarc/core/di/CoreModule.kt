@@ -8,6 +8,15 @@ import com.piconemarc.core.data.category.CategoryDaoImpl
 import com.piconemarc.core.data.category.CategoryRepository
 import com.piconemarc.core.data.operation.OperationDaoImpl
 import com.piconemarc.core.data.operation.OperationRepository
+import com.piconemarc.core.domain.interactor.account.AddNewAccountInteractor
+import com.piconemarc.core.domain.interactor.account.DeleteAccountInteractor
+import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
+import com.piconemarc.core.domain.interactor.category.AddNewCategoryInteractor
+import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
+import com.piconemarc.core.domain.interactor.operation.AddNewOperationInteractor
+import com.piconemarc.core.domain.interactor.operation.DeleteOperationInteractor
+import com.piconemarc.core.domain.interactor.operation.GetAllOperationsForAccountIdInteractor
+import com.piconemarc.core.domain.interactor.operation.GetAllOperationsInteractor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -65,5 +74,53 @@ class CoreModule {
 
     //------------------------------INTERACTORS----------------------------------
 
+    //ACCOUNT
+    @Provides
+    fun provideGetAllAccounts(accountRepository: AccountRepository) : GetAllAccountsInteractor{
+        return GetAllAccountsInteractor(accountRepository)
+    }
+
+    @Provides
+    fun provideAddNewAccount(accountRepository: AccountRepository) : AddNewAccountInteractor{
+        return AddNewAccountInteractor(accountRepository)
+    }
+
+    @Provides
+    fun provideDeleteAccount(accountRepository: AccountRepository) : DeleteAccountInteractor{
+        return DeleteAccountInteractor(accountRepository)
+    }
+
+    //CATEGORY
+    @Provides
+    fun provideGetAllCategories(categoryRepository: CategoryRepository) : GetAllCategoriesInteractor {
+        return GetAllCategoriesInteractor(categoryRepository)
+    }
+
+    @Provides
+    fun provideAddNewCategory(categoryRepository: CategoryRepository) : AddNewCategoryInteractor{
+        return AddNewCategoryInteractor(categoryRepository)
+    }
+
+    //Operation
+
+    @Provides
+    fun provideGetAllOperations(operationRepository: OperationRepository): GetAllOperationsInteractor{
+        return GetAllOperationsInteractor(operationRepository)
+    }
+
+    @Provides
+    fun provideGetAllOperationsForAccountId(operationRepository: OperationRepository):GetAllOperationsForAccountIdInteractor{
+        return GetAllOperationsForAccountIdInteractor(operationRepository)
+    }
+
+    @Provides
+    fun provideAddOperation(operationRepository: OperationRepository): AddNewOperationInteractor{
+        return AddNewOperationInteractor(operationRepository)
+    }
+
+    @Provides
+    fun provideDeleteOperation(operationRepository: OperationRepository) : DeleteOperationInteractor{
+        return DeleteOperationInteractor(operationRepository)
+    }
 
 }

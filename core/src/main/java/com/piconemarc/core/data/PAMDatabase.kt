@@ -1,12 +1,11 @@
 package com.piconemarc.core.data
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
+import androidx.room.*
 import com.piconemarc.core.data.account.AccountDao
 import com.piconemarc.core.data.category.CategoryDao
 import com.piconemarc.core.data.operation.OperationDao
+import com.piconemarc.core.domain.DateTypeConverter
 import com.piconemarc.core.domain.entityDTO.AccountDTO
 import com.piconemarc.core.domain.entityDTO.CategoryDTO
 import com.piconemarc.core.domain.entityDTO.OperationDTO
@@ -17,6 +16,7 @@ import com.piconemarc.core.domain.entityDTO.OperationDTO
     exportSchema = false
 )
 
+@TypeConverters(DateTypeConverter::class)
 abstract class PAMDatabase : RoomDatabase() {
 
     abstract fun accountDao(): AccountDao

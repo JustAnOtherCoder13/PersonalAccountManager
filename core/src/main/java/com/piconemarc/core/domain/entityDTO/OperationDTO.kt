@@ -6,7 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
 import androidx.room.PrimaryKey
 import com.piconemarc.core.domain.Constants.OPERATION_TABLE
-import com.piconemarc.model.entity.OperationModel
+import java.util.*
 
 
 @Entity(
@@ -24,16 +24,17 @@ import com.piconemarc.model.entity.OperationModel
     tableName = OPERATION_TABLE,
 
 )
-data class OperationDTO(val operationModel: OperationModel) {
+data class OperationDTO(
     @PrimaryKey
-    val id : Long = operationModel.id
-    val name : String = operationModel.name
-    val amount : Double = operationModel.amount
-    val endDateMonth : String = operationModel.endDate.month
-    val endDateYear : String = operationModel.endDate.year
-    val isRecurrent : Boolean = operationModel.isRecurrent
+    var id : Long = 0,
+    val name : String = "",
+    val amount : Double = 0.0,
+    val endDateMonth : String = "",
+    val endDateYear : String = "",
+    val isRecurrent : Boolean = false,
     @ColumnInfo(index = true)
-    val accountId : Long = operationModel.AccountId
+    val accountId : Long = 0,
     @ColumnInfo(index = true)
-    val categoryId : Long = operationModel.CategoryId
-}
+    val categoryId : Long = 0,
+    val emitDate : Date = Date()
+)

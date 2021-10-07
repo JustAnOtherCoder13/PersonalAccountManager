@@ -1,14 +1,14 @@
 package com.piconemarc.core.domain.entityDTO
 
+import android.graphics.Color
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.piconemarc.core.domain.Constants.CATEGORY_TABLE
-import com.piconemarc.model.entity.CategoryModel
 
 @Entity(tableName = CATEGORY_TABLE)
-data class CategoryDTO (val categoryModel: CategoryModel)  {
+data class CategoryDTO (
     @PrimaryKey
-    val id : Long = categoryModel.id
-    val name : String = categoryModel.name
-    val color : Int = categoryModel.color
-}
+    var id : Long = 0,
+    val name : String = "",
+    val color : Int = Color.TRANSPARENT
+)

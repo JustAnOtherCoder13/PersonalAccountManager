@@ -8,9 +8,9 @@ data class OperationModel(
     val amount : Double = 0.0,
     val endDate : EndDate = EndDate(),
     val isRecurrent : Boolean = false,
-    val AccountId : Long = 0,
-    val CategoryId : Long = 0,
-    val EmitDate : Date = Calendar.getInstance().time
+    val account : AccountModel = AccountModel(),
+    val category : CategoryModel = CategoryModel(),
+    val emitDate : Date = Calendar.getInstance().time
 )
 data class EndDate(
     val month : String = "",
