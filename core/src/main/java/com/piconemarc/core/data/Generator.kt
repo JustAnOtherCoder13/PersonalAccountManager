@@ -1,8 +1,10 @@
 package com.piconemarc.core.data
 
+import com.piconemarc.core.domain.Constants.TODAY
 import com.piconemarc.core.domain.entityDTO.AccountDTO
 import com.piconemarc.core.domain.entityDTO.CategoryDTO
 import com.piconemarc.core.domain.entityDTO.OperationDTO
+import java.util.*
 
 object Generator {
 
@@ -16,9 +18,9 @@ private val ACCOUNTS : List<AccountDTO> =  listOf(
     }
 
 private val OPERATIONS : List<OperationDTO> = listOf(
-   OperationDTO(id = 1,name = "first", amount = 10.00),
-   OperationDTO(id = 2,name = "second",amount = 50.00),
-   OperationDTO(id = 3,name = "third",amount = -40.00)
+   OperationDTO(id = 1,name = "first", amount = 10.00, emitDate = TODAY),
+   OperationDTO(id = 2,name = "second",amount = 50.00, emitDate = TODAY),
+   OperationDTO(id = 3,name = "third",amount = -40.00, emitDate = TODAY)
 )
     fun generateOperations() : MutableList<OperationDTO>{
         return OPERATIONS.toMutableList()

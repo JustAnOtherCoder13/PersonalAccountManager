@@ -4,6 +4,8 @@ import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,8 +23,13 @@ import androidx.compose.ui.Modifier
 import com.piconemarc.model.entity.GeneratedOperation
 import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMAddOperationPopUp
 import com.piconemarc.personalaccountmanager.ui.theme.PersonalAccountManagerTheme
+import com.piconemarc.viewmodel.viewModel.TestVM
 import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationScreenEvent
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.scopes.ActivityScoped
 
+@ActivityScoped
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
    // private val deleteOperationPopUpScreenModel : ConfirmDeleteOperationPopUpScreenModel
@@ -41,7 +48,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        val testVM : TestVM by viewModels()
 
         setContent {
             PersonalAccountManagerTheme {
@@ -72,7 +79,9 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
-                        Button(onClick = { AddOperationScreenEvent.initPopUp() }) {
+                        Button(onClick = {
+                            testVM.getAllCategories()
+                            AddOperationScreenEvent.initPopUp() }) {
                             Text(text = "add operation")
                         }
                     }

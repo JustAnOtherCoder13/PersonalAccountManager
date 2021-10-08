@@ -36,5 +36,5 @@ data class OperationDTO(
     val accountId : Long = 0,
     @ColumnInfo(index = true)
     val categoryId : Long = 0,
-    val emitDate : Date = Date()
+    val emitDate : Date? = Date()
 )

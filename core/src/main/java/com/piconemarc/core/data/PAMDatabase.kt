@@ -9,6 +9,7 @@ import com.piconemarc.core.data.category.CategoryDao
 import com.piconemarc.core.data.operation.OperationDao
 import com.piconemarc.core.domain.Constants.ACCOUNT_TABLE
 import com.piconemarc.core.domain.Constants.CATEGORY_TABLE
+import com.piconemarc.core.domain.Constants.OPERATION_TABLE
 import com.piconemarc.core.domain.DateTypeConverter
 import com.piconemarc.core.domain.entityDTO.AccountDTO
 import com.piconemarc.core.domain.entityDTO.CategoryDTO
@@ -89,9 +90,10 @@ abstract class PAMDatabase : RoomDatabase() {
                     contentValues.put("endDateYear", operation.endDateYear)
                     contentValues.put("accountId", operation.accountId)
                     contentValues.put("categoryId",operation.categoryId)
+                    contentValues.put("categoryId",operation.emitDate?.time)
 
 
-                    db.insert(CATEGORY_TABLE, OnConflictStrategy.IGNORE, contentValues)
+                    db.insert(OPERATION_TABLE, OnConflictStrategy.IGNORE, contentValues)
                 }
             }
 

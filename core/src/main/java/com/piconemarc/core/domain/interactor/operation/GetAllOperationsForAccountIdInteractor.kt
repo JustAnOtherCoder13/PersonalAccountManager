@@ -7,6 +7,7 @@ import com.piconemarc.model.entity.EndDate
 import com.piconemarc.model.entity.OperationModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.util.*
 import javax.inject.Inject
 
 class GetAllOperationsForAccountIdInteractor @Inject constructor(private val operationRepository: OperationRepository) {
@@ -39,7 +40,7 @@ class GetAllOperationsForAccountIdInteractor @Inject constructor(private val ope
                     isRecurrent = operationDTO.isRecurrent,
                     category = allCategories.find { categoryModel -> categoryModel.id == operationDTO.categoryId }
                         ?: CategoryModel(),
-                    emitDate = operationDTO.emitDate
+                    emitDate = operationDTO.emitDate ?: Date()
                 )
             )
         }
