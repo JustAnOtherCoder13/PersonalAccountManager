@@ -5,11 +5,9 @@ import com.piconemarc.core.domain.entityDTO.CategoryDTO
 import com.piconemarc.model.entity.CategoryModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class GetAllCategoriesInteractor(private val categoryRepository: CategoryRepository) :
-    BaseCategoryInteractor(
-        categoryRepository
-    ) {
+class GetAllCategoriesInteractor @Inject constructor(private val categoryRepository: CategoryRepository) {
 
     fun getAllCategories(): Flow<List<CategoryModel>> = categoryRepository.getAllCategories().map {
         mapAllCategoriesDTOtoCategoryModel(it)

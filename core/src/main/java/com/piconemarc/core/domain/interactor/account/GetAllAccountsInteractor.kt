@@ -5,11 +5,9 @@ import com.piconemarc.core.domain.entityDTO.AccountDTO
 import com.piconemarc.model.entity.AccountModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class GetAllAccountsInteractor(private val accountRepository: AccountRepository) :
-    BaseAccountInteractor(
-        accountRepository
-    ) {
+class GetAllAccountsInteractor @Inject constructor(private val accountRepository: AccountRepository) {
 
     fun getAllAccounts(): Flow<List<AccountModel>> = accountRepository.getAllAccounts().map {
         mapAccountDtoToAccountModel(it)
@@ -21,7 +19,7 @@ class GetAllAccountsInteractor(private val accountRepository: AccountRepository)
 
     private fun mapAccountDtoToAccountModel(accountDtoList: List<AccountDTO>): List<AccountModel> {
         val accountModelList = mutableListOf<AccountModel>()
-        accountDtoList.forEachIndexed {index, accountDTO ->
+        accountDtoList.forEachIndexed { index, accountDTO ->
             accountModelList.add(
                 index = index,
                 element = AccountModel(
@@ -34,7 +32,7 @@ class GetAllAccountsInteractor(private val accountRepository: AccountRepository)
         return accountModelList
     }
 
-    private fun mapAccountDtoToString(accountDtoList: List<AccountDTO>) : List<String>{
+    private fun mapAccountDtoToString(accountDtoList: List<AccountDTO>): List<String> {
         val accountStringList = mutableListOf<String>()
         accountDtoList.forEach {
             accountStringList.add(it.name)

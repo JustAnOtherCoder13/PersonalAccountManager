@@ -7,11 +7,9 @@ import com.piconemarc.model.entity.EndDate
 import com.piconemarc.model.entity.OperationModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class GetAllOperationsInteractor(private val operationRepository: OperationRepository) :
-    BaseOperationInteractor(
-        operationRepository
-    ) {
+class GetAllOperationsInteractor @Inject constructor(private val operationRepository: OperationRepository) {
 
     fun getAllOperations(allCategories: List<CategoryModel>): Flow<List<OperationModel>> =
         operationRepository.getAllOperations().map {
