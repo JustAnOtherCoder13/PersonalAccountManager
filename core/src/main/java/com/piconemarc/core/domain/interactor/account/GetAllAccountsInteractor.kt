@@ -3,6 +3,7 @@ package com.piconemarc.core.domain.interactor.account
 import com.piconemarc.core.data.account.AccountRepository
 import com.piconemarc.core.domain.entityDTO.AccountDTO
 import com.piconemarc.model.entity.AccountModel
+import com.piconemarc.model.entity.DataUiModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -13,31 +14,23 @@ class GetAllAccountsInteractor @Inject constructor(private val accountRepository
         mapAccountDtoToAccountModel(it)
     }
 
-    fun getAllAccountToStringList(): Flow<List<String>> = accountRepository.getAllAccounts().map {
-        mapAccountDtoToString(it)
-    }
+    fun getAllAccountToDataUiModelList(): Flow<List<DataUiModel>> =
+        accountRepository.getAllAccounts().map {
+            mapAccountDtoToDataUiModel(it)
+        }
 
     private fun mapAccountDtoToAccountModel(accountDtoList: List<AccountDTO>): List<AccountModel> {
-        val accountModelList = mutableListOf<AccountModel>()
-        accountDtoList.forEachIndexed { index, accountDTO ->
-            accountModelList.add(
-                index = index,
-                element = AccountModel(
-                    id = accountDTO.id,
-                    name = accountDTO.name,
-                    accountBalance = accountDTO.accountBalance
-                )
+        return accountDtoList.map {
+            AccountModel(
+                id = it.id,
+                name = it.name,
+                accountBalance = it.accountBalance
             )
-        }
-        return accountModelList
+        }.toMutableList()
     }
 
-    private fun mapAccountDtoToString(accountDtoList: List<AccountDTO>): List<String> {
-        val accountStringList = mutableListOf<String>()
-        accountDtoList.forEach {
-            accountStringList.add(it.name)
-        }
-        return accountStringList
+    private fun mapAccountDtoToDataUiModel(accountDtoList: List<AccountDTO>): List<DataUiModel> {
+        return accountDtoList.map { DataUiModel(it.name, it.id) }
     }
 
 }

@@ -9,31 +9,39 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.component.*
-import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationScreenEvent
-import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationScreenViewState
+import com.piconemarc.viewmodel.viewModel.AddOperationPopUpEvent
+import com.piconemarc.viewmodel.viewModel.AddOperationPopUpState
+import com.piconemarc.viewmodel.viewModel.AccountDetailViewModel
 
 @SuppressLint("ModifierParameter")
 @Composable
-fun PAMAddOperationPopUp() {
+fun PAMAddOperationPopUp(
+    accountDetailViewModel: AccountDetailViewModel
+) {
 
     //Pop up Body --------------------------------------------
     PAMBasePopUp(
         title = "",
         onAcceptButtonClicked = { },
-        onDismiss = { AddOperationScreenEvent.closePopUp() },
-        isExpanded = AddOperationScreenViewState.isPopUpExpanded,
+        onDismiss = { accountDetailViewModel.dispatchEvent(AddOperationPopUpEvent.CLosePopUp) },
+        isExpanded = AddOperationPopUpState.isPopUpExpanded,
         menuIconPanel = {
             PAMAddOperationPopUpLeftSideMenuIconPanel(
-                isTransferOptionExpanded = AddOperationScreenViewState.isTransferExpanded,
-                isPaymentOptionExpanded = AddOperationScreenViewState.isPaymentExpanded
+                isTransferOptionExpanded = AddOperationPopUpState.isTransferExpanded,
+                isPaymentOptionExpanded = AddOperationPopUpState.isPaymentExpanded,
+                operationDetailViewModel = accountDetailViewModel
             )
         }
     ) {
         //category drop down -----------------------------------
         PAMBaseDropDownMenuWithBackground(
-            selectedItem = AddOperationScreenViewState.selectedCategoryName,
-            itemList = AddOperationScreenViewState.operationCategories,
-            onItemSelected = {category -> AddOperationScreenEvent.selectCategory(category) }
+            selectedItem = AddOperationPopUpState.selectedCategoryName,
+            itemList = AddOperationPopUpState.operationCategories,
+            onItemSelected = { category ->
+                accountDetailViewModel.dispatchEvent(
+                    AddOperationPopUpEvent.SelectCategory(category)
+                )
+            }
         )
         // operation and amount text field--------------------------
         Column(
@@ -42,21 +50,26 @@ fun PAMAddOperationPopUp() {
         ) {
             PAMBlackBackgroundTextFieldItem(
                 title = stringResource(R.string.operationName),
-                onTextChange = {operationName-> AddOperationScreenEvent.fillOperationName(operationName) },
-                textValue = AddOperationScreenViewState.operationName,
+                onTextChange = { operationName ->
+                    accountDetailViewModel.dispatchEvent(
+                        AddOperationPopUpEvent.FillOperationName(operationName)
+                    )
+                },
+                textValue = AddOperationPopUpState.operationName,
             )
             PAMAmountTextFieldItem(
                 title = stringResource(R.string.operationAmount),
-                onTextChange = { },
+                onTextChange = {},
                 amountValue = "",
             )
             //Payment Operation option--------------------------
             PAMPunctualOrRecurrentSwitchButton(
-                isRecurrentOptionExpanded = AddOperationScreenViewState.isRecurrentOptionExpanded,
-                isPaymentOptionExpanded = AddOperationScreenViewState.isPaymentExpanded
+                isRecurrentOptionExpanded = AddOperationPopUpState.isRecurrentOptionExpanded,
+                isPaymentOptionExpanded = AddOperationPopUpState.isPaymentExpanded,
+                operationDetailViewModel = accountDetailViewModel
             )
             //Transfer Operation option---------------------------
-            PAMTransferOptionPanel(isTransferOptionExpanded = AddOperationScreenViewState.isTransferExpanded)
+            PAMTransferOptionPanel(accountDetailViewModel = accountDetailViewModel)
         }
     }
 }

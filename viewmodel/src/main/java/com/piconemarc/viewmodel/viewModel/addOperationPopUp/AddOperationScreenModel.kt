@@ -1,121 +1,178 @@
 package com.piconemarc.viewmodel.viewModel.addOperationPopUp
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import com.piconemarc.core.domain.AddOperationPopUpGlobalState
+import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
+import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
 import com.piconemarc.model.entity.AccountModel
 import com.piconemarc.model.entity.CategoryModel
+import com.piconemarc.model.entity.DataUiModel
 import com.piconemarc.model.entity.OperationModel
+import com.piconemarc.viewmodel.viewModel.DefaultStore
 import com.piconemarc.viewmodel.viewModel.StoreSubscriber
+import com.piconemarc.viewmodel.viewModel.UiAction
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
+import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
-private val isPoUpExpanded_: MutableState<Boolean> = mutableStateOf(false)
-private val isPaymentExpanded_: MutableState<Boolean> = mutableStateOf(false)
-private val isRecurrentOptionExpanded_: MutableState<Boolean> = mutableStateOf(false)
-private val isTransferExpanded_: MutableState<Boolean> = mutableStateOf(false)
-private val operationCategories_: MutableState<List<String>> = mutableStateOf(listOf())
-private val selectedCategoryName_: MutableState<String> = mutableStateOf("Category")
-private val operationName_: MutableState<String> = mutableStateOf("")
-private val operationAmount_: MutableState<String> = mutableStateOf("")
+internal val isPoUpExpanded_: MutableState<Boolean> = mutableStateOf(false)
+internal val isPaymentExpanded_: MutableState<Boolean> = mutableStateOf(false)
+internal val isRecurrentOptionExpanded_: MutableState<Boolean> = mutableStateOf(false)
+internal val isTransferExpanded_: MutableState<Boolean> = mutableStateOf(false)
+internal val operationCategories_: MutableState<List<DataUiModel>> = mutableStateOf(listOf())
+internal val operationAccounts_: MutableState<List<DataUiModel>> = mutableStateOf(listOf())
+internal val allAccounts_: MutableState<List<AccountModel>> = mutableStateOf(listOf())
+internal val selectedCategoryName_: MutableState<DataUiModel> =
+    mutableStateOf(DataUiModel("Category", 0))
+internal val operationName_: MutableState<String> = mutableStateOf("")
+internal val operationAmount_: MutableState<String> = mutableStateOf("")
 
 //internal value
-private val allCategories_: MutableState<List<CategoryModel>> = mutableStateOf(listOf())
-private val selectedCategory_: MutableState<CategoryModel> = mutableStateOf(CategoryModel())
-private val operation_: MutableState<OperationModel> = mutableStateOf(OperationModel())
+internal val allCategories_: MutableState<List<CategoryModel>> = mutableStateOf(listOf())
+internal val selectedCategory_: MutableState<CategoryModel> = mutableStateOf(CategoryModel())
+internal val operation_: MutableState<OperationModel> = mutableStateOf(OperationModel())
 
 
+class AddOperationScreenEvent @Inject constructor(
+    private val getAllCategoriesInteractor: GetAllCategoriesInteractor,
+    private val getAllAccountsInteractor: GetAllAccountsInteractor,
+    private val addOperationPopUpStore: DefaultStore<AddOperationPopUpGlobalState>
+) : CoroutineScope {
 
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Default
 
-object AddOperationScreenViewState {
-    val isPopUpExpanded by isPoUpExpanded_
-    val operationCategories by operationCategories_
-    val selectedCategoryName by selectedCategoryName_
-    val operationName by operationName_
-    val operationAmount by operationAmount_
-    val isPaymentExpanded by isPaymentExpanded_
-    val isRecurrentOptionExpanded by isRecurrentOptionExpanded_
-    val enDateSelectedMonth: String = ""
-    val endDateSelectedYear: String = ""
-    val isTransferExpanded by isTransferExpanded_
-    val accountList: List<AccountModel> = listOf()
-    val senderAccount: String = ""
-    val beneficiaryAccount: String = ""
-}
-
-object AddOperationScreenEvent {
-    fun closePopUp() {
-        DI.addOperationPopUpStore.dispatch(AddOperationPopUpAction.ClosePopUp)
-        removeSubscriber()
-    }
+    private val scope = CoroutineScope(coroutineContext)
+    private var getCategoriesJob: Job? = null
+    private var getAllAccountsJob: Job? = null
 
     fun initPopUp() {
         addSubscriber()
-        DI.addOperationPopUpStore.dispatch(AddOperationPopUpAction.Init)
+        getCategoriesJob = scope.launch {
+            getAllCategoriesInteractor.getAllCategories().collect {
+                updateCategoriesList(it)
+            }
+        }
+        addOperationPopUpStore.dispatch(AddOperationPopUpAction.Init)
+    }
+
+    fun closePopUp() {
+        addOperationPopUpStore.dispatch(AddOperationPopUpAction.ClosePopUp)
+        removeSubscriber()
+        scope.cancel()
+
     }
 
     fun collapseOptions() {
-        DI.addOperationPopUpStore.dispatch(AddOperationPopUpAction.CollapseOptions)
+        addOperationPopUpStore.dispatch(AddOperationPopUpAction.CollapseOptions)
     }
 
     fun expandPaymentOption() {
-        DI.addOperationPopUpStore.dispatch(AddOperationPopUpAction.ExpandPaymentOption)
+        addOperationPopUpStore.dispatch(AddOperationPopUpAction.ExpandPaymentOption)
     }
 
     fun expandTransferOption() {
-        DI.addOperationPopUpStore.dispatch(AddOperationPopUpAction.ExpandTransferOption)
+        getAllAccountsJob = scope.launch {
+            getAllAccountsInteractor.getAllAccounts().collect { allAccounts ->
+                updateAccountsList(allAccounts)
+            }
+        }
+        addOperationPopUpStore.dispatch(AddOperationPopUpAction.ExpandTransferOption)
     }
 
     fun expandRecurrentOption() {
-        DI.addOperationPopUpStore.dispatch(AddOperationPopUpAction.ExpandRecurrentOption)
+        addOperationPopUpStore.dispatch(AddOperationPopUpAction.ExpandRecurrentOption)
     }
 
     fun collapseRecurrentOption() {
-        DI.addOperationPopUpStore.dispatch(AddOperationPopUpAction.CloseRecurrentOption)
+        addOperationPopUpStore.dispatch(AddOperationPopUpAction.CloseRecurrentOption)
     }
 
-    fun selectCategory(selectedCategory: String) {
-        DI.addOperationPopUpStore.dispatch(
+    fun selectCategory(selectedCategoryId: Long) {
+        addOperationPopUpStore.dispatch(
             AddOperationPopUpAction.SelectCategory(
-                getCategoryForName(selectedCategory)
+                allCategories_.value.find { selectedCategoryId == it.id } ?: selectedCategory_.value
             )
         )
     }
 
-    fun fillOperationName(operationName : String){
-        DI.addOperationPopUpStore.dispatch(
+    fun fillOperationName(operationName: String) {
+        addOperationPopUpStore.dispatch(
             AddOperationPopUpAction.FillOperationName(
                 operationName
             )
         )
     }
-}
 
-private val subscriber: StoreSubscriber<AddOperationPopUpGlobalState> = {
-    isPoUpExpanded_.value = it.addOperationPopUpOperationOptionState.isPopUpExpanded
-    isPaymentExpanded_.value = it.addOperationPopUpPaymentOptionState.isPaymentExpanded
-    isRecurrentOptionExpanded_.value =
-        it.addOperationPopUpPaymentOptionState.isRecurrentOptionExpanded
-    isTransferExpanded_.value = it.addOperationPopUpTransferOptionState.isTransferExpanded
-    operationCategories_.value = mapCategoriesToString(it)
-    selectedCategory_.value = it.addOperationPopUpOperationOptionState.selectedCategory
-    selectedCategoryName_.value = it.addOperationPopUpOperationOptionState.selectedCategory.name
-    operationName_.value = it.addOperationPopUpOperationOptionState.operationName
-    operationAmount_.value = it.addOperationPopUpOperationOptionState.operationAmount
-}
-
-private fun addSubscriber() = DI.addOperationPopUpStore.add(subscriber)
-private fun removeSubscriber() = DI.addOperationPopUpStore.remove(subscriber)
-
-
-//--------------------------------------------HELPERS to refactor in interactor---------------------
-private fun mapCategoriesToString(it: AddOperationPopUpGlobalState): MutableList<String> {
-    allCategories_.value = it.addOperationPopUpOperationOptionState.operationCategories
-    val categoriesToString: MutableList<String> = mutableListOf()
-    it.addOperationPopUpOperationOptionState.operationCategories.forEachIndexed() { _, operationCategory ->
-        categoriesToString.add(operationCategory.name)
+    private fun updateCategoriesList(updatedCategoriesList: List<CategoryModel>) {
+        addOperationPopUpStore.dispatch(
+            AddOperationPopUpAction.UpdateCategoriesList(updatedCategoriesList)
+        )
     }
-    return categoriesToString
+
+    private fun updateAccountsList(updatedAccountList: List<AccountModel>) {
+        addOperationPopUpStore.dispatch(
+            AddOperationPopUpAction.UpdateAccountList(updatedAccountList)
+        )
+    }
+
+
+    private val subscriber: StoreSubscriber<AddOperationPopUpGlobalState> =
+        { addOperationPopUpGlobalState ->
+            isPoUpExpanded_.value =
+                addOperationPopUpGlobalState.addOperationPopUpOperationOptionState.isPopUpExpanded
+            isPaymentExpanded_.value =
+                addOperationPopUpGlobalState.addOperationPopUpPaymentOptionState.isPaymentExpanded
+            isRecurrentOptionExpanded_.value =
+                addOperationPopUpGlobalState.addOperationPopUpPaymentOptionState.isRecurrentOptionExpanded
+            isTransferExpanded_.value =
+                addOperationPopUpGlobalState.addOperationPopUpTransferOptionState.isTransferExpanded
+            allCategories_.value =
+                addOperationPopUpGlobalState.addOperationPopUpOperationOptionState.operationCategories
+            allAccounts_.value =
+                addOperationPopUpGlobalState.addOperationPopUpTransferOptionState.accountList
+            operationCategories_.value =
+                addOperationPopUpGlobalState.addOperationPopUpOperationOptionState.operationCategories.map {
+                    DataUiModel(
+                        it.name,
+                        it.id
+                    )
+                }
+            operationAccounts_.value =
+                addOperationPopUpGlobalState.addOperationPopUpTransferOptionState.accountList.map {
+                    DataUiModel(it.name, it.id)
+                }
+            selectedCategory_.value =
+                addOperationPopUpGlobalState.addOperationPopUpOperationOptionState.selectedCategory
+            selectedCategoryName_.value = DataUiModel(
+                addOperationPopUpGlobalState.addOperationPopUpOperationOptionState.selectedCategory.name,
+                addOperationPopUpGlobalState.addOperationPopUpOperationOptionState.selectedCategory.id
+            )
+            operationName_.value =
+                addOperationPopUpGlobalState.addOperationPopUpOperationOptionState.operationName
+            operationAmount_.value =
+                addOperationPopUpGlobalState.addOperationPopUpOperationOptionState.operationAmount
+        }
+
+    private fun addSubscriber() = addOperationPopUpStore.add(subscriber)
+    private fun removeSubscriber() = addOperationPopUpStore.remove(subscriber)
 }
 
-private fun getCategoryForName(selectedCategory: String) =
-    allCategories_.value.find { selectedCategory == it.name } ?: selectedCategory_.value
+internal sealed class AddOperationPopUpAction : UiAction {
+    object Init : AddOperationPopUpAction()
+    object ExpandPaymentOption : AddOperationPopUpAction()
+    object CollapseOptions : AddOperationPopUpAction()
+    object ExpandTransferOption : AddOperationPopUpAction()
+    object ExpandRecurrentOption : AddOperationPopUpAction()
+    object CloseRecurrentOption : AddOperationPopUpAction()
+    object ClosePopUp : AddOperationPopUpAction()
+    data class SelectCategory(val category: CategoryModel) : AddOperationPopUpAction()
+    data class FillOperationName(val operationName: String) : AddOperationPopUpAction()
+    data class UpdateCategoriesList(val allCategories: List<CategoryModel>) :
+        AddOperationPopUpAction()
+
+    data class UpdateAccountList(val accountList: List<AccountModel>) : AddOperationPopUpAction()
+}

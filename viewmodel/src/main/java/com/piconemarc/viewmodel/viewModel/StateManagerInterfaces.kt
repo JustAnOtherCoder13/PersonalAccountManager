@@ -40,6 +40,6 @@ class DefaultStore<S : PAMUiState>(
 
 
 interface PAMUiEvent {
-    val source: PAMUiState
-    val target: PAMUiState
+
+
 }
