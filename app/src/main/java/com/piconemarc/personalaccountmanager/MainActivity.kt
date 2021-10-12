@@ -4,24 +4,32 @@ import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import com.piconemarc.personalaccountmanager.ui.*
-import com.piconemarc.personalaccountmanager.ui.baseComponent.expandCollapsePaymentAnimation
-import com.piconemarc.personalaccountmanager.ui.baseComponent.popUp.addOperationPopUp.AddOperationPopUp
+import com.piconemarc.model.entity.GeneratedOperation
+import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMAddOperationPopUp
 import com.piconemarc.personalaccountmanager.ui.theme.PersonalAccountManagerTheme
+import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationScreenEvent
 
 class MainActivity : ComponentActivity() {
 
+   // private val deleteOperationPopUpScreenModel : ConfirmDeleteOperationPopUpScreenModel
+
     init {
         instance = this
+        //deleteOperationPopUpScreenModel =  ConfirmDeleteOperationPopUpScreenModel()
     }
 
     companion object {
@@ -33,91 +41,43 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val testList = mutableListOf("test 1", "test 2", "test 3")
+
+
         setContent {
             PersonalAccountManagerTheme {
+                val testList by remember {
+                    mutableStateOf(GeneratedOperation)
+                }
                 Surface(
                     color = MaterialTheme.colors.secondary
                 ) {
-                    Button(
-                        onClick = { popUpEventHandler(AddPopUpUiEvent.InitPopUp) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                    ) { Text(text = "Click") }
-
-                    AddOperationPopUp(
-                        addOperationPopUpState = addOperationPopUpState.value,
-                        popUpOnDismiss = { popUpEventHandler(AddPopUpUiEvent.OnDismiss) },
-                        popUpTitle = stringResource(id = popUpOperationType.value),
-                        popUpAccountList = listOf("Account1", "Account2", "Account3"),
-                        popUpCategory = popUpCategory.value,
-                        popUpCategoryList = testList,
-                        popUpOperationAmount = popUpOperationAmount.value,
-                        popUpOperationName = popUpOperationName.value,
-                        popUpSenderSelectedAccount = popUpSenderSelectedAccount.value,
-                        popUpBeneficiarySelectedAccount = popUpBeneficiarySelectedAccount.value,
-                        popUpSelectedMonth = popUpSelectedMonth.value,
-                        popUpSelectedYear = popUpSelectedYear.value,
-                        popUpPunctualOrRecurrentSwitchButtonModifier = Modifier.height(
-                            expandCollapsePaymentAnimation(
-                                getString(popUpOperationType.value),
-                                popUpIsRecurrent.value
-                            ).value
-                        ),
-                        popUpOnRecurrentOrPunctualSwitched = { isRecurrent ->
-                            popUpEventHandler(
-                                AddPopUpUiEvent.OnRecurrentOrPunctualSwitched(isRecurrent = isRecurrent)
-                            )
-                        },
-                        popUpOnBeneficiaryAccountSelected = { beneficiaryAccount ->
-                            popUpEventHandler(
-                                AddPopUpUiEvent.OnBeneficiaryAccountSelected(beneficiaryAccount = beneficiaryAccount)
-                            )
-                        },
-                        popUpOnCategorySelected = { category ->
-                            popUpEventHandler(
-                                AddPopUpUiEvent.OnCategorySelected(
-                                    selectedCategory = category
-                                )
-                            )
-                        },
-                        popUpOnEnterOperationAmount = { amount ->
-                            popUpEventHandler(
-                                AddPopUpUiEvent.OnEnterOperationAmount(
-                                    operationAmount = amount
-                                )
-                            )
-                        },
-                        popUpOnEnterOperationName = { name ->
-                            popUpEventHandler(
-                                AddPopUpUiEvent.OnEnterOperationName(
-                                    operationName = name
-                                )
-                            )
-                        },
-                        popUpOnMonthSelected = { selectedMonth ->
-                            popUpEventHandler(
-                                AddPopUpUiEvent.OnMonthSelected(selectedMonth = selectedMonth)
-                            )
-                        },
-                        popUpOnYearSelected = { selectedYear ->
-                            popUpEventHandler(AddPopUpUiEvent.OnYearSelected(selectedYear = selectedYear))
-                        },
-                        popUpOnSenderAccountSelected = { senderAccount ->
-                            popUpEventHandler(
-                                AddPopUpUiEvent.OnSenderAccountSelected(senderAccount = senderAccount)
-                            )
-                        },
-                        popUpOnAddOperation = { popUpEventHandler(AddPopUpUiEvent.OnAddOperation) },
-                        popUpOnIconButtonClicked = { operationType ->
-                            popUpEventHandler(
-                                AddPopUpUiEvent.OnLeftSideIconButtonClicked(
-                                    operationType = operationType
-                                )
-                            )
-                        },
-                    )
+                    Column() {
+                        LazyColumn() {
+                            items(testList) { item ->
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Column {
+                                        Text(text = item.name)
+                                        Text(text = item.amount.toString())
+                                    }
+                                    Button(
+                                        onClick = {
+                                           /* deleteOperationPopUpScreenModel.expand(
+                                                operationModel = item
+                                            )*/
+                                        }
+                                    ) { Text(text = "Click") }
+                                }
+                            }
+                        }
+                        Button(onClick = { AddOperationScreenEvent.initPopUp() }) {
+                            Text(text = "add operation")
+                        }
+                    }
+                    //PAMDeleteOperationPopUp(deleteOperationPopUpScreenModel)
+                    PAMAddOperationPopUp()
                 }
             }
         }
