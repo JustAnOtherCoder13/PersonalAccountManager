@@ -7,11 +7,10 @@ import com.piconemarc.model.entity.EndDate
 import com.piconemarc.model.entity.OperationModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.util.*
+import javax.inject.Inject
 
-class GetAllOperationsForAccountIdInteractor(private val operationRepository: OperationRepository) :
-    BaseOperationInteractor(
-        operationRepository
-    ) {
+class GetAllOperationsForAccountIdInteractor @Inject constructor(private val operationRepository: OperationRepository) {
 
     fun getAllOperationsForAccountId(
         accountId: Long,
@@ -25,26 +24,20 @@ class GetAllOperationsForAccountIdInteractor(private val operationRepository: Op
         allCategories: List<CategoryModel>,
         allOperationsDtoForAccountId: List<OperationDTO>
     ): List<OperationModel> {
-        val operationsModelList = mutableListOf<OperationModel>()
-
-        allOperationsDtoForAccountId.forEachIndexed { index, operationDTO ->
-            operationsModelList.add(
-                index = index,
-                element = OperationModel(
-                    id = operationDTO.id,
-                    name = operationDTO.name,
-                    amount = operationDTO.amount,
-                    endDate = EndDate(
-                        month = operationDTO.endDateMonth,
-                        year = operationDTO.endDateYear
-                    ),
-                    isRecurrent = operationDTO.isRecurrent,
-                    category = allCategories.find { categoryModel -> categoryModel.id == operationDTO.categoryId }
-                        ?: CategoryModel(),
-                    emitDate = operationDTO.emitDate
-                )
+        return allOperationsDtoForAccountId.map {
+            OperationModel(
+                id = it.id,
+                name = it.name,
+                amount = it.amount,
+                endDate = EndDate(
+                    month = it.endDateMonth,
+                    year = it.endDateYear
+                ),
+                isRecurrent = it.isRecurrent,
+                category = allCategories.find { categoryModel -> categoryModel.id == it.categoryId }
+                    ?: CategoryModel(),
+                emitDate = it.emitDate ?: Date()
             )
         }
-        return operationsModelList
     }
 }

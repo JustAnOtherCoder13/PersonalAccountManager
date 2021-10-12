@@ -1,34 +1,25 @@
 package com.piconemarc.core.domain
 
-import com.piconemarc.model.entity.AccountModel
-import com.piconemarc.model.entity.CategoryModel
+import com.piconemarc.core.domain.Constants.OPERATION_MODEL
+import com.piconemarc.model.entity.PresentationDataModel
 
 interface PAMUiState
 
-data class AddOperationPopUpOperationOptionState(
+data class AddOperationPopUpGlobalState(
     val isPopUpExpanded: Boolean = false,
-    val operationCategories: List<CategoryModel> = listOf(),
-    val selectedCategory: CategoryModel = CategoryModel(),
-    val operationName: String = "",
-    val operationAmount: String = "",
-) : PAMUiState
-
-data class AddOperationPopUpPaymentOptionState(
     val isPaymentExpanded: Boolean = false,
     val isRecurrentOptionExpanded: Boolean = false,
-    val enDateSelectedMonth: String = "",
-    val endDateSelectedYear: String = ""
-) : PAMUiState
-
-data class AddOperationPopUpTransferOptionState(
     val isTransferExpanded: Boolean = false,
-    val accountList: List<AccountModel> = listOf(),
-    val senderAccount: String = "",
-    val beneficiaryAccount: String = ""
-) : PAMUiState
-
-data class AddOperationPopUpGlobalState(
-    val addOperationPopUpOperationOptionState: AddOperationPopUpOperationOptionState = AddOperationPopUpOperationOptionState(),
-    val addOperationPopUpPaymentOptionState: AddOperationPopUpPaymentOptionState = AddOperationPopUpPaymentOptionState(),
-    val addOperationPopUpTransferOptionState: AddOperationPopUpTransferOptionState = AddOperationPopUpTransferOptionState()
-) : PAMUiState
+    val allCategories: List<PresentationDataModel> = listOf(),
+    val allAccounts: List<PresentationDataModel> = listOf(),
+    val selectableEndDateYears : List<PresentationDataModel> = listOf(),
+    val selectableEndDateMonths : List<PresentationDataModel> = listOf(),
+    val selectedCategory: PresentationDataModel = PresentationDataModel(),
+    val operationName: PresentationDataModel = PresentationDataModel(),
+    val operationAmount: PresentationDataModel = PresentationDataModel(),
+    val enDateSelectedMonth: PresentationDataModel = PresentationDataModel(),
+    val endDateSelectedYear: PresentationDataModel = PresentationDataModel(),
+    val senderAccount: PresentationDataModel = PresentationDataModel(),
+    val beneficiaryAccount: PresentationDataModel = PresentationDataModel(),
+    val addPopUpTitle : PresentationDataModel =  OPERATION_MODEL
+    ) : PAMUiState

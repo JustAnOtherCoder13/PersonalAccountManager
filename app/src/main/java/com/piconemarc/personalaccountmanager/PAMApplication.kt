@@ -1,7 +1,8 @@
-package com.piconemarc
+package com.piconemarc.personalaccountmanager
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class PAMApplication : Application()
+class PAMApplication : Application() {
+}

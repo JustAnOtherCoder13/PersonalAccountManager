@@ -24,19 +24,19 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.animation.*
 import com.piconemarc.personalaccountmanager.ui.theme.*
-import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationScreenEvent
-import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationScreenViewState
+import com.piconemarc.viewmodel.viewModel.AddOperationPopUpState
 
 @Composable
 fun PAMBasePopUp(
-    title: String,
+    title: PresentationDataModel,
     onAcceptButtonClicked: () -> Unit,
     onDismiss: () -> Unit,
     isExpanded: Boolean,
-    menuIconPanel : @Composable () -> Unit = {},
+    menuIconPanel: @Composable () -> Unit = {},
     body: @Composable () -> Unit
 ) {
     val transition = pAMBasePopUpEnterExitAnimation(isExpended = isExpanded)
@@ -84,7 +84,7 @@ fun PAMBaseDeletePopUp(
     body: @Composable () -> Unit
 ) {
     PAMBasePopUp(
-        title = stringResource(R.string.deleteBaseMsg) + elementToDelete,
+        title = PresentationDataModel(),//stringResource(R.string.deleteBaseMsg) + elementToDelete,
         onAcceptButtonClicked = onAcceptButtonClicked,
         onDismiss = onDismiss,
         body = body,
@@ -93,13 +93,19 @@ fun PAMBaseDeletePopUp(
 }
 
 @Composable
-fun PAMAddOperationPopUpLeftSideMenuIconPanel(isTransferOptionExpanded: Boolean, isPaymentOptionExpanded: Boolean) {
+fun PAMAddOperationPopUpLeftSideMenuIconPanel(
+    isTransferOptionExpanded: Boolean,
+    isPaymentOptionExpanded: Boolean,
+    onOperationButtonClicked: () -> Unit,
+    onPaymentButtonClicked: () -> Unit,
+    onTransferButtonClicked: () -> Unit
+) {
     Box {
         Box(
             modifier = Modifier
                 .offset(
                     y = pAMAddOperationPopUpIconMenuPanelSelectorAnimation(
-                        Pair(isPaymentOptionExpanded,isTransferOptionExpanded)
+                        Pair(isPaymentOptionExpanded, isTransferOptionExpanded)
                     ).offset.y.dp
                 )
                 .background(
@@ -112,17 +118,17 @@ fun PAMAddOperationPopUpLeftSideMenuIconPanel(isTransferOptionExpanded: Boolean,
         Column {
             PAMIconButton(
                 iconButton = PAMIconButtons.Operation,
-                onIconButtonClicked = { AddOperationScreenEvent.collapseOptions() }
+                onIconButtonClicked = onOperationButtonClicked
             )
             Spacer(modifier = Modifier.height(RegularMarge))
             PAMIconButton(
                 iconButton = PAMIconButtons.Payment,
-                onIconButtonClicked = { AddOperationScreenEvent.expandPaymentOption() }
+                onIconButtonClicked = onPaymentButtonClicked
             )
             Spacer(modifier = Modifier.height(RegularMarge))
             PAMIconButton(
                 iconButton = PAMIconButtons.Transfer,
-                onIconButtonClicked = { AddOperationScreenEvent.expandTransferOption() }
+                onIconButtonClicked = onTransferButtonClicked
             )
         }
     }
@@ -130,20 +136,20 @@ fun PAMAddOperationPopUpLeftSideMenuIconPanel(isTransferOptionExpanded: Boolean,
 
 @Composable
 fun PAMBlackBackgroundTextFieldItem(
-    title: String,
-    onTextChange: (text: String) -> Unit,
-    textValue :String
+    title: PresentationDataModel,
+    onTextChange: (text: PresentationDataModel) -> Unit,
+    textValue: PresentationDataModel
 ) {
     val focusManager = LocalFocusManager.current
-    if (AddOperationScreenViewState.isPopUpExpanded)focusManager.clearFocus()
+    if (!AddOperationPopUpState.isPopUpExpanded) focusManager.clearFocus()
     Column(modifier = Modifier.popUpClickableItemModifier()) {
         TextField(
-            value = textValue,
-            onValueChange =  onTextChange,
+            value = textValue.stringValue,
+            onValueChange = { onTextChange(textValue.copy(stringValue = it)) },
             textStyle = MaterialTheme.typography.body1.copy(
                 color = MaterialTheme.colors.onPrimary
             ),
-            label = { Text(text = title) },
+            label = { Text(text = title.stringValue) },
             colors = TextFieldDefaults.textFieldColors(
                 focusedLabelColor = MaterialTheme.colors.onPrimary,
                 unfocusedLabelColor = MaterialTheme.colors.onPrimary,
@@ -151,8 +157,9 @@ fun PAMBlackBackgroundTextFieldItem(
                 backgroundColor = Color.Transparent
             ),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            keyboardActions = KeyboardActions (onNext = { focusManager.moveFocus(FocusDirection.Down)
-            } )
+            keyboardActions = KeyboardActions(onNext = {
+                focusManager.moveFocus(FocusDirection.Down)
+            })
         )
 
     }
@@ -160,13 +167,13 @@ fun PAMBlackBackgroundTextFieldItem(
 
 @Composable
 fun PAMAmountTextFieldItem(
-    title: String,
-    onTextChange: (text: String) -> Unit,
-    amountValue : String,
+    title: PresentationDataModel,
+    onTextChange: (text: PresentationDataModel) -> Unit,
+    amountValue: PresentationDataModel,
 ) {
     val focusManager = LocalFocusManager.current
-    val transition = pAMAmountTextFieldAnimation(amountValue)
-    if (!AddOperationScreenViewState.isPopUpExpanded)focusManager.clearFocus()
+    val transition = pAMAmountTextFieldAnimation(amountValue.stringValue)
+    if (!AddOperationPopUpState.isPopUpExpanded) focusManager.clearFocus()
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -177,10 +184,10 @@ fun PAMAmountTextFieldItem(
             )
     ) {
         TextField(
-            value = amountValue,
-            onValueChange = onTextChange,
+            value = amountValue.stringValue,
+            onValueChange = { onTextChange(amountValue.copy(stringValue = it)) },
             textStyle = MaterialTheme.typography.body1,
-            label = { Text(text = title) },
+            label = { Text(text = title.stringValue)  },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Done
@@ -191,23 +198,34 @@ fun PAMAmountTextFieldItem(
                 backgroundColor = Color.Transparent,
                 textColor = transition.textColor
             ),
-            keyboardActions = KeyboardActions(onDone = {focusManager.clearFocus()})
+            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
         )
     }
 }
 
 @Composable
 fun PAMPunctualOrRecurrentSwitchButton(
-    isRecurrentOptionExpanded : Boolean,
-    isPaymentOptionExpanded : Boolean
+    isRecurrentOptionExpanded: Boolean,
+    isPaymentOptionExpanded: Boolean,
+    onPunctualButtonSelected : ()-> Unit,
+    onRecurrentButtonSelected : ()-> Unit,
+    endDateSelectedMonth : PresentationDataModel,
+    endDateSelectedYear : PresentationDataModel,
+    onMonthSelected: (month: PresentationDataModel) -> Unit,
+    onYearSelected: (year: PresentationDataModel) -> Unit,
+    selectableMonthList : List<PresentationDataModel>,
+    selectableYearList : List<PresentationDataModel>
+
 ) {
     val transition = pAMRecurrentOptionButtonAnimation(isRecurrentOptionExpanded)
-
     Column(
         modifier =
         Modifier
             .height(
-                pAMExpandCollapsePaymentAnimation(isPaymentOptionExpanded = isPaymentOptionExpanded, isRecurrentOptionExpanded = isRecurrentOptionExpanded).value
+                pAMExpandCollapsePaymentAnimation(
+                    isPaymentOptionExpanded = isPaymentOptionExpanded,
+                    isRecurrentOptionExpanded = isRecurrentOptionExpanded
+                ).value
             )
 
             .padding(bottom = RegularMarge)
@@ -219,13 +237,13 @@ fun PAMPunctualOrRecurrentSwitchButton(
                 .padding(top = RegularMarge)
         ) {
             SwitchButton(
-                onButtonSelected = { AddOperationScreenEvent.collapseRecurrentOption() },
+                onButtonSelected = onPunctualButtonSelected,
                 isSelected = !isRecurrentOptionExpanded,
                 title = stringResource(R.string.punctualSwitchButton),
                 switchShape = LeftSwitchShape
             )
             SwitchButton(
-                onButtonSelected = { AddOperationScreenEvent.expandRecurrentOption() },
+                onButtonSelected = onRecurrentButtonSelected,
                 isSelected = isRecurrentOptionExpanded,
                 title = stringResource(R.string.recurrentSwitchButton),
                 switchShape = RightSwitchShape.copy(bottomStart = CornerSize(transition.leftBottomCornerSize)),
@@ -235,10 +253,12 @@ fun PAMPunctualOrRecurrentSwitchButton(
         //Recurrent options
         PAMRecurrentOptionPanel(
             modifier = Modifier.height(pAMExpandCollapseEndDatePanel(isSelected = isRecurrentOptionExpanded).value),
-            onMonthSelected = {},
-            onYearSelected = {},
-            selectedMonth = "",
-            selectedYear = "",
+            onMonthSelected = onMonthSelected,
+            onYearSelected = onYearSelected,
+            selectedMonth = endDateSelectedMonth,
+            selectedYear = endDateSelectedYear,
+            selectableMonthList = selectableMonthList,
+            selectableYearList = selectableYearList
         )
     }
 }
@@ -246,10 +266,12 @@ fun PAMPunctualOrRecurrentSwitchButton(
 @Composable
 fun PAMRecurrentOptionPanel(
     modifier: Modifier,
-    onMonthSelected: (month: String) -> Unit,
-    onYearSelected: (year: String) -> Unit,
-    selectedMonth : String,
-    selectedYear : String
+    onMonthSelected: (month: PresentationDataModel) -> Unit,
+    onYearSelected: (year: PresentationDataModel) -> Unit,
+    selectedMonth: PresentationDataModel,
+    selectedYear: PresentationDataModel,
+    selectableMonthList : List<PresentationDataModel>,
+    selectableYearList : List<PresentationDataModel>
 ) {
     Column(
         modifier = modifier
@@ -275,42 +297,57 @@ fun PAMRecurrentOptionPanel(
         ) {
             PAMBaseDropDownMenu(
                 selectedItem = selectedMonth,
-                itemList = mutableListOf("Janvier", "Fevrier"),
+                itemList = selectableMonthList,
                 onItemSelected = { month -> onMonthSelected(month) })
             PAMBaseDropDownMenu(
                 selectedItem = selectedYear,
-                itemList = mutableListOf("2000", "2001"),
+                itemList = selectableYearList,
                 onItemSelected = { year -> onYearSelected(year) })
         }
     }
 }
 
 @Composable
-fun PAMTransferOptionPanel(isTransferOptionExpanded : Boolean) {
-    Column(modifier = Modifier.height(pAMExpandCollapseTransferPanelAnimation(isTransferOptionExpanded = isTransferOptionExpanded).value)) {
+fun PAMTransferOptionPanel(
+    isTransferOptionExpanded : Boolean,
+    senderAccountSelectedItem : PresentationDataModel,
+    allAccountsList : List<PresentationDataModel>,
+    beneficiaryAccountSelectedItem : PresentationDataModel,
+    onSenderAccountSelected : (senderAccount : PresentationDataModel) -> Unit,
+    onBeneficiaryAccountSelected : ( beneficiaryAccount : PresentationDataModel) -> Unit
+
+
+) {
+    Column(
+        modifier = Modifier.height(
+            pAMExpandCollapseTransferPanelAnimation(
+                isTransferOptionExpanded = isTransferOptionExpanded
+            ).value
+        )
+    ) {
         PAMBaseDropDownMenuWithBackground(
-            selectedItem = "",
-            itemList = listOf("1","2"),
-            onItemSelected = {}
+            selectedItem = senderAccountSelectedItem,
+            itemList = allAccountsList,
+            onItemSelected = onSenderAccountSelected
         )
 
         PAMBaseDropDownMenuWithBackground(
-            selectedItem = "",
-            itemList = listOf("1","2"),
-            onItemSelected = {}
+            selectedItem = beneficiaryAccountSelectedItem ,
+            itemList = allAccountsList,
+            onItemSelected = onBeneficiaryAccountSelected
         )
     }
 }
 
 @Composable
-fun PopUpTitle(title: String) {
+fun PopUpTitle(title: PresentationDataModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(color = MaterialTheme.colors.primary, shape = MaterialTheme.shapes.large)
     ) {
         Text(
-            text = title,
+            text = title.stringValue,
             color = MaterialTheme.colors.onPrimary,
             modifier = Modifier
                 .fillMaxWidth()

@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,11 +22,17 @@ import androidx.compose.ui.Modifier
 import com.piconemarc.model.entity.GeneratedOperation
 import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMAddOperationPopUp
 import com.piconemarc.personalaccountmanager.ui.theme.PersonalAccountManagerTheme
-import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationScreenEvent
+import com.piconemarc.viewmodel.viewModel.AccountDetailViewModel
+import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationPopUpAction
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.scopes.ActivityScoped
 
+@ActivityScoped
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-   // private val deleteOperationPopUpScreenModel : ConfirmDeleteOperationPopUpScreenModel
+
+    // private val deleteOperationPopUpScreenModel : ConfirmDeleteOperationPopUpScreenModel
 
     init {
         instance = this
@@ -41,7 +48,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+       val operationDetailViewModel : AccountDetailViewModel by viewModels()
 
         setContent {
             PersonalAccountManagerTheme {
@@ -72,12 +79,16 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
-                        Button(onClick = { AddOperationScreenEvent.initPopUp() }) {
+                        Button(onClick = {
+                            operationDetailViewModel.dispatchAction(AddOperationPopUpAction.Init)
+                            //addOperationScreenEvent.initPopUp()
+                        }) {
                             Text(text = "add operation")
                         }
                     }
                     //PAMDeleteOperationPopUp(deleteOperationPopUpScreenModel)
-                    PAMAddOperationPopUp()
+                    PAMAddOperationPopUp(
+                        accountDetailViewModel = operationDetailViewModel)
                 }
             }
         }
