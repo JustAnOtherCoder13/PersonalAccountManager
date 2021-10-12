@@ -1,34 +1,21 @@
 package com.piconemarc.core.domain
 
-import com.piconemarc.model.entity.AccountModel
-import com.piconemarc.model.entity.CategoryModel
+import com.piconemarc.model.entity.PresentationDataModel
 
 interface PAMUiState
 
-data class AddOperationPopUpOperationOptionState(
+data class AddOperationPopUpGlobalState(
     val isPopUpExpanded: Boolean = false,
-    val operationCategories: List<CategoryModel> = listOf(),
-    val selectedCategory: CategoryModel = CategoryModel(),
-    val operationName: String = "",
-    val operationAmount: String = "",
-) : PAMUiState
-
-data class AddOperationPopUpPaymentOptionState(
+    val operationCategories: List<PresentationDataModel> = listOf(),
+    val selectedCategory: PresentationDataModel = PresentationDataModel(),
+    val operationName: PresentationDataModel = PresentationDataModel(),
+    val operationAmount: PresentationDataModel = PresentationDataModel(),
     val isPaymentExpanded: Boolean = false,
     val isRecurrentOptionExpanded: Boolean = false,
     val enDateSelectedMonth: String = "",
-    val endDateSelectedYear: String = ""
-) : PAMUiState
-
-data class AddOperationPopUpTransferOptionState(
+    val endDateSelectedYear: String = "",
     val isTransferExpanded: Boolean = false,
-    val accountList: List<AccountModel> = listOf(),
+    val accountList: List<PresentationDataModel> = listOf(),
     val senderAccount: String = "",
     val beneficiaryAccount: String = ""
-) : PAMUiState
-
-data class AddOperationPopUpGlobalState(
-    val addOperationPopUpOperationOptionState: AddOperationPopUpOperationOptionState = AddOperationPopUpOperationOptionState(),
-    val addOperationPopUpPaymentOptionState: AddOperationPopUpPaymentOptionState = AddOperationPopUpPaymentOptionState(),
-    val addOperationPopUpTransferOptionState: AddOperationPopUpTransferOptionState = AddOperationPopUpTransferOptionState()
-) : PAMUiState
+    ) : PAMUiState

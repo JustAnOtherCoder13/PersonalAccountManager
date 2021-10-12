@@ -22,8 +22,8 @@ import androidx.compose.ui.Modifier
 import com.piconemarc.model.entity.GeneratedOperation
 import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMAddOperationPopUp
 import com.piconemarc.personalaccountmanager.ui.theme.PersonalAccountManagerTheme
-import com.piconemarc.viewmodel.viewModel.AddOperationPopUpEvent
 import com.piconemarc.viewmodel.viewModel.AccountDetailViewModel
+import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationPopUpAction
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.scopes.ActivityScoped
 
@@ -80,7 +80,7 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                         Button(onClick = {
-                            operationDetailViewModel.dispatchEvent(AddOperationPopUpEvent.InitPopUp)
+                            operationDetailViewModel.dispatchAction(AddOperationPopUpAction.Init)
                             //addOperationScreenEvent.initPopUp()
                         }) {
                             Text(text = "add operation")

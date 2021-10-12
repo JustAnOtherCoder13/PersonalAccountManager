@@ -12,7 +12,7 @@ import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.piconemarc.model.entity.DataUiModel
+import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
 import com.piconemarc.personalaccountmanager.ui.theme.PopUpFieldBackgroundShape
@@ -21,9 +21,9 @@ import com.piconemarc.personalaccountmanager.ui.theme.ThinBorder
 
 @Composable
 fun PAMBaseDropDownMenu(
-    selectedItem: DataUiModel,
-    itemList: List<DataUiModel>,
-    onItemSelected: (item: DataUiModel) -> Unit
+    selectedItem: PresentationDataModel,
+    itemList: List<PresentationDataModel>,
+    onItemSelected: (item: PresentationDataModel) -> Unit
 ) {
     var expanded: Boolean by remember {
         mutableStateOf(false)
@@ -74,9 +74,9 @@ fun PAMBaseDropDownMenu(
 
 @Composable
 fun PAMBaseDropDownMenuWithBackground(
-    selectedItem: DataUiModel,
-    itemList: List<DataUiModel>,
-    onItemSelected: (item: DataUiModel) -> Unit
+    selectedItem: PresentationDataModel,
+    itemList: List<PresentationDataModel>,
+    onItemSelected: (item: PresentationDataModel) -> Unit
 ) {
     Row(
         modifier = Modifier

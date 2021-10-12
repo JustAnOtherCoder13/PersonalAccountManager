@@ -5,13 +5,13 @@ import com.piconemarc.core.domain.PAMUiState
 
 interface PAMUiDataAnimation
 
-interface UiAction
+interface PAMUiAction
 
-typealias Reducer <S> = (S, UiAction) -> S
+typealias Reducer <S> = (S, PAMUiAction) -> S
 typealias StoreSubscriber <S> = (S) -> Unit
 
 interface Store<S : PAMUiState> {
-    fun dispatch(action: UiAction)
+    fun dispatch(action: PAMUiAction)
     fun add(subscriber: StoreSubscriber<S>): Boolean
     fun remove(subscriber: StoreSubscriber<S>): Boolean
 }
@@ -29,7 +29,7 @@ class DefaultStore<S : PAMUiState>(
             subscribers.forEach { it(value) }
         }
 
-    override fun dispatch(action: UiAction) {
+    override fun dispatch(action: PAMUiAction) {
         state = reducer(state, action)
     }
 

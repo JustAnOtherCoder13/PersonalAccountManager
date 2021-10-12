@@ -2,49 +2,24 @@ package com.piconemarc.viewmodel.viewModel
 
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
-import com.piconemarc.model.entity.AccountModel
-import com.piconemarc.model.entity.DataUiModel
+import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.viewmodel.viewModel.addOperationPopUp.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-//todo find a way to simplify access beetween vm an reducer, adding a new value is a mess
 @HiltViewModel
 class AccountDetailViewModel @Inject constructor(
-    private val addOperationScreenEvent: AddOperationScreenEvent
+    private val addOperationPopUpActionDispatcher: AddOperationPopUpActionDispatcher
 ) : ViewModel() {
 
-    fun dispatchEvent(event: PAMUiEvent){
-        when(event){
-            is AddOperationPopUpEvent -> when (event){
-                is AddOperationPopUpEvent.InitPopUp -> addOperationScreenEvent.initPopUp()
-                is AddOperationPopUpEvent.CLosePopUp ->addOperationScreenEvent.closePopUp()
-                is AddOperationPopUpEvent.CollapseOptions -> addOperationScreenEvent.collapseOptions()
-                is AddOperationPopUpEvent.ExpandPaymentOptions -> addOperationScreenEvent.expandPaymentOption()
-                is AddOperationPopUpEvent.ExpandTransferOptions -> addOperationScreenEvent.expandTransferOption()
-                is AddOperationPopUpEvent.ExpandRecurrentOptions -> addOperationScreenEvent.expandRecurrentOption()
-                is AddOperationPopUpEvent.CollapseRecurrentOptions -> addOperationScreenEvent.collapseRecurrentOption()
-                is AddOperationPopUpEvent.SelectCategory -> addOperationScreenEvent.selectCategory(event.selectedCategory.objectIdReference)
-                is AddOperationPopUpEvent.FillOperationName -> addOperationScreenEvent.fillOperationName(event.operationName)
-            }
+    fun dispatchAction(action: PAMUiAction){
+        when(action){
+            is AddOperationPopUpAction -> addOperationPopUpActionDispatcher.dispatchAction(action)
         }
     }
 }
 
-//AddOperationPopUp Event and States -----------------------------------------
-
-sealed class AddOperationPopUpEvent : PAMUiEvent{
-    object InitPopUp : AddOperationPopUpEvent()
-    object CLosePopUp : AddOperationPopUpEvent()
-    object CollapseOptions : AddOperationPopUpEvent()
-    object ExpandPaymentOptions : AddOperationPopUpEvent()
-    object ExpandTransferOptions : AddOperationPopUpEvent()
-    object ExpandRecurrentOptions : AddOperationPopUpEvent()
-    object CollapseRecurrentOptions : AddOperationPopUpEvent()
-    data class SelectCategory(val selectedCategory: DataUiModel) : AddOperationPopUpEvent()
-    data class FillOperationName(val operationName: String) : AddOperationPopUpEvent()
-
-}
+//AddOperationPopUp States -----------------------------------------
 
 object AddOperationPopUpState {
     val isPopUpExpanded by isPoUpExpanded_
@@ -58,8 +33,8 @@ object AddOperationPopUpState {
     val endDateSelectedYear: String = ""
     val isTransferExpanded by isTransferExpanded_
     val accountList by operationAccounts_
-    val senderAccount: DataUiModel = DataUiModel("",0)
-    val beneficiaryAccount: DataUiModel = DataUiModel("",0)
+    val senderAccount: PresentationDataModel = PresentationDataModel("",0)
+    val beneficiaryAccount: PresentationDataModel = PresentationDataModel("",0)
 }
 
-//
+

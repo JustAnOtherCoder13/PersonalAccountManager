@@ -3,7 +3,7 @@ package com.piconemarc.core.domain.interactor.account
 import com.piconemarc.core.data.account.AccountRepository
 import com.piconemarc.core.domain.entityDTO.AccountDTO
 import com.piconemarc.model.entity.AccountModel
-import com.piconemarc.model.entity.DataUiModel
+import com.piconemarc.model.entity.PresentationDataModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -14,7 +14,7 @@ class GetAllAccountsInteractor @Inject constructor(private val accountRepository
         mapAccountDtoToAccountModel(it)
     }
 
-    fun getAllAccountToDataUiModelList(): Flow<List<DataUiModel>> =
+    fun getAllAccountToDataUiModelList(): Flow<List<PresentationDataModel>> =
         accountRepository.getAllAccounts().map {
             mapAccountDtoToDataUiModel(it)
         }
@@ -29,8 +29,8 @@ class GetAllAccountsInteractor @Inject constructor(private val accountRepository
         }.toMutableList()
     }
 
-    private fun mapAccountDtoToDataUiModel(accountDtoList: List<AccountDTO>): List<DataUiModel> {
-        return accountDtoList.map { DataUiModel(it.name, it.id) }
+    private fun mapAccountDtoToDataUiModel(accountDtoList: List<AccountDTO>): List<PresentationDataModel> {
+        return accountDtoList.map { PresentationDataModel(it.name, it.id) }
     }
 
 }

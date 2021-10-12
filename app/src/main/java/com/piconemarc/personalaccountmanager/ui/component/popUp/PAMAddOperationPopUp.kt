@@ -7,11 +7,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.component.*
-import com.piconemarc.viewmodel.viewModel.AddOperationPopUpEvent
-import com.piconemarc.viewmodel.viewModel.AddOperationPopUpState
 import com.piconemarc.viewmodel.viewModel.AccountDetailViewModel
+import com.piconemarc.viewmodel.viewModel.AddOperationPopUpState
+import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationPopUpAction
 
 @SuppressLint("ModifierParameter")
 @Composable
@@ -23,7 +24,7 @@ fun PAMAddOperationPopUp(
     PAMBasePopUp(
         title = "",
         onAcceptButtonClicked = { },
-        onDismiss = { accountDetailViewModel.dispatchEvent(AddOperationPopUpEvent.CLosePopUp) },
+        onDismiss = { accountDetailViewModel.dispatchAction(AddOperationPopUpAction.ClosePopUp) },
         isExpanded = AddOperationPopUpState.isPopUpExpanded,
         menuIconPanel = {
             PAMAddOperationPopUpLeftSideMenuIconPanel(
@@ -38,8 +39,8 @@ fun PAMAddOperationPopUp(
             selectedItem = AddOperationPopUpState.selectedCategoryName,
             itemList = AddOperationPopUpState.operationCategories,
             onItemSelected = { category ->
-                accountDetailViewModel.dispatchEvent(
-                    AddOperationPopUpEvent.SelectCategory(category)
+                accountDetailViewModel.dispatchAction(
+                    AddOperationPopUpAction.SelectCategory(category)
                 )
             }
         )
@@ -51,11 +52,11 @@ fun PAMAddOperationPopUp(
             PAMBlackBackgroundTextFieldItem(
                 title = stringResource(R.string.operationName),
                 onTextChange = { operationName ->
-                    accountDetailViewModel.dispatchEvent(
-                        AddOperationPopUpEvent.FillOperationName(operationName)
+                    accountDetailViewModel.dispatchAction(
+                        AddOperationPopUpAction.FillOperationName(PresentationDataModel(operationName))
                     )
                 },
-                textValue = AddOperationPopUpState.operationName,
+                textValue = AddOperationPopUpState.operationName.stringValue,
             )
             PAMAmountTextFieldItem(
                 title = stringResource(R.string.operationAmount),

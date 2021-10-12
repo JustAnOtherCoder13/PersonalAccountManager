@@ -24,13 +24,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.piconemarc.model.entity.DataUiModel
+import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.animation.*
 import com.piconemarc.personalaccountmanager.ui.theme.*
-import com.piconemarc.viewmodel.viewModel.AddOperationPopUpEvent
-import com.piconemarc.viewmodel.viewModel.AddOperationPopUpState
 import com.piconemarc.viewmodel.viewModel.AccountDetailViewModel
+import com.piconemarc.viewmodel.viewModel.AddOperationPopUpState
+import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationPopUpAction
 
 @Composable
 fun PAMBasePopUp(
@@ -119,8 +119,8 @@ fun PAMAddOperationPopUpLeftSideMenuIconPanel(
             PAMIconButton(
                 iconButton = PAMIconButtons.Operation,
                 onIconButtonClicked = {
-                    operationDetailViewModel.dispatchEvent(
-                        AddOperationPopUpEvent.CollapseOptions
+                    operationDetailViewModel.dispatchAction(
+                        AddOperationPopUpAction.CollapseOptions
                     )
                 }
             )
@@ -128,8 +128,8 @@ fun PAMAddOperationPopUpLeftSideMenuIconPanel(
             PAMIconButton(
                 iconButton = PAMIconButtons.Payment,
                 onIconButtonClicked = {
-                    operationDetailViewModel.dispatchEvent(
-                        AddOperationPopUpEvent.ExpandPaymentOptions
+                    operationDetailViewModel.dispatchAction(
+                        AddOperationPopUpAction.ExpandPaymentOption
                     )
                 }
             )
@@ -137,8 +137,8 @@ fun PAMAddOperationPopUpLeftSideMenuIconPanel(
             PAMIconButton(
                 iconButton = PAMIconButtons.Transfer,
                 onIconButtonClicked = {
-                    operationDetailViewModel.dispatchEvent(
-                        AddOperationPopUpEvent.ExpandTransferOptions
+                    operationDetailViewModel.dispatchAction(
+                        AddOperationPopUpAction.ExpandTransferOption
                     )
                 }
             )
@@ -242,13 +242,13 @@ fun PAMPunctualOrRecurrentSwitchButton(
                 .padding(top = RegularMarge)
         ) {
             SwitchButton(
-                onButtonSelected = { operationDetailViewModel.dispatchEvent(AddOperationPopUpEvent.CollapseRecurrentOptions) },
+                onButtonSelected = { operationDetailViewModel.dispatchAction(AddOperationPopUpAction.CloseRecurrentOption) },
                 isSelected = !isRecurrentOptionExpanded,
                 title = stringResource(R.string.punctualSwitchButton),
                 switchShape = LeftSwitchShape
             )
             SwitchButton(
-                onButtonSelected = {  operationDetailViewModel.dispatchEvent(AddOperationPopUpEvent.ExpandRecurrentOptions) },
+                onButtonSelected = {  operationDetailViewModel.dispatchAction(AddOperationPopUpAction.ExpandRecurrentOption) },
                 isSelected = isRecurrentOptionExpanded,
                 title = stringResource(R.string.recurrentSwitchButton),
                 switchShape = RightSwitchShape.copy(bottomStart = CornerSize(transition.leftBottomCornerSize)),
@@ -297,11 +297,11 @@ fun PAMRecurrentOptionPanel(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             PAMBaseDropDownMenu(
-                selectedItem = DataUiModel( selectedMonth, 0),
+                selectedItem = PresentationDataModel( selectedMonth, 0),
                 itemList = mutableListOf(),
                 onItemSelected = { month -> onMonthSelected(month.stringValue) })
             PAMBaseDropDownMenu(
-                selectedItem = DataUiModel(selectedYear, 0 ),
+                selectedItem = PresentationDataModel(selectedYear, 0 ),
                 itemList = mutableListOf(),
                 onItemSelected = { year -> onYearSelected(year.stringValue) })
         }
