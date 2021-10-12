@@ -1,21 +1,25 @@
 package com.piconemarc.core.domain
 
+import com.piconemarc.core.domain.Constants.OPERATION_MODEL
 import com.piconemarc.model.entity.PresentationDataModel
 
 interface PAMUiState
 
 data class AddOperationPopUpGlobalState(
     val isPopUpExpanded: Boolean = false,
-    val operationCategories: List<PresentationDataModel> = listOf(),
+    val isPaymentExpanded: Boolean = false,
+    val isRecurrentOptionExpanded: Boolean = false,
+    val isTransferExpanded: Boolean = false,
+    val allCategories: List<PresentationDataModel> = listOf(),
+    val allAccounts: List<PresentationDataModel> = listOf(),
+    val selectableEndDateYears : List<PresentationDataModel> = listOf(),
+    val selectableEndDateMonths : List<PresentationDataModel> = listOf(),
     val selectedCategory: PresentationDataModel = PresentationDataModel(),
     val operationName: PresentationDataModel = PresentationDataModel(),
     val operationAmount: PresentationDataModel = PresentationDataModel(),
-    val isPaymentExpanded: Boolean = false,
-    val isRecurrentOptionExpanded: Boolean = false,
-    val enDateSelectedMonth: String = "",
-    val endDateSelectedYear: String = "",
-    val isTransferExpanded: Boolean = false,
-    val accountList: List<PresentationDataModel> = listOf(),
-    val senderAccount: String = "",
-    val beneficiaryAccount: String = ""
+    val enDateSelectedMonth: PresentationDataModel = PresentationDataModel(),
+    val endDateSelectedYear: PresentationDataModel = PresentationDataModel(),
+    val senderAccount: PresentationDataModel = PresentationDataModel(),
+    val beneficiaryAccount: PresentationDataModel = PresentationDataModel(),
+    val addPopUpTitle : PresentationDataModel =  OPERATION_MODEL
     ) : PAMUiState

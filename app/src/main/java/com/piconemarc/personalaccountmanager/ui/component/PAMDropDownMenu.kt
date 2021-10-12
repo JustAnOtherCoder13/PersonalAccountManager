@@ -12,6 +12,7 @@ import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
@@ -54,7 +55,9 @@ fun PAMBaseDropDownMenu(
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier = Modifier.wrapContentSize()
+            modifier = Modifier
+                .wrapContentWidth()
+                .height(150.dp)
 
         ) {
             itemList.forEachIndexed { _, item ->

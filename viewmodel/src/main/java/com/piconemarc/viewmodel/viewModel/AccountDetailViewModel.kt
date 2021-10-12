@@ -2,7 +2,6 @@ package com.piconemarc.viewmodel.viewModel
 
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
-import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.viewmodel.viewModel.addOperationPopUp.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -23,18 +22,21 @@ class AccountDetailViewModel @Inject constructor(
 
 object AddOperationPopUpState {
     val isPopUpExpanded by isPoUpExpanded_
-    val operationCategories by operationCategories_
+    val operationCategories by allCategories
     val selectedCategoryName by selectedCategoryName_
     val operationName by operationName_
     val operationAmount by operationAmount_
     val isPaymentExpanded by isPaymentExpanded_
     val isRecurrentOptionExpanded by isRecurrentOptionExpanded_
-    val enDateSelectedMonth: String = ""
-    val endDateSelectedYear: String = ""
+    val enDateSelectedMonth by selectedEndDateMonth_
+    val endDateSelectedYear by selectedEndDateYear_
     val isTransferExpanded by isTransferExpanded_
-    val accountList by operationAccounts_
-    val senderAccount: PresentationDataModel = PresentationDataModel("",0)
-    val beneficiaryAccount: PresentationDataModel = PresentationDataModel("",0)
+    val accountList by allAccounts
+    val senderAccount by senderAccount_
+    val beneficiaryAccount by beneficiaryAccount_
+    val addPopUpTitle by addPopUpTitle_
+    val selectableYearsList by selectableYearsList_
+    val selectableMonthsList by selectableMonthsList_
 }
 
 

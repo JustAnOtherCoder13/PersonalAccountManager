@@ -14,7 +14,7 @@ class GetAllAccountsInteractor @Inject constructor(private val accountRepository
         mapAccountDtoToAccountModel(it)
     }
 
-    fun getAllAccountToDataUiModelList(): Flow<List<PresentationDataModel>> =
+    fun getAllAccountsToDataUiModelList(): Flow<List<PresentationDataModel>> =
         accountRepository.getAllAccounts().map {
             mapAccountDtoToDataUiModel(it)
         }

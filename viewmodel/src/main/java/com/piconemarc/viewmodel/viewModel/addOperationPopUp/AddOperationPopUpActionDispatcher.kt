@@ -21,16 +21,39 @@ internal val isRecurrentOptionExpanded_: MutableState<Boolean> = mutableStateOf(
 internal val isTransferExpanded_: MutableState<Boolean> = mutableStateOf(false)
 
 //DATA PRESENTATION VALUES -------------------------------------------------------------------
-internal val operationCategories_: MutableState<List<PresentationDataModel>> =
+internal val allCategories: MutableState<List<PresentationDataModel>> =
     mutableStateOf(listOf())
-internal val operationAccounts_: MutableState<List<PresentationDataModel>> =
+internal val allAccounts: MutableState<List<PresentationDataModel>> =
     mutableStateOf(listOf())
-internal val selectedCategoryName_: MutableState<PresentationDataModel> =
-    mutableStateOf(PresentationDataModel("Category"))
+internal val selectableYearsList_: MutableState<List<PresentationDataModel>> =
+    mutableStateOf(listOf())
+internal val selectableMonthsList_: MutableState<List<PresentationDataModel>> =
+    mutableStateOf(listOf())
+
+internal val selectedCategoryName_: MutableState<PresentationDataModel> = mutableStateOf(
+    PresentationDataModel()
+)
 internal val operationName_: MutableState<PresentationDataModel> = mutableStateOf(
-    PresentationDataModel())
+    PresentationDataModel()
+)
 internal val operationAmount_: MutableState<PresentationDataModel> = mutableStateOf(
-    PresentationDataModel())
+    PresentationDataModel()
+)
+internal val addPopUpTitle_: MutableState<PresentationDataModel> = mutableStateOf(
+    PresentationDataModel()
+)
+internal val selectedEndDateYear_: MutableState<PresentationDataModel> = mutableStateOf(
+    PresentationDataModel()
+)
+internal val selectedEndDateMonth_: MutableState<PresentationDataModel> = mutableStateOf(
+    PresentationDataModel()
+)
+internal val senderAccount_ : MutableState<PresentationDataModel> = mutableStateOf(
+    PresentationDataModel()
+)
+internal val beneficiaryAccount_ : MutableState<PresentationDataModel> = mutableStateOf(
+    PresentationDataModel()
+)
 
 
 class AddOperationPopUpActionDispatcher @Inject constructor(
@@ -59,21 +82,55 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
             is AddOperationPopUpAction.FillOperationName -> fillOperationName(action.operation)
             is AddOperationPopUpAction.UpdateAccountList -> updateAccountsList(action.accountList)
             is AddOperationPopUpAction.UpdateCategoriesList -> updateCategoriesList(action.allCategories)
+            is AddOperationPopUpAction.FillOperationAmount -> fillOperationAmount(action.amount)
+            is AddOperationPopUpAction.SelectEndDateYear -> selectEndDateYear(action.selectedEndDateYear)
+            is AddOperationPopUpAction.SelectEndDateMonth -> selectEndDateMonth(action.selectedEndDateMonth)
+            is AddOperationPopUpAction.SelectSenderAccount -> selectSenderAccount(action.senderAccount)
+            is AddOperationPopUpAction.SelectBeneficiaryAccount -> selectBeneficiaryAccount(action.beneficiaryAccount)
         }
     }
 
-    // ACTIONS ---------------------------------------------------------------------------------
+    // IMPLEMENT ACTIONS ---------------------------------------------------------------------------------
+
+
+    private fun selectBeneficiaryAccount(beneficiaryAccount: PresentationDataModel) {
+        addOperationPopUpStore.dispatch(
+            AddOperationPopUpAction.SelectBeneficiaryAccount(
+                beneficiaryAccount
+            )
+        )
+    }
+
+    private fun selectSenderAccount(senderAccount: PresentationDataModel) {
+        addOperationPopUpStore.dispatch(AddOperationPopUpAction.SelectSenderAccount(senderAccount))
+
+    }
+
+    private fun selectEndDateMonth(selectedEndDateMonth: PresentationDataModel) {
+        addOperationPopUpStore.dispatch(
+            AddOperationPopUpAction.SelectEndDateMonth(
+                selectedEndDateMonth
+            )
+        )
+    }
+
+    private fun selectEndDateYear(selectedEndDateYear: PresentationDataModel) {
+        addOperationPopUpStore.dispatch(
+            AddOperationPopUpAction.SelectEndDateYear(
+                selectedEndDateYear
+            )
+        )
+    }
+
+    private fun fillOperationAmount(amount: PresentationDataModel) {
+        addOperationPopUpStore.dispatch(AddOperationPopUpAction.FillOperationAmount(amount))
+    }
 
     private fun initPopUp() {
         addSubscriber()
         getCategoriesJob = scope.launch {
-            getAllCategoriesInteractor.getAllCategories().collect { allCategories ->
-                updateCategoriesList(allCategories.map {
-                    PresentationDataModel(
-                        stringValue = it.name,
-                        objectIdReference = it.id
-                    )
-                })
+            getAllCategoriesInteractor.getAllCategoriesToDataUiModelList().collect { allCategories ->
+                updateCategoriesList(allCategories)
             }
         }
         addOperationPopUpStore.dispatch(AddOperationPopUpAction.Init)
@@ -95,13 +152,8 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
 
     private fun expandTransferOption() {
         getAllAccountsJob = scope.launch {
-            getAllAccountsInteractor.getAllAccounts().collect { allAccounts ->
-                updateAccountsList(allAccounts.map {
-                    PresentationDataModel(
-                        stringValue = it.name,
-                        objectIdReference = it.id
-                    )
-                })
+            getAllAccountsInteractor.getAllAccountsToDataUiModelList().collect { allAccounts ->
+                updateAccountsList(allAccounts)
             }
         }
         addOperationPopUpStore.dispatch(AddOperationPopUpAction.ExpandTransferOption)
@@ -109,6 +161,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
 
     private fun expandRecurrentOption() {
         addOperationPopUpStore.dispatch(AddOperationPopUpAction.ExpandRecurrentOption)
+
     }
 
     private fun collapseRecurrentOption() {
@@ -145,7 +198,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
     private fun removeSubscriber() = addOperationPopUpStore.remove(subscriber)
 
 
-//Subscriber to get updatedState
+    //Subscriber to get updatedState
     private val subscriber: StoreSubscriber<AddOperationPopUpGlobalState> =
         { addOperationPopUpGlobalState ->
 
@@ -161,11 +214,17 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
             isTransferExpanded_.value =
                 addOperationPopUpGlobalState.isTransferExpanded
 
-            operationCategories_.value =
-                addOperationPopUpGlobalState.operationCategories
+            allCategories.value =
+                addOperationPopUpGlobalState.allCategories
 
-            operationAccounts_.value =
-                addOperationPopUpGlobalState.accountList
+            allAccounts.value =
+                addOperationPopUpGlobalState.allAccounts
+
+            selectableYearsList_.value =
+                addOperationPopUpGlobalState.selectableEndDateYears
+
+            selectableMonthsList_.value =
+                addOperationPopUpGlobalState.selectableEndDateMonths
 
             selectedCategoryName_.value =
                 addOperationPopUpGlobalState.selectedCategory
@@ -175,6 +234,21 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
 
             operationAmount_.value =
                 addOperationPopUpGlobalState.operationAmount
+
+            addPopUpTitle_.value =
+                addOperationPopUpGlobalState.addPopUpTitle
+
+            selectedEndDateYear_.value =
+                addOperationPopUpGlobalState.endDateSelectedYear
+
+            selectedEndDateMonth_.value =
+                addOperationPopUpGlobalState.enDateSelectedMonth
+
+            senderAccount_.value =
+                addOperationPopUpGlobalState.senderAccount
+
+            beneficiaryAccount_.value =
+                addOperationPopUpGlobalState.beneficiaryAccount
         }
 }
 
@@ -188,9 +262,22 @@ sealed class AddOperationPopUpAction : PAMUiAction {
     object ClosePopUp : AddOperationPopUpAction()
     data class SelectCategory(val category: PresentationDataModel) : AddOperationPopUpAction()
     data class FillOperationName(val operation: PresentationDataModel) : AddOperationPopUpAction()
+    data class FillOperationAmount(val amount: PresentationDataModel) : AddOperationPopUpAction()
     data class UpdateCategoriesList(val allCategories: List<PresentationDataModel>) :
         AddOperationPopUpAction()
+
     data class UpdateAccountList(val accountList: List<PresentationDataModel>) :
         AddOperationPopUpAction()
-}
 
+    data class SelectEndDateYear(val selectedEndDateYear: PresentationDataModel) :
+        AddOperationPopUpAction()
+
+    data class SelectEndDateMonth(val selectedEndDateMonth: PresentationDataModel) :
+        AddOperationPopUpAction()
+
+    data class SelectSenderAccount(val senderAccount: PresentationDataModel) :
+        AddOperationPopUpAction()
+
+    data class SelectBeneficiaryAccount(val beneficiaryAccount: PresentationDataModel) :
+        AddOperationPopUpAction()
+}
