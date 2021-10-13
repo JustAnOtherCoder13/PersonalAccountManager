@@ -1,7 +1,6 @@
 package com.piconemarc.viewmodel.viewModel
 
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.ViewModel
 import com.piconemarc.viewmodel.viewModel.addOperationPopUp.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -9,18 +8,19 @@ import javax.inject.Inject
 @HiltViewModel
 class AccountDetailViewModel @Inject constructor(
     private val addOperationPopUpActionDispatcher: AddOperationPopUpActionDispatcher
-) : ViewModel() {
+) : BaseScreenViewModel() {
 
-    fun dispatchAction(action: PAMUiAction){
+    override fun dispatchAction(action: UiAction){
         when(action){
             is AddOperationPopUpAction -> addOperationPopUpActionDispatcher.dispatchAction(action)
         }
     }
+
 }
 
 //AddOperationPopUp States -----------------------------------------
 
-object AddOperationPopUpState {
+object AddOperationPopUpUiState {
     val isPopUpExpanded by isPoUpExpanded_
     val operationCategories by allCategories
     val selectedCategoryName by selectedCategoryName_

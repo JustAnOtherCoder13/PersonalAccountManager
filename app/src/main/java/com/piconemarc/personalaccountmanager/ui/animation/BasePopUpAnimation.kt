@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.piconemarc.personalaccountmanager.ui.theme.BigMarge
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
 import com.piconemarc.personalaccountmanager.ui.theme.XlMarge
-import com.piconemarc.viewmodel.viewModel.PAMUiDataAnimation
+import com.piconemarc.viewmodel.viewModel.UiDataAnimation
 
 @Composable
 fun pAMBasePopUpEnterExitAnimation(isExpended: Boolean): PAMUiDataAnimations.BasePopUpAnimationData {
@@ -202,13 +202,13 @@ enum class AmountTextFieldState {
 }
 
 
-object PAMUiDataAnimations : PAMUiDataAnimation {
+object PAMUiDataAnimations : UiDataAnimation {
 
     class BasePopUpAnimationData(
         alpha: State<Float>,
         size: State<Dp>,
         position: State<Dp>,
-    ) : PAMUiDataAnimation {
+    ) : UiDataAnimation {
         val alpha by alpha
         val size by size
         val position by position
@@ -216,13 +216,13 @@ object PAMUiDataAnimations : PAMUiDataAnimation {
 
     class AddOperationPopUpIconMenuPanelAnimationData(
         offset: State<Offset>
-    ) : PAMUiDataAnimation {
+    ) : UiDataAnimation {
         val offset by offset
     }
 
     class AddOperationPopUpRecurrentButtonTransitionData(
         buttonSize: State<Dp>, leftBottomCornerSize: State<Dp>
-    ) : PAMUiDataAnimation {
+    ) : UiDataAnimation {
         val buttonSize by buttonSize
         val leftBottomCornerSize by leftBottomCornerSize
     }
@@ -230,7 +230,7 @@ object PAMUiDataAnimations : PAMUiDataAnimation {
     class AmountTextFieldTransitionData(
         backgroundColor: State<Color>,
         textColor: State<Color>,
-    ) : PAMUiDataAnimation {
+    ) : UiDataAnimation {
         val backgroundColor by backgroundColor
         val textColor by textColor
     }

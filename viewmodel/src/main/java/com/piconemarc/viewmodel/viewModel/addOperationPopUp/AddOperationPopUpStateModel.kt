@@ -1,9 +1,9 @@
-package com.piconemarc.core.domain
+package com.piconemarc.viewmodel.viewModel.addOperationPopUp
 
 import com.piconemarc.core.domain.Constants.OPERATION_MODEL
 import com.piconemarc.model.entity.PresentationDataModel
+import com.piconemarc.viewmodel.viewModel.UiState
 
-interface PAMUiState
 
 data class AddOperationPopUpGlobalState(
     val isPopUpExpanded: Boolean = false,
@@ -22,4 +22,4 @@ data class AddOperationPopUpGlobalState(
     val senderAccount: PresentationDataModel = PresentationDataModel(),
     val beneficiaryAccount: PresentationDataModel = PresentationDataModel(),
     val addPopUpTitle : PresentationDataModel =  OPERATION_MODEL
-    ) : PAMUiState
+    ) : UiState

@@ -42,4 +42,5 @@ object Constants {
     val SELECTABLE_MONTHS_LIST : List<PresentationDataModel> =
         DateFormatSymbols(Locale.FRENCH).months.toList().map { PresentationDataModel(stringValue = it )}
 
+    interface Interactor
 }

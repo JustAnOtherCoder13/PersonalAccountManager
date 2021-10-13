@@ -1,6 +1,5 @@
 package com.piconemarc.viewmodel.viewModel.addOperationPopUp
 
-import com.piconemarc.core.domain.AddOperationPopUpGlobalState
 import com.piconemarc.core.domain.Constants.BENEFICIARY_ACCOUNT_MODEL
 import com.piconemarc.core.domain.Constants.CATEGORY_MODEL
 import com.piconemarc.core.domain.Constants.MONTH_MODEL
@@ -16,42 +15,20 @@ import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
 import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.viewmodel.viewModel.DefaultStore
 import com.piconemarc.viewmodel.viewModel.Reducer
+import com.piconemarc.viewmodel.viewModel.ReducerModule
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+
 @InstallIn(SingletonComponent::class)
 @Module
-class AddPopUpStateReducerModule {
+class AddPopUpStateReducerModule
+    : ReducerModule<AddOperationPopUpGlobalState> {
 
-    @Provides
-    fun provideAddOperationScreenEvent(
-        getAllCategoriesInteractor: GetAllCategoriesInteractor,
-        getAllAccountsInteractor: GetAllAccountsInteractor,
-        addOperationPopUpStore: DefaultStore<AddOperationPopUpGlobalState>
-    ): AddOperationPopUpActionDispatcher {
-        return AddOperationPopUpActionDispatcher(
-            getAllCategoriesInteractor,
-            getAllAccountsInteractor,
-            addOperationPopUpStore
-        )
-    }
-
-    @Singleton
-    @Provides
-    fun addOperationPopUpStore(addOperationPopUpGlobalState: AddOperationPopUpGlobalState): DefaultStore<AddOperationPopUpGlobalState> =
-        DefaultStore(
-            initialState = addOperationPopUpGlobalState,
-            reducer = provideAddOperationStateReducer
-        )
-
-    @Provides
-    fun provideGlobalState(): AddOperationPopUpGlobalState =
-        AddOperationPopUpGlobalState()
-
-    private val provideAddOperationStateReducer: Reducer<AddOperationPopUpGlobalState> =
+    override val provideStateReducer: Reducer<AddOperationPopUpGlobalState> =
         { old, action ->
             action as AddOperationPopUpAction
             when (action) {
@@ -117,7 +94,7 @@ class AddPopUpStateReducerModule {
                 is AddOperationPopUpAction.SelectEndDateMonth -> old.copy(
                     enDateSelectedMonth = action.selectedEndDateMonth
                 )
-                is AddOperationPopUpAction.SelectSenderAccount  -> old.copy(
+                is AddOperationPopUpAction.SelectSenderAccount -> old.copy(
                     senderAccount = action.senderAccount
                 )
                 is AddOperationPopUpAction.SelectBeneficiaryAccount -> old.copy(
@@ -125,4 +102,33 @@ class AddPopUpStateReducerModule {
                 )
             }
         }
+
+    @Provides
+    fun provideAddOperationScreenEvent(
+        getAllCategoriesInteractor: GetAllCategoriesInteractor,
+        getAllAccountsInteractor: GetAllAccountsInteractor,
+        addOperationPopUpStore: DefaultStore<AddOperationPopUpGlobalState>
+    ): AddOperationPopUpActionDispatcher {
+        return AddOperationPopUpActionDispatcher(
+            getAllCategoriesInteractor,
+            getAllAccountsInteractor,
+            addOperationPopUpStore
+        )
+    }
+
+
+
+    @Singleton
+    @Provides
+    override fun provideStore(state: AddOperationPopUpGlobalState): DefaultStore<AddOperationPopUpGlobalState> {
+        return DefaultStore(
+            initialState = state,
+            reducer = provideStateReducer
+        )
+    }
+
+    @Provides
+    override fun provideState(): AddOperationPopUpGlobalState =
+        AddOperationPopUpGlobalState()
+
 }

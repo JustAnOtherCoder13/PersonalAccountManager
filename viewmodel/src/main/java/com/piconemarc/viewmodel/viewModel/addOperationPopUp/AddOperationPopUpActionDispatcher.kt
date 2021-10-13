@@ -2,17 +2,18 @@ package com.piconemarc.viewmodel.viewModel.addOperationPopUp
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import com.piconemarc.core.domain.AddOperationPopUpGlobalState
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
 import com.piconemarc.model.entity.PresentationDataModel
+import com.piconemarc.viewmodel.viewModel.ActionDispatcher
 import com.piconemarc.viewmodel.viewModel.DefaultStore
-import com.piconemarc.viewmodel.viewModel.PAMUiAction
 import com.piconemarc.viewmodel.viewModel.StoreSubscriber
-import kotlinx.coroutines.*
+import com.piconemarc.viewmodel.viewModel.UiAction
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 
 //EXPAND AND COLLAPSE VALUES --------------------------------------------------------------
 internal val isPoUpExpanded_: MutableState<Boolean> = mutableStateOf(false)
@@ -56,20 +57,20 @@ internal val beneficiaryAccount_ : MutableState<PresentationDataModel> = mutable
 )
 
 
+
 class AddOperationPopUpActionDispatcher @Inject constructor(
     private val getAllCategoriesInteractor: GetAllCategoriesInteractor,
     private val getAllAccountsInteractor: GetAllAccountsInteractor,
     private val addOperationPopUpStore: DefaultStore<AddOperationPopUpGlobalState>
-) : CoroutineScope {
-    // Scope and job to launch data request
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Default
-    private val scope = CoroutineScope(coroutineContext)
+) : ActionDispatcher<AddOperationPopUpAction,AddOperationPopUpGlobalState> {
     private var getCategoriesJob: Job? = null
     private var getAllAccountsJob: Job? = null
 
+    override val store: DefaultStore<AddOperationPopUpGlobalState>
+        get() = addOperationPopUpStore
+
     //action dispatcher
-    fun dispatchAction(action: AddOperationPopUpAction) {
+    override fun dispatchAction(action: AddOperationPopUpAction) {
         when (action) {
             is AddOperationPopUpAction.Init -> initPopUp()
             is AddOperationPopUpAction.ClosePopUp -> closePopUp()
@@ -94,7 +95,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
 
 
     private fun selectBeneficiaryAccount(beneficiaryAccount: PresentationDataModel) {
-        addOperationPopUpStore.dispatch(
+        store.dispatch(
             AddOperationPopUpAction.SelectBeneficiaryAccount(
                 beneficiaryAccount
             )
@@ -102,12 +103,12 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
     }
 
     private fun selectSenderAccount(senderAccount: PresentationDataModel) {
-        addOperationPopUpStore.dispatch(AddOperationPopUpAction.SelectSenderAccount(senderAccount))
+        store.dispatch(AddOperationPopUpAction.SelectSenderAccount(senderAccount))
 
     }
 
     private fun selectEndDateMonth(selectedEndDateMonth: PresentationDataModel) {
-        addOperationPopUpStore.dispatch(
+        store.dispatch(
             AddOperationPopUpAction.SelectEndDateMonth(
                 selectedEndDateMonth
             )
@@ -115,7 +116,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
     }
 
     private fun selectEndDateYear(selectedEndDateYear: PresentationDataModel) {
-        addOperationPopUpStore.dispatch(
+        store.dispatch(
             AddOperationPopUpAction.SelectEndDateYear(
                 selectedEndDateYear
             )
@@ -123,7 +124,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
     }
 
     private fun fillOperationAmount(amount: PresentationDataModel) {
-        addOperationPopUpStore.dispatch(AddOperationPopUpAction.FillOperationAmount(amount))
+        store.dispatch(AddOperationPopUpAction.FillOperationAmount(amount))
     }
 
     private fun initPopUp() {
@@ -133,21 +134,21 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                 updateCategoriesList(allCategories)
             }
         }
-        addOperationPopUpStore.dispatch(AddOperationPopUpAction.Init)
+        store.dispatch(AddOperationPopUpAction.Init)
     }
 
     private fun closePopUp() {
-        addOperationPopUpStore.dispatch(AddOperationPopUpAction.ClosePopUp)
+        store.dispatch(AddOperationPopUpAction.ClosePopUp)
         removeSubscriber()
         scope.cancel()
     }
 
     private fun collapseOptions() {
-        addOperationPopUpStore.dispatch(AddOperationPopUpAction.CollapseOptions)
+        store.dispatch(AddOperationPopUpAction.CollapseOptions)
     }
 
     private fun expandPaymentOption() {
-        addOperationPopUpStore.dispatch(AddOperationPopUpAction.ExpandPaymentOption)
+        store.dispatch(AddOperationPopUpAction.ExpandPaymentOption)
     }
 
     private fun expandTransferOption() {
@@ -156,26 +157,26 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                 updateAccountsList(allAccounts)
             }
         }
-        addOperationPopUpStore.dispatch(AddOperationPopUpAction.ExpandTransferOption)
+        store.dispatch(AddOperationPopUpAction.ExpandTransferOption)
     }
 
     private fun expandRecurrentOption() {
-        addOperationPopUpStore.dispatch(AddOperationPopUpAction.ExpandRecurrentOption)
+        store.dispatch(AddOperationPopUpAction.ExpandRecurrentOption)
 
     }
 
     private fun collapseRecurrentOption() {
-        addOperationPopUpStore.dispatch(AddOperationPopUpAction.CloseRecurrentOption)
+        store.dispatch(AddOperationPopUpAction.CloseRecurrentOption)
     }
 
     private fun selectCategory(selectedCategoryUiModel: PresentationDataModel) {
-        addOperationPopUpStore.dispatch(
+        store.dispatch(
             AddOperationPopUpAction.SelectCategory(selectedCategoryUiModel)
         )
     }
 
     private fun fillOperationName(operation: PresentationDataModel) {
-        addOperationPopUpStore.dispatch(
+        store.dispatch(
             AddOperationPopUpAction.FillOperationName(
                 operation
             )
@@ -183,25 +184,21 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
     }
 
     private fun updateCategoriesList(updatedCategoriesList: List<PresentationDataModel>) {
-        addOperationPopUpStore.dispatch(
+        store.dispatch(
             AddOperationPopUpAction.UpdateCategoriesList(updatedCategoriesList)
         )
     }
 
     private fun updateAccountsList(updatedAccountList: List<PresentationDataModel>) {
-        addOperationPopUpStore.dispatch(
+        store.dispatch(
             AddOperationPopUpAction.UpdateAccountList(updatedAccountList)
         )
     }
 
-    private fun addSubscriber() = addOperationPopUpStore.add(subscriber)
-    private fun removeSubscriber() = addOperationPopUpStore.remove(subscriber)
-
 
     //Subscriber to get updatedState
-    private val subscriber: StoreSubscriber<AddOperationPopUpGlobalState> =
+    override val subscriber: StoreSubscriber<AddOperationPopUpGlobalState> =
         { addOperationPopUpGlobalState ->
-
             isPoUpExpanded_.value =
                 addOperationPopUpGlobalState.isPopUpExpanded
 
@@ -252,7 +249,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
         }
 }
 
-sealed class AddOperationPopUpAction : PAMUiAction {
+sealed class AddOperationPopUpAction : UiAction {
     object Init : AddOperationPopUpAction()
     object ExpandPaymentOption : AddOperationPopUpAction()
     object CollapseOptions : AddOperationPopUpAction()
