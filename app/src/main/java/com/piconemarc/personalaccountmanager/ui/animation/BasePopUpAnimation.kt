@@ -11,9 +11,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.piconemarc.personalaccountmanager.ui.theme.BigMarge
-import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
-import com.piconemarc.personalaccountmanager.ui.theme.XlMarge
+import com.piconemarc.personalaccountmanager.ui.theme.*
 import com.piconemarc.viewmodel.viewModel.UiDataAnimation
 
 @Composable
@@ -162,9 +160,9 @@ fun pAMAmountTextFieldAnimation(amount: String): PAMUiDataAnimations.AmountTextF
     val backgroundColor = transition.animateColor(
         label = "", transitionSpec = { tween(durationMillis = 400) }) {
         when (it) {
-            AmountTextFieldState.NAN -> Color.Gray
-            AmountTextFieldState.POSITIVE -> Color.Green
-            AmountTextFieldState.NEGATIVE -> Color.Red
+            AmountTextFieldState.NAN -> MaterialTheme.colors.primaryVariant
+            AmountTextFieldState.POSITIVE -> Positive
+            AmountTextFieldState.NEGATIVE -> Negative
         }
     }
     val textColor = transition.animateColor(

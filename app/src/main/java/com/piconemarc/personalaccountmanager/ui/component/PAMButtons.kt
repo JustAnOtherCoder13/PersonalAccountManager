@@ -29,7 +29,7 @@ fun PAMBaseButton(
         modifier = Modifier
             .width(120.dp),
         colors = ButtonDefaults.textButtonColors(
-            backgroundColor = MaterialTheme.colors.secondary,
+            backgroundColor = MaterialTheme.colors.secondaryVariant,
             contentColor = MaterialTheme.colors.onSecondary
         )
     ) {
