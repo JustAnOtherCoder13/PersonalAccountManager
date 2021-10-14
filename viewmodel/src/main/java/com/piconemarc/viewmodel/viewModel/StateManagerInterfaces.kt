@@ -10,18 +10,20 @@ interface UiDataAnimation
 
 interface UiAction
 
+interface VMState
+
 interface UiState
 
 typealias Reducer <S> = (S, UiAction) -> S
 typealias StoreSubscriber <S> = (S) -> Unit
 
-interface Store<S : UiState> {
+interface Store<S : VMState> {
     fun dispatch(action: UiAction)
     fun add(subscriber: StoreSubscriber<S>): Boolean
     fun remove(subscriber: StoreSubscriber<S>): Boolean
 }
 
-class DefaultStore<S : UiState>(
+class DefaultStore<S : VMState>(
     initialState: S,
     private val reducer: Reducer<S>
 ) : Store<S> {
@@ -39,7 +41,7 @@ class DefaultStore<S : UiState>(
 }
 
 
-interface ActionDispatcher<A : UiAction, S : UiState> : CoroutineScope {
+interface ActionDispatcher<A : UiAction, S : VMState> : CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Default
     val scope: CoroutineScope
@@ -54,12 +56,21 @@ interface ActionDispatcher<A : UiAction, S : UiState> : CoroutineScope {
     val subscriber: StoreSubscriber<S>
 }
 
-interface ReducerModule<S : UiState>{
+interface ReducerModule<S : VMState>{
     val provideStateReducer : Reducer<S>
     fun provideState () : S
     fun provideStore (state : S): DefaultStore<S>
+    //todo find a way to abstract dispatcher
 }
 
 abstract class BaseScreenViewModel : ViewModel(){
     abstract fun dispatchAction(action : UiAction)
+}
+
+interface UtilsProvider <S : VMState> {
+    val providedSubscriber : StoreSubscriber<S>
+    val providedReducer : Reducer<S>
+    val providedUiState : UiState
+    val providedVmState : VMState
+    //todo find a way to abstract action
 }

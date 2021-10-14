@@ -1,6 +1,11 @@
 package com.piconemarc.core.domain
 
 import com.piconemarc.model.entity.PresentationDataModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import java.text.DateFormatSymbols
 import java.util.*
 
@@ -43,4 +48,27 @@ object Constants {
         DateFormatSymbols(Locale.FRENCH).months.toList().map { PresentationDataModel(stringValue = it )}
 
     interface Interactor
+
+    data class ErrorHandlerFlowCollector<T : Any>(
+        private val scope: CoroutineScope,
+        private val flow: Flow<T>
+    ) {
+
+        private fun onSuccess(data: T): T = data
+
+        private fun onError(throwable: Throwable) {
+            println("error : $throwable")
+        }
+
+        fun launchCoroutine(updatedData: (data: T) -> Unit) = scope.launch {
+            flow
+                .catch {
+                    onError(it)
+                }
+                .collect {
+                    updatedData(it)
+                    onSuccess(it)
+                }
+        }
+    }
 }

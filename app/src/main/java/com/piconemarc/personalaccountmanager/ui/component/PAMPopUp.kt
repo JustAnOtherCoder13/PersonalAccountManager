@@ -28,7 +28,6 @@ import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.animation.*
 import com.piconemarc.personalaccountmanager.ui.theme.*
-import com.piconemarc.viewmodel.viewModel.AddOperationPopUpUiState
 
 @Composable
 fun PAMBasePopUp(
@@ -138,10 +137,11 @@ fun PAMAddOperationPopUpLeftSideMenuIconPanel(
 fun PAMBlackBackgroundTextFieldItem(
     title: PresentationDataModel,
     onTextChange: (text: PresentationDataModel) -> Unit,
-    textValue: PresentationDataModel
+    textValue: PresentationDataModel,
+    isAddOperationPopUpExpanded : Boolean
 ) {
     val focusManager = LocalFocusManager.current
-    if (!AddOperationPopUpUiState.isPopUpExpanded) focusManager.clearFocus()
+    if (!isAddOperationPopUpExpanded) focusManager.clearFocus()
     Column(modifier = Modifier.popUpClickableItemModifier()) {
         TextField(
             value = textValue.stringValue,
@@ -170,10 +170,11 @@ fun PAMAmountTextFieldItem(
     title: PresentationDataModel,
     onTextChange: (text: PresentationDataModel) -> Unit,
     amountValue: PresentationDataModel,
+    isAddOperationPopUpExpanded : Boolean
 ) {
     val focusManager = LocalFocusManager.current
     val transition = pAMAmountTextFieldAnimation(amountValue.stringValue)
-    if (!AddOperationPopUpUiState.isPopUpExpanded) focusManager.clearFocus()
+    if (!isAddOperationPopUpExpanded) focusManager.clearFocus()
     Column(
         modifier = Modifier
             .fillMaxWidth()

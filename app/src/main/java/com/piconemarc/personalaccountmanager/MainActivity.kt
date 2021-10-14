@@ -23,7 +23,7 @@ import com.piconemarc.model.entity.GeneratedOperation
 import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMAddOperationPopUp
 import com.piconemarc.personalaccountmanager.ui.theme.PersonalAccountManagerTheme
 import com.piconemarc.viewmodel.viewModel.AccountDetailViewModel
-import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationPopUpAction
+import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationPopUpUtilsProvider
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.scopes.ActivityScoped
 
@@ -80,7 +80,7 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                         Button(onClick = {
-                            operationDetailViewModel.dispatchAction(AddOperationPopUpAction.Init)
+                            operationDetailViewModel.dispatchAction(AddOperationPopUpUtilsProvider.AddOperationPopUpAction.Init)
                             //addOperationScreenEvent.initPopUp()
                         }) {
                             Text(text = "add operation")

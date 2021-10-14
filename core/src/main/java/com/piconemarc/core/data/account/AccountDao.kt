@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface AccountDao {
 
+    //todo pass all with flow or better use shared flow and state flow
     @Query("SELECT*FROM $ACCOUNT_TABLE")
     fun getAllAccounts() : Flow<List<AccountDTO>>
 
