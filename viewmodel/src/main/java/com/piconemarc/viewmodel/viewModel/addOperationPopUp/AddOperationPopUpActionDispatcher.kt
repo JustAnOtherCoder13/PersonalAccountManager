@@ -100,6 +100,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
 
     private fun initPopUp() {
         addSubscriber()
+        //todo extract logic with error handler
         getCategoriesJob = scope.launch {
             getAllCategoriesInteractor.getAllCategoriesToDataUiModelList()
                 .collect { allCategories ->

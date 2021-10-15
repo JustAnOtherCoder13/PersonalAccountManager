@@ -1,4 +1,4 @@
-package com.piconemarc.personalaccountmanager.ui.component
+package com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
@@ -58,7 +58,10 @@ fun PAMBasePopUp(
                     elevation = BigMarge,
                     backgroundColor = MaterialTheme.colors.secondary,
                     shape = MaterialTheme.shapes.large.copy(topStart = CornerSize(0.dp)),
-                    border = BorderStroke(LittleMarge, MaterialTheme.colors.primaryVariant),
+                    border = BorderStroke(LittleMarge, BrownDark_300),
+                    modifier = Modifier.clickable {
+                        //to disable dismiss when click on card
+                    }
                 ) {
                     Column {
                         PopUpTitle(title)
@@ -99,7 +102,7 @@ fun PAMAddOperationPopUpLeftSideMenuIconPanel(
     onPaymentButtonClicked: () -> Unit,
     onTransferButtonClicked: () -> Unit
 ) {
-    Box {
+    Box() {
         Box(
             modifier = Modifier
                 .offset(
@@ -108,13 +111,18 @@ fun PAMAddOperationPopUpLeftSideMenuIconPanel(
                     ).offset.y.dp
                 )
                 .background(
-                    color = MaterialTheme.colors.primaryVariant,
+                    color = BrownLight,
                     shape = RoundedCornerShape(topStart = BigMarge, bottomStart = BigMarge)
                 )
-                .height(48.dp)
-                .width(48.dp)
+                .height(50.dp)
+                .width(50.dp)
         )
-        Column {
+        Column(
+            modifier = Modifier
+                .width(45.dp)
+                .padding(start = 5.dp)
+
+        ) {
             PAMIconButton(
                 iconButton = PAMIconButtons.Operation,
                 onIconButtonClicked = onOperationButtonClicked
@@ -173,14 +181,13 @@ fun PAMAmountTextFieldItem(
     isAddOperationPopUpExpanded : Boolean
 ) {
     val focusManager = LocalFocusManager.current
-    val transition = pAMAmountTextFieldAnimation(amountValue.stringValue)
     if (!isAddOperationPopUpExpanded) focusManager.clearFocus()
-    Column(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = RegularMarge, bottom = RegularMarge, end = RegularMarge)
             .background(
-                color = transition.backgroundColor,
+                color = MaterialTheme.colors.primary,
                 shape = PopUpFieldBackgroundShape
             )
     ) {
@@ -194,10 +201,10 @@ fun PAMAmountTextFieldItem(
                 imeAction = ImeAction.Done
             ),
             colors = TextFieldDefaults.textFieldColors(
-                focusedLabelColor = transition.textColor,
-                unfocusedLabelColor = transition.textColor,
-                backgroundColor = Color.Transparent,
-                textColor = transition.textColor
+                focusedLabelColor = MaterialTheme.colors.onPrimary,
+                unfocusedLabelColor = MaterialTheme.colors.onPrimary,
+                cursorColor = MaterialTheme.colors.onPrimary,
+                backgroundColor = Color.Transparent
             ),
             keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
         )
@@ -345,7 +352,10 @@ fun PopUpTitle(title: PresentationDataModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(color = MaterialTheme.colors.primary, shape = MaterialTheme.shapes.large)
+            .background(
+                color = MaterialTheme.colors.primaryVariant,
+                shape = MaterialTheme.shapes.large.copy(topStart = CornerSize(0.dp))
+            )
     ) {
         Text(
             text = title.stringValue,
@@ -367,8 +377,9 @@ fun SwitchButton(
     switchShape: Shape,
     bottomPadding: Dp = RegularMarge
 ) {
+    //todo pass with transition
     val buttonColor by animateColorAsState(
-        targetValue = if (isSelected) MaterialTheme.colors.primary else MaterialTheme.colors.primaryVariant,
+        targetValue = if (isSelected) MaterialTheme.colors.primary else MaterialTheme.colors.secondaryVariant,
         animationSpec = if (!isSelected) tween(delayMillis = 120) else tween(delayMillis = 0)
     )
     val textColor by animateColorAsState(
