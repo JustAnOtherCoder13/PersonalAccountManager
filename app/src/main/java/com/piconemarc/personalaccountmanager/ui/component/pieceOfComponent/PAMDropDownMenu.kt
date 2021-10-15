@@ -1,4 +1,4 @@
-package com.piconemarc.personalaccountmanager.ui.component
+package com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

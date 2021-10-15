@@ -1,14 +1,16 @@
 package com.piconemarc.personalaccountmanager.ui.component.popUp
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.R
-import com.piconemarc.personalaccountmanager.ui.component.*
+import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.*
+import com.piconemarc.personalaccountmanager.ui.theme.BigMarge
+import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
 import com.piconemarc.viewmodel.viewModel.AccountDetailViewModel
 import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationPopUpUtilsProvider
 
@@ -44,21 +46,13 @@ fun PAMAddOperationPopUp(
             )
         }
     ) {
-        //category drop down -----------------------------------
-        PAMBaseDropDownMenuWithBackground(
-            selectedItem = AddOperationPopUpUtilsProvider.AddOperationPopUpUiState.selectedCategoryName,
-            itemList = AddOperationPopUpUtilsProvider.AddOperationPopUpUiState.operationCategories,
-            onItemSelected = { category ->
-                accountDetailViewModel.dispatchAction(
-                    AddOperationPopUpUtilsProvider.AddOperationPopUpAction.SelectCategory(category)
-                )
-            }
-        )
-        // operation and amount text field--------------------------
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            //add or minus switch
+            AddOrMinusSwitchButton()
+            // operation name--------------------------
             PAMBlackBackgroundTextFieldItem(
                 title = PresentationDataModel(stringValue = stringResource(R.string.operationName)),
                 onTextChange = { operationName ->
@@ -69,6 +63,7 @@ fun PAMAddOperationPopUp(
                 textValue = AddOperationPopUpUtilsProvider.AddOperationPopUpUiState.operationName,
                 isAddOperationPopUpExpanded = AddOperationPopUpUtilsProvider.AddOperationPopUpUiState.isPopUpExpanded
             )
+            // operation Amount--------------------------
             PAMAmountTextFieldItem(
                 title = PresentationDataModel(stringValue = stringResource(R.string.operationAmount)),
                 onTextChange = { operationAmount ->
@@ -79,6 +74,17 @@ fun PAMAddOperationPopUp(
                 amountValue = AddOperationPopUpUtilsProvider.AddOperationPopUpUiState.operationAmount,
                 isAddOperationPopUpExpanded = AddOperationPopUpUtilsProvider.AddOperationPopUpUiState.isPopUpExpanded
             )
+            //category drop down -----------------------------------
+            PAMBaseDropDownMenuWithBackground(
+                selectedItem = AddOperationPopUpUtilsProvider.AddOperationPopUpUiState.selectedCategoryName,
+                itemList = AddOperationPopUpUtilsProvider.AddOperationPopUpUiState.operationCategories,
+                onItemSelected = { category ->
+                    accountDetailViewModel.dispatchAction(
+                        AddOperationPopUpUtilsProvider.AddOperationPopUpAction.SelectCategory(category)
+                    )
+                }
+            )
+
             //Payment Operation option--------------------------
             PAMPunctualOrRecurrentSwitchButton(
                 isRecurrentOptionExpanded = AddOperationPopUpUtilsProvider.AddOperationPopUpUiState.isRecurrentOptionExpanded,
@@ -124,5 +130,31 @@ fun PAMAddOperationPopUp(
                 }
             )
         }
+    }
+}
+
+@Composable
+private fun AddOrMinusSwitchButton() {
+    var isAddOperation by remember {
+        mutableStateOf(true)
+    }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = BigMarge, end = BigMarge, top = LittleMarge),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        PAMIconButton(
+            onIconButtonClicked = { isAddOperation = true },
+            iconButton = PAMIconButtons.Add,
+            iconColor = if (isAddOperation) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSecondary,
+            backgroundColor = if (isAddOperation) MaterialTheme.colors.primary else MaterialTheme.colors.secondaryVariant
+        )
+        PAMIconButton(
+            onIconButtonClicked = { isAddOperation = false },
+            iconButton = PAMIconButtons.Minus,
+            iconColor = if (!isAddOperation) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSecondary,
+            backgroundColor = if (!isAddOperation) MaterialTheme.colors.primary else MaterialTheme.colors.secondaryVariant
+        )
     }
 }

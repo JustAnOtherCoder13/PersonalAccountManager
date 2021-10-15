@@ -2,7 +2,6 @@ package com.piconemarc.personalaccountmanager.ui.animation
 
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.*
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -13,6 +12,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.piconemarc.personalaccountmanager.ui.theme.*
 import com.piconemarc.viewmodel.viewModel.UiDataAnimation
+
+//todo create a new file for global screen animations
+
+
 
 @Composable
 fun pAMBasePopUpEnterExitAnimation(isExpended: Boolean): PAMUiDataAnimations.BasePopUpAnimationData {
@@ -49,7 +52,7 @@ fun pAMBasePopUpEnterExitAnimation(isExpended: Boolean): PAMUiDataAnimations.Bas
     ) {
         when (it) {
             false -> (-50).dp
-            true -> 100.dp
+            true -> 20.dp
         }
     }
     return remember(transition) {
@@ -153,53 +156,6 @@ fun pAMExpandCollapseEndDatePanel(isSelected: Boolean): State<Dp> = animateDpAsS
     )
 )
 
-@Composable
-fun pAMAmountTextFieldAnimation(amount: String): PAMUiDataAnimations.AmountTextFieldTransitionData {
-    val transition = updateTransition(targetState = getAmountState(amount = amount), label = "")
-
-    val backgroundColor = transition.animateColor(
-        label = "", transitionSpec = { tween(durationMillis = 400) }) {
-        when (it) {
-            AmountTextFieldState.NAN -> MaterialTheme.colors.primaryVariant
-            AmountTextFieldState.POSITIVE -> Positive
-            AmountTextFieldState.NEGATIVE -> Negative
-        }
-    }
-    val textColor = transition.animateColor(
-        label = "", transitionSpec = { tween(durationMillis = 400) }) {
-        when (it) {
-            AmountTextFieldState.NAN -> MaterialTheme.colors.onSecondary
-            AmountTextFieldState.POSITIVE -> MaterialTheme.colors.onSecondary
-            AmountTextFieldState.NEGATIVE -> MaterialTheme.colors.onPrimary
-        }
-    }
-
-    return remember(transition) {
-        PAMUiDataAnimations.AmountTextFieldTransitionData(
-            backgroundColor = backgroundColor,
-            textColor = textColor
-        )
-    }
-}
-
-@Composable
-fun getAmountState(amount: String): AmountTextFieldState {
-    return try {
-        if (amount.toDouble() < 0) AmountTextFieldState.NEGATIVE
-        else AmountTextFieldState.POSITIVE
-    } catch (exception: NumberFormatException) {
-        println(exception)
-        AmountTextFieldState.NAN
-    }
-}
-
-enum class AmountTextFieldState {
-    NEGATIVE,
-    POSITIVE,
-    NAN
-}
-
-
 object PAMUiDataAnimations : UiDataAnimation {
 
     class BasePopUpAnimationData(
@@ -210,6 +166,16 @@ object PAMUiDataAnimations : UiDataAnimation {
         val alpha by alpha
         val size by size
         val position by position
+    }
+
+    class InterlayerAnimationData(
+        interlayerColor: State<Color>,
+        homeIconVerticalPosition : State<Dp>,
+        paymentIconVerticalPosition : State<Dp>
+    ) : UiDataAnimation {
+        val interlayerColor by interlayerColor
+        val homeIconVerticalPosition by homeIconVerticalPosition
+        val paymentIconVerticalPosition by paymentIconVerticalPosition
     }
 
     class AddOperationPopUpIconMenuPanelAnimationData(
@@ -223,13 +189,5 @@ object PAMUiDataAnimations : UiDataAnimation {
     ) : UiDataAnimation {
         val buttonSize by buttonSize
         val leftBottomCornerSize by leftBottomCornerSize
-    }
-
-    class AmountTextFieldTransitionData(
-        backgroundColor: State<Color>,
-        textColor: State<Color>,
-    ) : UiDataAnimation {
-        val backgroundColor by backgroundColor
-        val textColor by textColor
     }
 }
