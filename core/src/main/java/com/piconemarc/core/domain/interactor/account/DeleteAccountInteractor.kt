@@ -11,7 +11,8 @@ class DeleteAccountInteractor @Inject constructor(private val accountRepository:
             AccountDTO(
                 id = accountModel.id,
                 name = accountModel.name,
-                accountBalance = accountModel.accountBalance
+                accountBalance = accountModel.accountBalance,
+                accountOverdraft = accountModel.accountOverdraft
             )
         )
     }

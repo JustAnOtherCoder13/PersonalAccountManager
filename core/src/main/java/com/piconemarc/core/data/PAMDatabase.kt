@@ -73,6 +73,7 @@ abstract class PAMDatabase : RoomDatabase() {
                     contentValues.put("id", account.id)
                     contentValues.put("accountBalance", account.accountBalance)
                     contentValues.put("name", account.name)
+                    contentValues.put("accountOverdraft", account.accountOverdraft)
 
                     db.insert(ACCOUNT_TABLE, OnConflictStrategy.IGNORE, contentValues)
                 }

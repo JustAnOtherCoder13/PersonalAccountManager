@@ -8,9 +8,9 @@ import com.piconemarc.core.domain.entityDTO.OperationDTO
 object Generator {
 
 private val ACCOUNTS : List<AccountDTO> =  listOf(
-    AccountDTO(id = 1,name = "myName1"),
-    AccountDTO(id = 2,name = "myName2"),
-    AccountDTO(id = 3,name = "myName3"),
+    AccountDTO(id = 1,name = "myName1", accountBalance = 100.0,accountOverdraft = 500.0),
+    AccountDTO(id = 2,name = "myName2", accountBalance = -15.36, accountOverdraft = 200.0),
+    AccountDTO(id = 3,name = "myName3", accountBalance = 20.00),
 )
     fun generateAccounts() : MutableList<AccountDTO>{
         return ACCOUNTS.toMutableList()

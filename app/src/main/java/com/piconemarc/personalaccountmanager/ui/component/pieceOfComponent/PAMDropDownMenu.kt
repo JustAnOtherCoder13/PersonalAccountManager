@@ -12,13 +12,9 @@ import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.R
-import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
-import com.piconemarc.personalaccountmanager.ui.theme.PopUpFieldBackgroundShape
-import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
-import com.piconemarc.personalaccountmanager.ui.theme.ThinBorder
+import com.piconemarc.personalaccountmanager.ui.theme.*
 
 @Composable
 fun PAMBaseDropDownMenu(
@@ -57,7 +53,7 @@ fun PAMBaseDropDownMenu(
             onDismissRequest = { expanded = false },
             modifier = Modifier
                 .wrapContentWidth()
-                .height(150.dp)
+                .height(DropDownMenuHeight)
 
         ) {
             itemList.forEachIndexed { _, item ->
@@ -98,4 +94,3 @@ fun PAMBaseDropDownMenuWithBackground(
         )
     }
 }
-

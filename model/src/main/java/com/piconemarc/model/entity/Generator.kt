@@ -2,9 +2,9 @@ package com.piconemarc.model.entity
 
 
 val GeneratedAccount : MutableList<AccountModel> =  mutableListOf(
-    AccountModel(id = 1,name = "myName1"),
-    AccountModel(id = 2,name = "myName2"),
-    AccountModel(id = 3,name = "myName3"),
+    AccountModel(id = 1,name = "myName1", accountBalance = 100.0,accountOverdraft = 500.0),
+    AccountModel(id = 2,name = "myName2", accountBalance = -15.36, accountOverdraft = 200.0),
+    AccountModel(id = 3,name = "myName3", accountBalance = 20.00),
 )
 
 val GeneratedOperation : MutableList<OperationModel> = mutableListOf(

@@ -16,9 +16,9 @@ Constants.Interactor{
         mapAccountDtoToAccountModel(it)
     }
 
-    fun getAllAccountsToDataUiModelList(): Flow<List<PresentationDataModel>> =
+    fun getAllAccountsToPresentationDataModel(): Flow<List<PresentationDataModel>> =
         accountRepository.getAllAccounts().map {
-            mapAccountDtoToDataUiModel(it)
+            mapAccountDtoToPresentationDataModel(it)
         }
 
     private fun mapAccountDtoToAccountModel(accountDtoList: List<AccountDTO>): List<AccountModel> {
@@ -26,12 +26,13 @@ Constants.Interactor{
             AccountModel(
                 id = it.id,
                 name = it.name,
-                accountBalance = it.accountBalance
+                accountBalance = it.accountBalance,
+                accountOverdraft = it.accountOverdraft
             )
         }.toMutableList()
     }
 
-    private fun mapAccountDtoToDataUiModel(accountDtoList: List<AccountDTO>): List<PresentationDataModel> {
+    private fun mapAccountDtoToPresentationDataModel(accountDtoList: List<AccountDTO>): List<PresentationDataModel> {
         return accountDtoList.map { PresentationDataModel(it.name, it.id) }
     }
 

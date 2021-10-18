@@ -16,6 +16,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.piconemarc.personalaccountmanager.R
+import com.piconemarc.personalaccountmanager.ui.animation.pAMAddPopUpAddOrMinusTransition
 import com.piconemarc.personalaccountmanager.ui.component.screen.InterlayerIcon
 import com.piconemarc.personalaccountmanager.ui.theme.*
 
@@ -57,7 +58,7 @@ fun PAMBaseButton(
         onClick = onButtonClicked,
         shape = ButtonShape,
         modifier = Modifier
-            .width(120.dp),
+            .width(PopUpBaseButtonWidth),
         colors = ButtonDefaults.textButtonColors(
             backgroundColor = BrownLight,
             contentColor = MaterialTheme.colors.onSecondary
@@ -89,13 +90,13 @@ fun PAMAcceptOrDismissButtons(
 
 @Composable
 fun PAMIconButton(
-    onIconButtonClicked: () -> Unit,
+    onIconButtonClicked: (iconButton : PAMIconButtons) -> Unit,
     iconButton: PAMIconButtons,
     iconColor: Color = MaterialTheme.colors.onPrimary,
     backgroundColor: Color = MaterialTheme.colors.primaryVariant
 ) {
     IconButton(
-        onClick = { onIconButtonClicked() }
+        onClick = { onIconButtonClicked(iconButton) }
     )
     {
         PAMCircleIcon(
@@ -116,14 +117,14 @@ fun PAMAddButton(onAddButtonClicked: () -> Unit) {
                 color = MaterialTheme.colors.primary,
                 shape = RoundedCornerShape(XlMarge)
             )
-            .width(100.dp)
-            .height(50.dp),
+            .width(AddButtonWidth)
+            .height(AddButtonHeight),
         shape = RoundedCornerShape(XlMarge),
         colors = ButtonDefaults.buttonColors(
             backgroundColor = BrownDark,
         ),
         elevation = ButtonDefaults.elevation(
-            defaultElevation = 10.dp
+            defaultElevation = AddButtonElevation
         ),
         onClick = onAddButtonClicked
     ) {
@@ -137,37 +138,66 @@ fun PAMAddButton(onAddButtonClicked: () -> Unit) {
 @Composable
 fun PAMHomeButton(
     iconYOffset: Dp,
-    onHomeButtonClicked: () -> Unit
+    onHomeButtonClicked: (iconButton : PAMIconButtons) -> Unit
 ) = InterlayerIcon(
     backGroundColor = PastelGreen,
     iconButton = PAMIconButtons.Home,
-    onIconFolderClicked = onHomeButtonClicked,
-    yOffset = 0.dp,
-    iconYOffset = iconYOffset // todo pass with animation
+    onInterlayerIconClicked = onHomeButtonClicked,
+    iconYOffset = iconYOffset
 )
 
 @Composable
 fun PAMPaymentButton(
     iconYOffset: Dp,
-    onPaymentButtonClicked: () -> Unit
+    onPaymentButtonClicked: (iconButton : PAMIconButtons) -> Unit
 ) = InterlayerIcon(
     backGroundColor = PastelBlue,
     iconButton = PAMIconButtons.Payment,
-    onIconFolderClicked = onPaymentButtonClicked,
-    yOffset = 45.dp,
+    onInterlayerIconClicked = onPaymentButtonClicked,
+    yOffset = InterlayerPaymentIconOffsetPosition,
     iconYOffset = iconYOffset
 )
 
 @Composable
 fun PAMChartButton(
-    onChartButtonClicked: () -> Unit
+    onChartButtonClicked: (iconButton : PAMIconButtons) -> Unit
 ) = InterlayerIcon(
     backGroundColor = PastelPurple,
     iconButton = PAMIconButtons.Chart,
-    onIconFolderClicked = onChartButtonClicked,
-    yOffset = 90.dp,
+    onInterlayerIconClicked = onChartButtonClicked,
+    yOffset = InterlayerChartIconOffsetPosition,
 )
 
+@Composable
+fun AddOrMinusSwitchButton(
+    onAddOrMinusClicked : (isAddClicked : Boolean)-> Unit,
+    isAddOperation: Boolean
+) {
+    val transition = pAMAddPopUpAddOrMinusTransition(isAddOperation = isAddOperation)
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = BigMarge, end = BigMarge, top = LittleMarge),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        PAMIconButton(
+            onIconButtonClicked = {
+                onAddOrMinusClicked(true)
+            },
+            iconButton = PAMIconButtons.Add,
+            iconColor = transition.addIconColor,
+            backgroundColor = transition.addBackgroundColor
+        )
+        PAMIconButton(
+            onIconButtonClicked = {
+                onAddOrMinusClicked(false)
+            },
+            iconButton = PAMIconButtons.Minus,
+            iconColor = transition.minusIconColor,
+            backgroundColor = transition.minusBackgroundColor
+        )
+    }
+}
 
 sealed class PAMIconButtons {
 
@@ -183,7 +213,7 @@ sealed class PAMIconButtons {
 
     object Payment : PAMIconButtons() {
         override val iconContentDescription: Int = R.string.paymentIconContentDescription
-        override val vectorIcon: Int = R.drawable.ic_outline_ios_share_24
+        override val vectorIcon: Int = R.drawable.ic_outline_payment_24
         override val iconName: Int = R.string.payment
     }
 
@@ -210,7 +240,11 @@ sealed class PAMIconButtons {
     }
 
     object Minus : PAMIconButtons() {
-        override val iconContentDescription: Int = R.string.addIconContentDescription
+        override val iconContentDescription: Int = R.string.minusIconContentDescription
         override val vectorIcon: Int = R.drawable.ic_outline_minus_24
+    }
+    object Delete : PAMIconButtons() {
+        override val iconContentDescription: Int = R.string.deleteIconContentDescription
+        override val vectorIcon: Int = R.drawable.ic_outline_delete_24
     }
 }

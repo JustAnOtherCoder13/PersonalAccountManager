@@ -1,16 +1,15 @@
 package com.piconemarc.personalaccountmanager.ui.component.popUp
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.MaterialTheme
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.R
+import com.piconemarc.personalaccountmanager.ui.animation.pAMAddOperationPopUpBackgroundColor
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.*
-import com.piconemarc.personalaccountmanager.ui.theme.BigMarge
-import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
 import com.piconemarc.viewmodel.viewModel.AccountDetailViewModel
 import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationPopUpUtilsProvider
 
@@ -18,46 +17,60 @@ import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationPopUpUti
 fun PAMAddOperationPopUp(
     accountDetailViewModel: AccountDetailViewModel
 ) {
+    //todo pass with reducer and state
+    var isAddOperation by remember {
+        mutableStateOf(true)
+    }
+    var selectedIcon :PAMIconButtons by remember {
+        mutableStateOf(PAMIconButtons.Operation)
+    }
     //Pop up Body --------------------------------------------
     PAMBasePopUp(
         title = AddOperationPopUpUtilsProvider().providedUiState.addPopUpTitle,
-        onAcceptButtonClicked = { },//todo add operation here
+        onAcceptButtonClicked = {
+            //todo check if filled before add here
+
+        },//todo add operation here
         onDismiss = { accountDetailViewModel.dispatchAction(AddOperationPopUpUtilsProvider.AddOperationPopUpAction.ClosePopUp) },
         isExpanded = AddOperationPopUpUtilsProvider.AddOperationPopUpUiState.isPopUpExpanded,
         menuIconPanel = {
             PAMAddOperationPopUpLeftSideMenuIconPanel(
-                isTransferOptionExpanded = AddOperationPopUpUtilsProvider.AddOperationPopUpUiState.isTransferExpanded,
-                isPaymentOptionExpanded = AddOperationPopUpUtilsProvider.AddOperationPopUpUiState.isPaymentExpanded,
-                onOperationButtonClicked = {
-                    accountDetailViewModel.dispatchAction(
-                        AddOperationPopUpUtilsProvider.AddOperationPopUpAction.CollapseOptions
-                    )
+                onIconButtonClicked = {
+                    selectedIcon = it
+                    when (it) {
+                        is PAMIconButtons.Payment -> accountDetailViewModel.dispatchAction(
+                            AddOperationPopUpUtilsProvider.AddOperationPopUpAction.ExpandPaymentOption
+                        )
+                        is PAMIconButtons.Transfer -> accountDetailViewModel.dispatchAction(
+                            AddOperationPopUpUtilsProvider.AddOperationPopUpAction.ExpandTransferOption
+                        )
+                        else -> accountDetailViewModel.dispatchAction(
+                            AddOperationPopUpUtilsProvider.AddOperationPopUpAction.CollapseOptions
+                        )
+                    }
                 },
-                onPaymentButtonClicked = {
-                    accountDetailViewModel.dispatchAction(
-                        AddOperationPopUpUtilsProvider.AddOperationPopUpAction.ExpandPaymentOption
-                    )
-                },
-                onTransferButtonClicked = {
-                    accountDetailViewModel.dispatchAction(
-                        AddOperationPopUpUtilsProvider.AddOperationPopUpAction.ExpandTransferOption
-                    )
-                }
+                selectedIcon = selectedIcon
             )
-        }
+        },
+        popUpBackgroundColor = pAMAddOperationPopUpBackgroundColor(isAddOperation = isAddOperation).value
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             //add or minus switch
-            AddOrMinusSwitchButton()
+            AddOrMinusSwitchButton(
+                onAddOrMinusClicked = { isAddClicked -> isAddOperation = isAddClicked },
+                isAddOperation = isAddOperation
+            )
             // operation name--------------------------
             PAMBlackBackgroundTextFieldItem(
                 title = PresentationDataModel(stringValue = stringResource(R.string.operationName)),
                 onTextChange = { operationName ->
                     accountDetailViewModel.dispatchAction(
-                        AddOperationPopUpUtilsProvider.AddOperationPopUpAction.FillOperationName(operationName)
+                        AddOperationPopUpUtilsProvider.AddOperationPopUpAction.FillOperationName(
+                            operationName
+                        )
                     )
                 },
                 textValue = AddOperationPopUpUtilsProvider.AddOperationPopUpUiState.operationName,
@@ -68,7 +81,9 @@ fun PAMAddOperationPopUp(
                 title = PresentationDataModel(stringValue = stringResource(R.string.operationAmount)),
                 onTextChange = { operationAmount ->
                     accountDetailViewModel.dispatchAction(
-                        AddOperationPopUpUtilsProvider.AddOperationPopUpAction.FillOperationAmount(operationAmount)
+                        AddOperationPopUpUtilsProvider.AddOperationPopUpAction.FillOperationAmount(
+                            operationAmount
+                        )
                     )
                 },
                 amountValue = AddOperationPopUpUtilsProvider.AddOperationPopUpUiState.operationAmount,
@@ -80,7 +95,9 @@ fun PAMAddOperationPopUp(
                 itemList = AddOperationPopUpUtilsProvider.AddOperationPopUpUiState.operationCategories,
                 onItemSelected = { category ->
                     accountDetailViewModel.dispatchAction(
-                        AddOperationPopUpUtilsProvider.AddOperationPopUpAction.SelectCategory(category)
+                        AddOperationPopUpUtilsProvider.AddOperationPopUpAction.SelectCategory(
+                            category
+                        )
                     )
                 }
             )
@@ -99,12 +116,16 @@ fun PAMAddOperationPopUp(
                 },
                 onMonthSelected = { endDateMonth ->
                     accountDetailViewModel.dispatchAction(
-                        AddOperationPopUpUtilsProvider.AddOperationPopUpAction.SelectEndDateMonth(endDateMonth)
+                        AddOperationPopUpUtilsProvider.AddOperationPopUpAction.SelectEndDateMonth(
+                            endDateMonth
+                        )
                     )
                 },
                 onYearSelected = { endDateYear ->
                     accountDetailViewModel.dispatchAction(
-                        AddOperationPopUpUtilsProvider.AddOperationPopUpAction.SelectEndDateYear(endDateYear)
+                        AddOperationPopUpUtilsProvider.AddOperationPopUpAction.SelectEndDateYear(
+                            endDateYear
+                        )
                     )
                 },
                 endDateSelectedMonth = AddOperationPopUpUtilsProvider.AddOperationPopUpUiState.enDateSelectedMonth,
@@ -120,12 +141,16 @@ fun PAMAddOperationPopUp(
                 beneficiaryAccountSelectedItem = AddOperationPopUpUtilsProvider.AddOperationPopUpUiState.beneficiaryAccount,
                 onSenderAccountSelected = { senderAccount ->
                     accountDetailViewModel.dispatchAction(
-                        AddOperationPopUpUtilsProvider.AddOperationPopUpAction.SelectSenderAccount(senderAccount)
+                        AddOperationPopUpUtilsProvider.AddOperationPopUpAction.SelectSenderAccount(
+                            senderAccount
+                        )
                     )
                 },
                 onBeneficiaryAccountSelected = { beneficiaryAccount ->
                     accountDetailViewModel.dispatchAction(
-                        AddOperationPopUpUtilsProvider.AddOperationPopUpAction.SelectBeneficiaryAccount(beneficiaryAccount)
+                        AddOperationPopUpUtilsProvider.AddOperationPopUpAction.SelectBeneficiaryAccount(
+                            beneficiaryAccount
+                        )
                     )
                 }
             )
@@ -133,28 +158,3 @@ fun PAMAddOperationPopUp(
     }
 }
 
-@Composable
-private fun AddOrMinusSwitchButton() {
-    var isAddOperation by remember {
-        mutableStateOf(true)
-    }
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = BigMarge, end = BigMarge, top = LittleMarge),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        PAMIconButton(
-            onIconButtonClicked = { isAddOperation = true },
-            iconButton = PAMIconButtons.Add,
-            iconColor = if (isAddOperation) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSecondary,
-            backgroundColor = if (isAddOperation) MaterialTheme.colors.primary else MaterialTheme.colors.secondaryVariant
-        )
-        PAMIconButton(
-            onIconButtonClicked = { isAddOperation = false },
-            iconButton = PAMIconButtons.Minus,
-            iconColor = if (!isAddOperation) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSecondary,
-            backgroundColor = if (!isAddOperation) MaterialTheme.colors.primary else MaterialTheme.colors.secondaryVariant
-        )
-    }
-}
