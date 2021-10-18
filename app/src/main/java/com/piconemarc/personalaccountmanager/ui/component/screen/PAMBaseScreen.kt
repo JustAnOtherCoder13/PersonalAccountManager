@@ -4,19 +4,26 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.piconemarc.model.entity.AccountModel
+import com.piconemarc.model.entity.GeneratedAccount
 import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.animation.PAMUiDataAnimations
@@ -25,6 +32,7 @@ import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.*
 import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMAddOperationPopUp
 import com.piconemarc.personalaccountmanager.ui.theme.*
 import com.piconemarc.viewmodel.viewModel.AccountDetailViewModel
+import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationPopUpUtilsProvider
 
 @Composable
 fun BaseScreen(
@@ -48,67 +56,61 @@ fun BaseScreen(
 @Composable
 fun PAMMainScreen(
     accountDetailViewModel: AccountDetailViewModel,
-    body: @Composable () -> Unit,
 ) {
-    var isPaymentSelected by remember {
-        mutableStateOf(false)
+    //todo pass with state
+    var selectedInterlayerIconButton: PAMIconButtons by remember {
+        mutableStateOf(PAMIconButtons.Home)
     }
-    var isChartSelected by remember {
-        mutableStateOf(false)
+    var allAccountBalance : Double by remember {
+        mutableStateOf(0.0)
     }
-    var title by remember {
-        mutableStateOf("My Accounts")
+    var allAccountRest : Double by remember {
+        mutableStateOf(0.0)
     }
+   GeneratedAccount.forEach {
+            allAccountBalance += it.accountBalance
+            allAccountRest += it.accountOverdraft+it.accountBalance
+        }
 
-    val transition: PAMUiDataAnimations.InterlayerAnimationData = pAMInterlayerAnimation(
-        Pair(isPaymentSelected, isChartSelected)
-    )
     BaseScreen(
         header = { PAMAppHeader() },
         body = {
-            //folder
-            Row(Modifier.fillMaxWidth()) {
-                Folder {
-                    SheetHoleColumn(transition.interlayerColor)
-                    Column(modifier = Modifier.weight(1f)) {
-                        Sheet(interlayerBackgroundColor = transition.interlayerColor) {
-                            Text(
-                                text = title,
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.h2
+            PAMAppBody(
+                onInterlayerIconClicked = { selectedInterlayerIconButton = it },
+                selectedInterlayerIconButton = selectedInterlayerIconButton,
+                body = {
+                    when (selectedInterlayerIconButton) {
+                        is PAMIconButtons.Payment -> {
+                        }
+                        is PAMIconButtons.Chart -> {
+                        }
+                        else -> {
+                            MyAccountsBody(
+                                onAddAccountButtonClicked = {
+                                    accountDetailViewModel.dispatchAction(
+                                        AddOperationPopUpUtilsProvider.AddOperationPopUpAction.InitPopUp
+                                    )
+                                },
+                                onDeleteAccountButtonClicked = {account ->
+                                    //todo launch delete PopUp
+                                },
+                                onAccountClicked = {account ->
+                                    //todo go to detail
+                                },
+                                //todo pass with state
+                                allAccounts = GeneratedAccount
                             )
-                            body()
                         }
                     }
-                    InterlayerIconPanel(
-                        transition = transition,
-                        onHomeButtonClicked = {
-                            title = "My Accounts"
-                        },
-                        onPaymentButtonClicked = {
-                            title = "My Payments"
-                        },
-                        onChartButtonClicked = {
-                            title = "Chart"
-                        },
-                        flowUpTuple = {
-                            isPaymentSelected = it.first
-                            isChartSelected = it.second
-                        },
-                        isPaymentSelected = isPaymentSelected,
-                        isChartSelected = isChartSelected
-                    )
                 }
-            }
 
+            )
         },
         footer = {
             PAMAppFooter(
-                footerAccountBalance = PresentationDataModel(stringValue = "+100"),//---------------------------
-                footerAccountName = PresentationDataModel(stringValue = "testName"),  //todo pass with VM
-                footerAccountRest = PresentationDataModel(stringValue = "200")  //-----------------------------
+                footerAccountBalance = PresentationDataModel(stringValue = allAccountBalance.toString()),//---------------------------
+                footerAccountName = PresentationDataModel(stringValue = stringResource(R.string.footerAllAccountsTitle)),  //todo pass with VM
+                footerAccountRest = PresentationDataModel(stringValue = allAccountRest.toString())  //-----------------------------
             )
         }
     )
@@ -116,103 +118,256 @@ fun PAMMainScreen(
 }
 
 @Composable
-private fun InterlayerIconPanel(
-    isPaymentSelected: Boolean,
-    isChartSelected: Boolean,
-    transition: PAMUiDataAnimations.InterlayerAnimationData,
-    onHomeButtonClicked: () -> Unit,
-    onPaymentButtonClicked: () -> Unit,
-    onChartButtonClicked: () -> Unit,
-    flowUpTuple: (Pair<Boolean, Boolean>) -> Unit
+private fun MyAccountsBody(
+    onAddAccountButtonClicked: () -> Unit,
+    onDeleteAccountButtonClicked: (account: PresentationDataModel) -> Unit,
+    onAccountClicked: (account: PresentationDataModel) -> Unit,
+    allAccounts: List<AccountModel>
 ) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        LazyColumn() {
+            items(allAccounts) { account ->
+                val accountName = PresentationDataModel(
+                    stringValue = account.name,
+                    objectIdReference = account.id
+                )
+                AccountPostIt(
+                    accountName = accountName,
+                    onDeleteAccountButtonClicked = { onDeleteAccountButtonClicked(accountName) },
+                    accountBalanceValue = PresentationDataModel(
+                        stringValue = account.accountBalance.toString(),
+                        objectIdReference = account.id
+                    ),
+                    accountRestValue = PresentationDataModel(
+                        stringValue = (account.accountOverdraft + (account.accountBalance)).toString(),
+                        objectIdReference = account.id
+                    ),
+                    onAccountClicked = onAccountClicked
+                )
+            }
+        }
+        PAMAddButton(
+            onAddButtonClicked = onAddAccountButtonClicked
+        )
+    }
+}
 
+@Composable
+private fun AccountPostIt(
+    accountName: PresentationDataModel,
+    onDeleteAccountButtonClicked: () -> Unit,
+    accountBalanceValue: PresentationDataModel,
+    accountRestValue: PresentationDataModel,
+    onAccountClicked: (account: PresentationDataModel) -> Unit
+) {
+    Box(modifier = Modifier
+        .size(width = AccountPostItWidth, height = AccountPostItHeight)
+        .padding(bottom = BigMarge)
+        .clickable { onAccountClicked(accountName) }
+    ) {
+        AccountPostItBackground(this)
+        Column(
+            modifier = Modifier
+                .wrapContentHeight()
+                .fillMaxWidth()
+        ) {
+            AccountPostItTitle(
+                accountName = accountName,
+                onDeleteAccountButtonClicked = onDeleteAccountButtonClicked
+            )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = XlMarge, start = RegularMarge),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                AccountPostItValue(
+                    valueTitle = stringResource(R.string.accountPostItBalanceTitle),
+                    value = accountBalanceValue
+                )
+                AccountPostItValue(
+                    valueTitle = stringResource(R.string.accountPostItRestTitle),
+                    value = accountRestValue
+                )
+            }
+
+        }
+    }
+}
+
+@Composable
+private fun AccountPostItValue(
+    valueTitle: String,
+    value: PresentationDataModel
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+    ) {
+        Text(
+            text = valueTitle,
+            style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.Bold)
+        )
+        Text(
+            text = value.stringValue,
+            style = MaterialTheme.typography.body1,
+            modifier = Modifier.padding(start = LittleMarge)
+        )
+    }
+}
+
+@Composable
+private fun AccountPostItTitle(
+    accountName: PresentationDataModel,
+    onDeleteAccountButtonClicked: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = LittleMarge),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = accountName.stringValue,
+            style = MaterialTheme.typography.h3
+        )
+        IconButton(
+            onClick = onDeleteAccountButtonClicked,
+        ) {
+            Icon(
+                imageVector =
+                ImageVector.vectorResource(id = PAMIconButtons.Delete.vectorIcon),
+                contentDescription =
+                stringResource(
+                    id = PAMIconButtons.Delete.iconContentDescription
+                )
+            )
+        }
+    }
+    Divider(
+        modifier = Modifier
+            .padding(start = LittleMarge, end = LittleMarge, bottom = RegularMarge),
+        color = MaterialTheme.colors.onSecondary,
+        thickness = ThinBorder
+    )
+}
+
+@Composable
+private fun AccountPostItBackground(boxScope: BoxScope) {
+    with(boxScope) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    color = PastelYellow,
+                    shape = CutCornerShape(bottomEnd = BigMarge)
+                )
+                .border(
+                    width = ThinBorder,
+                    color = BrownDark_300,
+                    shape = CutCornerShape(bottomEnd = BigMarge)
+                )
+        )
+        Box(
+            modifier = Modifier
+                .size(width = BigMarge, height = BigMarge)
+                .align(Alignment.BottomEnd)
+                .background(
+                    color = PastelYellowLight,
+                    shape = CutCornerShape(bottomEnd = BigMarge)
+                )
+                .border(
+                    width = ThinBorder,
+                    color = BrownDark_300,
+                    shape = CutCornerShape(bottomEnd = BigMarge)
+                ),
+
+
+            )
+    }
+}
+
+@Composable
+private fun PAMAppBody(
+    onInterlayerIconClicked: (iconButton: PAMIconButtons) -> Unit,
+    selectedInterlayerIconButton: PAMIconButtons,
+    body: @Composable () -> Unit
+) {
+    val transition: PAMUiDataAnimations.InterlayerAnimationData = pAMInterlayerAnimation(
+        selectedInterlayerIconButton
+    )
+    Row(Modifier.fillMaxWidth()) {
+        Folder {
+            SheetHoleColumn(transition.interlayerColor)
+            Column(modifier = Modifier.weight(1f)) {
+                Sheet(interlayerBackgroundColor = transition.interlayerColor) {
+                    InterLayerTitle(
+                        title = when (selectedInterlayerIconButton) {
+                            is PAMIconButtons.Payment -> {
+                                stringResource(R.string.myPaymentInterlayerTitle)
+                            }
+                            is PAMIconButtons.Chart -> {
+                                stringResource(R.string.chartInterlayerTitle)
+                            }
+                            else -> {
+                                stringResource(R.string.myAccountsInterLayerTitle)
+                            }
+                        }
+                    )
+                    body()
+                }
+            }
+            InterlayerIconPanel(
+                transition = transition,
+                onInterlayerIconClicked = onInterlayerIconClicked,
+                selectedInterlayerIconButton = selectedInterlayerIconButton
+            )
+        }
+    }
+}
+
+@Composable
+private fun InterLayerTitle(title: String) {
+    Text(
+        text = title,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = RegularMarge),
+        textAlign = TextAlign.Center,
+        style = MaterialTheme.typography.h2
+    )
+}
+
+@Composable
+private fun InterlayerIconPanel(
+    transition: PAMUiDataAnimations.InterlayerAnimationData,
+    onInterlayerIconClicked: (iconButton: PAMIconButtons) -> Unit,
+    selectedInterlayerIconButton: PAMIconButtons
+) {
     Box(
         modifier = Modifier
-            .width(50.dp)
+            .width(InterlayerIconPanelWidth)
             .fillMaxHeight()
     ) {
-        if (isPaymentSelected) {
-            PaymentInterlayerIconDisposition(
-                onHomeButtonClicked = {
-                    onHomeButtonClicked()
-                    flowUpTuple(
-                        Pair(
-                            first = false, second = false
-                        )
-                    )
-                },
-                onPaymentButtonClicked = {
-                    onPaymentButtonClicked()
-                    flowUpTuple(
-                        Pair(
-                            first = true, second = false
-                        )
-                    )
-                },
-                onChartButtonClicked = {
-                    onChartButtonClicked()
-                    flowUpTuple(
-                        Pair(
-                            first = false, second = true
-                        )
-                    )
-                },
-                transition = transition
-            )
-        } else if (isChartSelected) {
-            ChartInterlayerIconDisposition(
-                onHomeButtonClicked = {
-                    onHomeButtonClicked()
-                    flowUpTuple(
-                        Pair(
-                            first = false, second = false
-                        )
-                    )
-                },
-                onPaymentButtonClicked = {
-                    onPaymentButtonClicked()
-                    flowUpTuple(
-                        Pair(
-                            first = true, second = false
-                        )
-                    )
-                },
-                onChartButtonClicked = {
-                    onChartButtonClicked()
-                    flowUpTuple(
-                        Pair(
-                            first = false, second = true
-                        )
-                    )
-                },
-                transition = transition
-            )
-        } else {
-            HomeInterlayerIconDisposition(
-                onHomeButtonClicked = {
-                    onHomeButtonClicked()
-                    flowUpTuple(
-                        Pair(
-                            first = false, second = false
-                        )
-                    )
-                },
-                onPaymentButtonClicked = {
-                    onPaymentButtonClicked()
-                    flowUpTuple(
-                        Pair(
-                            first = true, second = false
-                        )
-                    )
-                },
-                onChartButtonClicked = {
-                    onChartButtonClicked()
-                    flowUpTuple(
-                        Pair(
-                            first = false, second = true
-                        )
-                    )
-                },
+        when (selectedInterlayerIconButton) {
+            is PAMIconButtons.Payment ->
+                PaymentInterlayerIconDisposition(
+                    onInterlayerIconClicked = onInterlayerIconClicked,
+                    transition = transition
+                )
+            is PAMIconButtons.Chart ->
+                ChartInterlayerIconDisposition(
+                    onInterlayerIconClicked = onInterlayerIconClicked,
+                    transition = transition
+                )
+            else -> HomeInterlayerIconDisposition(
+                onInterlayerIconClicked = onInterlayerIconClicked,
                 transition = transition
             )
         }
@@ -222,68 +377,62 @@ private fun InterlayerIconPanel(
 
 @Composable
 fun HomeInterlayerIconDisposition(
-    onHomeButtonClicked: () -> Unit,
-    onPaymentButtonClicked: () -> Unit,
-    onChartButtonClicked: () -> Unit,
+    onInterlayerIconClicked: (iconButton: PAMIconButtons) -> Unit,
     transition: PAMUiDataAnimations.InterlayerAnimationData
 ) {
     InterLayerIconsSelector(
         topButton = {
             PAMHomeButton(
-                onHomeButtonClicked = onHomeButtonClicked,
+                onHomeButtonClicked = onInterlayerIconClicked,
                 iconYOffset = transition.homeIconVerticalPosition
             )
         },
         middleButton = {
             PAMPaymentButton(
-                onPaymentButtonClicked = onPaymentButtonClicked,
+                onPaymentButtonClicked = onInterlayerIconClicked,
                 iconYOffset = transition.paymentIconVerticalPosition
             )
         },
-        backgroundButton = { PAMChartButton(onChartButtonClicked = onChartButtonClicked) })
+        backgroundButton = { PAMChartButton(onChartButtonClicked = onInterlayerIconClicked) })
 }
 
 @Composable
 fun PaymentInterlayerIconDisposition(
-    onHomeButtonClicked: () -> Unit,
-    onPaymentButtonClicked: () -> Unit,
-    onChartButtonClicked: () -> Unit,
+    onInterlayerIconClicked: (iconButton: PAMIconButtons) -> Unit,
     transition: PAMUiDataAnimations.InterlayerAnimationData
 ) {
     InterLayerIconsSelector(
         topButton = {
             PAMPaymentButton(
-                onPaymentButtonClicked = onPaymentButtonClicked,
+                onPaymentButtonClicked = onInterlayerIconClicked,
                 iconYOffset = transition.paymentIconVerticalPosition
             )
         },
         middleButton = {
             PAMHomeButton(
-                onHomeButtonClicked = onHomeButtonClicked,
+                onHomeButtonClicked = onInterlayerIconClicked,
                 iconYOffset = transition.homeIconVerticalPosition
             )
         },
-        backgroundButton = { PAMChartButton(onChartButtonClicked = onChartButtonClicked) })
+        backgroundButton = { PAMChartButton(onChartButtonClicked = onInterlayerIconClicked) })
 }
 
 @Composable
 fun ChartInterlayerIconDisposition(
-    onHomeButtonClicked: () -> Unit,
-    onPaymentButtonClicked: () -> Unit,
-    onChartButtonClicked: () -> Unit,
+    onInterlayerIconClicked: (iconButton: PAMIconButtons) -> Unit,
     transition: PAMUiDataAnimations.InterlayerAnimationData
 ) {
     InterLayerIconsSelector(
-        topButton = { PAMChartButton(onChartButtonClicked = onChartButtonClicked) },
+        topButton = { PAMChartButton(onChartButtonClicked = onInterlayerIconClicked) },
         middleButton = {
             PAMPaymentButton(
-                onPaymentButtonClicked = onPaymentButtonClicked,
+                onPaymentButtonClicked = onInterlayerIconClicked,
                 iconYOffset = transition.paymentIconVerticalPosition
             )
         },
         backgroundButton = {
             PAMHomeButton(
-                onHomeButtonClicked = onHomeButtonClicked,
+                onHomeButtonClicked = onInterlayerIconClicked,
                 iconYOffset = transition.homeIconVerticalPosition
             )
         })
@@ -304,14 +453,14 @@ private fun InterLayerIconsSelector(
 fun InterlayerIcon(
     backGroundColor: Color,
     iconButton: PAMIconButtons,
-    onIconFolderClicked: () -> Unit,
-    yOffset: Dp,
-    iconYOffset: Dp = 28.dp
+    onInterlayerIconClicked: (iconButton: PAMIconButtons) -> Unit,
+    yOffset: Dp = 0.dp,
+    iconYOffset: Dp = InterLayerIconOffsetDown
 ) {
     Row(
         modifier = Modifier
-            .width(40.dp)
-            .height(70.dp)
+            .width(InterlayerIconPanelRowWidth)
+            .height(InterlayerIconPanelRowHeight)
             .offset(y = yOffset)
             .background(
                 color = backGroundColor,
@@ -320,7 +469,7 @@ fun InterlayerIcon(
                     bottomEnd = BigMarge
                 )
             )
-            .clickable { onIconFolderClicked() },
+            .clickable { onInterlayerIconClicked(iconButton) },
     ) {
         PAMCircleIcon(
             iconButton = iconButton,

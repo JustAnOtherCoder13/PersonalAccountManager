@@ -25,7 +25,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
     //action dispatcher
     override fun dispatchAction(action: AddOperationPopUpUtilsProvider.AddOperationPopUpAction) {
         when (action) {
-            is AddOperationPopUpUtilsProvider.AddOperationPopUpAction.Init -> initPopUp()
+            is AddOperationPopUpUtilsProvider.AddOperationPopUpAction.InitPopUp -> initPopUp()
             is AddOperationPopUpUtilsProvider.AddOperationPopUpAction.ClosePopUp -> closePopUp()
             is AddOperationPopUpUtilsProvider.AddOperationPopUpAction.CollapseOptions -> collapseOptions()
             is AddOperationPopUpUtilsProvider.AddOperationPopUpAction.ExpandPaymentOption -> expandPaymentOption()
@@ -107,7 +107,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                     updateCategoriesList(allCategories)
                 }
         }
-        store.dispatch(AddOperationPopUpUtilsProvider.AddOperationPopUpAction.Init)
+        store.dispatch(AddOperationPopUpUtilsProvider.AddOperationPopUpAction.InitPopUp)
     }
 
     private fun closePopUp() {
@@ -126,7 +126,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
 
     private fun expandTransferOption() {
         getAllAccountsJob = scope.launch {
-            getAllAccountsInteractor.getAllAccountsToDataUiModelList().collect { allAccounts ->
+            getAllAccountsInteractor.getAllAccountsToPresentationDataModel().collect { allAccounts ->
                 updateAccountsList(allAccounts)
             }
         }

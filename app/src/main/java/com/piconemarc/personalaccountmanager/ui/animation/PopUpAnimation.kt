@@ -1,21 +1,18 @@
 package com.piconemarc.personalaccountmanager.ui.animation
 
 import androidx.compose.animation.animateColor
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.*
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMIconButtons
 import com.piconemarc.personalaccountmanager.ui.theme.*
-import com.piconemarc.viewmodel.viewModel.UiDataAnimation
-
-//todo create a new file for global screen animations
-
-
 
 @Composable
 fun pAMBasePopUpEnterExitAnimation(isExpended: Boolean): PAMUiDataAnimations.BasePopUpAnimationData {
@@ -66,8 +63,8 @@ fun pAMBasePopUpEnterExitAnimation(isExpended: Boolean): PAMUiDataAnimations.Bas
 
 
 @Composable
-fun pAMAddOperationPopUpIconMenuPanelSelectorAnimation(expandedOptions: Pair<Boolean, Boolean>): PAMUiDataAnimations.AddOperationPopUpIconMenuPanelAnimationData {
-    val transition = updateTransition(targetState = expandedOptions, label = "")
+fun pAMAddOperationPopUpIconMenuPanelSelectorAnimation(selectedIcon : PAMIconButtons): PAMUiDataAnimations.AddOperationPopUpIconMenuPanelAnimationData {
+    val transition = updateTransition(targetState = selectedIcon, label = "")
 
     val offset = transition.animateOffset(
         transitionSpec = {
@@ -78,15 +75,11 @@ fun pAMAddOperationPopUpIconMenuPanelSelectorAnimation(expandedOptions: Pair<Boo
         },
         label = ""
     ) {
-
-        Offset(
-            0f, if (it.second && it.first) {
-                116f
-            } else if (it.first) {
-                58f
-            }  else
-                0f
-        )
+        Offset(x=0f, y = when(it){
+            is PAMIconButtons.Transfer -> SelectorLowPosition
+            is PAMIconButtons.Payment -> SelectorMiddlePosition
+            else -> SelectorHighPosition
+        })
     }
 
     return remember(transition) {
@@ -148,46 +141,70 @@ fun pAMExpandCollapsePaymentAnimation(
 )
 
 @Composable
-fun pAMExpandCollapseEndDatePanel(isSelected: Boolean): State<Dp> = animateDpAsState(
-    targetValue = if (isSelected) 100.dp else 0.dp,
+fun pAMExpandCollapseEndDatePanel(isRecurrentOptionSelected: Boolean): State<Dp> = animateDpAsState(
+    targetValue = if (isRecurrentOptionSelected) 100.dp else 0.dp,
     animationSpec = spring(
         dampingRatio = Spring.DampingRatioLowBouncy,
         stiffness = Spring.StiffnessLow
     )
 )
 
-object PAMUiDataAnimations : UiDataAnimation {
 
-    class BasePopUpAnimationData(
-        alpha: State<Float>,
-        size: State<Dp>,
-        position: State<Dp>,
-    ) : UiDataAnimation {
-        val alpha by alpha
-        val size by size
-        val position by position
+@Composable
+fun pAMAddOperationPopUpBackgroundColor(isAddOperation : Boolean) : State<Color> = animateColorAsState(
+    targetValue = if (isAddOperation) Positive else Negative,
+    animationSpec = tween(durationMillis = 300)
+)
+
+@Composable
+fun pAMAddPopUpAddOrMinusTransition (isAddOperation : Boolean): PAMUiDataAnimations.AddOperationPopUpAddOrMinusTransitionData{
+    val transition = updateTransition(targetState = isAddOperation, label = "")
+
+    val addIconColor = transition.animateColor(label = "") {
+        if (it) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSecondary
     }
 
-    class InterlayerAnimationData(
-        interlayerColor: State<Color>,
-        homeIconVerticalPosition : State<Dp>,
-        paymentIconVerticalPosition : State<Dp>
-    ) : UiDataAnimation {
-        val interlayerColor by interlayerColor
-        val homeIconVerticalPosition by homeIconVerticalPosition
-        val paymentIconVerticalPosition by paymentIconVerticalPosition
+    val addBackgroundColor = transition.animateColor(label = "") {
+        if (it) MaterialTheme.colors.primary else MaterialTheme.colors.secondaryVariant
     }
 
-    class AddOperationPopUpIconMenuPanelAnimationData(
-        offset: State<Offset>
-    ) : UiDataAnimation {
-        val offset by offset
+    val minusIconColor = transition.animateColor(label = "") {
+        if (!it) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSecondary
     }
 
-    class AddOperationPopUpRecurrentButtonTransitionData(
-        buttonSize: State<Dp>, leftBottomCornerSize: State<Dp>
-    ) : UiDataAnimation {
-        val buttonSize by buttonSize
-        val leftBottomCornerSize by leftBottomCornerSize
+    val minusBackgroundColor = transition.animateColor(label = "") {
+        if (!it) MaterialTheme.colors.primary else MaterialTheme.colors.secondaryVariant
     }
+
+   return PAMUiDataAnimations.AddOperationPopUpAddOrMinusTransitionData(
+       addIconColor = addIconColor ,
+       addBackgroundColor = addBackgroundColor,
+       minusIconColor = minusIconColor,
+       minusBackgroundColor = minusBackgroundColor
+   )
 }
+
+@Composable
+fun pAMBaseSwitchButtonTransition(isSelected : Boolean) : PAMUiDataAnimations.BaseSwitchButtonData{
+    val transition = updateTransition(targetState = isSelected, label = "")
+
+    val buttonColor = transition.animateColor(
+        label = "",
+        transitionSpec = { tween(delayMillis = if (!isSelected) 120 else 0) }
+        ) {
+        if (it) MaterialTheme.colors.primary else MaterialTheme.colors.secondaryVariant
+    }
+
+    val textColor = transition.animateColor(
+        label = "",
+        transitionSpec = { tween(delayMillis = if (!isSelected) 120 else 0) }
+    ) {
+        if (it) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSecondary
+    }
+
+    return PAMUiDataAnimations.BaseSwitchButtonData(
+        buttonColor = buttonColor ,
+        textColor = textColor,
+    )
+}
+

@@ -11,7 +11,8 @@ class AddNewAccountInteractor @Inject constructor(private val accountRepository:
         accountRepository.addNewAccount(
             AccountDTO(
                 name = accountModel.name,
-                accountBalance = accountModel.accountBalance
+                accountBalance = accountModel.accountBalance,
+                accountOverdraft = accountModel.accountOverdraft
             )
         )
     }

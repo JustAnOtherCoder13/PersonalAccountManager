@@ -7,6 +7,7 @@
     <string name="transferIconContentDescription">Transfer operation icon button</string>
     <string name="chartIconContentDescription">Chart icon button</string>
     <string name="addIconContentDescription">Add icon button</string>
+    <string name="deleteIconContentDescription">Delete icon button</string>
     <string name="minusIconContentDescription">Minus icon button</string>
     <string name="collapseIconContentDescription">Pop up expanded or collapsed icon</string>
 
@@ -27,4 +28,10 @@
     <string name="beneficiaryAccount">Beneficiary account</string>
     <string name="cancel">CANCEL</string>
     <string name="ok">OK</string>
+    <string name="myPaymentInterlayerTitle">My Payment</string>
+    <string name="chartInterlayerTitle">Chart</string>
+    <string name="myAccountsInterLayerTitle">My Accounts</string>
+    <string name="accountPostItBalanceTitle">Balance : </string>
+    <string name="accountPostItRestTitle">Rest : </string>
+    <string name="footerAllAccountsTitle">All Accounts</string>
 </resources>

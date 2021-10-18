@@ -55,7 +55,7 @@ class AddOperationPopUpUtilsProvider :
     ) : VMState
 
     sealed class AddOperationPopUpAction : UiAction {
-        object Init : AddOperationPopUpAction()
+        object InitPopUp : AddOperationPopUpAction()
         object ExpandPaymentOption : AddOperationPopUpAction()
         object CollapseOptions : AddOperationPopUpAction()
         object ExpandTransferOption : AddOperationPopUpAction()
@@ -93,7 +93,7 @@ class AddOperationPopUpUtilsProvider :
         { old, action ->
             action as AddOperationPopUpAction
             when (action) {
-                is AddOperationPopUpAction.Init -> old.copy(
+                is AddOperationPopUpAction.InitPopUp -> old.copy(
                     isPopUpExpanded = true,
                     selectedCategory = Constants.CATEGORY_MODEL,
                     addPopUpTitle = OPERATION_MODEL,

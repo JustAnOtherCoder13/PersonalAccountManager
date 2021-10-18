@@ -1,7 +1,5 @@
 package com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,7 +10,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
@@ -35,6 +32,7 @@ fun PAMBasePopUp(
     onAcceptButtonClicked: () -> Unit,
     onDismiss: () -> Unit,
     isExpanded: Boolean,
+    popUpBackgroundColor : Color = MaterialTheme.colors.secondary,
     menuIconPanel: @Composable () -> Unit = {},
     body: @Composable () -> Unit
 ) {
@@ -56,7 +54,7 @@ fun PAMBasePopUp(
                 menuIconPanel()
                 Card(
                     elevation = BigMarge,
-                    backgroundColor = MaterialTheme.colors.secondary,
+                    backgroundColor = popUpBackgroundColor,
                     shape = MaterialTheme.shapes.large.copy(topStart = CornerSize(0.dp)),
                     border = BorderStroke(LittleMarge, BrownDark_300),
                     modifier = Modifier.clickable {
@@ -96,46 +94,43 @@ fun PAMBaseDeletePopUp(
 
 @Composable
 fun PAMAddOperationPopUpLeftSideMenuIconPanel(
-    isTransferOptionExpanded: Boolean,
-    isPaymentOptionExpanded: Boolean,
-    onOperationButtonClicked: () -> Unit,
-    onPaymentButtonClicked: () -> Unit,
-    onTransferButtonClicked: () -> Unit
+    onIconButtonClicked : (iconButton : PAMIconButtons)-> Unit,
+    selectedIcon : PAMIconButtons
 ) {
     Box() {
         Box(
             modifier = Modifier
                 .offset(
                     y = pAMAddOperationPopUpIconMenuPanelSelectorAnimation(
-                        Pair(isPaymentOptionExpanded, isTransferOptionExpanded)
+                        selectedIcon
                     ).offset.y.dp
                 )
                 .background(
                     color = BrownLight,
                     shape = RoundedCornerShape(topStart = BigMarge, bottomStart = BigMarge)
                 )
-                .height(50.dp)
-                .width(50.dp)
+                .height(AddPopUpSelectorSize)
+                .width(AddPopUpSelectorSize)
         )
         Column(
             modifier = Modifier
-                .width(45.dp)
+                .width(AddPopUpSelectorSize - 5.dp)
                 .padding(start = 5.dp)
 
         ) {
             PAMIconButton(
                 iconButton = PAMIconButtons.Operation,
-                onIconButtonClicked = onOperationButtonClicked
+                onIconButtonClicked = onIconButtonClicked
             )
             Spacer(modifier = Modifier.height(RegularMarge))
             PAMIconButton(
                 iconButton = PAMIconButtons.Payment,
-                onIconButtonClicked = onPaymentButtonClicked
+                onIconButtonClicked = onIconButtonClicked
             )
             Spacer(modifier = Modifier.height(RegularMarge))
             PAMIconButton(
                 iconButton = PAMIconButtons.Transfer,
-                onIconButtonClicked = onTransferButtonClicked
+                onIconButtonClicked = onIconButtonClicked
             )
         }
     }
@@ -150,7 +145,13 @@ fun PAMBlackBackgroundTextFieldItem(
 ) {
     val focusManager = LocalFocusManager.current
     if (!isAddOperationPopUpExpanded) focusManager.clearFocus()
-    Column(modifier = Modifier.popUpClickableItemModifier()) {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(top = RegularMarge, bottom = RegularMarge, end = RegularMarge)
+        .background(
+            color = MaterialTheme.colors.primary,
+            shape = PopUpFieldBackgroundShape
+        )) {
         TextField(
             value = textValue.stringValue,
             onValueChange = { onTextChange(textValue.copy(stringValue = it)) },
@@ -204,8 +205,8 @@ fun PAMAmountTextFieldItem(
                 focusedLabelColor = MaterialTheme.colors.onPrimary,
                 unfocusedLabelColor = MaterialTheme.colors.onPrimary,
                 cursorColor = MaterialTheme.colors.onPrimary,
-                backgroundColor = Color.Transparent
-            ),
+                backgroundColor = Color.Transparent,
+                textColor = MaterialTheme.colors.onPrimary ),
             keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
         )
     }
@@ -260,7 +261,7 @@ fun PAMPunctualOrRecurrentSwitchButton(
         }
         //Recurrent options
         PAMRecurrentOptionPanel(
-            modifier = Modifier.height(pAMExpandCollapseEndDatePanel(isSelected = isRecurrentOptionExpanded).value),
+            modifier = Modifier.height(pAMExpandCollapseEndDatePanel(isRecurrentOptionSelected = isRecurrentOptionExpanded).value),
             onMonthSelected = onMonthSelected,
             onYearSelected = onYearSelected,
             selectedMonth = endDateSelectedMonth,
@@ -377,20 +378,13 @@ fun SwitchButton(
     switchShape: Shape,
     bottomPadding: Dp = RegularMarge
 ) {
-    //todo pass with transition
-    val buttonColor by animateColorAsState(
-        targetValue = if (isSelected) MaterialTheme.colors.primary else MaterialTheme.colors.secondaryVariant,
-        animationSpec = if (!isSelected) tween(delayMillis = 120) else tween(delayMillis = 0)
-    )
-    val textColor by animateColorAsState(
-        targetValue = if (isSelected) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSecondary,
-        animationSpec = if (!isSelected) tween(delayMillis = 120) else tween(delayMillis = 0)
-    )
+    val transition = pAMBaseSwitchButtonTransition(isSelected = isSelected)
+
     Button(
         modifier = Modifier
             .wrapContentSize()
             .background(
-                color = buttonColor,
+                color = transition.buttonColor,
                 shape = switchShape
             )
             .padding(end = RegularMarge),
@@ -407,7 +401,7 @@ fun SwitchButton(
                 bottom = bottomPadding,
                 end = RegularMarge
             ),
-            color = textColor
+            color = transition.textColor
         )
     }
 }
