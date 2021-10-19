@@ -1,9 +1,12 @@
-package com.piconemarc.viewmodel.viewModel.globalState
+package com.piconemarc.viewmodel.di
 
+import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
+import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
 import com.piconemarc.viewmodel.viewModel.DefaultStore
-import com.piconemarc.viewmodel.viewModel.Store
 import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationPopUpUtilsProvider
 import com.piconemarc.viewmodel.viewModel.baseAppScreen.BaseAppScreenUtilProvider
+import com.piconemarc.viewmodel.viewModel.globalState.GlobalActionDispatcher
+import com.piconemarc.viewmodel.viewModel.globalState.GlobalUtilProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,7 +21,7 @@ class GlobalReducerModule {
         AddOperationPopUpUtilsProvider.AddOperationPopUpVMState()
 
     @Provides
-    fun baseAppScreenState() : BaseAppScreenUtilProvider.BaseAppScreenVmState =
+    fun provideBaseAppScreenState() : BaseAppScreenUtilProvider.BaseAppScreenVmState =
         BaseAppScreenUtilProvider.BaseAppScreenVmState()
 
     @Provides
@@ -33,7 +36,7 @@ class GlobalReducerModule {
 
 
     @Provides
-    fun provideAppStore (state : GlobalUtilProvider.GlobalVmState): DefaultStore<GlobalUtilProvider.GlobalVmState>{
+    fun provideGlobalStore (state : GlobalUtilProvider.GlobalVmState): DefaultStore<GlobalUtilProvider.GlobalVmState>{
         return DefaultStore(
             initialState = state,
             reducer = GlobalUtilProvider().globalReducer
@@ -41,9 +44,16 @@ class GlobalReducerModule {
     }
 
     @Provides
-    fun provideGlobalDispatcher(defaultStore: DefaultStore<GlobalUtilProvider.GlobalVmState>) : GlobalActionDispatcher {
+    fun provideGlobalDispatcher(
+        defaultStore: DefaultStore<GlobalUtilProvider.GlobalVmState>,
+        getAllAccountsInteractor: GetAllAccountsInteractor,
+        getAllCategoriesInteractor: GetAllCategoriesInteractor
+    )
+    : GlobalActionDispatcher {
         return GlobalActionDispatcher(
-            defaultStore
+            defaultStore,
+            getAllAccountsInteractor,
+            getAllCategoriesInteractor
         )
     }
 }

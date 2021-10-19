@@ -56,21 +56,6 @@ interface ActionDispatcher<A : UiAction, S : VMState> : CoroutineScope {
     val subscriber: StoreSubscriber<S>
 }
 
-interface ReducerModule<S : VMState>{
-    val provideStateReducer : Reducer<S>
-    fun provideState () : S
-    fun provideStore (state : S): DefaultStore<S>
-    //todo find a way to abstract dispatcher
-}
-
 abstract class BaseScreenViewModel : ViewModel(){
     abstract fun dispatchAction(action : UiAction)
-}
-
-interface UtilsProvider <S : VMState> {
-    val providedSubscriber : StoreSubscriber<S>
-    val providedReducer : Reducer<S>
-    val providedUiState : UiState
-    val providedVmState : VMState
-    //todo find a way to abstract action
 }

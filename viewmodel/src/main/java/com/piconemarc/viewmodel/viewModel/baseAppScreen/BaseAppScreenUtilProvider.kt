@@ -1,18 +1,11 @@
 package com.piconemarc.viewmodel.viewModel.baseAppScreen
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import com.piconemarc.model.entity.AccountModel
 import com.piconemarc.viewmodel.viewModel.Reducer
-import com.piconemarc.viewmodel.viewModel.StoreSubscriber
 import com.piconemarc.viewmodel.viewModel.UiAction
 import com.piconemarc.viewmodel.viewModel.VMState
-import com.piconemarc.viewmodel.viewModel.baseAppScreen.BaseAppScreenUtilProvider.BaseAppScreenMutableState.allAccounts_
-import com.piconemarc.viewmodel.viewModel.baseAppScreen.BaseAppScreenUtilProvider.BaseAppScreenMutableState.selectedInterlayerButton_
 
 class BaseAppScreenUtilProvider {
-
 
     data class BaseAppScreenVmState(
         val selectedInterlayerButton : String = "My Accounts",
@@ -40,20 +33,5 @@ class BaseAppScreenUtilProvider {
         }
     }
 
-    private object BaseAppScreenMutableState {
-        val selectedInterlayerButton_ : MutableState<String> = mutableStateOf("My Accounts")
-        val allAccounts_ : MutableState<List<AccountModel>> = mutableStateOf(listOf())
-    }
 
-    val baseAppScreenSubscriber : StoreSubscriber<BaseAppScreenVmState> = {baseAppScreenVmState ->
-
-     selectedInterlayerButton_.value = baseAppScreenVmState.selectedInterlayerButton
-     allAccounts_.value = baseAppScreenVmState.allAccounts
-
-    }
-
-    object BaseAppScreenUiState {
-        val selectedInterlayerButton by selectedInterlayerButton_
-        val allAccounts by allAccounts_
-    }
 }

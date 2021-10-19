@@ -1,39 +1,22 @@
 package com.piconemarc.viewmodel.viewModel.addOperationPopUp
 
-import android.util.Log
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import com.piconemarc.core.domain.Constants
+import com.piconemarc.core.domain.Constants.BENEFICIARY_ACCOUNT_MODEL
+import com.piconemarc.core.domain.Constants.CATEGORY_MODEL
+import com.piconemarc.core.domain.Constants.MONTH_MODEL
 import com.piconemarc.core.domain.Constants.OPERATION_MODEL
+import com.piconemarc.core.domain.Constants.PAYMENT_MODEL
+import com.piconemarc.core.domain.Constants.SELECTABLE_MONTHS_LIST
+import com.piconemarc.core.domain.Constants.SELECTABLE_YEARS_LIST
+import com.piconemarc.core.domain.Constants.SENDER_ACCOUNT_MODEL
+import com.piconemarc.core.domain.Constants.TRANSFER_MODEL
+import com.piconemarc.core.domain.Constants.YEAR_MODEL
 import com.piconemarc.model.entity.PresentationDataModel
-import com.piconemarc.viewmodel.viewModel.*
+import com.piconemarc.viewmodel.viewModel.Reducer
+import com.piconemarc.viewmodel.viewModel.UiAction
+import com.piconemarc.viewmodel.viewModel.VMState
 
 
-class AddOperationPopUpUtilsProvider : UtilsProvider<AddOperationPopUpUtilsProvider.AddOperationPopUpVMState> {
-
-    override val providedUiState = AddOperationPopUpUiState
-
-    object AddOperationPopUpUiState : UiState {
-        val isPopUpExpanded by AddOperationPopUpMutableStates.isPoUpExpanded_
-        val operationCategories by AddOperationPopUpMutableStates.allCategories
-        val selectedCategoryName by AddOperationPopUpMutableStates.selectedCategoryName_
-        val operationName by AddOperationPopUpMutableStates.operationName_
-        val operationAmount by AddOperationPopUpMutableStates.operationAmount_
-        val isPaymentExpanded by AddOperationPopUpMutableStates.isPaymentExpanded_
-        val isRecurrentOptionExpanded by AddOperationPopUpMutableStates.isRecurrentOptionExpanded_
-        val enDateSelectedMonth by AddOperationPopUpMutableStates.selectedEndDateMonth_
-        val endDateSelectedYear by AddOperationPopUpMutableStates.selectedEndDateYear_
-        val isTransferExpanded by AddOperationPopUpMutableStates.isTransferExpanded_
-        val accountList by AddOperationPopUpMutableStates.allAccounts
-        val senderAccount by AddOperationPopUpMutableStates.senderAccount_
-        val beneficiaryAccount by AddOperationPopUpMutableStates.beneficiaryAccount_
-        val addPopUpTitle by AddOperationPopUpMutableStates.addPopUpTitle_
-        val selectableYearsList by AddOperationPopUpMutableStates.selectableYearsList_
-        val selectableMonthsList by AddOperationPopUpMutableStates.selectableMonthsList_
-    }
-
-    override val providedVmState = AddOperationPopUpVMState()
+class AddOperationPopUpUtilsProvider  {
 
     data class AddOperationPopUpVMState(
         val isPopUpExpanded: Boolean = false,
@@ -89,14 +72,14 @@ class AddOperationPopUpUtilsProvider : UtilsProvider<AddOperationPopUpUtilsProvi
     }
 
 
-    override val providedReducer: Reducer<AddOperationPopUpVMState> =
+    val providedReducer: Reducer<AddOperationPopUpVMState> =
         { old, action ->
             action as AddOperationPopUpAction
             when (action) {
                 is AddOperationPopUpAction.InitPopUp -> {
                     old.copy(
                         isPopUpExpanded = true,
-                        selectedCategory = Constants.CATEGORY_MODEL,
+                        selectedCategory = CATEGORY_MODEL,
                         addPopUpTitle = OPERATION_MODEL,
                         operationName = PresentationDataModel(),
                         operationAmount = PresentationDataModel(),
@@ -120,7 +103,7 @@ class AddOperationPopUpUtilsProvider : UtilsProvider<AddOperationPopUpUtilsProvi
                 is AddOperationPopUpAction.ExpandPaymentOption -> old.copy(
                     isPaymentExpanded = true,
                     isTransferExpanded = false,
-                    addPopUpTitle = Constants.PAYMENT_MODEL
+                    addPopUpTitle = PAYMENT_MODEL
                 )
                 is AddOperationPopUpAction.CollapseOptions -> old.copy(
                     isPaymentExpanded = false,
@@ -130,10 +113,10 @@ class AddOperationPopUpUtilsProvider : UtilsProvider<AddOperationPopUpUtilsProvi
                 )
                 is AddOperationPopUpAction.ExpandRecurrentOption -> old.copy(
                     isRecurrentOptionExpanded = true,
-                    selectableEndDateYears = Constants.SELECTABLE_YEARS_LIST,
-                    endDateSelectedYear = Constants.YEAR_MODEL,
-                    selectableEndDateMonths = Constants.SELECTABLE_MONTHS_LIST,
-                    enDateSelectedMonth = Constants.MONTH_MODEL
+                    selectableEndDateYears = SELECTABLE_YEARS_LIST,
+                    endDateSelectedYear = YEAR_MODEL,
+                    selectableEndDateMonths = SELECTABLE_MONTHS_LIST,
+                    enDateSelectedMonth = MONTH_MODEL
                 )
                 is AddOperationPopUpAction.CloseRecurrentOption -> old.copy(
                     isRecurrentOptionExpanded = false
@@ -141,9 +124,9 @@ class AddOperationPopUpUtilsProvider : UtilsProvider<AddOperationPopUpUtilsProvi
                 is AddOperationPopUpAction.ExpandTransferOption -> old.copy(
                     isPaymentExpanded = true,
                     isTransferExpanded = true,
-                    addPopUpTitle = Constants.TRANSFER_MODEL,
-                    senderAccount = Constants.SENDER_ACCOUNT_MODEL,
-                    beneficiaryAccount = Constants.BENEFICIARY_ACCOUNT_MODEL
+                    addPopUpTitle = TRANSFER_MODEL,
+                    senderAccount = SENDER_ACCOUNT_MODEL,
+                    beneficiaryAccount = BENEFICIARY_ACCOUNT_MODEL
                 )
                 is AddOperationPopUpAction.UpdateAccountList -> old.copy(
                     allAccounts = action.accountList
@@ -165,98 +148,4 @@ class AddOperationPopUpUtilsProvider : UtilsProvider<AddOperationPopUpUtilsProvi
                 )
             }
         }
-
-    override val providedSubscriber: StoreSubscriber<AddOperationPopUpVMState> =
-        { addOperationPopUpState ->
-            AddOperationPopUpMutableStates.isPoUpExpanded_.value =
-                addOperationPopUpState.isPopUpExpanded
-
-            AddOperationPopUpMutableStates.isPaymentExpanded_.value =
-                addOperationPopUpState.isPaymentExpanded
-
-            AddOperationPopUpMutableStates.isRecurrentOptionExpanded_.value =
-                addOperationPopUpState.isRecurrentOptionExpanded
-
-            AddOperationPopUpMutableStates.isTransferExpanded_.value =
-                addOperationPopUpState.isTransferExpanded
-
-            AddOperationPopUpMutableStates.allCategories.value =
-                addOperationPopUpState.allCategories
-
-            AddOperationPopUpMutableStates.allAccounts.value =
-                addOperationPopUpState.allAccounts
-
-            AddOperationPopUpMutableStates.selectableYearsList_.value =
-                addOperationPopUpState.selectableEndDateYears
-
-            AddOperationPopUpMutableStates.selectableMonthsList_.value =
-                addOperationPopUpState.selectableEndDateMonths
-
-            AddOperationPopUpMutableStates.selectedCategoryName_.value =
-                addOperationPopUpState.selectedCategory
-
-            AddOperationPopUpMutableStates.operationName_.value =
-                addOperationPopUpState.operationName
-
-            AddOperationPopUpMutableStates.operationAmount_.value =
-                addOperationPopUpState.operationAmount
-
-            AddOperationPopUpMutableStates.addPopUpTitle_.value =
-                addOperationPopUpState.addPopUpTitle
-
-            AddOperationPopUpMutableStates.selectedEndDateYear_.value =
-                addOperationPopUpState.endDateSelectedYear
-
-            AddOperationPopUpMutableStates.selectedEndDateMonth_.value =
-                addOperationPopUpState.enDateSelectedMonth
-
-            AddOperationPopUpMutableStates.senderAccount_.value =
-                addOperationPopUpState.senderAccount
-
-            AddOperationPopUpMutableStates.beneficiaryAccount_.value =
-                addOperationPopUpState.beneficiaryAccount
-        }
-
-    private object AddOperationPopUpMutableStates {
-        //EXPAND AND COLLAPSE VALUES --------------------------------------------------------------
-        val isPoUpExpanded_: MutableState<Boolean> = mutableStateOf(false)
-        val isPaymentExpanded_: MutableState<Boolean> = mutableStateOf(false)
-        val isRecurrentOptionExpanded_: MutableState<Boolean> = mutableStateOf(false)
-        val isTransferExpanded_: MutableState<Boolean> = mutableStateOf(false)
-
-        //DATA PRESENTATION VALUES -------------------------------------------------------------------
-        val allCategories: MutableState<List<PresentationDataModel>> =
-            mutableStateOf(listOf())
-        val allAccounts: MutableState<List<PresentationDataModel>> =
-            mutableStateOf(listOf())
-        val selectableYearsList_: MutableState<List<PresentationDataModel>> =
-            mutableStateOf(listOf())
-        val selectableMonthsList_: MutableState<List<PresentationDataModel>> =
-            mutableStateOf(listOf())
-
-        val selectedCategoryName_: MutableState<PresentationDataModel> = mutableStateOf(
-            PresentationDataModel()
-        )
-        val operationName_: MutableState<PresentationDataModel> = mutableStateOf(
-            PresentationDataModel()
-        )
-        val operationAmount_: MutableState<PresentationDataModel> = mutableStateOf(
-            PresentationDataModel()
-        )
-        val addPopUpTitle_: MutableState<PresentationDataModel> = mutableStateOf(
-            PresentationDataModel()
-        )
-        val selectedEndDateYear_: MutableState<PresentationDataModel> = mutableStateOf(
-            PresentationDataModel()
-        )
-        val selectedEndDateMonth_: MutableState<PresentationDataModel> = mutableStateOf(
-            PresentationDataModel()
-        )
-        val senderAccount_: MutableState<PresentationDataModel> = mutableStateOf(
-            PresentationDataModel()
-        )
-        val beneficiaryAccount_: MutableState<PresentationDataModel> = mutableStateOf(
-            PresentationDataModel()
-        )
-    }
 }

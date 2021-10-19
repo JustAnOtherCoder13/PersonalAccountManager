@@ -77,9 +77,7 @@ fun PAMBaseDropDownMenuWithBackground(
     selectedItem: PresentationDataModel,
     itemList: List<PresentationDataModel>,
     onItemSelected: (item: PresentationDataModel) -> Unit
-) {
-    Log.i("TAG", "PAMBaseDropDownMenuWithBackground:$itemList")
-    Row(
+) { Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = RegularMarge, bottom = RegularMarge, end = RegularMarge)

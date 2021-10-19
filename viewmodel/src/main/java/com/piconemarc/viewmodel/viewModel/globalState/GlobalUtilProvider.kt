@@ -11,9 +11,8 @@ import com.piconemarc.viewmodel.viewModel.globalState.GlobalUtilProvider.GlobalM
 
 class GlobalUtilProvider {
 
-
     data class GlobalVmState(
-        val baseAppScreenVmState: BaseAppScreenUtilProvider.BaseAppScreenVmState = BaseAppScreenUtilProvider.BaseAppScreenVmState(),
+        var baseAppScreenVmState: BaseAppScreenUtilProvider.BaseAppScreenVmState = BaseAppScreenUtilProvider.BaseAppScreenVmState(),
         var addOperationPopUpVMState: AddOperationPopUpUtilsProvider.AddOperationPopUpVMState = AddOperationPopUpUtilsProvider.AddOperationPopUpVMState()
     ) : VMState
 
@@ -35,7 +34,6 @@ class GlobalUtilProvider {
                 old.copy(
                     addOperationPopUpVMState = addPopUpReducer(old.addOperationPopUpVMState,action.baseAction)
                 )
-
 
             }
             else -> { old }
