@@ -1,5 +1,6 @@
 package com.piconemarc.viewmodel.viewModel.addOperationPopUp
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,8 +10,7 @@ import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.viewmodel.viewModel.*
 
 
-class AddOperationPopUpUtilsProvider :
-    UtilsProvider<AddOperationPopUpUtilsProvider.AddOperationPopUpVMState> {
+class AddOperationPopUpUtilsProvider : UtilsProvider<AddOperationPopUpUtilsProvider.AddOperationPopUpVMState> {
 
     override val providedUiState = AddOperationPopUpUiState
 
@@ -93,13 +93,15 @@ class AddOperationPopUpUtilsProvider :
         { old, action ->
             action as AddOperationPopUpAction
             when (action) {
-                is AddOperationPopUpAction.InitPopUp -> old.copy(
-                    isPopUpExpanded = true,
-                    selectedCategory = Constants.CATEGORY_MODEL,
-                    addPopUpTitle = OPERATION_MODEL,
-                    operationName = PresentationDataModel(),
-                    operationAmount = PresentationDataModel(),
-                )
+                is AddOperationPopUpAction.InitPopUp -> {
+                    old.copy(
+                        isPopUpExpanded = true,
+                        selectedCategory = Constants.CATEGORY_MODEL,
+                        addPopUpTitle = OPERATION_MODEL,
+                        operationName = PresentationDataModel(),
+                        operationAmount = PresentationDataModel(),
+                    )
+                }
                 is AddOperationPopUpAction.ClosePopUp -> old.copy(
                     isPopUpExpanded = false,
                     isPaymentExpanded = false,

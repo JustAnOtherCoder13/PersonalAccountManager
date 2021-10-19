@@ -1,5 +1,6 @@
 package com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -77,6 +78,7 @@ fun PAMBaseDropDownMenuWithBackground(
     itemList: List<PresentationDataModel>,
     onItemSelected: (item: PresentationDataModel) -> Unit
 ) {
+    Log.i("TAG", "PAMBaseDropDownMenuWithBackground:$itemList")
     Row(
         modifier = Modifier
             .fillMaxWidth()

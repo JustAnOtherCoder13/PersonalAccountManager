@@ -1,5 +1,6 @@
 package com.piconemarc.viewmodel.viewModel.addOperationPopUp
 
+import android.util.Log
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
 import com.piconemarc.model.entity.PresentationDataModel
@@ -24,8 +25,11 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
 
     //action dispatcher
     override fun dispatchAction(action: AddOperationPopUpUtilsProvider.AddOperationPopUpAction) {
+        Log.e("TAG", "dispatchAction: ", )
         when (action) {
-            is AddOperationPopUpUtilsProvider.AddOperationPopUpAction.InitPopUp -> initPopUp()
+            is AddOperationPopUpUtilsProvider.AddOperationPopUpAction.InitPopUp -> {
+                initPopUp()
+            }
             is AddOperationPopUpUtilsProvider.AddOperationPopUpAction.ClosePopUp -> closePopUp()
             is AddOperationPopUpUtilsProvider.AddOperationPopUpAction.CollapseOptions -> collapseOptions()
             is AddOperationPopUpUtilsProvider.AddOperationPopUpAction.ExpandPaymentOption -> expandPaymentOption()
@@ -101,6 +105,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
     private fun initPopUp() {
         addSubscriber()
         //todo extract logic with error handler
+        Log.i("TAG", "initPopUp: ")
         getCategoriesJob = scope.launch {
             getAllCategoriesInteractor.getAllCategoriesToDataUiModelList()
                 .collect { allCategories ->
