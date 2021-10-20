@@ -3,8 +3,8 @@ package com.piconemarc.personalaccountmanager.ui.animation
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.*
 import androidx.compose.runtime.Composable
-import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMIconButtons
 import com.piconemarc.personalaccountmanager.ui.theme.*
+import com.piconemarc.viewmodel.PAMIconButtons
 
 @Composable
 fun pAMInterlayerAnimation(selectedInterlayerButton: PAMIconButtons) : PAMUiDataAnimations.InterlayerAnimationData{

@@ -2,6 +2,7 @@ package com.piconemarc.viewmodel.viewModel
 
 import com.piconemarc.core.domain.Constants
 import com.piconemarc.model.entity.PresentationDataModel
+import com.piconemarc.viewmodel.PAMIconButtons
 import com.piconemarc.viewmodel.Reducer
 
 object AppReducers {
@@ -9,13 +10,21 @@ object AppReducers {
     val globalReducer: Reducer<ViewModelInnerStates.GlobalVmState> = { old, action ->
         action as AppActions.GlobalAction
         when (action) {
-            is AppActions.GlobalAction.UpdateBaseAppScreenVmState ->
+            is AppActions.GlobalAction.UpdateBaseAppScreenVmState -> {
+
                 old.copy(
-                    baseAppScreenVmState = appBaseScreenReducer(old.baseAppScreenVmState, action.baseAction),
+                    baseAppScreenVmState = appBaseScreenReducer(
+                        old.baseAppScreenVmState,
+                        action.baseAction
+                    ),
                 )
+            }
             is AppActions.GlobalAction.UpdateAddPopUpState -> {
                 old.copy(
-                    addOperationPopUpVMState = addPopUpReducer(old.addOperationPopUpVMState,action.baseAction)
+                    addOperationPopUpVMState = addPopUpReducer(
+                        old.addOperationPopUpVMState,
+                        action.baseAction
+                    )
                 )
 
             }
@@ -27,11 +36,15 @@ object AppReducers {
         action as AppActions.BaseAppScreenAction
         when (action){
             is AppActions.BaseAppScreenAction.InitScreen -> old.copy(
-                selectedInterlayerButton = "My Accounts",
-                allAccounts = listOf()
+                selectedInterlayerButton = PAMIconButtons.Home
             )
-            is AppActions.BaseAppScreenAction.SelectInterlayer -> old.copy(selectedInterlayerButton = action.selectedInterlayerButton)
+            is AppActions.BaseAppScreenAction.SelectInterlayer -> {
+                old.copy(selectedInterlayerButton = action.selectedInterlayerButton)
+            }
             is AppActions.BaseAppScreenAction.UpdateAccounts -> old.copy(allAccounts = action.allAccounts)
+            is AppActions.BaseAppScreenAction.UpdateFooterBalance -> old.copy(footerBalance = action.footerBalance)
+            is AppActions.BaseAppScreenAction.UpdateFooterRest -> old.copy(footerRest = action.footerRest)
+            is AppActions.BaseAppScreenAction.UpdateFooterTitle -> old.copy(footerTitle = action.footerTitle)
         }
     }
 
@@ -46,6 +59,8 @@ object AppReducers {
                         addPopUpTitle = Constants.OPERATION_MODEL,
                         operationName = PresentationDataModel(),
                         operationAmount = PresentationDataModel(),
+                        isAddOperation = true,
+                        addPopUpOptionSelectedIcon = PAMIconButtons.Operation
                     )
                 }
                 is AppActions.AddOperationPopUpAction.ClosePopUp -> old.copy(
@@ -108,6 +123,12 @@ object AppReducers {
                 )
                 is AppActions.AddOperationPopUpAction.SelectBeneficiaryAccount -> old.copy(
                     beneficiaryAccount = action.beneficiaryAccount
+                )
+                is AppActions.AddOperationPopUpAction.SelectOptionIcon -> old.copy(
+                    addPopUpOptionSelectedIcon = action.selectedIcon
+                )
+                is AppActions.AddOperationPopUpAction.SelectAddOrMinus -> old.copy(
+                    isAddOperation = action.isAddOperation
                 )
             }
         }

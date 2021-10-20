@@ -24,7 +24,7 @@ class AppSubscriber {
         }
 
     object GlobalUiState : UiState {
-        val baseAppScreenVmState by baseAppScreenVmState_
+        val baseAppScreenUiState by baseAppScreenVmState_
         val addOperationPopUpUiState by addOperationPopUpVMState_
     }
 

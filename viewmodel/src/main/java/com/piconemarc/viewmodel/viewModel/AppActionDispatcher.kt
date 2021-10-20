@@ -2,6 +2,7 @@ package com.piconemarc.viewmodel.viewModel
 
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
+import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.viewmodel.ActionDispatcher
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.StoreSubscriber
@@ -27,27 +28,52 @@ class AppActionDispatcher @Inject constructor(
     private var getAllCategoriesJob: Job? = null
 
     override fun dispatchAction(action: UiAction) {
+        store.add(subscriber)
         when (action) {
 
             //BaseAppScreen -----------------------------------------------------------------------------------
-            is AppActions.GlobalAction.UpdateBaseAppScreenVmState ->
+            is AppActions.BaseAppScreenAction -> {
                 updateBaseAppState(action)
+                when (action){
+                    is AppActions.BaseAppScreenAction.InitScreen ->
+                        getAllAccountsJob = scope.launch {
+                            getAllAccountsInteractor.getAllAccounts().collect { allAccounts ->
+                                var allAccountBalance  = 0.0
+                                var allAccountRest = 0.0
+                                allAccounts.forEach {
+                                    allAccountBalance += it.accountBalance
+                                    allAccountRest += it.accountOverdraft+allAccountBalance
+                                }
+                                updateBaseAppState(AppActions.BaseAppScreenAction.UpdateFooterBalance(
+                                    PresentationDataModel(
+                                        stringValue = allAccountBalance.toString()
+                                    )
+                                ))
+                                updateBaseAppState(AppActions.BaseAppScreenAction.UpdateFooterRest(
+                                    PresentationDataModel(
+                                        stringValue = allAccountRest.toString()
+                                    )
+                                ))
+                                updateBaseAppState(AppActions.BaseAppScreenAction.UpdateAccounts(allAccounts))
+                            }}
+                }
+            }
 
             //Add pop up -----------------------------------------------------------------------------------------
             is AppActions.AddOperationPopUpAction -> {
-                updateAddPopState(action)
+                updateAddPopUpState(action)
                 when (action){
                     is AppActions.AddOperationPopUpAction.InitPopUp ->
                         getAllCategoriesJob = scope.launch {
                             getAllCategoriesInteractor.getAllCategoriesToDataUiModelList().collect {
-                                updateAddPopState(AppActions.AddOperationPopUpAction.UpdateCategoriesList(it))
+                                updateAddPopUpState(AppActions.AddOperationPopUpAction.UpdateCategoriesList(it))
                             }
                         }
 
                     is AppActions.AddOperationPopUpAction.ExpandTransferOption ->
                         getAllAccountsJob = scope.launch {
                             getAllAccountsInteractor.getAllAccountsToPresentationDataModel().collect {
-                                updateAddPopState(AppActions.AddOperationPopUpAction.UpdateAccountList(it))
+                                updateAddPopUpState(AppActions.AddOperationPopUpAction.UpdateAccountList(it))
                             }}
 
                     is AppActions.AddOperationPopUpAction.ClosePopUp ->{
@@ -62,14 +88,12 @@ class AppActionDispatcher @Inject constructor(
     //implement actions -------------------------------------------------------------------------------------
 
     private fun updateBaseAppState(action: UiAction) {
-        store.add(subscriber)
         store.dispatch(
             AppActions.GlobalAction.UpdateBaseAppScreenVmState(action)
         )
     }
 
-    private fun updateAddPopState(action: UiAction) {
-        store.add(subscriber)
+    private fun updateAddPopUpState(action: UiAction) {
         store.dispatch(
             AppActions.GlobalAction.UpdateAddPopUpState(action)
         )

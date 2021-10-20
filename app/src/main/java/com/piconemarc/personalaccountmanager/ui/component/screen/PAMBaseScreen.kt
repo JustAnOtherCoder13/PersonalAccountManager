@@ -10,7 +10,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -23,7 +23,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.piconemarc.model.entity.AccountModel
-import com.piconemarc.model.entity.GeneratedAccount
 import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.animation.PAMUiDataAnimations
@@ -31,8 +30,10 @@ import com.piconemarc.personalaccountmanager.ui.animation.pAMInterlayerAnimation
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.*
 import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMAddOperationPopUp
 import com.piconemarc.personalaccountmanager.ui.theme.*
+import com.piconemarc.viewmodel.PAMIconButtons
 import com.piconemarc.viewmodel.viewModel.AppActionDispatcher
 import com.piconemarc.viewmodel.viewModel.AppActions
+import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.baseAppScreenUiState
 
 @Composable
 fun BaseScreen(
@@ -55,31 +56,21 @@ fun BaseScreen(
 
 @Composable
 fun PAMMainScreen(
-    accountDetailViewModel: AppActionDispatcher,
+    actionDispatcher: AppActionDispatcher,
 ) {
-    //todo pass with state
-    var selectedInterlayerIconButton: PAMIconButtons by remember {
-        mutableStateOf(PAMIconButtons.Home)
-    }
-    var allAccountBalance : Double by remember {
-        mutableStateOf(0.0)
-    }
-    var allAccountRest : Double by remember {
-        mutableStateOf(0.0)
-    }
-   GeneratedAccount.forEach {
-            allAccountBalance += it.accountBalance
-            allAccountRest += it.accountOverdraft+it.accountBalance
-        }
-
+    actionDispatcher.dispatchAction(AppActions.BaseAppScreenAction.InitScreen)
     BaseScreen(
         header = { PAMAppHeader() },
         body = {
             PAMAppBody(
-                onInterlayerIconClicked = { selectedInterlayerIconButton = it },
-                selectedInterlayerIconButton = selectedInterlayerIconButton,
+                onInterlayerIconClicked = {
+                    actionDispatcher.dispatchAction(
+                        AppActions.BaseAppScreenAction.SelectInterlayer(it)
+                    )
+                                          },
+                selectedInterlayerIconButton = baseAppScreenUiState.selectedInterlayerButton,
                 body = {
-                    when (selectedInterlayerIconButton) {
+                    when (baseAppScreenUiState.selectedInterlayerButton) {
                         is PAMIconButtons.Payment -> {
                         }
                         is PAMIconButtons.Chart -> {
@@ -87,7 +78,7 @@ fun PAMMainScreen(
                         else -> {
                             MyAccountsBody(
                                 onAddAccountButtonClicked = {
-                                    accountDetailViewModel.dispatchAction(
+                                    actionDispatcher.dispatchAction(
                                         AppActions.AddOperationPopUpAction.InitPopUp
                                     )
                                 },
@@ -97,8 +88,7 @@ fun PAMMainScreen(
                                 onAccountClicked = {account ->
                                     //todo go to detail
                                 },
-                                //todo pass with state
-                                allAccounts = GeneratedAccount
+                                allAccounts = baseAppScreenUiState.allAccounts
                             )
                         }
                     }
@@ -108,13 +98,13 @@ fun PAMMainScreen(
         },
         footer = {
             PAMAppFooter(
-                footerAccountBalance = PresentationDataModel(stringValue = allAccountBalance.toString()),//---------------------------
-                footerAccountName = PresentationDataModel(stringValue = stringResource(R.string.footerAllAccountsTitle)),  //todo pass with VM
-                footerAccountRest = PresentationDataModel(stringValue = allAccountRest.toString())  //-----------------------------
+                footerAccountBalance =  baseAppScreenUiState.footerBalance,
+                footerAccountName = baseAppScreenUiState.footerTitle,
+                footerAccountRest = baseAppScreenUiState.footerRest
             )
         }
     )
-    PAMAddOperationPopUp(accountDetailViewModel = accountDetailViewModel)
+    PAMAddOperationPopUp(accountDetailViewModel = actionDispatcher)
 }
 
 @Composable

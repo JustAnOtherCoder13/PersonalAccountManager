@@ -10,6 +10,7 @@ import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.animation.pAMAddOperationPopUpBackgroundColor
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.*
+import com.piconemarc.viewmodel.PAMIconButtons
 import com.piconemarc.viewmodel.viewModel.AppActionDispatcher
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.addOperationPopUpUiState
@@ -18,13 +19,6 @@ import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.addOperati
 fun PAMAddOperationPopUp(
     accountDetailViewModel: AppActionDispatcher
 ) {
-    //todo pass with reducer and state
-    var isAddOperation by remember {
-        mutableStateOf(true)
-    }
-    var selectedIcon :PAMIconButtons by remember {
-        mutableStateOf(PAMIconButtons.Operation)
-    }
     //Pop up Body --------------------------------------------
     PAMBasePopUp(
         title = addOperationPopUpUiState.addPopUpTitle,
@@ -37,7 +31,7 @@ fun PAMAddOperationPopUp(
         menuIconPanel = {
             PAMAddOperationPopUpLeftSideMenuIconPanel(
                 onIconButtonClicked = {
-                    selectedIcon = it
+                    accountDetailViewModel.dispatchAction(AppActions.AddOperationPopUpAction.SelectOptionIcon(it))
                     when (it) {
                         is PAMIconButtons.Payment -> accountDetailViewModel.dispatchAction(
                             AppActions.AddOperationPopUpAction.ExpandPaymentOption
@@ -50,10 +44,10 @@ fun PAMAddOperationPopUp(
                         )
                     }
                 },
-                selectedIcon = selectedIcon
+                selectedIcon = addOperationPopUpUiState.addPopUpOptionSelectedIcon
             )
         },
-        popUpBackgroundColor = pAMAddOperationPopUpBackgroundColor(isAddOperation = isAddOperation).value
+        popUpBackgroundColor = pAMAddOperationPopUpBackgroundColor(isAddOperation = addOperationPopUpUiState.isAddOperation).value
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -61,8 +55,11 @@ fun PAMAddOperationPopUp(
         ) {
             //add or minus switch
             AddOrMinusSwitchButton(
-                onAddOrMinusClicked = { isAddClicked -> isAddOperation = isAddClicked },
-                isAddOperation = isAddOperation
+                onAddOrMinusClicked = { isAddClicked ->
+                    accountDetailViewModel.dispatchAction(AppActions.AddOperationPopUpAction.SelectAddOrMinus(
+                    isAddClicked
+                )) },
+                isAddOperation = addOperationPopUpUiState.isAddOperation
             )
             // operation name--------------------------
             PAMBlackBackgroundTextFieldItem(

@@ -19,6 +19,7 @@ import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.animation.pAMAddPopUpAddOrMinusTransition
 import com.piconemarc.personalaccountmanager.ui.component.screen.InterlayerIcon
 import com.piconemarc.personalaccountmanager.ui.theme.*
+import com.piconemarc.viewmodel.PAMIconButtons
 
 @Composable
 fun PAMCircleIcon(
@@ -199,6 +200,7 @@ fun AddOrMinusSwitchButton(
     }
 }
 
+/*
 sealed class PAMIconButtons {
 
     open val iconContentDescription: Int = 0
@@ -206,7 +208,7 @@ sealed class PAMIconButtons {
     open val iconName: Int = 0
 
     object Operation : PAMIconButtons() {
-        override val iconContentDescription: Int = R.string.operationIconContentDescription
+        override val iconContentDescription: Int = com.piconemarc.viewmodel.R.string.operationIconContentDescription
         override val vectorIcon: Int = R.drawable.ic_outline_payments_24
         override val iconName: Int = R.string.operation
     }
@@ -247,4 +249,4 @@ sealed class PAMIconButtons {
         override val iconContentDescription: Int = R.string.deleteIconContentDescription
         override val vectorIcon: Int = R.drawable.ic_outline_delete_24
     }
-}
+}*/

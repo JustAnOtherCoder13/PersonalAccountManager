@@ -2,6 +2,7 @@ package com.piconemarc.viewmodel.viewModel
 
 import com.piconemarc.model.entity.AccountModel
 import com.piconemarc.model.entity.PresentationDataModel
+import com.piconemarc.viewmodel.PAMIconButtons
 import com.piconemarc.viewmodel.UiAction
 
 object AppActions {
@@ -13,8 +14,11 @@ object AppActions {
 
     sealed class BaseAppScreenAction : UiAction {
         object InitScreen : BaseAppScreenAction()
-        data class SelectInterlayer(val selectedInterlayerButton: String) : BaseAppScreenAction()
+        data class SelectInterlayer(val selectedInterlayerButton: PAMIconButtons) : BaseAppScreenAction()
         data class UpdateAccounts(val allAccounts: List<AccountModel>) : BaseAppScreenAction()
+        data class UpdateFooterBalance ( val footerBalance : PresentationDataModel) : BaseAppScreenAction()
+        data class UpdateFooterRest (val footerRest : PresentationDataModel) : BaseAppScreenAction()
+        data class UpdateFooterTitle ( val footerTitle : PresentationDataModel) : BaseAppScreenAction()
     }
 
     sealed class AddOperationPopUpAction : UiAction {
@@ -49,6 +53,12 @@ object AppActions {
 
         data class SelectBeneficiaryAccount(val beneficiaryAccount: PresentationDataModel) :
             AddOperationPopUpAction()
+
+        data class SelectOptionIcon(val selectedIcon : PAMIconButtons) :
+                AddOperationPopUpAction()
+
+        data class SelectAddOrMinus(val isAddOperation : Boolean) :
+                AddOperationPopUpAction()
     }
 
 }

@@ -25,6 +25,7 @@ import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.animation.*
 import com.piconemarc.personalaccountmanager.ui.theme.*
+import com.piconemarc.viewmodel.PAMIconButtons
 
 @Composable
 fun PAMBasePopUp(
