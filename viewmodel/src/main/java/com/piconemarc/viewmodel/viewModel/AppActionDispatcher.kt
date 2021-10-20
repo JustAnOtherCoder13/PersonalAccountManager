@@ -1,57 +1,56 @@
-package com.piconemarc.viewmodel.viewModel.globalState
+package com.piconemarc.viewmodel.viewModel
 
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
-import com.piconemarc.viewmodel.viewModel.ActionDispatcher
-import com.piconemarc.viewmodel.viewModel.DefaultStore
-import com.piconemarc.viewmodel.viewModel.StoreSubscriber
-import com.piconemarc.viewmodel.viewModel.UiAction
-import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationPopUpUtilsProvider
+import com.piconemarc.viewmodel.ActionDispatcher
+import com.piconemarc.viewmodel.DefaultStore
+import com.piconemarc.viewmodel.StoreSubscriber
+import com.piconemarc.viewmodel.UiAction
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class GlobalActionDispatcher @Inject constructor(
-    override val store: DefaultStore<GlobalUtilProvider.GlobalVmState>,
+@HiltViewModel
+class AppActionDispatcher @Inject constructor(
+    override val store: DefaultStore<ViewModelInnerStates.GlobalVmState>,
     private val getAllAccountsInteractor: GetAllAccountsInteractor,
     private val getAllCategoriesInteractor: GetAllCategoriesInteractor
-) : ActionDispatcher<UiAction, GlobalUtilProvider.GlobalVmState> {
+) : ActionDispatcher<UiAction, ViewModelInnerStates.GlobalVmState>() {
 
-    override val subscriber: StoreSubscriber<GlobalUtilProvider.GlobalVmState> =
-        GlobalUtilProvider().globalStoreSubscriber
+    override val subscriber: StoreSubscriber<ViewModelInnerStates.GlobalVmState> =
+        AppSubscriber().appStoreSubscriber
 
     //flow job
     private var getAllAccountsJob: Job? = null
     private var getAllCategoriesJob: Job? = null
 
-
-
     override fun dispatchAction(action: UiAction) {
         when (action) {
 
             //BaseAppScreen -----------------------------------------------------------------------------------
-            is GlobalUtilProvider.GlobalAction.UpdateBaseAppScreenVmState ->
+            is AppActions.GlobalAction.UpdateBaseAppScreenVmState ->
                 updateBaseAppState(action)
 
             //Add pop up -----------------------------------------------------------------------------------------
-            is AddOperationPopUpUtilsProvider.AddOperationPopUpAction -> {
+            is AppActions.AddOperationPopUpAction -> {
                 updateAddPopState(action)
                 when (action){
-                    is AddOperationPopUpUtilsProvider.AddOperationPopUpAction.InitPopUp ->
+                    is AppActions.AddOperationPopUpAction.InitPopUp ->
                         getAllCategoriesJob = scope.launch {
                             getAllCategoriesInteractor.getAllCategoriesToDataUiModelList().collect {
-                                updateAddPopState(AddOperationPopUpUtilsProvider.AddOperationPopUpAction.UpdateCategoriesList(it))
+                                updateAddPopState(AppActions.AddOperationPopUpAction.UpdateCategoriesList(it))
                             }
                         }
 
-                    is AddOperationPopUpUtilsProvider.AddOperationPopUpAction.ExpandTransferOption ->
+                    is AppActions.AddOperationPopUpAction.ExpandTransferOption ->
                         getAllAccountsJob = scope.launch {
                             getAllAccountsInteractor.getAllAccountsToPresentationDataModel().collect {
-                                updateAddPopState(AddOperationPopUpUtilsProvider.AddOperationPopUpAction.UpdateAccountList(it))
+                                updateAddPopState(AppActions.AddOperationPopUpAction.UpdateAccountList(it))
                             }}
 
-                    is AddOperationPopUpUtilsProvider.AddOperationPopUpAction.ClosePopUp ->{
+                    is AppActions.AddOperationPopUpAction.ClosePopUp ->{
                         getAllAccountsJob?.cancel()
                         getAllCategoriesJob?.cancel()
                     }
@@ -65,14 +64,14 @@ class GlobalActionDispatcher @Inject constructor(
     private fun updateBaseAppState(action: UiAction) {
         store.add(subscriber)
         store.dispatch(
-            GlobalUtilProvider.GlobalAction.UpdateBaseAppScreenVmState(action)
+            AppActions.GlobalAction.UpdateBaseAppScreenVmState(action)
         )
     }
 
     private fun updateAddPopState(action: UiAction) {
         store.add(subscriber)
         store.dispatch(
-            GlobalUtilProvider.GlobalAction.UpdateAddPopUpState(action)
+            AppActions.GlobalAction.UpdateAddPopUpState(action)
         )
     }
 }

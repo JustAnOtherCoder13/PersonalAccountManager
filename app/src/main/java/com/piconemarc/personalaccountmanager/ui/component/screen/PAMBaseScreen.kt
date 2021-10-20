@@ -31,8 +31,8 @@ import com.piconemarc.personalaccountmanager.ui.animation.pAMInterlayerAnimation
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.*
 import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMAddOperationPopUp
 import com.piconemarc.personalaccountmanager.ui.theme.*
-import com.piconemarc.viewmodel.viewModel.AccountDetailViewModel
-import com.piconemarc.viewmodel.viewModel.addOperationPopUp.AddOperationPopUpUtilsProvider
+import com.piconemarc.viewmodel.viewModel.AppActionDispatcher
+import com.piconemarc.viewmodel.viewModel.AppActions
 
 @Composable
 fun BaseScreen(
@@ -55,7 +55,7 @@ fun BaseScreen(
 
 @Composable
 fun PAMMainScreen(
-    accountDetailViewModel: AccountDetailViewModel,
+    accountDetailViewModel: AppActionDispatcher,
 ) {
     //todo pass with state
     var selectedInterlayerIconButton: PAMIconButtons by remember {
@@ -88,7 +88,7 @@ fun PAMMainScreen(
                             MyAccountsBody(
                                 onAddAccountButtonClicked = {
                                     accountDetailViewModel.dispatchAction(
-                                        AddOperationPopUpUtilsProvider.AddOperationPopUpAction.InitPopUp
+                                        AppActions.AddOperationPopUpAction.InitPopUp
                                     )
                                 },
                                 onDeleteAccountButtonClicked = {account ->
