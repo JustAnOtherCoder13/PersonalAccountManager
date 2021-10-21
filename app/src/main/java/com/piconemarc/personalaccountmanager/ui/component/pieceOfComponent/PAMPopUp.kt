@@ -186,7 +186,7 @@ private fun TextFieldErrorMessage(
     if (isError) {
         Text(
             text = errorMsg.stringValue,
-            color = MaterialTheme.colors.error,
+            color = NegativeText,
             style = MaterialTheme.typography.caption,
             modifier = Modifier.padding(start = 16.dp)
         )
