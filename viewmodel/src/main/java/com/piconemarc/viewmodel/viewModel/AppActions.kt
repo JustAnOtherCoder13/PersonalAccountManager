@@ -20,10 +20,10 @@ object AppActions {
             BaseAppScreenAction()
 
         data class UpdateAccounts(val allAccounts: List<AccountModel>) : BaseAppScreenAction()
-        data class UpdateFooterBalance(val footerBalance: PresentationDataModel) :
+        data class UpdateFooterBalance(val allAccounts: List<AccountModel>) :
             BaseAppScreenAction()
 
-        data class UpdateFooterRest(val footerRest: PresentationDataModel) : BaseAppScreenAction()
+        data class UpdateFooterRest(val allAccounts: List<AccountModel>) : BaseAppScreenAction()
         data class UpdateFooterTitle(val footerTitle: PresentationDataModel) : BaseAppScreenAction()
     }
 

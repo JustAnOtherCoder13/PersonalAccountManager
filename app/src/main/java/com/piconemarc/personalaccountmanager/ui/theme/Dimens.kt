@@ -2,6 +2,8 @@ package com.piconemarc.personalaccountmanager.ui.theme
 
 import androidx.compose.ui.unit.dp
 
+val appScreenHeaderHeight = 60.dp
+
 val ThinMarge = 2.dp
 val LittleMarge = 5.dp
 val RegularMarge = 10.dp
@@ -36,3 +38,6 @@ const val SelectorMiddlePosition = 58f
 const val SelectorLowPosition = 116f
 
 val AddPopUpSelectorSize = 50.dp
+
+val sheetHoleColumnWidth = 30.dp
+val sheetHoleSize = 24.dp

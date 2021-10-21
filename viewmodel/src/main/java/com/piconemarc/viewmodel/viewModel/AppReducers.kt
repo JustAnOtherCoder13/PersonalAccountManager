@@ -58,8 +58,25 @@ object AppReducers {
                 old.copy(selectedInterlayerButton = action.selectedInterlayerButton)
             }
             is AppActions.BaseAppScreenAction.UpdateAccounts -> old.copy(allAccounts = action.allAccounts)
-            is AppActions.BaseAppScreenAction.UpdateFooterBalance -> old.copy(footerBalance = action.footerBalance)
-            is AppActions.BaseAppScreenAction.UpdateFooterRest -> old.copy(footerRest = action.footerRest)
+            is AppActions.BaseAppScreenAction.UpdateFooterBalance -> {
+                var allAccountBalance = 0.0
+                action.allAccounts.forEach {
+
+                    allAccountBalance += it.accountBalance
+                }
+                old.copy(
+                footerBalance =  PresentationDataModel(allAccountBalance.toString())
+                )
+            }
+            is AppActions.BaseAppScreenAction.UpdateFooterRest ->  {
+                var allAccountRest = 0.0
+                action.allAccounts.forEach {
+                    allAccountRest += (it.accountBalance + it.accountOverdraft)
+                }
+                old.copy(
+                    footerRest =  PresentationDataModel(allAccountRest.toString())
+                )
+            }
             is AppActions.BaseAppScreenAction.UpdateFooterTitle -> old.copy(footerTitle = action.footerTitle)
         }
     }

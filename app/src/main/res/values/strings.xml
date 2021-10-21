@@ -1,21 +1,8 @@
 <resources>
     <string name="app_name">Personal Account Manager</string>
 
-    <string name="homeIconContentDescription">Home icon button</string>
-    <string name="operationIconContentDescription">Operation icon button</string>
-    <string name="paymentIconContentDescription">Payment operation icon button</string>
-    <string name="transferIconContentDescription">Transfer operation icon button</string>
-    <string name="chartIconContentDescription">Chart icon button</string>
-    <string name="addIconContentDescription">Add icon button</string>
-    <string name="deleteIconContentDescription">Delete icon button</string>
-    <string name="minusIconContentDescription">Minus icon button</string>
     <string name="collapseIconContentDescription">Pop up expanded or collapsed icon</string>
-
-
     <string name="deleteBaseMsg">"Are you sure you want to delete this "</string>
-    <string name="operation">Operation</string>
-    <string name="payment">Payment Operation</string>
-    <string name="transfer">Transfer Operation</string>
     <string name="category">Category</string>
     <string name="operationName">Operation name</string>
     <string name="operationAmount">Operation Amount</string>
@@ -31,7 +18,14 @@
     <string name="myPaymentInterlayerTitle">My Payment</string>
     <string name="chartInterlayerTitle">Chart</string>
     <string name="myAccountsInterLayerTitle">My Accounts</string>
-    <string name="accountPostItBalanceTitle">Balance : </string>
-    <string name="accountPostItRestTitle">Rest : </string>
     <string name="footerAllAccountsTitle">All Accounts</string>
+    <string name="balanceTitle">Balance :</string>
+    <string name="restTitle">Rest : </string>
+    <string name="accountNameTitle">Account Name</string>
+    <string name="nameErrorMessage">You have to fill the name before validate</string>
+    <string name="initialBalanceTitle">Initial Balance</string>
+    <string name="balanceErrorMessage">If you don\'t fill balance, it will be set to 0.0</string>
+    <string name="overdraftTitle">Overdraft</string>
+    <string name="overdraftErrorMessage">If you don\'t fill overdraft, it will be set to 0.0</string>
+    <string name="addAccountPopUpTitle">Add new Account</string>
 </resources>

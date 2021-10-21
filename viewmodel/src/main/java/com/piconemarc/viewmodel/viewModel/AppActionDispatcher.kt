@@ -6,7 +6,6 @@ import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
 import com.piconemarc.model.entity.AccountModel
-import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.viewmodel.ActionDispatcher
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.StoreSubscriber
@@ -17,8 +16,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.lang.Exception
-import java.lang.NumberFormatException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -49,24 +46,14 @@ class AppActionDispatcher @Inject constructor(
                     is AppActions.BaseAppScreenAction.InitScreen ->
                         getAllAccountsJob = scope.launch {
                             getAllAccountsInteractor.getAllAccounts().collect { allAccounts ->
-                                var allAccountBalance = 0.0
-                                var allAccountRest = 0.0
-                                allAccounts.forEach {
-                                    allAccountBalance += it.accountBalance
-                                    allAccountRest += it.accountOverdraft + allAccountBalance
-                                }
                                 updateBaseAppState(
                                     AppActions.BaseAppScreenAction.UpdateFooterBalance(
-                                        PresentationDataModel(
-                                            stringValue = allAccountBalance.toString()
-                                        )
+                                        allAccounts
                                     )
                                 )
                                 updateBaseAppState(
                                     AppActions.BaseAppScreenAction.UpdateFooterRest(
-                                        PresentationDataModel(
-                                            stringValue = allAccountRest.toString()
-                                        )
+                                        allAccounts
                                     )
                                 )
                                 updateBaseAppState(
@@ -163,7 +150,6 @@ class AppActionDispatcher @Inject constructor(
                                 } catch (e: Exception) {
                                     //todo catch error
                                 }
-
                             }
                     }
                 }
@@ -171,7 +157,7 @@ class AppActionDispatcher @Inject constructor(
         }
     }
 
-    //implement actions -------------------------------------------------------------------------------------
+    //implement update component state -------------------------------------------------------------------------------------
 
     private fun updateBaseAppState(action: UiAction) {
         store.dispatch(

@@ -1,16 +1,14 @@
-package com.piconemarc.personalaccountmanager.ui.component.screen
+package com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -20,22 +18,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.piconemarc.model.entity.AccountModel
 import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.animation.PAMUiDataAnimations
 import com.piconemarc.personalaccountmanager.ui.animation.pAMInterlayerAnimation
-import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.*
-import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMAddAccountPopUp
-import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMAddOperationPopUp
-import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMDeleteAccountPopUp
 import com.piconemarc.personalaccountmanager.ui.theme.*
 import com.piconemarc.viewmodel.PAMIconButtons
-import com.piconemarc.viewmodel.viewModel.AppActionDispatcher
-import com.piconemarc.viewmodel.viewModel.AppActions
-import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.baseAppScreenUiState
 
 @Composable
 fun BaseScreen(
@@ -57,108 +46,9 @@ fun BaseScreen(
 }
 
 @Composable
-fun PAMMainScreen(
-    actionDispatcher: AppActionDispatcher,
-) {
-    actionDispatcher.dispatchAction(AppActions.BaseAppScreenAction.InitScreen)
-    var isPop by remember {
-        mutableStateOf(false)
-    }
-    BaseScreen(
-        header = { PAMAppHeader() },
-        body = {
-            PAMAppBody(
-                onInterlayerIconClicked = {
-                    actionDispatcher.dispatchAction(
-                        AppActions.BaseAppScreenAction.SelectInterlayer(it)
-                    )
-                },
-                selectedInterlayerIconButton = baseAppScreenUiState.selectedInterlayerButton,
-                body = {
-                    when (baseAppScreenUiState.selectedInterlayerButton) {
-                        is PAMIconButtons.Payment -> {
-                        }
-                        is PAMIconButtons.Chart -> {
-                        }
-                        else -> {
-                            MyAccountsBody(
-                                onAddAccountButtonClicked = {
-                                    actionDispatcher.dispatchAction(
-                                        AppActions.AddAccountPopUpAction.InitPopUp
-                                    )
-                                },
-                                onDeleteAccountButtonClicked = { accountName ->
-                                    actionDispatcher.dispatchAction(
-                                        AppActions.DeleteAccountAction.InitPopUp(accountName = accountName)
-                                    )
-                                },
-                                onAccountClicked = { account ->
-                                    //todo go to detail
-                                },
-                                allAccounts = baseAppScreenUiState.allAccounts
-                            )
-                        }
-                    }
-                }
-
-            )
-        },
-        footer = {
-            PAMAppFooter(
-                footerAccountBalance = baseAppScreenUiState.footerBalance,
-                footerAccountName = baseAppScreenUiState.footerTitle,
-                footerAccountRest = baseAppScreenUiState.footerRest
-            )
-        }
-    )
-    PAMAddOperationPopUp(actionDispatcher = actionDispatcher)
-    PAMDeleteAccountPopUp(actionDispatcher = actionDispatcher)
-    PAMAddAccountPopUp(actionDispatcher = actionDispatcher)
-}
-
-@Composable
-private fun MyAccountsBody(
-    onAddAccountButtonClicked: () -> Unit,
-    onDeleteAccountButtonClicked: (accountName: PresentationDataModel) -> Unit,
-    onAccountClicked: (account: PresentationDataModel) -> Unit,
-    allAccounts: List<AccountModel>
-) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-        LazyColumn() {
-            items(allAccounts) { account ->
-                AccountPostIt(
-                    accountName =  PresentationDataModel(
-                        stringValue = account.name,
-                        objectIdReference = account.id
-                    ),
-                    onDeleteAccountButtonClicked = { accountName ->
-                        onDeleteAccountButtonClicked(accountName) },
-                    accountBalanceValue = PresentationDataModel(
-                        stringValue = account.accountBalance.toString(),
-                        objectIdReference = account.id
-                    ),
-                    accountRestValue = PresentationDataModel(
-                        stringValue = (account.accountOverdraft + (account.accountBalance)).toString(),
-                        objectIdReference = account.id
-                    ),
-                    onAccountClicked = onAccountClicked
-                )
-            }
-        }
-        PAMAddButton(
-            onAddButtonClicked = onAddAccountButtonClicked
-        )
-    }
-}
-
-@Composable
-private fun AccountPostIt(
+fun AccountPostIt(
     accountName: PresentationDataModel,
-    onDeleteAccountButtonClicked: (accountName : PresentationDataModel) -> Unit,
+    onDeleteAccountButtonClicked: (accountName: PresentationDataModel) -> Unit,
     accountBalanceValue: PresentationDataModel,
     accountRestValue: PresentationDataModel,
     onAccountClicked: (account: PresentationDataModel) -> Unit
@@ -185,15 +75,14 @@ private fun AccountPostIt(
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 AccountPostItValue(
-                    valueTitle = stringResource(R.string.accountPostItBalanceTitle),
+                    valueTitle = stringResource(R.string.balanceTitle),
                     value = accountBalanceValue
                 )
                 AccountPostItValue(
-                    valueTitle = stringResource(R.string.accountPostItRestTitle),
+                    valueTitle = stringResource(R.string.restTitle),
                     value = accountRestValue
                 )
             }
-
         }
     }
 }
@@ -286,14 +175,12 @@ private fun AccountPostItBackground(boxScope: BoxScope) {
                     color = BrownDark_300,
                     shape = CutCornerShape(bottomEnd = BigMarge)
                 ),
-
-
-            )
+        )
     }
 }
 
 @Composable
-private fun PAMAppBody(
+fun PAMAppBody(
     onInterlayerIconClicked: (iconButton: PAMIconButtons) -> Unit,
     selectedInterlayerIconButton: PAMIconButtons,
     body: @Composable () -> Unit
@@ -307,6 +194,7 @@ private fun PAMAppBody(
             Column(modifier = Modifier.weight(1f)) {
                 Sheet(interlayerBackgroundColor = transition.interlayerColor) {
                     InterLayerTitle(
+                        //todo pass with transition?
                         title = when (selectedInterlayerIconButton) {
                             is PAMIconButtons.Payment -> {
                                 stringResource(R.string.myPaymentInterlayerTitle)
@@ -341,141 +229,6 @@ private fun InterLayerTitle(title: String) {
         textAlign = TextAlign.Center,
         style = MaterialTheme.typography.h2
     )
-}
-
-@Composable
-private fun InterlayerIconPanel(
-    transition: PAMUiDataAnimations.InterlayerAnimationData,
-    onInterlayerIconClicked: (iconButton: PAMIconButtons) -> Unit,
-    selectedInterlayerIconButton: PAMIconButtons
-) {
-    Box(
-        modifier = Modifier
-            .width(InterlayerIconPanelWidth)
-            .fillMaxHeight()
-    ) {
-        when (selectedInterlayerIconButton) {
-            is PAMIconButtons.Payment ->
-                PaymentInterlayerIconDisposition(
-                    onInterlayerIconClicked = onInterlayerIconClicked,
-                    transition = transition
-                )
-            is PAMIconButtons.Chart ->
-                ChartInterlayerIconDisposition(
-                    onInterlayerIconClicked = onInterlayerIconClicked,
-                    transition = transition
-                )
-            else -> HomeInterlayerIconDisposition(
-                onInterlayerIconClicked = onInterlayerIconClicked,
-                transition = transition
-            )
-        }
-    }
-}
-
-
-@Composable
-fun HomeInterlayerIconDisposition(
-    onInterlayerIconClicked: (iconButton: PAMIconButtons) -> Unit,
-    transition: PAMUiDataAnimations.InterlayerAnimationData
-) {
-    InterLayerIconsSelector(
-        topButton = {
-            PAMHomeButton(
-                onHomeButtonClicked = onInterlayerIconClicked,
-                iconYOffset = transition.homeIconVerticalPosition
-            )
-        },
-        middleButton = {
-            PAMPaymentButton(
-                onPaymentButtonClicked = onInterlayerIconClicked,
-                iconYOffset = transition.paymentIconVerticalPosition
-            )
-        },
-        backgroundButton = { PAMChartButton(onChartButtonClicked = onInterlayerIconClicked) })
-}
-
-@Composable
-fun PaymentInterlayerIconDisposition(
-    onInterlayerIconClicked: (iconButton: PAMIconButtons) -> Unit,
-    transition: PAMUiDataAnimations.InterlayerAnimationData
-) {
-    InterLayerIconsSelector(
-        topButton = {
-            PAMPaymentButton(
-                onPaymentButtonClicked = onInterlayerIconClicked,
-                iconYOffset = transition.paymentIconVerticalPosition
-            )
-        },
-        middleButton = {
-            PAMHomeButton(
-                onHomeButtonClicked = onInterlayerIconClicked,
-                iconYOffset = transition.homeIconVerticalPosition
-            )
-        },
-        backgroundButton = { PAMChartButton(onChartButtonClicked = onInterlayerIconClicked) })
-}
-
-@Composable
-fun ChartInterlayerIconDisposition(
-    onInterlayerIconClicked: (iconButton: PAMIconButtons) -> Unit,
-    transition: PAMUiDataAnimations.InterlayerAnimationData
-) {
-    InterLayerIconsSelector(
-        topButton = { PAMChartButton(onChartButtonClicked = onInterlayerIconClicked) },
-        middleButton = {
-            PAMPaymentButton(
-                onPaymentButtonClicked = onInterlayerIconClicked,
-                iconYOffset = transition.paymentIconVerticalPosition
-            )
-        },
-        backgroundButton = {
-            PAMHomeButton(
-                onHomeButtonClicked = onInterlayerIconClicked,
-                iconYOffset = transition.homeIconVerticalPosition
-            )
-        })
-}
-
-@Composable
-private fun InterLayerIconsSelector(
-    topButton: @Composable () -> Unit,
-    middleButton: @Composable () -> Unit,
-    backgroundButton: @Composable () -> Unit
-) {
-    backgroundButton()
-    middleButton()
-    topButton()
-}
-
-@Composable
-fun InterlayerIcon(
-    backGroundColor: Color,
-    iconButton: PAMIconButtons,
-    onInterlayerIconClicked: (iconButton: PAMIconButtons) -> Unit,
-    yOffset: Dp = 0.dp,
-    iconYOffset: Dp = InterLayerIconOffsetDown
-) {
-    Row(
-        modifier = Modifier
-            .width(InterlayerIconPanelRowWidth)
-            .height(InterlayerIconPanelRowHeight)
-            .offset(y = yOffset)
-            .background(
-                color = backGroundColor,
-                shape = RoundedCornerShape(
-                    topEnd = BigMarge,
-                    bottomEnd = BigMarge
-                )
-            )
-            .clickable { onInterlayerIconClicked(iconButton) },
-    ) {
-        PAMCircleIcon(
-            iconButton = iconButton,
-            iconColor = MaterialTheme.colors.onSecondary,
-            yOffset = iconYOffset
-        )
-    }
 }
 
 @Composable
@@ -527,7 +280,7 @@ private fun SheetHoleColumn(
 ) {
     Column(
         modifier = Modifier
-            .width(30.dp)
+            .width(sheetHoleColumnWidth)
             .fillMaxHeight()
             .background(
                 color = backGroundColor
@@ -547,7 +300,7 @@ private fun SheetHoleColumn(
 private fun SheetHole() {
     Box(
         modifier = Modifier
-            .size(24.dp)
+            .size(sheetHoleSize)
             .background(
                 brush = Brush.radialGradient(
                     listOf(
@@ -561,7 +314,7 @@ private fun SheetHole() {
 }
 
 @Composable
-private fun PAMAppFooter(
+fun PAMAppFooter(
     footerAccountName: PresentationDataModel,
     footerAccountBalance: PresentationDataModel,
     footerAccountRest: PresentationDataModel
@@ -616,11 +369,11 @@ private fun PAMAppFooter(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Balance : ${footerAccountBalance.stringValue}",
+                text = stringResource(R.string.balanceTitle) + footerAccountBalance.stringValue,
                 style = MaterialTheme.typography.body1
             )
             Text(
-                text = "Rest : ${footerAccountRest.stringValue}",
+                text = stringResource(R.string.restTitle) + footerAccountRest.stringValue,
                 style = MaterialTheme.typography.body1
             )
         }
@@ -628,11 +381,11 @@ private fun PAMAppFooter(
 }
 
 @Composable
-private fun PAMAppHeader() {
+fun PAMAppHeader() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(60.dp)
+            .height(appScreenHeaderHeight)
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(

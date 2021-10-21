@@ -41,5 +41,4 @@ class AppSubscriber {
         val deleteAccountVMState by deleteAccountVmState_
         val addAccountPopUpVMState by addAccountPoUpVmState_
     }
-
 }

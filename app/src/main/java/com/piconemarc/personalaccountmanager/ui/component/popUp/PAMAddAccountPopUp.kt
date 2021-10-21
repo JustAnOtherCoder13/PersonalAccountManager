@@ -2,11 +2,13 @@ package com.piconemarc.personalaccountmanager.ui.component.popUp
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import com.piconemarc.model.entity.PresentationDataModel
-import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMBrownBackgroundAmountTextFieldItem
+import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMBasePopUp
+import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMBrownBackgroundAmountTextFieldItem
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMBrownBackgroundTextFieldItem
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
 import com.piconemarc.viewmodel.viewModel.AppActionDispatcher
@@ -17,7 +19,7 @@ import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.addAccount
 fun PAMAddAccountPopUp(actionDispatcher: AppActionDispatcher) {
 
     PAMBasePopUp(
-        title = PresentationDataModel("Add new Account"),
+        title = PresentationDataModel(stringResource(R.string.addAccountPopUpTitle)),
         onAcceptButtonClicked = {
             actionDispatcher.dispatchAction(AppActions.AddAccountPopUpAction.AddNewAccount(
                 accountName = addAccountPopUpVMState.accountName,
@@ -32,7 +34,7 @@ fun PAMAddAccountPopUp(actionDispatcher: AppActionDispatcher) {
     ) {
         Column(modifier = Modifier.padding(vertical = RegularMarge)) {
             PAMBrownBackgroundTextFieldItem(
-                title = PresentationDataModel("Account Name"),
+                title = PresentationDataModel(stringResource(R.string.accountNameTitle)),
                 onTextChange = { accountName ->
                     actionDispatcher.dispatchAction(
                         AppActions.AddAccountPopUpAction.FillAccountName(accountName = accountName)
@@ -41,10 +43,10 @@ fun PAMAddAccountPopUp(actionDispatcher: AppActionDispatcher) {
                 textValue = addAccountPopUpVMState.accountName,
                 isPopUpExpanded = addAccountPopUpVMState.isPopUpExpanded,
                 isError = addAccountPopUpVMState.isNameError,
-                errorMsg = PresentationDataModel("You have to fill the name before validate")
+                errorMsg = PresentationDataModel(stringResource(R.string.nameErrorMessage))
             )
             PAMBrownBackgroundAmountTextFieldItem(
-                title = PresentationDataModel("Initial Balance"),
+                title = PresentationDataModel(stringResource(R.string.initialBalanceTitle)),
                 onTextChange = { accountBalance ->
                     actionDispatcher.dispatchAction(
                         AppActions.AddAccountPopUpAction.FillAccountBalance(accountBalance = accountBalance)
@@ -53,10 +55,10 @@ fun PAMAddAccountPopUp(actionDispatcher: AppActionDispatcher) {
                 amountValue = addAccountPopUpVMState.accountBalance,
                 isPopUpExpanded = addAccountPopUpVMState.isPopUpExpanded,
                 isError = addAccountPopUpVMState.isBalanceError,
-                errorMsg = PresentationDataModel("If you don't fill balance, it will be set to 0.0")
+                errorMsg = PresentationDataModel(stringResource(R.string.balanceErrorMessage))
             )
             PAMBrownBackgroundAmountTextFieldItem(
-                title = PresentationDataModel("Overdraft"),
+                title = PresentationDataModel(stringResource(R.string.overdraftTitle)),
                 onTextChange = { accountOverdraft ->
                     actionDispatcher.dispatchAction(
                         AppActions.AddAccountPopUpAction.FillAccountOverdraft(accountOverdraft = accountOverdraft)
@@ -65,10 +67,8 @@ fun PAMAddAccountPopUp(actionDispatcher: AppActionDispatcher) {
                 amountValue = addAccountPopUpVMState.accountOverdraft,
                 isPopUpExpanded = addAccountPopUpVMState.isPopUpExpanded,
                 isError = addAccountPopUpVMState.isOverdraftError,
-                errorMsg = PresentationDataModel("If you don't fill overdraft, it will be set to 0.0")
+                errorMsg = PresentationDataModel(stringResource(R.string.overdraftErrorMessage))
             )
         }
-
-
     }
 }
