@@ -1,9 +1,8 @@
-package com.piconemarc.viewmodel.viewModel
+package com.piconemarc.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlin.coroutines.CoroutineContext
 
 
 interface UiDataAnimation
@@ -40,37 +39,14 @@ class DefaultStore<S : VMState>(
     override fun remove(subscriber: StoreSubscriber<S>): Boolean = subscribers.remove(subscriber)
 }
 
+abstract class ActionDispatcher<A : UiAction, S : VMState> : ViewModel(){
 
-interface ActionDispatcher<A : UiAction, S : VMState> : CoroutineScope {
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Default
-    val scope: CoroutineScope
-        get() = CoroutineScope(coroutineContext)
-    val store: DefaultStore<S>
-
-    fun dispatchAction(action: A)
+    val scope: CoroutineScope = viewModelScope
+    abstract val store: DefaultStore<S>
+    abstract fun dispatchAction(action: A)
 
     fun addSubscriber() = store.add(subscriber)
     fun removeSubscriber() = store.remove(subscriber)
 
-    val subscriber: StoreSubscriber<S>
-}
-
-interface ReducerModule<S : VMState>{
-    val provideStateReducer : Reducer<S>
-    fun provideState () : S
-    fun provideStore (state : S): DefaultStore<S>
-    //todo find a way to abstract dispatcher
-}
-
-abstract class BaseScreenViewModel : ViewModel(){
-    abstract fun dispatchAction(action : UiAction)
-}
-
-interface UtilsProvider <S : VMState> {
-    val providedSubscriber : StoreSubscriber<S>
-    val providedReducer : Reducer<S>
-    val providedUiState : UiState
-    val providedVmState : VMState
-    //todo find a way to abstract action
+    abstract val subscriber: StoreSubscriber<S>
 }

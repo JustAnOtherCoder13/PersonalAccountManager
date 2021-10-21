@@ -11,7 +11,7 @@ import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import com.piconemarc.personalaccountmanager.ui.component.screen.PAMMainScreen
 import com.piconemarc.personalaccountmanager.ui.theme.PersonalAccountManagerTheme
-import com.piconemarc.viewmodel.viewModel.AccountDetailViewModel
+import com.piconemarc.viewmodel.viewModel.AppActionDispatcher
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.scopes.ActivityScoped
 
@@ -32,7 +32,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val accountDetailViewModel: AccountDetailViewModel by viewModels()
+
+        val appActionDispatcher : AppActionDispatcher by viewModels()
 
         setContent {
             PersonalAccountManagerTheme {
@@ -40,7 +41,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.secondaryVariant,
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    PAMMainScreen(accountDetailViewModel)
+                    PAMMainScreen(appActionDispatcher)
                 }
             }
         }

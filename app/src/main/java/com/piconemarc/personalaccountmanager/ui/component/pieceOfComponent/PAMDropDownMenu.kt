@@ -76,8 +76,7 @@ fun PAMBaseDropDownMenuWithBackground(
     selectedItem: PresentationDataModel,
     itemList: List<PresentationDataModel>,
     onItemSelected: (item: PresentationDataModel) -> Unit
-) {
-    Row(
+) { Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = RegularMarge, bottom = RegularMarge, end = RegularMarge)

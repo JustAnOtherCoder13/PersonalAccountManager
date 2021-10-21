@@ -15,6 +15,9 @@ interface AccountDao {
     @Query("SELECT*FROM $ACCOUNT_TABLE")
     fun getAllAccounts() : Flow<List<AccountDTO>>
 
+    @Query("SELECT*FROM $ACCOUNT_TABLE WHERE $ACCOUNT_TABLE.id = :id")
+    suspend fun getAccountForId(id:Long) : AccountDTO
+
     @Insert
     suspend fun addNewAccount(accountDTO: AccountDTO)
 

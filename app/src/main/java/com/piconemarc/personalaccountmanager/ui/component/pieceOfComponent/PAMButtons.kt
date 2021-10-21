@@ -3,6 +3,7 @@ package com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,9 +17,10 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.piconemarc.personalaccountmanager.R
+import com.piconemarc.personalaccountmanager.ui.animation.PAMUiDataAnimations
 import com.piconemarc.personalaccountmanager.ui.animation.pAMAddPopUpAddOrMinusTransition
-import com.piconemarc.personalaccountmanager.ui.component.screen.InterlayerIcon
 import com.piconemarc.personalaccountmanager.ui.theme.*
+import com.piconemarc.viewmodel.PAMIconButtons
 
 @Composable
 fun PAMCircleIcon(
@@ -199,52 +201,138 @@ fun AddOrMinusSwitchButton(
     }
 }
 
-sealed class PAMIconButtons {
+@Composable
+fun InterLayerIconsSelector(
+    topButton: @Composable () -> Unit,
+    middleButton: @Composable () -> Unit,
+    backgroundButton: @Composable () -> Unit
+) {
+    backgroundButton()
+    middleButton()
+    topButton()
+}
 
-    open val iconContentDescription: Int = 0
-    open val vectorIcon: Int = 0
-    open val iconName: Int = 0
-
-    object Operation : PAMIconButtons() {
-        override val iconContentDescription: Int = R.string.operationIconContentDescription
-        override val vectorIcon: Int = R.drawable.ic_outline_payments_24
-        override val iconName: Int = R.string.operation
-    }
-
-    object Payment : PAMIconButtons() {
-        override val iconContentDescription: Int = R.string.paymentIconContentDescription
-        override val vectorIcon: Int = R.drawable.ic_outline_payment_24
-        override val iconName: Int = R.string.payment
-    }
-
-    object Transfer : PAMIconButtons() {
-        override val iconContentDescription: Int = R.string.transferIconContentDescription
-        override val vectorIcon: Int = R.drawable.ic_baseline_swap_horiz_24
-        override val iconName: Int = R.string.transfer
-    }
-
-    object Home : PAMIconButtons() {
-        override val iconContentDescription: Int = R.string.homeIconContentDescription
-        override val vectorIcon: Int = R.drawable.ic_outline_home_24
-        override val iconName: Int = R.string.homeIconContentDescription
-    }
-
-    object Chart : PAMIconButtons() {
-        override val iconContentDescription: Int = R.string.chartIconContentDescription
-        override val vectorIcon: Int = R.drawable.ic_outline_bar_chart_24
-    }
-
-    object Add : PAMIconButtons() {
-        override val iconContentDescription: Int = R.string.addIconContentDescription
-        override val vectorIcon: Int = R.drawable.ic_baseline_add_24
-    }
-
-    object Minus : PAMIconButtons() {
-        override val iconContentDescription: Int = R.string.minusIconContentDescription
-        override val vectorIcon: Int = R.drawable.ic_outline_minus_24
-    }
-    object Delete : PAMIconButtons() {
-        override val iconContentDescription: Int = R.string.deleteIconContentDescription
-        override val vectorIcon: Int = R.drawable.ic_outline_delete_24
+@Composable
+fun InterlayerIcon(
+    backGroundColor: Color,
+    iconButton: PAMIconButtons,
+    onInterlayerIconClicked: (iconButton: PAMIconButtons) -> Unit,
+    yOffset: Dp = 0.dp,
+    iconYOffset: Dp = InterLayerIconOffsetDown
+) {
+    Row(
+        modifier = Modifier
+            .width(InterlayerIconPanelRowWidth)
+            .height(InterlayerIconPanelRowHeight)
+            .offset(y = yOffset)
+            .background(
+                color = backGroundColor,
+                shape = RoundedCornerShape(
+                    topEnd = BigMarge,
+                    bottomEnd = BigMarge
+                )
+            )
+            .clickable { onInterlayerIconClicked(iconButton) },
+    ) {
+        PAMCircleIcon(
+            iconButton = iconButton,
+            iconColor = MaterialTheme.colors.onSecondary,
+            yOffset = iconYOffset
+        )
     }
 }
+
+@Composable
+fun InterlayerIconPanel(
+    transition: PAMUiDataAnimations.InterlayerAnimationData,
+    onInterlayerIconClicked: (iconButton: PAMIconButtons) -> Unit,
+    selectedInterlayerIconButton: PAMIconButtons
+) {
+    Box(
+        modifier = Modifier
+            .width(InterlayerIconPanelWidth)
+            .fillMaxHeight()
+    ) {
+        when (selectedInterlayerIconButton) {
+            is PAMIconButtons.Payment ->
+                PaymentInterlayerIconDisposition(
+                    onInterlayerIconClicked = onInterlayerIconClicked,
+                    transition = transition
+                )
+            is PAMIconButtons.Chart ->
+                ChartInterlayerIconDisposition(
+                    onInterlayerIconClicked = onInterlayerIconClicked,
+                    transition = transition
+                )
+            else -> HomeInterlayerIconDisposition(
+                onInterlayerIconClicked = onInterlayerIconClicked,
+                transition = transition
+            )
+        }
+    }
+}
+
+
+@Composable
+fun HomeInterlayerIconDisposition(
+    onInterlayerIconClicked: (iconButton: PAMIconButtons) -> Unit,
+    transition: PAMUiDataAnimations.InterlayerAnimationData
+) {
+    InterLayerIconsSelector(
+        topButton = {
+            PAMHomeButton(
+                onHomeButtonClicked = onInterlayerIconClicked,
+                iconYOffset = transition.homeIconVerticalPosition
+            )
+        },
+        middleButton = {
+            PAMPaymentButton(
+                onPaymentButtonClicked = onInterlayerIconClicked,
+                iconYOffset = transition.paymentIconVerticalPosition
+            )
+        },
+        backgroundButton = { PAMChartButton(onChartButtonClicked = onInterlayerIconClicked) })
+}
+
+@Composable
+fun PaymentInterlayerIconDisposition(
+    onInterlayerIconClicked: (iconButton: PAMIconButtons) -> Unit,
+    transition: PAMUiDataAnimations.InterlayerAnimationData
+) {
+    InterLayerIconsSelector(
+        topButton = {
+            PAMPaymentButton(
+                onPaymentButtonClicked = onInterlayerIconClicked,
+                iconYOffset = transition.paymentIconVerticalPosition
+            )
+        },
+        middleButton = {
+            PAMHomeButton(
+                onHomeButtonClicked = onInterlayerIconClicked,
+                iconYOffset = transition.homeIconVerticalPosition
+            )
+        },
+        backgroundButton = { PAMChartButton(onChartButtonClicked = onInterlayerIconClicked) })
+}
+
+@Composable
+fun ChartInterlayerIconDisposition(
+    onInterlayerIconClicked: (iconButton: PAMIconButtons) -> Unit,
+    transition: PAMUiDataAnimations.InterlayerAnimationData
+) {
+    InterLayerIconsSelector(
+        topButton = { PAMChartButton(onChartButtonClicked = onInterlayerIconClicked) },
+        middleButton = {
+            PAMPaymentButton(
+                onPaymentButtonClicked = onInterlayerIconClicked,
+                iconYOffset = transition.paymentIconVerticalPosition
+            )
+        },
+        backgroundButton = {
+            PAMHomeButton(
+                onHomeButtonClicked = onInterlayerIconClicked,
+                iconYOffset = transition.homeIconVerticalPosition
+            )
+        })
+}
+
