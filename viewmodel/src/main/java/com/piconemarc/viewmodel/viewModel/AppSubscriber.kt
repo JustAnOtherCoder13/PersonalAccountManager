@@ -25,6 +25,11 @@ private val addAccountPoUpVmState_ : MutableState<ViewModelInnerStates.AddAccoun
         ViewModelInnerStates.AddAccountPopUpVMState()
     )
 
+private val myAccountDetailScreenVMState_ : MutableState<ViewModelInnerStates.MyAccountDetailScreenVMState> =
+    mutableStateOf(
+        ViewModelInnerStates.MyAccountDetailScreenVMState()
+    )
+
 class AppSubscriber {
 
     val appStoreSubscriber: StoreSubscriber<ViewModelInnerStates.GlobalVmState> =
@@ -33,6 +38,7 @@ class AppSubscriber {
             addOperationPopUpVMState_.value = globalVmState.addOperationPopUpVMState
             deleteAccountVmState_.value = globalVmState.deleteAccountPopUpVMState
             addAccountPoUpVmState_.value = globalVmState.addAccountPopUpVMState
+            myAccountDetailScreenVMState_.value = globalVmState.myAccountDetailScreenVMState
         }
 
     object GlobalUiState : UiState {
@@ -40,5 +46,6 @@ class AppSubscriber {
         val addOperationPopUpUiState by addOperationPopUpVMState_
         val deleteAccountVMState by deleteAccountVmState_
         val addAccountPopUpVMState by addAccountPoUpVmState_
+        val myAccountDetailScreenVMState by myAccountDetailScreenVMState_
     }
 }

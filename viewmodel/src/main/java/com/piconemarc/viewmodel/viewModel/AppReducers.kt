@@ -44,6 +44,14 @@ object AppReducers {
                     )
                 )
             }
+            is AppActions.GlobalAction.UpdateMyAccountDetailScreenState ->{
+                old.copy(
+                    myAccountDetailScreenVMState = myAccountDetailScreenReducer(
+                        old.myAccountDetailScreenVMState,
+                        action.baseAction
+                    )
+                )
+            }
         }
     }
 
@@ -217,6 +225,21 @@ object AppReducers {
                 accountOverdraft = action.accountOverdraft,
                 isOverdraftError = action.accountOverdraft.stringValue.trim().isEmpty()
             )
+        }
+    }
+
+    val myAccountDetailScreenReducer : Reducer<ViewModelInnerStates.MyAccountDetailScreenVMState> = {
+        old,action ->
+        action as AppActions.MyAccountDetailScreenAction
+        when(action){
+            is AppActions.MyAccountDetailScreenAction.InitScreen -> old
+            is AppActions.MyAccountDetailScreenAction.CloseScreen -> old
+            is AppActions.MyAccountDetailScreenAction.UpdateAccountBalance -> old
+            is AppActions.MyAccountDetailScreenAction.UpdateAccountRest -> old
+            is AppActions.MyAccountDetailScreenAction.UpdateAccountMonthlyOperations -> old
+            is AppActions.MyAccountDetailScreenAction.AddNewOperation -> old
+            is AppActions.MyAccountDetailScreenAction.DeleteOperation -> old
+
         }
     }
 

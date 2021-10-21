@@ -2,6 +2,7 @@ package com.piconemarc.viewmodel.viewModel
 
 import com.piconemarc.core.domain.Constants
 import com.piconemarc.model.entity.AccountModel
+import com.piconemarc.model.entity.OperationModel
 import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.viewmodel.PAMIconButtons
 import com.piconemarc.viewmodel.VMState
@@ -12,7 +13,8 @@ object ViewModelInnerStates {
         var baseAppScreenVmState: BaseAppScreenVmState ,
         var addOperationPopUpVMState: AddOperationPopUpVMState ,
         var deleteAccountPopUpVMState: DeleteAccountPopUpVMState,
-        var addAccountPopUpVMState: AddAccountPopUpVMState
+        var addAccountPopUpVMState: AddAccountPopUpVMState,
+        var myAccountDetailScreenVMState: MyAccountDetailScreenVMState
     ) : VMState
 
     data class BaseAppScreenVmState(
@@ -59,6 +61,15 @@ object ViewModelInnerStates {
         val isNameError : Boolean = false,
         val isBalanceError : Boolean = true,
         val isOverdraftError : Boolean = true
+    ):VMState
+
+    data class MyAccountDetailScreenVMState(
+        val accountName: PresentationDataModel = PresentationDataModel(),
+        val actualMonth : PresentationDataModel = PresentationDataModel(),
+        val accountMonthlyOperations : List<OperationModel> = listOf(),
+        val accountBalance : PresentationDataModel= PresentationDataModel(),
+        val accountRest : PresentationDataModel = PresentationDataModel(),
+        val operationToDelete : OperationModel = OperationModel()
     ):VMState
 
 }

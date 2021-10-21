@@ -1,6 +1,7 @@
 package com.piconemarc.viewmodel.viewModel
 
 import com.piconemarc.model.entity.AccountModel
+import com.piconemarc.model.entity.OperationModel
 import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.viewmodel.PAMIconButtons
 import com.piconemarc.viewmodel.UiAction
@@ -12,6 +13,7 @@ object AppActions {
         data class UpdateAddOperationPopUpState(val baseAction: UiAction) : GlobalAction()
         data class UpdateDeleteAccountPopUpState(val baseAction: UiAction) : GlobalAction()
         data class UpdateAddAccountPopUpState(val baseAction: UiAction) : GlobalAction()
+        data class UpdateMyAccountDetailScreenState(val baseAction: UiAction) : GlobalAction()
     }
 
     sealed class BaseAppScreenAction : UiAction {
@@ -88,6 +90,16 @@ object AppActions {
         data class FillAccountName(val accountName : PresentationDataModel): AddAccountPopUpAction()
         data class FillAccountBalance (val accountBalance : PresentationDataModel): AddAccountPopUpAction()
         data class FillAccountOverdraft (val accountOverdraft : PresentationDataModel): AddAccountPopUpAction()
+    }
+
+    sealed class MyAccountDetailScreenAction : UiAction{
+        object InitScreen : MyAccountDetailScreenAction()
+        object CloseScreen : MyAccountDetailScreenAction()
+        data class UpdateAccountMonthlyOperations(val accountMonthlyOperations : List<OperationModel>): MyAccountDetailScreenAction()
+        data class UpdateAccountBalance(val accountBalance : PresentationDataModel): MyAccountDetailScreenAction()
+        data class UpdateAccountRest(val accountRest : PresentationDataModel): MyAccountDetailScreenAction()
+        data class DeleteOperation(val operation : OperationModel): MyAccountDetailScreenAction()
+        data class AddNewOperation(val operation : OperationModel): MyAccountDetailScreenAction()
     }
 
 }

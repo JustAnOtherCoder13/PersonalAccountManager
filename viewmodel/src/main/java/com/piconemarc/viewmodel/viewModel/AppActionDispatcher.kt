@@ -154,6 +154,21 @@ class AppActionDispatcher @Inject constructor(
                     }
                 }
             }
+            //MyAccount detail screen ----------------------------------------------------------------
+            is AppActions.MyAccountDetailScreenAction -> {
+                updateMyAccountDetailScreenState(action)
+                when (action){
+                    is AppActions.MyAccountDetailScreenAction.InitScreen ->{
+                        //todo getAllOperationForAccount in flow, update account balance, rest and operation list
+                    }
+                    is AppActions.MyAccountDetailScreenAction.AddNewOperation->{
+                        //todo addNewOperation
+                    }
+                    is AppActions.MyAccountDetailScreenAction.DeleteOperation -> {
+                        //todo deleteOperation
+                    }
+                }
+            }
         }
     }
 
@@ -180,6 +195,12 @@ class AppActionDispatcher @Inject constructor(
     private fun updateAddAccountPopUpState(action: UiAction) {
         store.dispatch(
             AppActions.GlobalAction.UpdateAddAccountPopUpState(action)
+        )
+    }
+
+    private fun updateMyAccountDetailScreenState(action: UiAction){
+        store.dispatch(
+            AppActions.GlobalAction.UpdateMyAccountDetailScreenState(action)
         )
     }
 }

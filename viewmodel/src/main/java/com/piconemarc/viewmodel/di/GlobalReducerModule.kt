@@ -29,17 +29,23 @@ class GlobalReducerModule {
         ViewModelInnerStates.AddAccountPopUpVMState()
 
     @Provides
+    fun provideMyAccountDetailScreenVmState() : ViewModelInnerStates.MyAccountDetailScreenVMState =
+        ViewModelInnerStates.MyAccountDetailScreenVMState()
+
+    @Provides
     fun provideGlobalState(
         baseAppScreenVmState: ViewModelInnerStates.BaseAppScreenVmState,
         addOperationPopUpVMState: ViewModelInnerStates.AddOperationPopUpVMState,
         deleteAccountPopUpVMState: ViewModelInnerStates.DeleteAccountPopUpVMState,
-        addAccountPopUpVMState: ViewModelInnerStates.AddAccountPopUpVMState
+        addAccountPopUpVMState: ViewModelInnerStates.AddAccountPopUpVMState,
+        myAccountDetailScreenVMState: ViewModelInnerStates.MyAccountDetailScreenVMState
     ): ViewModelInnerStates.GlobalVmState =
         ViewModelInnerStates.GlobalVmState(
             baseAppScreenVmState = baseAppScreenVmState,
             addOperationPopUpVMState = addOperationPopUpVMState,
             deleteAccountPopUpVMState = deleteAccountPopUpVMState,
-            addAccountPopUpVMState = addAccountPopUpVMState
+            addAccountPopUpVMState = addAccountPopUpVMState,
+            myAccountDetailScreenVMState = myAccountDetailScreenVMState
         )
 
 

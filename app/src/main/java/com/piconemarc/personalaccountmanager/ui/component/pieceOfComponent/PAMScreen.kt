@@ -369,11 +369,11 @@ fun PAMAppFooter(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = stringResource(R.string.balanceTitle) + footerAccountBalance.stringValue,
+                text = stringResource(R.string.restTitle) + footerAccountRest.stringValue,
                 style = MaterialTheme.typography.body1
             )
             Text(
-                text = stringResource(R.string.restTitle) + footerAccountRest.stringValue,
+                text = stringResource(R.string.balanceTitle) + footerAccountBalance.stringValue,
                 style = MaterialTheme.typography.body1
             )
         }

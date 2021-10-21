@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.piconemarc.model.entity.GeneratedOperation
+import com.piconemarc.model.entity.OperationModel
 import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMAddButton
@@ -28,11 +29,39 @@ fun MyAccountDetailBody(
     onBack: () -> Unit,
     accountName: PresentationDataModel
 ) {
+    val generatedOperations = GeneratedOperation
+    val accountBalance = "30.0"
+    val accountRest= "50.0"
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
+        AccountDetailSheetBody(
+            onBack,
+            accountName,
+            accountRest,
+            accountBalance,
+            generatedOperations,
+            this
+        )
+        PAMAddButton(onAddButtonClicked = {
+
+        })
+    }
+
+}
+
+@Composable
+private fun AccountDetailSheetBody(
+    onBack: () -> Unit,
+    accountName: PresentationDataModel,
+    accountRest: String,
+    accountBalance: String,
+    generatedOperations: MutableList<OperationModel>,
+    columnScope: ColumnScope
+) {
+    with(columnScope){
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -53,116 +82,130 @@ fun MyAccountDetailBody(
         ) {
             AccountDetailTitle(onBack, accountName)
             Box(modifier = Modifier.fillMaxSize()) {
-                Divider(
-                    color = MaterialTheme.colors.onSecondary,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .width(ThinBorder)
-                        .offset(y = 30.dp)
-                )
-                Row(
-                    modifier = Modifier
-                        .align(alignment = Alignment.BottomStart)
-                        .padding(horizontal = LittleMarge)
-                        .background(
-                            color = MaterialTheme.colors.secondary,
-                            shape = RoundedCornerShape(BigMarge)
-                        )
-                        .border(
-                            width = ThinBorder,
-                            color = MaterialTheme.colors.onSecondary,
-                            shape = RoundedCornerShape(BigMarge)
-                        )
-                        .padding(horizontal = RegularMarge, vertical = RegularMarge)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = stringResource(R.string.restTitle) + "30.0",
-                        style = MaterialTheme.typography.body1
-                    )
-                    Text(
-                        text = stringResource(R.string.balanceTitle) + "50.0",
-                        style = MaterialTheme.typography.body1
-                    )
-                }
-
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .offset(y = 35.dp)
-                ) {
-                    val list = GeneratedOperation
-                    items(list) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = it.name,
-                                modifier = Modifier
-                                    .padding(start = LittleMarge)
-                                    .weight(2f),
-                                style = MaterialTheme.typography.body1
-                            )
-                            Text(
-                                text =if (it.amount>0) "+${it.amount}" else it.amount.toString(),
-                                modifier = Modifier
-                                    .padding(start = LittleMarge)
-                                    .weight(0.9f),
-                                style = MaterialTheme.typography.body1,
-                                color = if (it.amount>0) PositiveText else NegativeText
-                            )
-                            Box(modifier = Modifier.size(35.dp)){
-                                PAMIconButton(
-                                    onIconButtonClicked = {},
-                                    iconButton = PAMIconButtons.Delete,
-                                    iconColor = MaterialTheme.colors.onSecondary,
-                                    backgroundColor = Color.Transparent
-                                )
-                            }
-                        }
-                        Divider(
-                            modifier = Modifier.fillMaxWidth(),
-                            color = MaterialTheme.colors.secondaryVariant.copy(alpha = 0.3f),
-                            thickness = ThinBorder
-                        )
-                    }
-                }
-                Column(modifier = Modifier.fillMaxSize()) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(LittleMarge)
-                    ) {
-                        Text(
-                            text = "Operation Name",
-                            modifier = Modifier.weight(1.8f),
-                            style = MaterialTheme.typography.h3
-                        )
-                        Divider(
-                            color = MaterialTheme.colors.onSecondary,
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .width(ThinBorder)
-                                .padding(bottom = 37.dp)
-                        )
-                        Text(
-                            text = "Amount",
-                            modifier = Modifier
-                                .padding(start = LittleMarge)
-                                .weight(1.2f),
-                            style = MaterialTheme.typography.h3
-                        )
-                    }
-                }
+                AccountDetailSheetFooter(accountRest, accountBalance, this)
+                OperationRecyclerView(accountMonthlyOperations = generatedOperations)
+                AccountDetailTitleAndDivider()
             }
         }
-        PAMAddButton(onAddButtonClicked = {
-
-        })
     }
 
+}
+
+@Composable
+private fun AccountDetailSheetFooter(accountRest: String, accountBalance: String, boxScope: BoxScope) {
+    with(boxScope){
+        Divider(
+            color = MaterialTheme.colors.onSecondary,
+            modifier = Modifier
+                .fillMaxWidth()
+                .width(ThinBorder)
+                .offset(y = 30.dp)
+        )
+        Row(
+            modifier = Modifier.Companion
+                .align(alignment = Alignment.BottomStart)
+                .padding(horizontal = LittleMarge)
+                .background(
+                    color = MaterialTheme.colors.secondary,
+                    shape = RoundedCornerShape(BigMarge)
+                )
+                .border(
+                    width = ThinBorder,
+                    color = MaterialTheme.colors.onSecondary,
+                    shape = RoundedCornerShape(BigMarge)
+                )
+                .padding(horizontal = RegularMarge, vertical = RegularMarge)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = stringResource(R.string.restTitle) + accountRest,
+                style = MaterialTheme.typography.body1
+            )
+            Text(
+                text = stringResource(R.string.balanceTitle) + accountBalance,
+                style = MaterialTheme.typography.body1
+            )
+        }
+    }
+
+}
+
+@Composable
+private fun OperationRecyclerView(accountMonthlyOperations: List<OperationModel>) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .offset(y = 35.dp)
+    ) { items(accountMonthlyOperations) { operation -> OperationItem(operation = operation) } }
+}
+
+@Composable
+private fun OperationItem(operation: OperationModel) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = operation.name,
+            modifier = Modifier
+                .padding(start = LittleMarge)
+                .weight(2f),
+            style = MaterialTheme.typography.body1
+        )
+        Text(
+            text = if (operation.amount > 0) "+${operation.amount}" else operation.amount.toString(),
+            modifier = Modifier
+                .padding(start = LittleMarge)
+                .weight(0.9f),
+            style = MaterialTheme.typography.body1,
+            color = if (operation.amount > 0) PositiveText else NegativeText
+        )
+        Box(modifier = Modifier.size(35.dp)) {
+            PAMIconButton(
+                onIconButtonClicked = {},
+                iconButton = PAMIconButtons.Delete,
+                iconColor = MaterialTheme.colors.onSecondary,
+                backgroundColor = Color.Transparent
+            )
+        }
+    }
+    Divider(
+        modifier = Modifier.fillMaxWidth(),
+        color = MaterialTheme.colors.secondaryVariant.copy(alpha = 0.3f),
+        thickness = ThinBorder
+    )
+}
+
+@Composable
+private fun AccountDetailTitleAndDivider() {
+    Column(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(LittleMarge)
+        ) {
+            Text(
+                text = stringResource(id = R.string.operationName),
+                modifier = Modifier.weight(accountDetailOperationNameWeight),
+                style = MaterialTheme.typography.h3
+            )
+            Divider(
+                color = MaterialTheme.colors.onSecondary,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(ThinBorder)
+                    .padding(bottom = accountDetailVerticalDividerBottomPadding)
+            )
+            Text(
+                text = stringResource(R.string.amount),
+                modifier = Modifier
+                    .padding(start = LittleMarge)
+                    .weight(accountDetailOperationAmountWeight),
+                style = MaterialTheme.typography.h3
+            )
+        }
+    }
 }
 
 @Composable
