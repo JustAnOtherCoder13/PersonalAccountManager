@@ -10,7 +10,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -28,7 +28,9 @@ import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.animation.PAMUiDataAnimations
 import com.piconemarc.personalaccountmanager.ui.animation.pAMInterlayerAnimation
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.*
+import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMAddAccountPopUp
 import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMAddOperationPopUp
+import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMDeleteAccountPopUp
 import com.piconemarc.personalaccountmanager.ui.theme.*
 import com.piconemarc.viewmodel.PAMIconButtons
 import com.piconemarc.viewmodel.viewModel.AppActionDispatcher
@@ -59,6 +61,9 @@ fun PAMMainScreen(
     actionDispatcher: AppActionDispatcher,
 ) {
     actionDispatcher.dispatchAction(AppActions.BaseAppScreenAction.InitScreen)
+    var isPop by remember {
+        mutableStateOf(false)
+    }
     BaseScreen(
         header = { PAMAppHeader() },
         body = {
@@ -67,7 +72,7 @@ fun PAMMainScreen(
                     actionDispatcher.dispatchAction(
                         AppActions.BaseAppScreenAction.SelectInterlayer(it)
                     )
-                                          },
+                },
                 selectedInterlayerIconButton = baseAppScreenUiState.selectedInterlayerButton,
                 body = {
                     when (baseAppScreenUiState.selectedInterlayerButton) {
@@ -79,13 +84,15 @@ fun PAMMainScreen(
                             MyAccountsBody(
                                 onAddAccountButtonClicked = {
                                     actionDispatcher.dispatchAction(
-                                        AppActions.AddOperationPopUpAction.InitPopUp
+                                        AppActions.AddAccountPopUpAction.InitPopUp
                                     )
                                 },
-                                onDeleteAccountButtonClicked = {account ->
-                                    //todo launch delete PopUp
+                                onDeleteAccountButtonClicked = { accountName ->
+                                    actionDispatcher.dispatchAction(
+                                        AppActions.DeleteAccountAction.InitPopUp(accountName = accountName)
+                                    )
                                 },
-                                onAccountClicked = {account ->
+                                onAccountClicked = { account ->
                                     //todo go to detail
                                 },
                                 allAccounts = baseAppScreenUiState.allAccounts
@@ -98,19 +105,21 @@ fun PAMMainScreen(
         },
         footer = {
             PAMAppFooter(
-                footerAccountBalance =  baseAppScreenUiState.footerBalance,
+                footerAccountBalance = baseAppScreenUiState.footerBalance,
                 footerAccountName = baseAppScreenUiState.footerTitle,
                 footerAccountRest = baseAppScreenUiState.footerRest
             )
         }
     )
-    PAMAddOperationPopUp(accountDetailViewModel = actionDispatcher)
+    PAMAddOperationPopUp(actionDispatcher = actionDispatcher)
+    PAMDeleteAccountPopUp(actionDispatcher = actionDispatcher)
+    PAMAddAccountPopUp(actionDispatcher = actionDispatcher)
 }
 
 @Composable
 private fun MyAccountsBody(
     onAddAccountButtonClicked: () -> Unit,
-    onDeleteAccountButtonClicked: (account: PresentationDataModel) -> Unit,
+    onDeleteAccountButtonClicked: (accountName: PresentationDataModel) -> Unit,
     onAccountClicked: (account: PresentationDataModel) -> Unit,
     allAccounts: List<AccountModel>
 ) {
@@ -121,13 +130,13 @@ private fun MyAccountsBody(
     ) {
         LazyColumn() {
             items(allAccounts) { account ->
-                val accountName = PresentationDataModel(
-                    stringValue = account.name,
-                    objectIdReference = account.id
-                )
                 AccountPostIt(
-                    accountName = accountName,
-                    onDeleteAccountButtonClicked = { onDeleteAccountButtonClicked(accountName) },
+                    accountName =  PresentationDataModel(
+                        stringValue = account.name,
+                        objectIdReference = account.id
+                    ),
+                    onDeleteAccountButtonClicked = { accountName ->
+                        onDeleteAccountButtonClicked(accountName) },
                     accountBalanceValue = PresentationDataModel(
                         stringValue = account.accountBalance.toString(),
                         objectIdReference = account.id
@@ -149,7 +158,7 @@ private fun MyAccountsBody(
 @Composable
 private fun AccountPostIt(
     accountName: PresentationDataModel,
-    onDeleteAccountButtonClicked: () -> Unit,
+    onDeleteAccountButtonClicked: (accountName : PresentationDataModel) -> Unit,
     accountBalanceValue: PresentationDataModel,
     accountRestValue: PresentationDataModel,
     onAccountClicked: (account: PresentationDataModel) -> Unit
@@ -167,7 +176,7 @@ private fun AccountPostIt(
         ) {
             AccountPostItTitle(
                 accountName = accountName,
-                onDeleteAccountButtonClicked = onDeleteAccountButtonClicked
+                onDeleteAccountButtonClicked = { onDeleteAccountButtonClicked(accountName) }
             )
             Column(
                 modifier = Modifier

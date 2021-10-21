@@ -21,4 +21,8 @@ class AccountDaoImpl @Inject constructor(pamDatabase: PAMDatabase) :AccountDao {
         accountDao.deleteAccount(accountDTO)
     }
 
+    override suspend fun getAccountForId(id:Long) : AccountDTO{
+        return accountDao.getAccountForId(id)
+    }
+
 }

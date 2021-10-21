@@ -9,8 +9,10 @@ import com.piconemarc.viewmodel.VMState
 object ViewModelInnerStates {
 
     data class GlobalVmState(
-        var baseAppScreenVmState: BaseAppScreenVmState = BaseAppScreenVmState(),
-        var addOperationPopUpVMState: AddOperationPopUpVMState = AddOperationPopUpVMState()
+        var baseAppScreenVmState: BaseAppScreenVmState ,
+        var addOperationPopUpVMState: AddOperationPopUpVMState ,
+        var deleteAccountPopUpVMState: DeleteAccountPopUpVMState,
+        var addAccountPopUpVMState: AddAccountPopUpVMState
     ) : VMState
 
     data class BaseAppScreenVmState(
@@ -41,5 +43,22 @@ object ViewModelInnerStates {
         val isAddOperation : Boolean = true,
         val addPopUpOptionSelectedIcon : PAMIconButtons = PAMIconButtons.Operation
     ) : VMState
+
+    data class DeleteAccountPopUpVMState(
+        val isPopUpExpanded: Boolean = false,
+        val accountToDeleteName : PresentationDataModel = PresentationDataModel(),
+        val accountToDeleteBalance :PresentationDataModel = PresentationDataModel(),
+        val accountToDelete : AccountModel = AccountModel()
+    ) : VMState
+
+    data class AddAccountPopUpVMState(
+        val isPopUpExpanded : Boolean = false,
+        val accountName : PresentationDataModel = PresentationDataModel(),
+        val accountBalance : PresentationDataModel = PresentationDataModel(),
+        val accountOverdraft : PresentationDataModel = PresentationDataModel(),
+        val isNameError : Boolean = false,
+        val isBalanceError : Boolean = true,
+        val isOverdraftError : Boolean = true
+    ):VMState
 
 }

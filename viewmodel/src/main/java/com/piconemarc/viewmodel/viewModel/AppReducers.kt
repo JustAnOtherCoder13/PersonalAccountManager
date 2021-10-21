@@ -1,6 +1,7 @@
 package com.piconemarc.viewmodel.viewModel
 
 import com.piconemarc.core.domain.Constants
+import com.piconemarc.model.entity.AccountModel
 import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.viewmodel.PAMIconButtons
 import com.piconemarc.viewmodel.Reducer
@@ -19,14 +20,29 @@ object AppReducers {
                     ),
                 )
             }
-            is AppActions.GlobalAction.UpdateAddPopUpState -> {
+            is AppActions.GlobalAction.UpdateAddOperationPopUpState -> {
                 old.copy(
-                    addOperationPopUpVMState = addPopUpReducer(
+                    addOperationPopUpVMState = addOperationPopUpReducer(
                         old.addOperationPopUpVMState,
                         action.baseAction
                     )
                 )
-
+            }
+            is AppActions.GlobalAction.UpdateDeleteAccountPopUpState ->{
+                old.copy(
+                    deleteAccountPopUpVMState = deleteAccountPopUpReducer(
+                        old.deleteAccountPopUpVMState,
+                        action.baseAction
+                    )
+                )
+            }
+            is AppActions.GlobalAction.UpdateAddAccountPopUpState ->{
+                old.copy(
+                    addAccountPopUpVMState = addAccountPopUpReducer(
+                        old.addAccountPopUpVMState,
+                        action.baseAction
+                    )
+                )
             }
         }
     }
@@ -48,7 +64,7 @@ object AppReducers {
         }
     }
 
-    val addPopUpReducer: Reducer<ViewModelInnerStates.AddOperationPopUpVMState> =
+    val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperationPopUpVMState> =
         { old, action ->
             action as AppActions.AddOperationPopUpAction
             when (action) {
@@ -132,5 +148,59 @@ object AppReducers {
                 )
             }
         }
+
+    val deleteAccountPopUpReducer : Reducer<ViewModelInnerStates.DeleteAccountPopUpVMState> ={
+        old, action ->
+        action as AppActions.DeleteAccountAction
+        when(action){
+            is AppActions.DeleteAccountAction.InitPopUp -> old.copy(
+                isPopUpExpanded = true,
+            )
+            is AppActions.DeleteAccountAction.ClosePopUp -> old.copy(
+                isPopUpExpanded = false,
+                accountToDelete = AccountModel()
+            )
+            is AppActions.DeleteAccountAction.DeleteAccount -> old.copy(
+                isPopUpExpanded = false,
+            )
+            is AppActions.DeleteAccountAction.UpdateAccountToDelete -> old.copy(
+                accountToDelete = action.accountToDelete,
+                accountToDeleteBalance = PresentationDataModel(action.accountToDelete.accountBalance.toString(),action.accountToDelete.id),
+                accountToDeleteName = PresentationDataModel(action.accountToDelete.name,action.accountToDelete.id)
+            )
+        }
+    }
+
+    val addAccountPopUpReducer : Reducer<ViewModelInnerStates.AddAccountPopUpVMState> = {
+        old, action ->
+        action as AppActions.AddAccountPopUpAction
+        when(action){
+            is AppActions.AddAccountPopUpAction.InitPopUp->old.copy(
+                isPopUpExpanded = true,
+                accountName = PresentationDataModel(),
+                accountBalance = PresentationDataModel(),
+                accountOverdraft = PresentationDataModel(),
+                isBalanceError = true,
+                isOverdraftError = true
+            )
+            is AppActions.AddAccountPopUpAction.ClosePopUp -> old.copy(
+                isPopUpExpanded = false
+            )
+            is AppActions.AddAccountPopUpAction.AddNewAccount -> old.copy(
+                isNameError = action.accountName.stringValue.trim().isEmpty()
+            )
+            is AppActions.AddAccountPopUpAction.FillAccountName-> old.copy(
+                accountName = action.accountName
+            )
+            is AppActions.AddAccountPopUpAction.FillAccountBalance-> old.copy(
+                accountBalance = action.accountBalance,
+                isBalanceError = action.accountBalance.stringValue.trim().isEmpty()
+            )
+            is AppActions.AddAccountPopUpAction.FillAccountOverdraft-> old.copy(
+                accountOverdraft = action.accountOverdraft,
+                isOverdraftError = action.accountOverdraft.stringValue.trim().isEmpty()
+            )
+        }
+    }
 
 }

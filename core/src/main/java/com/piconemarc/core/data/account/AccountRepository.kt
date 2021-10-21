@@ -10,6 +10,10 @@ class AccountRepository @Inject constructor(private val accountDaoImpl: AccountD
         return accountDaoImpl.getAllAccounts()
     }
 
+     suspend fun getAccountForId(id:Long):AccountDTO{
+        return accountDaoImpl.getAccountForId(id)
+    }
+
     suspend fun addNewAccount(accountDTO: AccountDTO){
         accountDaoImpl.addNewAccount(accountDTO)
     }
@@ -17,6 +21,5 @@ class AccountRepository @Inject constructor(private val accountDaoImpl: AccountD
     suspend fun deleteAccount(accountDTO: AccountDTO) {
         accountDaoImpl.deleteAccount(accountDTO)
     }
-
 
 }

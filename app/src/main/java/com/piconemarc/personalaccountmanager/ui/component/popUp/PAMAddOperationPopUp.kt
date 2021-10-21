@@ -17,7 +17,7 @@ import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.addOperati
 
 @Composable
 fun PAMAddOperationPopUp(
-    accountDetailViewModel: AppActionDispatcher
+    actionDispatcher: AppActionDispatcher
 ) {
     //Pop up Body --------------------------------------------
     PAMBasePopUp(
@@ -26,20 +26,24 @@ fun PAMAddOperationPopUp(
             //todo check if filled before add here
 
         },//todo add operation here
-        onDismiss = { accountDetailViewModel.dispatchAction(AppActions.AddOperationPopUpAction.ClosePopUp) },
+        onDismiss = { actionDispatcher.dispatchAction(AppActions.AddOperationPopUpAction.ClosePopUp) },
         isExpanded = addOperationPopUpUiState.isPopUpExpanded,
         menuIconPanel = {
             PAMAddOperationPopUpLeftSideMenuIconPanel(
                 onIconButtonClicked = {
-                    accountDetailViewModel.dispatchAction(AppActions.AddOperationPopUpAction.SelectOptionIcon(it))
+                    actionDispatcher.dispatchAction(
+                        AppActions.AddOperationPopUpAction.SelectOptionIcon(
+                            it
+                        )
+                    )
                     when (it) {
-                        is PAMIconButtons.Payment -> accountDetailViewModel.dispatchAction(
+                        is PAMIconButtons.Payment -> actionDispatcher.dispatchAction(
                             AppActions.AddOperationPopUpAction.ExpandPaymentOption
                         )
-                        is PAMIconButtons.Transfer -> accountDetailViewModel.dispatchAction(
+                        is PAMIconButtons.Transfer -> actionDispatcher.dispatchAction(
                             AppActions.AddOperationPopUpAction.ExpandTransferOption
                         )
-                        else -> accountDetailViewModel.dispatchAction(
+                        else -> actionDispatcher.dispatchAction(
                             AppActions.AddOperationPopUpAction.CollapseOptions
                         )
                     }
@@ -56,43 +60,50 @@ fun PAMAddOperationPopUp(
             //add or minus switch
             AddOrMinusSwitchButton(
                 onAddOrMinusClicked = { isAddClicked ->
-                    accountDetailViewModel.dispatchAction(AppActions.AddOperationPopUpAction.SelectAddOrMinus(
-                    isAddClicked
-                )) },
+                    actionDispatcher.dispatchAction(
+                        AppActions.AddOperationPopUpAction.SelectAddOrMinus(
+                            isAddClicked
+                        )
+                    )
+                },
                 isAddOperation = addOperationPopUpUiState.isAddOperation
             )
             // operation name--------------------------
-            PAMBlackBackgroundTextFieldItem(
+            PAMBrownBackgroundTextFieldItem(
                 title = PresentationDataModel(stringValue = stringResource(R.string.operationName)),
                 onTextChange = { operationName ->
-                    accountDetailViewModel.dispatchAction(
+                    actionDispatcher.dispatchAction(
                         AppActions.AddOperationPopUpAction.FillOperationName(
                             operationName
                         )
                     )
                 },
                 textValue = addOperationPopUpUiState.operationName,
-                isAddOperationPopUpExpanded = addOperationPopUpUiState.isPopUpExpanded
+                isPopUpExpanded = addOperationPopUpUiState.isPopUpExpanded,
+                isError = false,//todo
+                errorMsg = PresentationDataModel("error")
             )
             // operation Amount--------------------------
-            PAMAmountTextFieldItem(
+            PAMBrownBackgroundAmountTextFieldItem(
                 title = PresentationDataModel(stringValue = stringResource(R.string.operationAmount)),
                 onTextChange = { operationAmount ->
-                    accountDetailViewModel.dispatchAction(
+                    actionDispatcher.dispatchAction(
                         AppActions.AddOperationPopUpAction.FillOperationAmount(
                             operationAmount
                         )
                     )
                 },
                 amountValue = addOperationPopUpUiState.operationAmount,
-                isAddOperationPopUpExpanded = addOperationPopUpUiState.isPopUpExpanded
+                isPopUpExpanded = addOperationPopUpUiState.isPopUpExpanded,
+                isError = false,
+                errorMsg = PresentationDataModel()
             )
             //category drop down -----------------------------------
             PAMBaseDropDownMenuWithBackground(
                 selectedItem = addOperationPopUpUiState.selectedCategory,
                 itemList = addOperationPopUpUiState.allCategories,
                 onItemSelected = { category ->
-                    accountDetailViewModel.dispatchAction(
+                    actionDispatcher.dispatchAction(
                         AppActions.AddOperationPopUpAction.SelectCategory(
                             category
                         )
@@ -105,22 +116,22 @@ fun PAMAddOperationPopUp(
                 isRecurrentOptionExpanded = addOperationPopUpUiState.isRecurrentOptionExpanded,
                 isPaymentOptionExpanded = addOperationPopUpUiState.isPaymentExpanded,
                 onPunctualButtonSelected = {
-                    accountDetailViewModel
+                    actionDispatcher
                         .dispatchAction(AppActions.AddOperationPopUpAction.CloseRecurrentOption)
                 },
                 onRecurrentButtonSelected = {
-                    accountDetailViewModel
+                    actionDispatcher
                         .dispatchAction(AppActions.AddOperationPopUpAction.ExpandRecurrentOption)
                 },
                 onMonthSelected = { endDateMonth ->
-                    accountDetailViewModel.dispatchAction(
+                    actionDispatcher.dispatchAction(
                         AppActions.AddOperationPopUpAction.SelectEndDateMonth(
                             endDateMonth
                         )
                     )
                 },
                 onYearSelected = { endDateYear ->
-                    accountDetailViewModel.dispatchAction(
+                    actionDispatcher.dispatchAction(
                         AppActions.AddOperationPopUpAction.SelectEndDateYear(
                             endDateYear
                         )
@@ -138,14 +149,14 @@ fun PAMAddOperationPopUp(
                 allAccountsList = addOperationPopUpUiState.allAccounts,
                 beneficiaryAccountSelectedItem = addOperationPopUpUiState.beneficiaryAccount,
                 onSenderAccountSelected = { senderAccount ->
-                    accountDetailViewModel.dispatchAction(
+                    actionDispatcher.dispatchAction(
                         AppActions.AddOperationPopUpAction.SelectSenderAccount(
                             senderAccount
                         )
                     )
                 },
                 onBeneficiaryAccountSelected = { beneficiaryAccount ->
-                    accountDetailViewModel.dispatchAction(
+                    actionDispatcher.dispatchAction(
                         AppActions.AddOperationPopUpAction.SelectBeneficiaryAccount(
                             beneficiaryAccount
                         )

@@ -10,6 +10,7 @@ import com.piconemarc.core.data.operation.OperationDaoImpl
 import com.piconemarc.core.data.operation.OperationRepository
 import com.piconemarc.core.domain.interactor.account.AddNewAccountInteractor
 import com.piconemarc.core.domain.interactor.account.DeleteAccountInteractor
+import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.core.domain.interactor.category.AddNewCategoryInteractor
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
@@ -78,6 +79,11 @@ class CoreModule {
     @Provides
     fun provideGetAllAccounts(accountRepository: AccountRepository) : GetAllAccountsInteractor{
         return GetAllAccountsInteractor(accountRepository)
+    }
+
+    @Provides
+    fun provideGetAccountForId(accountRepository: AccountRepository) :GetAccountForIdInteractor{
+        return GetAccountForIdInteractor(accountRepository)
     }
 
     @Provides

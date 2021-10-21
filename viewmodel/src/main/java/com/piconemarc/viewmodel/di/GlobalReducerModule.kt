@@ -17,22 +17,34 @@ class GlobalReducerModule {
         ViewModelInnerStates.AddOperationPopUpVMState()
 
     @Provides
-    fun provideBaseAppScreenState() : ViewModelInnerStates.BaseAppScreenVmState =
+    fun provideBaseAppScreenState(): ViewModelInnerStates.BaseAppScreenVmState =
         ViewModelInnerStates.BaseAppScreenVmState()
+
+    @Provides
+    fun provideDeleteAccountState(): ViewModelInnerStates.DeleteAccountPopUpVMState =
+        ViewModelInnerStates.DeleteAccountPopUpVMState()
+
+    @Provides
+    fun provideAddAccountState(): ViewModelInnerStates.AddAccountPopUpVMState =
+        ViewModelInnerStates.AddAccountPopUpVMState()
 
     @Provides
     fun provideGlobalState(
         baseAppScreenVmState: ViewModelInnerStates.BaseAppScreenVmState,
-        addOperationPopUpVMState: ViewModelInnerStates.AddOperationPopUpVMState
-    ) : ViewModelInnerStates.GlobalVmState =
+        addOperationPopUpVMState: ViewModelInnerStates.AddOperationPopUpVMState,
+        deleteAccountPopUpVMState: ViewModelInnerStates.DeleteAccountPopUpVMState,
+        addAccountPopUpVMState: ViewModelInnerStates.AddAccountPopUpVMState
+    ): ViewModelInnerStates.GlobalVmState =
         ViewModelInnerStates.GlobalVmState(
             baseAppScreenVmState = baseAppScreenVmState,
-            addOperationPopUpVMState = addOperationPopUpVMState
+            addOperationPopUpVMState = addOperationPopUpVMState,
+            deleteAccountPopUpVMState = deleteAccountPopUpVMState,
+            addAccountPopUpVMState = addAccountPopUpVMState
         )
 
 
     @Provides
-    fun provideGlobalStore (state : ViewModelInnerStates.GlobalVmState): DefaultStore<ViewModelInnerStates.GlobalVmState> {
+    fun provideGlobalStore(state: ViewModelInnerStates.GlobalVmState): DefaultStore<ViewModelInnerStates.GlobalVmState> {
         return DefaultStore(
             initialState = state,
             reducer = AppReducers.globalReducer

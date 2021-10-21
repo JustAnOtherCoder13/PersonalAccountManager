@@ -78,14 +78,14 @@ fun PAMBasePopUp(
 
 @Composable
 fun PAMBaseDeletePopUp(
-    elementToDelete: String,
+    deletePopUpTitle: PresentationDataModel,
     onAcceptButtonClicked: () -> Unit,
     onDismiss: () -> Unit,
     isExpanded: Boolean,
     body: @Composable () -> Unit
 ) {
     PAMBasePopUp(
-        title = PresentationDataModel(),//stringResource(R.string.deleteBaseMsg) + elementToDelete,
+        title = deletePopUpTitle,
         onAcceptButtonClicked = onAcceptButtonClicked,
         onDismiss = onDismiss,
         body = body,
@@ -138,14 +138,16 @@ fun PAMAddOperationPopUpLeftSideMenuIconPanel(
 }
 
 @Composable
-fun PAMBlackBackgroundTextFieldItem(
+fun PAMBrownBackgroundTextFieldItem(
     title: PresentationDataModel,
     onTextChange: (text: PresentationDataModel) -> Unit,
     textValue: PresentationDataModel,
-    isAddOperationPopUpExpanded : Boolean
+    isPopUpExpanded : Boolean,
+    isError : Boolean,
+    errorMsg : PresentationDataModel
 ) {
     val focusManager = LocalFocusManager.current
-    if (!isAddOperationPopUpExpanded) focusManager.clearFocus()
+    if (!isPopUpExpanded) focusManager.clearFocus()
     Column(modifier = Modifier
         .fillMaxWidth()
         .padding(top = RegularMarge, bottom = RegularMarge, end = RegularMarge)
@@ -167,24 +169,42 @@ fun PAMBlackBackgroundTextFieldItem(
                 backgroundColor = Color.Transparent
             ),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            keyboardActions = KeyboardActions(onNext = {
-                focusManager.moveFocus(FocusDirection.Down)
-            })
+            keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }
+            ),
+            isError = isError
         )
+        TextFieldErrorMessage(isError, errorMsg)
 
     }
 }
 
 @Composable
-fun PAMAmountTextFieldItem(
+private fun TextFieldErrorMessage(
+    isError: Boolean,
+    errorMsg: PresentationDataModel
+) {
+    if (isError) {
+        Text(
+            text = errorMsg.stringValue,
+            color = MaterialTheme.colors.error,
+            style = MaterialTheme.typography.caption,
+            modifier = Modifier.padding(start = 16.dp)
+        )
+    }
+}
+
+@Composable
+fun PAMBrownBackgroundAmountTextFieldItem(
     title: PresentationDataModel,
     onTextChange: (text: PresentationDataModel) -> Unit,
     amountValue: PresentationDataModel,
-    isAddOperationPopUpExpanded : Boolean
+    isPopUpExpanded : Boolean,
+    isError: Boolean,
+    errorMsg: PresentationDataModel
 ) {
     val focusManager = LocalFocusManager.current
-    if (!isAddOperationPopUpExpanded) focusManager.clearFocus()
-    Row(
+    if (!isPopUpExpanded) focusManager.clearFocus()
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = RegularMarge, bottom = RegularMarge, end = RegularMarge)
@@ -208,8 +228,10 @@ fun PAMAmountTextFieldItem(
                 cursorColor = MaterialTheme.colors.onPrimary,
                 backgroundColor = Color.Transparent,
                 textColor = MaterialTheme.colors.onPrimary ),
-            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
+            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+            isError = isError
         )
+        TextFieldErrorMessage(isError = isError, errorMsg = errorMsg)
     }
 }
 
