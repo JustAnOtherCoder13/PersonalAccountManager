@@ -27,10 +27,17 @@ class GlobalReducerModule {
     @Provides
     fun provideAddAccountState(): ViewModelInnerStates.AddAccountPopUpVMState =
         ViewModelInnerStates.AddAccountPopUpVMState()
+    @Provides
+    fun provideMyAccountScreenState() : ViewModelInnerStates.MyAccountScreenVMState =
+        ViewModelInnerStates.MyAccountScreenVMState()
 
     @Provides
     fun provideMyAccountDetailScreenVmState() : ViewModelInnerStates.MyAccountDetailScreenVMState =
         ViewModelInnerStates.MyAccountDetailScreenVMState()
+
+    @Provides
+    fun provideDeleteOperationPopUpVmState() : ViewModelInnerStates.DeleteOperationPopUpVMState =
+        ViewModelInnerStates.DeleteOperationPopUpVMState()
 
     @Provides
     fun provideGlobalState(
@@ -38,14 +45,18 @@ class GlobalReducerModule {
         addOperationPopUpVMState: ViewModelInnerStates.AddOperationPopUpVMState,
         deleteAccountPopUpVMState: ViewModelInnerStates.DeleteAccountPopUpVMState,
         addAccountPopUpVMState: ViewModelInnerStates.AddAccountPopUpVMState,
-        myAccountDetailScreenVMState: ViewModelInnerStates.MyAccountDetailScreenVMState
+        myAccountDetailScreenVMState: ViewModelInnerStates.MyAccountDetailScreenVMState,
+        myAccountScreenVMState: ViewModelInnerStates.MyAccountScreenVMState,
+        deleteOperationPopUpVMState: ViewModelInnerStates.DeleteOperationPopUpVMState
     ): ViewModelInnerStates.GlobalVmState =
         ViewModelInnerStates.GlobalVmState(
             baseAppScreenVmState = baseAppScreenVmState,
             addOperationPopUpVMState = addOperationPopUpVMState,
             deleteAccountPopUpVMState = deleteAccountPopUpVMState,
             addAccountPopUpVMState = addAccountPopUpVMState,
-            myAccountDetailScreenVMState = myAccountDetailScreenVMState
+            myAccountDetailScreenVMState = myAccountDetailScreenVMState,
+            myAccountScreenVmState = myAccountScreenVMState,
+            deleteOperationPopUpVmState = deleteOperationPopUpVMState
         )
 
 

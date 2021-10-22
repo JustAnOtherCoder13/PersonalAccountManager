@@ -1,6 +1,7 @@
 package com.piconemarc.personalaccountmanager.ui.component.screen
 
 import androidx.compose.runtime.*
+import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.BaseScreen
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMAppBody
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMAppFooter
@@ -8,6 +9,7 @@ import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMAp
 import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMAddAccountPopUp
 import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMAddOperationPopUp
 import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMDeleteAccountPopUp
+import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMDeleteOperationPopUp
 import com.piconemarc.viewmodel.PAMIconButtons
 import com.piconemarc.viewmodel.viewModel.AppActionDispatcher
 import com.piconemarc.viewmodel.viewModel.AppActions
@@ -18,8 +20,24 @@ fun PAMMainScreen(
     actionDispatcher: AppActionDispatcher,
 ) {
     actionDispatcher.dispatchAction(AppActions.BaseAppScreenAction.InitScreen)
+    actionDispatcher.dispatchAction(AppActions.MyAccountScreenAction.InitScreen)
     var isPop by remember {
         mutableStateOf(false)
+    }
+    var isAccountClicked by remember {
+        mutableStateOf(false)
+    }
+    var selectedAccountName by remember {
+        mutableStateOf(PresentationDataModel())
+    }
+    var isDeleteOperationPopUpExpanded by remember {
+        mutableStateOf(false)
+    }
+    var operationName by remember {
+        mutableStateOf("")
+    }
+    var operationAmount by remember {
+        mutableStateOf("")
     }
     BaseScreen(
         header = { PAMAppHeader() },
@@ -37,9 +55,17 @@ fun PAMMainScreen(
                         }
                         is PAMIconButtons.Chart -> {
                         }
-                        else -> { MyAccountsBody(actionDispatcher = actionDispatcher) }
+                        else -> { MyAccountsBody(
+                            actionDispatcher = actionDispatcher,
+                            onDeleteOperationButtonClick = {
+                                isDeleteOperationPopUpExpanded = true
+                                operationName = it.name
+                                operationAmount = it.amount.toString()
+                            }
+                        ) }
                     }
-                }
+                },
+                interLayerTitle = ""
             )
         },
         footer = {
@@ -53,4 +79,16 @@ fun PAMMainScreen(
     PAMAddOperationPopUp(actionDispatcher = actionDispatcher)
     PAMDeleteAccountPopUp(actionDispatcher = actionDispatcher)
     PAMAddAccountPopUp(actionDispatcher = actionDispatcher)
+    PAMDeleteOperationPopUp(
+        isDeleteOperationExpanded = isDeleteOperationPopUpExpanded,
+        operationName = PresentationDataModel(operationName),
+        operationAmount = PresentationDataModel(operationAmount),
+        onAcceptButtonClick ={
+
+        },
+        onDismiss ={
+            isDeleteOperationPopUpExpanded = false
+        },
+        actionDispatcher = actionDispatcher
+    )
 }

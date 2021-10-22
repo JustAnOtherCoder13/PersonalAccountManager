@@ -30,8 +30,7 @@ class GetAllOperationsInteractor @Inject constructor(private val operationReposi
                 year = it.endDateYear
             ),
             isRecurrent = it.isRecurrent,
-            category = allCategories.find { categoryModel -> categoryModel.id == it.categoryId }
-                ?: CategoryModel(),
+            categoryId = it.categoryId,
             emitDate = it.emitDate?: Date()
         )  }
     }

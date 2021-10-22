@@ -1,5 +1,6 @@
 package com.piconemarc.viewmodel.viewModel
 
+import android.util.Log
 import com.piconemarc.core.domain.Constants
 import com.piconemarc.model.entity.AccountModel
 import com.piconemarc.model.entity.PresentationDataModel
@@ -12,7 +13,6 @@ object AppReducers {
         action as AppActions.GlobalAction
         when (action) {
             is AppActions.GlobalAction.UpdateBaseAppScreenVmState -> {
-
                 old.copy(
                     baseAppScreenVmState = appBaseScreenReducer(
                         old.baseAppScreenVmState,
@@ -52,6 +52,22 @@ object AppReducers {
                     )
                 )
             }
+            is AppActions.GlobalAction.UpdateMyAccountScreenState -> {
+                old.copy(
+                    myAccountScreenVmState = myAccountScreenReducer(
+                        old.myAccountScreenVmState,
+                        action.baseAction
+                    )
+                )
+            }
+            is AppActions.GlobalAction.UpdateDeleteOperationPopUpState -> {
+                old.copy(
+                    deleteOperationPopUpVmState = deleteOperationPopUpReducer(
+                        old.deleteOperationPopUpVmState,
+                        action.baseAction
+                    )
+                )
+            }
         }
     }
 
@@ -86,6 +102,8 @@ object AppReducers {
                 )
             }
             is AppActions.BaseAppScreenAction.UpdateFooterTitle -> old.copy(footerTitle = action.footerTitle)
+            is AppActions.BaseAppScreenAction.UpdateInterlayerTiTle -> old.copy(interLayerTitle = action.interlayerTitle)
+
         }
     }
 
@@ -171,6 +189,12 @@ object AppReducers {
                 is AppActions.AddOperationPopUpAction.SelectAddOrMinus -> old.copy(
                     isAddOperation = action.isAddOperation
                 )
+                is AppActions.AddOperationPopUpAction.AddNewOperation -> old.copy(
+                    isPopUpExpanded = false,
+                    isPaymentExpanded = false,
+                    isRecurrentOptionExpanded = false,
+                    isTransferExpanded = false,
+                )
             }
         }
 
@@ -228,19 +252,71 @@ object AppReducers {
         }
     }
 
+    val myAccountScreenReducer : Reducer<ViewModelInnerStates.MyAccountScreenVMState> = {
+        old,action ->
+        action as AppActions.MyAccountScreenAction
+        when (action){
+            is AppActions.MyAccountScreenAction.InitScreen -> {
+                Log.d("TAG", ": ")
+                old.copy(
+                    isVisible = true
+                )
+            }
+            is AppActions.MyAccountScreenAction.CloseScreen -> old.copy(
+                isVisible = false
+            )
+            is AppActions.MyAccountScreenAction.UpdateAccountList -> {
+
+                old.copy(
+                    allAccounts = action.accountList
+                )
+            }
+
+        }
+    }
+
     val myAccountDetailScreenReducer : Reducer<ViewModelInnerStates.MyAccountDetailScreenVMState> = {
         old,action ->
         action as AppActions.MyAccountDetailScreenAction
         when(action){
-            is AppActions.MyAccountDetailScreenAction.InitScreen -> old
-            is AppActions.MyAccountDetailScreenAction.CloseScreen -> old
-            is AppActions.MyAccountDetailScreenAction.UpdateAccountBalance -> old
-            is AppActions.MyAccountDetailScreenAction.UpdateAccountRest -> old
-            is AppActions.MyAccountDetailScreenAction.UpdateAccountMonthlyOperations -> old
-            is AppActions.MyAccountDetailScreenAction.AddNewOperation -> old
-            is AppActions.MyAccountDetailScreenAction.DeleteOperation -> old
-
+            is AppActions.MyAccountDetailScreenAction.InitScreen -> old.copy(
+                isVisible = true
+            )
+            is AppActions.MyAccountDetailScreenAction.CloseScreen -> old.copy(
+                isVisible = false
+            )
+            is AppActions.MyAccountDetailScreenAction.UpdateAccountBalance -> old.copy(
+                accountBalance = action.accountBalance
+            )
+            is AppActions.MyAccountDetailScreenAction.UpdateAccountRest -> old.copy(
+                accountRest = action.accountRest
+            )
+            is AppActions.MyAccountDetailScreenAction.UpdateAccountMonthlyOperations -> old.copy(
+                accountMonthlyOperations = action.accountMonthlyOperations
+            )
+            is AppActions.MyAccountDetailScreenAction.UpdateAccountName -> old.copy(
+                accountName = action.accountName
+            )
         }
     }
+
+    val deleteOperationPopUpReducer : Reducer<ViewModelInnerStates.DeleteOperationPopUpVMState> =
+        { old, action ->
+            action as AppActions.DeleteOperationPopUpAction
+            when (action){
+                is AppActions.DeleteOperationPopUpAction.InitPopUp-> old.copy(
+                    isPopUpExpanded = true
+                )
+                is AppActions.DeleteOperationPopUpAction.ClosePopUp-> old.copy(
+                    isPopUpExpanded = false
+                )
+                is AppActions.DeleteOperationPopUpAction.UpdateOperationToDelete-> old.copy(
+                    operationToDelete = action.operationToDelete
+                )
+                is AppActions.DeleteOperationPopUpAction.DeleteOperation-> old.copy(
+                    isPopUpExpanded = false
+                )
+            }
+        }
 
 }

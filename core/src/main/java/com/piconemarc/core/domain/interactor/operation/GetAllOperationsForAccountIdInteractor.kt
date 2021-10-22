@@ -14,14 +14,12 @@ class GetAllOperationsForAccountIdInteractor @Inject constructor(private val ope
 
     fun getAllOperationsForAccountId(
         accountId: Long,
-        allCategories: List<CategoryModel>
     ): Flow<List<OperationModel>> =
         operationRepository.getOperationsForAccountId(accountId).map {
-            mapAllOperationsDtoForAccountIdToOperationModel(allCategories, it)
+            mapAllOperationsDtoForAccountIdToOperationModel(it)
         }
 
     private fun mapAllOperationsDtoForAccountIdToOperationModel(
-        allCategories: List<CategoryModel>,
         allOperationsDtoForAccountId: List<OperationDTO>
     ): List<OperationModel> {
         return allOperationsDtoForAccountId.map {
@@ -34,8 +32,7 @@ class GetAllOperationsForAccountIdInteractor @Inject constructor(private val ope
                     year = it.endDateYear
                 ),
                 isRecurrent = it.isRecurrent,
-                category = allCategories.find { categoryModel -> categoryModel.id == it.categoryId }
-                    ?: CategoryModel(),
+                categoryId = it.categoryId,
                 emitDate = it.emitDate ?: Date()
             )
         }

@@ -14,12 +14,16 @@ object AppActions {
         data class UpdateDeleteAccountPopUpState(val baseAction: UiAction) : GlobalAction()
         data class UpdateAddAccountPopUpState(val baseAction: UiAction) : GlobalAction()
         data class UpdateMyAccountDetailScreenState(val baseAction: UiAction) : GlobalAction()
+        data class UpdateMyAccountScreenState(val baseAction: UiAction):GlobalAction()
+        data class UpdateDeleteOperationPopUpState(val baseAction: UiAction): GlobalAction()
     }
 
     sealed class BaseAppScreenAction : UiAction {
         object InitScreen : BaseAppScreenAction()
         data class SelectInterlayer(val selectedInterlayerButton: PAMIconButtons) :
             BaseAppScreenAction()
+        data class UpdateInterlayerTiTle(val interlayerTitle : PresentationDataModel) : BaseAppScreenAction()
+
 
         data class UpdateAccounts(val allAccounts: List<AccountModel>) : BaseAppScreenAction()
         data class UpdateFooterBalance(val allAccounts: List<AccountModel>) :
@@ -28,6 +32,21 @@ object AppActions {
         data class UpdateFooterRest(val allAccounts: List<AccountModel>) : BaseAppScreenAction()
         data class UpdateFooterTitle(val footerTitle: PresentationDataModel) : BaseAppScreenAction()
     }
+    sealed class MyAccountScreenAction : UiAction{
+        object InitScreen : MyAccountScreenAction()
+        object CloseScreen : MyAccountScreenAction()
+        data class UpdateAccountList(val accountList : List<AccountModel>): MyAccountScreenAction()
+    }
+
+    sealed class MyAccountDetailScreenAction : UiAction{
+        data class InitScreen(val selectedAccount: AccountModel) : MyAccountDetailScreenAction()
+        object CloseScreen : MyAccountDetailScreenAction()
+        data class UpdateAccountMonthlyOperations(val accountMonthlyOperations : List<OperationModel>): MyAccountDetailScreenAction()
+        data class UpdateAccountBalance(val accountBalance : PresentationDataModel): MyAccountDetailScreenAction()
+        data class UpdateAccountRest(val accountRest : PresentationDataModel): MyAccountDetailScreenAction()
+        data class UpdateAccountName(val accountName : PresentationDataModel):MyAccountDetailScreenAction()
+    }
+
 
     sealed class AddOperationPopUpAction : UiAction {
         object InitPopUp : AddOperationPopUpAction()
@@ -67,6 +86,16 @@ object AppActions {
 
         data class SelectAddOrMinus(val isAddOperation: Boolean) :
             AddOperationPopUpAction()
+
+        data class AddNewOperation(val operation : OperationModel) :
+                AddOperationPopUpAction()
+    }
+
+    sealed class DeleteOperationPopUpAction : UiAction{
+        data class InitPopUp(val operationToDelete : OperationModel): DeleteOperationPopUpAction()
+        object ClosePopUp : DeleteOperationPopUpAction()
+        data class UpdateOperationToDelete(val operationToDelete: OperationModel) : DeleteOperationPopUpAction()
+        data class DeleteOperation(val operationToDelete: OperationModel) : DeleteOperationPopUpAction()
     }
 
     sealed class DeleteAccountAction : UiAction {
@@ -92,14 +121,6 @@ object AppActions {
         data class FillAccountOverdraft (val accountOverdraft : PresentationDataModel): AddAccountPopUpAction()
     }
 
-    sealed class MyAccountDetailScreenAction : UiAction{
-        object InitScreen : MyAccountDetailScreenAction()
-        object CloseScreen : MyAccountDetailScreenAction()
-        data class UpdateAccountMonthlyOperations(val accountMonthlyOperations : List<OperationModel>): MyAccountDetailScreenAction()
-        data class UpdateAccountBalance(val accountBalance : PresentationDataModel): MyAccountDetailScreenAction()
-        data class UpdateAccountRest(val accountRest : PresentationDataModel): MyAccountDetailScreenAction()
-        data class DeleteOperation(val operation : OperationModel): MyAccountDetailScreenAction()
-        data class AddNewOperation(val operation : OperationModel): MyAccountDetailScreenAction()
-    }
+
 
 }

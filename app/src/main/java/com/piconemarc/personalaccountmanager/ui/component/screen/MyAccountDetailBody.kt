@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.piconemarc.model.entity.GeneratedOperation
 import com.piconemarc.model.entity.OperationModel
 import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.R
@@ -21,32 +20,46 @@ import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMAd
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMIconButton
 import com.piconemarc.personalaccountmanager.ui.theme.*
 import com.piconemarc.viewmodel.PAMIconButtons
+import com.piconemarc.viewmodel.viewModel.AppActionDispatcher
+import com.piconemarc.viewmodel.viewModel.AppActions
+import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.myAccountDetailScreenUiState
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
 fun MyAccountDetailBody(
-    onBack: () -> Unit,
-    accountName: PresentationDataModel
+    onDeleteItemButtonCLick: (operation: OperationModel) -> Unit,
+    actionDispatcher: AppActionDispatcher
 ) {
-    val generatedOperations = GeneratedOperation
-    val accountBalance = "30.0"
-    val accountRest= "50.0"
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         AccountDetailSheetBody(
-            onBack,
-            accountName,
-            accountRest,
-            accountBalance,
-            generatedOperations,
-            this
+            onBack = {
+                actionDispatcher.dispatchAction(
+                    AppActions.MyAccountDetailScreenAction.CloseScreen
+                )
+                actionDispatcher.dispatchAction(
+                    AppActions.MyAccountScreenAction.InitScreen
+                )
+            },
+            accountName = myAccountDetailScreenUiState.accountName,
+            accountRest = myAccountDetailScreenUiState.accountRest,
+            accountBalance = myAccountDetailScreenUiState.accountBalance,
+            allOperations = myAccountDetailScreenUiState.accountMonthlyOperations,
+            this,
+            onDeleteItemButtonCLick = {
+                actionDispatcher.dispatchAction(
+                    AppActions.DeleteOperationPopUpAction.InitPopUp(it)
+                )
+            }
         )
         PAMAddButton(onAddButtonClicked = {
-
+            actionDispatcher.dispatchAction(
+                AppActions.AddOperationPopUpAction.InitPopUp
+            )
         })
     }
 
@@ -56,10 +69,11 @@ fun MyAccountDetailBody(
 private fun AccountDetailSheetBody(
     onBack: () -> Unit,
     accountName: PresentationDataModel,
-    accountRest: String,
-    accountBalance: String,
-    generatedOperations: MutableList<OperationModel>,
-    columnScope: ColumnScope
+    accountRest: PresentationDataModel,
+    accountBalance: PresentationDataModel,
+    allOperations: List<OperationModel>,
+    columnScope: ColumnScope,
+    onDeleteItemButtonCLick: (operation: OperationModel) -> Unit
 ) {
     with(columnScope){
         Column(
@@ -82,8 +96,14 @@ private fun AccountDetailSheetBody(
         ) {
             AccountDetailTitle(onBack, accountName)
             Box(modifier = Modifier.fillMaxSize()) {
-                AccountDetailSheetFooter(accountRest, accountBalance, this)
-                OperationRecyclerView(accountMonthlyOperations = generatedOperations)
+                AccountDetailSheetFooter(
+                    accountRest.stringValue,
+                    accountBalance.stringValue,
+                    this)
+                OperationRecyclerView(
+                    accountMonthlyOperations = allOperations,
+                    onDeleteItemButtonCLick = onDeleteItemButtonCLick
+                )
                 AccountDetailTitleAndDivider()
             }
         }
@@ -132,16 +152,25 @@ private fun AccountDetailSheetFooter(accountRest: String, accountBalance: String
 }
 
 @Composable
-private fun OperationRecyclerView(accountMonthlyOperations: List<OperationModel>) {
+private fun OperationRecyclerView(
+    accountMonthlyOperations: List<OperationModel>,
+    onDeleteItemButtonCLick: (operation: OperationModel) -> Unit
+    ) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .offset(y = 35.dp)
-    ) { items(accountMonthlyOperations) { operation -> OperationItem(operation = operation) } }
+    ) { items(accountMonthlyOperations) { operation -> OperationItem(
+        operation = operation,
+        onDeleteItemButtonCLick = onDeleteItemButtonCLick
+        ) } }
 }
 
 @Composable
-private fun OperationItem(operation: OperationModel) {
+private fun OperationItem(
+    operation: OperationModel,
+    onDeleteItemButtonCLick : (operation : OperationModel)-> Unit
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -163,7 +192,7 @@ private fun OperationItem(operation: OperationModel) {
         )
         Box(modifier = Modifier.size(35.dp)) {
             PAMIconButton(
-                onIconButtonClicked = {},
+                onIconButtonClicked = {onDeleteItemButtonCLick(operation)},
                 iconButton = PAMIconButtons.Delete,
                 iconColor = MaterialTheme.colors.onSecondary,
                 backgroundColor = Color.Transparent

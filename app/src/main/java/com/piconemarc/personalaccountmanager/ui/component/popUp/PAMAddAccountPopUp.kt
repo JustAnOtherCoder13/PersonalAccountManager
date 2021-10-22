@@ -13,7 +13,7 @@ import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMBr
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
 import com.piconemarc.viewmodel.viewModel.AppActionDispatcher
 import com.piconemarc.viewmodel.viewModel.AppActions
-import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.addAccountPopUpVMState
+import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.addAccountPopUpUiState
 
 @Composable
 fun PAMAddAccountPopUp(actionDispatcher: AppActionDispatcher) {
@@ -22,15 +22,15 @@ fun PAMAddAccountPopUp(actionDispatcher: AppActionDispatcher) {
         title = PresentationDataModel(stringResource(R.string.addAccountPopUpTitle)),
         onAcceptButtonClicked = {
             actionDispatcher.dispatchAction(AppActions.AddAccountPopUpAction.AddNewAccount(
-                accountName = addAccountPopUpVMState.accountName,
-                accountBalance = addAccountPopUpVMState.accountBalance,
-                accountOverdraft = addAccountPopUpVMState.accountOverdraft
+                accountName = addAccountPopUpUiState.accountName,
+                accountBalance = addAccountPopUpUiState.accountBalance,
+                accountOverdraft = addAccountPopUpUiState.accountOverdraft
             ))
         },
         onDismiss = {
                     actionDispatcher.dispatchAction(AppActions.AddAccountPopUpAction.ClosePopUp)
                     },
-        isExpanded = addAccountPopUpVMState.isPopUpExpanded
+        isExpanded = addAccountPopUpUiState.isPopUpExpanded
     ) {
         Column(modifier = Modifier.padding(vertical = RegularMarge)) {
             PAMBrownBackgroundTextFieldItem(
@@ -40,9 +40,9 @@ fun PAMAddAccountPopUp(actionDispatcher: AppActionDispatcher) {
                         AppActions.AddAccountPopUpAction.FillAccountName(accountName = accountName)
                     )
                 },
-                textValue = addAccountPopUpVMState.accountName,
-                isPopUpExpanded = addAccountPopUpVMState.isPopUpExpanded,
-                isError = addAccountPopUpVMState.isNameError,
+                textValue = addAccountPopUpUiState.accountName,
+                isPopUpExpanded = addAccountPopUpUiState.isPopUpExpanded,
+                isError = addAccountPopUpUiState.isNameError,
                 errorMsg = PresentationDataModel(stringResource(R.string.nameErrorMessage))
             )
             PAMBrownBackgroundAmountTextFieldItem(
@@ -52,9 +52,9 @@ fun PAMAddAccountPopUp(actionDispatcher: AppActionDispatcher) {
                         AppActions.AddAccountPopUpAction.FillAccountBalance(accountBalance = accountBalance)
                     )
                 },
-                amountValue = addAccountPopUpVMState.accountBalance,
-                isPopUpExpanded = addAccountPopUpVMState.isPopUpExpanded,
-                isError = addAccountPopUpVMState.isBalanceError,
+                amountValue = addAccountPopUpUiState.accountBalance,
+                isPopUpExpanded = addAccountPopUpUiState.isPopUpExpanded,
+                isError = addAccountPopUpUiState.isBalanceError,
                 errorMsg = PresentationDataModel(stringResource(R.string.balanceErrorMessage))
             )
             PAMBrownBackgroundAmountTextFieldItem(
@@ -64,9 +64,9 @@ fun PAMAddAccountPopUp(actionDispatcher: AppActionDispatcher) {
                         AppActions.AddAccountPopUpAction.FillAccountOverdraft(accountOverdraft = accountOverdraft)
                     )
                 },
-                amountValue = addAccountPopUpVMState.accountOverdraft,
-                isPopUpExpanded = addAccountPopUpVMState.isPopUpExpanded,
-                isError = addAccountPopUpVMState.isOverdraftError,
+                amountValue = addAccountPopUpUiState.accountOverdraft,
+                isPopUpExpanded = addAccountPopUpUiState.isPopUpExpanded,
+                isError = addAccountPopUpUiState.isOverdraftError,
                 errorMsg = PresentationDataModel(stringResource(R.string.overdraftErrorMessage))
             )
         }

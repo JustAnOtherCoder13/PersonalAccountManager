@@ -19,6 +19,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.piconemarc.model.entity.AccountModel
 import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.animation.PAMUiDataAnimations
@@ -32,7 +33,7 @@ fun BaseScreen(
     body: @Composable () -> Unit,
     footer: @Composable () -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.SpaceBetween) {
+    Column(modifier = Modifier.fillMaxHeight()) {
         Row() { header() }
         Row(
             modifier = Modifier
@@ -51,12 +52,13 @@ fun AccountPostIt(
     onDeleteAccountButtonClicked: (accountName: PresentationDataModel) -> Unit,
     accountBalanceValue: PresentationDataModel,
     accountRestValue: PresentationDataModel,
-    onAccountClicked: (account: PresentationDataModel) -> Unit
+    onAccountClicked: (account: AccountModel) -> Unit,
+    selectedAccount : AccountModel
 ) {
     Box(modifier = Modifier
         .size(width = AccountPostItWidth, height = AccountPostItHeight)
         .padding(bottom = BigMarge)
-        .clickable { onAccountClicked(accountName) }
+        .clickable { onAccountClicked(selectedAccount) }
     ) {
         AccountPostItBackground(this)
         Column(
@@ -183,15 +185,16 @@ private fun AccountPostItBackground(boxScope: BoxScope) {
 fun PAMAppBody(
     onInterlayerIconClicked: (iconButton: PAMIconButtons) -> Unit,
     selectedInterlayerIconButton: PAMIconButtons,
+    interLayerTitle : String,
     body: @Composable () -> Unit
 ) {
     val transition: PAMUiDataAnimations.InterlayerAnimationData = pAMInterlayerAnimation(
         selectedInterlayerIconButton
     )
     Row(Modifier.fillMaxWidth()) {
-        Folder {
-            SheetHoleColumn(transition.interlayerColor)
-            Column(modifier = Modifier.weight(1f)) {
+        Folder(
+            sheetHole = { SheetHoleColumn(transition.interlayerColor) },
+            interlayers = {
                 Sheet(interlayerBackgroundColor = transition.interlayerColor) {
                     InterLayerTitle(
                         //todo pass with transition?
@@ -209,13 +212,16 @@ fun PAMAppBody(
                     )
                     body()
                 }
-            }
-            InterlayerIconPanel(
-                transition = transition,
-                onInterlayerIconClicked = onInterlayerIconClicked,
-                selectedInterlayerIconButton = selectedInterlayerIconButton
-            )
-        }
+
+            },
+            interLayerIconPanel = {
+                InterlayerIconPanel(
+                    transition = transition,
+                    onInterlayerIconClicked = onInterlayerIconClicked,
+                    selectedInterlayerIconButton = selectedInterlayerIconButton
+                )
+            },
+        )
     }
 }
 
@@ -250,7 +256,11 @@ private fun Sheet(
 }
 
 @Composable
-private fun Folder(interlayers: @Composable () -> Unit) {
+private fun Folder(
+    sheetHole: @Composable () -> Unit,
+    interlayers: @Composable () -> Unit,
+    interLayerIconPanel: @Composable () -> Unit
+) {
     Row(
         modifier = Modifier
             .background(
@@ -270,7 +280,19 @@ private fun Folder(interlayers: @Composable () -> Unit) {
             .padding(LittleMarge)
 
     ) {
-        interlayers()
+        Column() {
+            sheetHole()
+        }
+        Column(
+            modifier = Modifier
+                .weight(1f)
+        ) {
+            interlayers()
+        }
+        Column() {
+            interLayerIconPanel()
+        }
+
     }
 }
 

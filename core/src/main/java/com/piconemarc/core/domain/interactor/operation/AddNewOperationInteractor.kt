@@ -16,7 +16,7 @@ class AddNewOperationInteractor @Inject constructor(private val operationReposit
                 endDateYear = operationModel.endDate.year,
                 isRecurrent = operationModel.isRecurrent,
                 accountId = operationModel.account.id,
-                categoryId = operationModel.category.id,
+                categoryId = operationModel.categoryId,
                 emitDate = operationModel.emitDate
             )
         )
