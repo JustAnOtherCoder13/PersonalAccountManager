@@ -26,6 +26,10 @@ import com.piconemarc.personalaccountmanager.ui.animation.PAMUiDataAnimations
 import com.piconemarc.personalaccountmanager.ui.animation.pAMInterlayerAnimation
 import com.piconemarc.personalaccountmanager.ui.theme.*
 import com.piconemarc.viewmodel.PAMIconButtons
+import com.piconemarc.viewmodel.viewModel.AppActionDispatcher
+import com.piconemarc.viewmodel.viewModel.AppActions
+import com.piconemarc.viewmodel.viewModel.AppSubscriber
+import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.baseAppScreenUiState
 
 @Composable
 fun BaseScreen(
@@ -183,13 +187,11 @@ private fun AccountPostItBackground(boxScope: BoxScope) {
 
 @Composable
 fun PAMAppBody(
-    onInterlayerIconClicked: (iconButton: PAMIconButtons) -> Unit,
-    selectedInterlayerIconButton: PAMIconButtons,
-    interLayerTitle : String,
+    actionDispatcher : AppActionDispatcher,
     body: @Composable () -> Unit
 ) {
     val transition: PAMUiDataAnimations.InterlayerAnimationData = pAMInterlayerAnimation(
-        selectedInterlayerIconButton
+        baseAppScreenUiState.selectedInterlayerButton
     )
     Row(Modifier.fillMaxWidth()) {
         Folder(
@@ -197,18 +199,7 @@ fun PAMAppBody(
             interlayers = {
                 Sheet(interlayerBackgroundColor = transition.interlayerColor) {
                     InterLayerTitle(
-                        //todo pass with transition?
-                        title = when (selectedInterlayerIconButton) {
-                            is PAMIconButtons.Payment -> {
-                                stringResource(R.string.myPaymentInterlayerTitle)
-                            }
-                            is PAMIconButtons.Chart -> {
-                                stringResource(R.string.chartInterlayerTitle)
-                            }
-                            else -> {
-                                stringResource(R.string.myAccountsInterLayerTitle)
-                            }
-                        }
+                        title = stringResource(id = baseAppScreenUiState.interLayerTitle)
                     )
                     body()
                 }
@@ -217,8 +208,12 @@ fun PAMAppBody(
             interLayerIconPanel = {
                 InterlayerIconPanel(
                     transition = transition,
-                    onInterlayerIconClicked = onInterlayerIconClicked,
-                    selectedInterlayerIconButton = selectedInterlayerIconButton
+                    onInterlayerIconClicked = {
+                        actionDispatcher.dispatchAction(
+                            AppActions.BaseAppScreenAction.SelectInterlayer(it)
+                        )
+                    },
+                    selectedInterlayerIconButton = baseAppScreenUiState.selectedInterlayerButton
                 )
             },
         )

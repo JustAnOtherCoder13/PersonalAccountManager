@@ -26,7 +26,6 @@ import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.myAccountS
 @Composable
 fun MyAccountsBody(
     actionDispatcher: AppActionDispatcher,
-    onDeleteOperationButtonClick : (operation : OperationModel)-> Unit,
 ) {
     if (myAccountScreenUiState.isVisible)
         Column(
@@ -79,11 +78,5 @@ fun MyAccountsBody(
                 }
             )
         }
-    if (myAccountDetailScreenUiState.isVisible)
-        MyAccountDetailBody(
-            onDeleteItemButtonCLick = {
-                onDeleteOperationButtonClick(it)
-            },
-            actionDispatcher = actionDispatcher
-        )
+    if (myAccountDetailScreenUiState.isVisible) MyAccountDetailBody(actionDispatcher = actionDispatcher)
 }

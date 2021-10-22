@@ -22,7 +22,7 @@ object AppActions {
         object InitScreen : BaseAppScreenAction()
         data class SelectInterlayer(val selectedInterlayerButton: PAMIconButtons) :
             BaseAppScreenAction()
-        data class UpdateInterlayerTiTle(val interlayerTitle : PresentationDataModel) : BaseAppScreenAction()
+        data class UpdateInterlayerTiTle(val interlayerTitle : Int) : BaseAppScreenAction()
 
 
         data class UpdateAccounts(val allAccounts: List<AccountModel>) : BaseAppScreenAction()

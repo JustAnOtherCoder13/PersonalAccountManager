@@ -27,12 +27,13 @@ sealed class PAMIconButtons {
     object Home : PAMIconButtons() {
         override val iconContentDescription: Int = R.string.homeIconContentDescription
         override val vectorIcon: Int = R.drawable.ic_outline_home_24
-        override val iconName: Int = R.string.homeIconContentDescription
+        override val iconName: Int = R.string.homeInterlayerTitle
     }
 
     object Chart : PAMIconButtons() {
         override val iconContentDescription: Int = R.string.chartIconContentDescription
         override val vectorIcon: Int = R.drawable.ic_outline_bar_chart_24
+        override val iconName: Int = R.string.chartInterlayerTitle
     }
 
     object Add : PAMIconButtons() {

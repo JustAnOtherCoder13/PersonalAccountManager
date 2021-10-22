@@ -33,7 +33,8 @@ class GetAllOperationsForAccountIdInteractor @Inject constructor(private val ope
                 ),
                 isRecurrent = it.isRecurrent,
                 categoryId = it.categoryId,
-                emitDate = it.emitDate ?: Date()
+                emitDate = it.emitDate ?: Date(),
+                accountId = it.accountId
             )
         }
     }

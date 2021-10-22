@@ -21,51 +21,21 @@ fun PAMMainScreen(
 ) {
     actionDispatcher.dispatchAction(AppActions.BaseAppScreenAction.InitScreen)
     actionDispatcher.dispatchAction(AppActions.MyAccountScreenAction.InitScreen)
-    var isPop by remember {
-        mutableStateOf(false)
-    }
-    var isAccountClicked by remember {
-        mutableStateOf(false)
-    }
-    var selectedAccountName by remember {
-        mutableStateOf(PresentationDataModel())
-    }
-    var isDeleteOperationPopUpExpanded by remember {
-        mutableStateOf(false)
-    }
-    var operationName by remember {
-        mutableStateOf("")
-    }
-    var operationAmount by remember {
-        mutableStateOf("")
-    }
+
     BaseScreen(
         header = { PAMAppHeader() },
         body = {
             PAMAppBody(
-                onInterlayerIconClicked = {
-                    actionDispatcher.dispatchAction(
-                        AppActions.BaseAppScreenAction.SelectInterlayer(it)
-                    )
-                },
-                selectedInterlayerIconButton = baseAppScreenUiState.selectedInterlayerButton,
+                actionDispatcher = actionDispatcher,
                 body = {
                     when (baseAppScreenUiState.selectedInterlayerButton) {
                         is PAMIconButtons.Payment -> {
                         }
                         is PAMIconButtons.Chart -> {
                         }
-                        else -> { MyAccountsBody(
-                            actionDispatcher = actionDispatcher,
-                            onDeleteOperationButtonClick = {
-                                isDeleteOperationPopUpExpanded = true
-                                operationName = it.name
-                                operationAmount = it.amount.toString()
-                            }
-                        ) }
+                        else -> { MyAccountsBody(actionDispatcher = actionDispatcher) }
                     }
-                },
-                interLayerTitle = ""
+                }
             )
         },
         footer = {
@@ -79,16 +49,5 @@ fun PAMMainScreen(
     PAMAddOperationPopUp(actionDispatcher = actionDispatcher)
     PAMDeleteAccountPopUp(actionDispatcher = actionDispatcher)
     PAMAddAccountPopUp(actionDispatcher = actionDispatcher)
-    PAMDeleteOperationPopUp(
-        isDeleteOperationExpanded = isDeleteOperationPopUpExpanded,
-        operationName = PresentationDataModel(operationName),
-        operationAmount = PresentationDataModel(operationAmount),
-        onAcceptButtonClick ={
-
-        },
-        onDismiss ={
-            isDeleteOperationPopUpExpanded = false
-        },
-        actionDispatcher = actionDispatcher
-    )
+    PAMDeleteOperationPopUp(actionDispatcher = actionDispatcher)
 }

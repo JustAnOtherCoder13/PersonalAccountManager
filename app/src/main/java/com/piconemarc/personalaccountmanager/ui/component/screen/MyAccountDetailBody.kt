@@ -28,7 +28,6 @@ import java.util.*
 
 @Composable
 fun MyAccountDetailBody(
-    onDeleteItemButtonCLick: (operation: OperationModel) -> Unit,
     actionDispatcher: AppActionDispatcher
 ) {
     Column(

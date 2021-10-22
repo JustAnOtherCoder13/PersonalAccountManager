@@ -14,12 +14,20 @@ class AccountRepository @Inject constructor(private val accountDaoImpl: AccountD
         return accountDaoImpl.getAccountForId(id)
     }
 
+     fun getAccountForIdFlow(id: Long): Flow<AccountDTO> {
+        return accountDaoImpl.getAccountForIdFlow(id)
+    }
+
     suspend fun addNewAccount(accountDTO: AccountDTO){
         accountDaoImpl.addNewAccount(accountDTO)
     }
 
     suspend fun deleteAccount(accountDTO: AccountDTO) {
         accountDaoImpl.deleteAccount(accountDTO)
+    }
+
+    suspend fun updateAccountBalance(accountId: Long, accountBalance: Double) {
+        accountDaoImpl.updateAccountBalance(accountId, accountBalance)
     }
 
 }

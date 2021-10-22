@@ -1,21 +1,16 @@
 package com.piconemarc.viewmodel.viewModel
 
 import android.util.Log
-import com.piconemarc.core.domain.interactor.account.AddNewAccountInteractor
-import com.piconemarc.core.domain.interactor.account.DeleteAccountInteractor
-import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
-import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
+import com.piconemarc.core.domain.interactor.account.*
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
 import com.piconemarc.core.domain.interactor.operation.DeleteOperationInteractor
 import com.piconemarc.core.domain.interactor.operation.GetAllOperationsForAccountIdInteractor
 import com.piconemarc.model.entity.AccountModel
 import com.piconemarc.model.entity.PresentationDataModel
-import com.piconemarc.viewmodel.ActionDispatcher
-import com.piconemarc.viewmodel.DefaultStore
-import com.piconemarc.viewmodel.StoreSubscriber
-import com.piconemarc.viewmodel.UiAction
+import com.piconemarc.viewmodel.*
 import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.addAccountPopUpUiState
 import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.deleteAccountUiState
+import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.myAccountDetailScreenUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
@@ -32,7 +27,8 @@ class AppActionDispatcher @Inject constructor(
     private val getAccountForIdInteractor: GetAccountForIdInteractor,
     private val addNewAccountInteractor: AddNewAccountInteractor,
     private val getAllOperationsForAccountIdInteractor: GetAllOperationsForAccountIdInteractor,
-    private val deleteOperationInteractor: DeleteOperationInteractor
+    private val deleteOperationInteractor: DeleteOperationInteractor,
+    private val updateAccountBalanceInteractor: UpdateAccountBalanceInteractor
 ) : ActionDispatcher<UiAction, ViewModelInnerStates.GlobalVmState>() {
 
     override val subscriber: StoreSubscriber<ViewModelInnerStates.GlobalVmState> =
@@ -42,7 +38,9 @@ class AppActionDispatcher @Inject constructor(
     private var getAllAccountsJob: Job? = null
     private var getAllCategoriesJob: Job? = null
     private var myAccountScreenJob: Job? = null
-    private var myAccountDetailScreenJob: Job? = null
+    private var myAccountDetailScreenOperationsFlowJob: Job? = null
+    private var myAccountDetailScreenAccountFlowJob: Job? = null
+
 
     override fun dispatchAction(action: UiAction) {
         store.add(subscriber)
@@ -72,9 +70,6 @@ class AppActionDispatcher @Inject constructor(
                                 )
                             }
                         }
-                        AppActions.BaseAppScreenAction.UpdateInterlayerTiTle(
-                            PresentationDataModel("My accounts")
-                        )
                     }
                 }
             }
@@ -83,6 +78,11 @@ class AppActionDispatcher @Inject constructor(
                 updateMyAccountScreenState(action)
                 when (action) {
                     is AppActions.MyAccountScreenAction.InitScreen -> {
+                        updateBaseAppState(
+                            AppActions.BaseAppScreenAction.UpdateInterlayerTiTle(
+                                R.string.myAccountsInterLayerTitle
+                            )
+                        )
                         myAccountScreenJob = scope.launch {
                             getAllAccountsInteractor.getAllAccounts().collect {
                                 updateMyAccountScreenState(
@@ -105,10 +105,25 @@ class AppActionDispatcher @Inject constructor(
                     is AppActions.MyAccountDetailScreenAction.InitScreen -> {
                         updateBaseAppState(
                             AppActions.BaseAppScreenAction.UpdateInterlayerTiTle(
-                                PresentationDataModel("Detail")
+                                R.string.detail
                             )
                         )
-                        myAccountDetailScreenJob = scope.launch {
+
+                        myAccountDetailScreenAccountFlowJob = scope.launch {
+                            getAccountForIdInteractor.getAccountForIdFlow(action.selectedAccount.id)
+                                .collect {
+                                    updateMyAccountDetailScreenState(
+                                        AppActions.MyAccountDetailScreenAction.UpdateAccountBalance(
+                                            PresentationDataModel(
+                                                it.accountBalance.toString(),
+                                                it.id
+                                            )
+                                        )
+                                    )
+                                }
+                        }
+
+                        myAccountDetailScreenOperationsFlowJob = scope.launch {
                             getAllOperationsForAccountIdInteractor.getAllOperationsForAccountId(
                                 action.selectedAccount.id
                             ).collect {
@@ -129,7 +144,7 @@ class AppActionDispatcher @Inject constructor(
                                 updateMyAccountDetailScreenState(
                                     AppActions.MyAccountDetailScreenAction.UpdateAccountRest(
                                         PresentationDataModel(
-                                           (action.selectedAccount.accountOverdraft+ action.selectedAccount.accountBalance).toString()
+                                            (action.selectedAccount.accountOverdraft + action.selectedAccount.accountBalance).toString()
                                         )
                                     )
                                 )
@@ -138,13 +153,15 @@ class AppActionDispatcher @Inject constructor(
                                         PresentationDataModel(
                                             action.selectedAccount.name,
                                             action.selectedAccount.id
-                                        ) )
+                                        )
+                                    )
                                 )
                             }
                         }
                     }
-                    is AppActions.MyAccountDetailScreenAction.CloseScreen->{
-                        myAccountDetailScreenJob?.cancel()
+                    is AppActions.MyAccountDetailScreenAction.CloseScreen -> {
+                        myAccountDetailScreenOperationsFlowJob?.cancel()
+                        myAccountDetailScreenAccountFlowJob?.cancel()
                     }
                 }
             }
@@ -238,19 +255,23 @@ class AppActionDispatcher @Inject constructor(
                 }
             }
             //DeleteOperationPopUp ----------------------------------------------------------------
-            is AppActions.DeleteOperationPopUpAction ->{
+            is AppActions.DeleteOperationPopUpAction -> {
                 updateDeleteOperationPoUpState(action)
-                when(action){
-                    is AppActions.DeleteOperationPopUpAction.InitPopUp->{
+                when (action) {
+                    is AppActions.DeleteOperationPopUpAction.InitPopUp -> {
                         updateDeleteOperationPoUpState(
                             AppActions.DeleteOperationPopUpAction.UpdateOperationToDelete(action.operationToDelete)
                         )
 
                     }
-                    is AppActions.DeleteOperationPopUpAction.DeleteOperation-> {
+                    is AppActions.DeleteOperationPopUpAction.DeleteOperation -> {
                         scope.launch {
                             deleteOperationInteractor.deleteOperation(action.operationToDelete)
-
+                            updateAccountBalanceInteractor.updateAccountBalanceOnDeleteOperation(
+                                accountId = action.operationToDelete.accountId,
+                                deletedOperationAMount = action.operationToDelete.amount,
+                                oldAccountBalance = myAccountDetailScreenUiState.accountBalance.stringValue.toDouble(),
+                            )
                         }
                     }
                 }
@@ -297,7 +318,7 @@ class AppActionDispatcher @Inject constructor(
         )
     }
 
-    private fun updateDeleteOperationPoUpState(action: UiAction){
+    private fun updateDeleteOperationPoUpState(action: UiAction) {
         store.dispatch(
             AppActions.GlobalAction.UpdateDeleteOperationPopUpState(action)
         )

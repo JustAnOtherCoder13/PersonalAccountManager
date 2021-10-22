@@ -16,7 +16,7 @@ class DeleteOperationInteractor @Inject constructor(private val operationReposit
                 endDateMonth = operationModel.endDate.month,
                 endDateYear = operationModel.endDate.year,
                 isRecurrent = operationModel.isRecurrent,
-                accountId = operationModel.account.id,
+                accountId = operationModel.accountId,
                 categoryId = operationModel.categoryId,
                 emitDate = operationModel.emitDate
             )

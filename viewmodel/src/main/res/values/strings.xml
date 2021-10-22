@@ -11,5 +11,11 @@
     <string name="operation">Operation</string>
     <string name="payment">Payment Operation</string>
     <string name="transfer">Transfer Operation</string>
+    <string name="myPaymentInterlayerTitle">My Payment</string>
+    <string name="myAccountsInterLayerTitle">My Accounts</string>
+    <string name="detail">Detail</string>
+    <string name="homeInterlayerTitle">My Accounts</string>
+    <string name="chartInterlayerTitle">Chart</string>
+    <string name="backIconButtonContentDescription">Back icon button</string>
 
 </resources>

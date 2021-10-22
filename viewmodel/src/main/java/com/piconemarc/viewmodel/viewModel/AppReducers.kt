@@ -1,6 +1,8 @@
 package com.piconemarc.viewmodel.viewModel
 
+import android.content.res.Resources
 import android.util.Log
+import androidx.compose.ui.res.stringResource
 import com.piconemarc.core.domain.Constants
 import com.piconemarc.model.entity.AccountModel
 import com.piconemarc.model.entity.PresentationDataModel
@@ -79,7 +81,10 @@ object AppReducers {
                 selectedInterlayerButton = PAMIconButtons.Home
             )
             is AppActions.BaseAppScreenAction.SelectInterlayer -> {
-                old.copy(selectedInterlayerButton = action.selectedInterlayerButton)
+                old.copy(
+                    selectedInterlayerButton = action.selectedInterlayerButton,
+                    interLayerTitle = action.selectedInterlayerButton.iconName
+                )
             }
             is AppActions.BaseAppScreenAction.UpdateAccounts -> old.copy(allAccounts = action.allAccounts)
             is AppActions.BaseAppScreenAction.UpdateFooterBalance -> {

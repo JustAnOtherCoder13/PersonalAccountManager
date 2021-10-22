@@ -17,14 +17,7 @@ import com.piconemarc.viewmodel.viewModel.AppSubscriber
 import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.deleteOperationPopUpUiState
 
 @Composable
-fun PAMDeleteOperationPopUp(
-    isDeleteOperationExpanded: Boolean,
-    operationName: PresentationDataModel,
-    operationAmount: PresentationDataModel,
-    onAcceptButtonClick : ()-> Unit,
-    onDismiss : ()-> Unit,
-    actionDispatcher: AppActionDispatcher
-) {
+fun PAMDeleteOperationPopUp(actionDispatcher: AppActionDispatcher) {
     PAMBaseDeletePopUp(
         deletePopUpTitle = PresentationDataModel("Delete Operation"),
         onAcceptButtonClicked = {
