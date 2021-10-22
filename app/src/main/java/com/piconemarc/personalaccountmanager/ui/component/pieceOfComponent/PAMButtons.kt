@@ -173,9 +173,10 @@ fun PAMChartButton(
 @Composable
 fun AddOrMinusSwitchButton(
     onAddOrMinusClicked : (isAddClicked : Boolean)-> Unit,
-    isAddOperation: Boolean
+    isAddOperation: Boolean,
+    isEnable : Boolean
 ) {
-    val transition = pAMAddPopUpAddOrMinusTransition(isAddOperation = isAddOperation)
+    val transition = pAMAddPopUpAddOrMinusTransition(isAddOperation = isAddOperation, isEnable = isEnable)
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -184,6 +185,7 @@ fun AddOrMinusSwitchButton(
     ) {
         PAMIconButton(
             onIconButtonClicked = {
+                if (isEnable)
                 onAddOrMinusClicked(true)
             },
             iconButton = PAMIconButtons.Add,
@@ -192,6 +194,7 @@ fun AddOrMinusSwitchButton(
         )
         PAMIconButton(
             onIconButtonClicked = {
+                if (isEnable)
                 onAddOrMinusClicked(false)
             },
             iconButton = PAMIconButtons.Minus,

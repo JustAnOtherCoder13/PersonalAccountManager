@@ -1,7 +1,6 @@
 package com.piconemarc.personalaccountmanager.ui.component.screen
 
-import androidx.compose.runtime.*
-import com.piconemarc.model.entity.PresentationDataModel
+import androidx.compose.runtime.Composable
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.BaseScreen
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMAppBody
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMAppFooter

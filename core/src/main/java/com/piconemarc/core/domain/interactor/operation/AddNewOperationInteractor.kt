@@ -12,8 +12,8 @@ class AddNewOperationInteractor @Inject constructor(private val operationReposit
             OperationDTO(
                 name = operationModel.name,
                 amount = operationModel.amount,
-                endDateMonth = operationModel.endDate.month,
-                endDateYear = operationModel.endDate.year,
+                endDateMonth = operationModel.endDate?.month,
+                endDateYear = operationModel.endDate?.year,
                 isRecurrent = operationModel.isRecurrent,
                 accountId = operationModel.accountId,
                 categoryId = operationModel.categoryId,

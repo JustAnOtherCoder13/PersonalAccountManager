@@ -25,16 +25,20 @@ import java.util.*
 
 )
 data class OperationDTO(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     var id : Long = 0,
     val name : String = "",
     val amount : Double = 0.0,
-    val endDateMonth : String = "",
-    val endDateYear : String = "",
+    val endDateMonth : String? = null,
+    val endDateYear : String? = null,
     val isRecurrent : Boolean = false,
     @ColumnInfo(index = true)
     val accountId : Long = 0,
     @ColumnInfo(index = true)
-    val categoryId : Long = 0,
-    val emitDate : Date? = Date()
-)
+    val categoryId : Long = 1,
+    val emitDate : Date? = Date(),
+    val senderAccountId : Long? = null,
+    val beneficiaryAccountId : Long? = null
+){
+
+}

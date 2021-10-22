@@ -62,7 +62,13 @@ object ViewModelInnerStates {
         val beneficiaryAccount: PresentationDataModel = PresentationDataModel(),
         val addPopUpTitle: PresentationDataModel = Constants.OPERATION_MODEL,
         val isAddOperation: Boolean = true,
-        val addPopUpOptionSelectedIcon: PAMIconButtons = PAMIconButtons.Operation
+        val addPopUpOptionSelectedIcon: PAMIconButtons = PAMIconButtons.Operation,
+        val isOperationNameError : Boolean=false,
+        val isOperationAmountError : Boolean=false,
+        val isRecurrentEndDateError : Boolean = true,
+        val isSenderAccountError : Boolean = false,
+        val isBeneficiaryAccountError : Boolean = false,
+        val isAddOrMinusEnable : Boolean = true
     ) : VMState
 
     data class DeleteOperationPopUpVMState(

@@ -7,7 +7,7 @@ import com.piconemarc.core.domain.Constants.CATEGORY_TABLE
 
 @Entity(tableName = CATEGORY_TABLE)
 data class CategoryDTO (
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     var id : Long = 0,
     val name : String = "",
     val color : Int = Color.TRANSPARENT

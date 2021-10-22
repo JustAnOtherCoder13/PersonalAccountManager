@@ -6,13 +6,15 @@ data class OperationModel(
     val id : Long = 0,
     val name : String = "",
     val amount : Double = 0.0,
-    val endDate : EndDate = EndDate(),
+    val endDate : EndDate? = EndDate(),
     val isRecurrent : Boolean = false,
     val accountId : Long = 0,
-    val categoryId : Long = 0,
-    val emitDate : Date = Calendar.getInstance().time
+    val categoryId : Long = 1,
+    val emitDate : Date = Calendar.getInstance().time,
+    val senderAccountId : Long? = null,
+    val beneficiaryAccountId : Long? = null
 )
 data class EndDate(
-    val month : String = "",
-    val year : String = ""
+    val month : String? = null,
+    val year : String? = null
 )

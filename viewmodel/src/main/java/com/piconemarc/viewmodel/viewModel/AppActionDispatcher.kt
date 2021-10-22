@@ -1,14 +1,15 @@
 package com.piconemarc.viewmodel.viewModel
 
-import android.util.Log
 import com.piconemarc.core.domain.interactor.account.*
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
+import com.piconemarc.core.domain.interactor.operation.AddNewOperationInteractor
 import com.piconemarc.core.domain.interactor.operation.DeleteOperationInteractor
 import com.piconemarc.core.domain.interactor.operation.GetAllOperationsForAccountIdInteractor
 import com.piconemarc.model.entity.AccountModel
 import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.viewmodel.*
 import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.addAccountPopUpUiState
+import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.addOperationPopUpUiState
 import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.deleteAccountUiState
 import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.myAccountDetailScreenUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +29,8 @@ class AppActionDispatcher @Inject constructor(
     private val addNewAccountInteractor: AddNewAccountInteractor,
     private val getAllOperationsForAccountIdInteractor: GetAllOperationsForAccountIdInteractor,
     private val deleteOperationInteractor: DeleteOperationInteractor,
-    private val updateAccountBalanceInteractor: UpdateAccountBalanceInteractor
+    private val updateAccountBalanceInteractor: UpdateAccountBalanceInteractor,
+    private val addNewOperationInteractor: AddNewOperationInteractor
 ) : ActionDispatcher<UiAction, ViewModelInnerStates.GlobalVmState>() {
 
     override val subscriber: StoreSubscriber<ViewModelInnerStates.GlobalVmState> =
@@ -108,7 +110,6 @@ class AppActionDispatcher @Inject constructor(
                                 R.string.detail
                             )
                         )
-
                         myAccountDetailScreenAccountFlowJob = scope.launch {
                             getAccountForIdInteractor.getAccountForIdFlow(action.selectedAccount.id)
                                 .collect {
@@ -120,9 +121,16 @@ class AppActionDispatcher @Inject constructor(
                                             )
                                         )
                                     )
+                                    updateMyAccountDetailScreenState(
+                                        AppActions.MyAccountDetailScreenAction.UpdateAccountRest(
+                                            PresentationDataModel(
+                                                (it.accountOverdraft + it.accountBalance).toString(),
+                                                it.id
+                                            )
+                                        )
+                                    )
                                 }
                         }
-
                         myAccountDetailScreenOperationsFlowJob = scope.launch {
                             getAllOperationsForAccountIdInteractor.getAllOperationsForAccountId(
                                 action.selectedAccount.id
@@ -196,6 +204,48 @@ class AppActionDispatcher @Inject constructor(
                     is AppActions.AddOperationPopUpAction.ClosePopUp -> {
                         getAllAccountsJob?.cancel()
                         getAllCategoriesJob?.cancel()
+                    }
+                    is AppActions.AddOperationPopUpAction.AddNewOperation -> {
+                        //todo check if transfer, if true add operation in two account
+                        if (!addOperationPopUpUiState.isOperationNameError
+                            && !addOperationPopUpUiState.isOperationAmountError
+                        ) {
+                            scope.launch {
+                                try {
+                                    addNewOperationInteractor.addNewOperation(
+                                        if (addOperationPopUpUiState.isAddOperation) action.operation
+                                        else action.operation.copy(amount = action.operation.amount * -1)
+                                    )
+                                    updateAccountBalanceInteractor.updateAccountBalanceOnAddOperation(
+                                        accountId = action.operation.accountId,
+                                        oldAccountBalance = myAccountDetailScreenUiState.accountBalance.stringValue.toDouble(),
+                                        addedOperationAmount = action.operation.amount
+                                    )
+                                    updateAddOperationPopUpState(
+                                        AppActions.AddOperationPopUpAction.ClosePopUp
+                                    )
+                                } catch (e: java.lang.Exception) {
+
+                                }
+
+                            }
+                        }
+                    }
+                    is AppActions.AddOperationPopUpAction.SelectOptionIcon -> {
+                        updateAddOperationPopUpState(
+                            AppActions.AddOperationPopUpAction.ExpandRecurrentOption
+                        )
+                        when (action.selectedIcon) {
+                            is PAMIconButtons.Payment -> updateAddOperationPopUpState(
+                                AppActions.AddOperationPopUpAction.ExpandPaymentOption
+                            )
+                            is PAMIconButtons.Transfer -> updateAddOperationPopUpState(
+                                AppActions.AddOperationPopUpAction.ExpandTransferOption
+                            )
+                            else -> updateAddOperationPopUpState(
+                                AppActions.AddOperationPopUpAction.CollapseOptions
+                            )
+                        }
                     }
                 }
             }

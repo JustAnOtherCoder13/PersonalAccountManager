@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.piconemarc.model.entity.PresentationDataModel
@@ -75,8 +76,11 @@ fun PAMBaseDropDownMenu(
 fun PAMBaseDropDownMenuWithBackground(
     selectedItem: PresentationDataModel,
     itemList: List<PresentationDataModel>,
-    onItemSelected: (item: PresentationDataModel) -> Unit
-) { Row(
+    onItemSelected: (item: PresentationDataModel) -> Unit,
+    isError: Boolean = false,
+    errorMessage: PresentationDataModel = PresentationDataModel()
+) {
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = RegularMarge, bottom = RegularMarge, end = RegularMarge)
@@ -84,12 +88,16 @@ fun PAMBaseDropDownMenuWithBackground(
                 color = MaterialTheme.colors.primary,
                 shape = PopUpFieldBackgroundShape
             ),
-        horizontalArrangement = Arrangement.Center
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         PAMBaseDropDownMenu(
             selectedItem = selectedItem,
             itemList = itemList,
             onItemSelected = onItemSelected
+        )
+        ErrorMessage(
+            isError = isError,
+            errorMsg = errorMessage
         )
     }
 }

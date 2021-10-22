@@ -1,6 +1,5 @@
 package com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -38,7 +37,7 @@ fun PAMBasePopUp(
     menuIconPanel: @Composable () -> Unit = {},
     body: @Composable () -> Unit
 ) {
-    val transition = pAMBasePopUpEnterExitAnimation(isExpended = isExpanded)
+    val transition = pAMBasePopUpEnterExitAnimation(isExpanded = isExpanded)
     if (transition.alpha > 0f)
         Column(
             modifier = Modifier
@@ -174,13 +173,13 @@ fun PAMBrownBackgroundTextFieldItem(
             ),
             isError = isError
         )
-        TextFieldErrorMessage(isError, errorMsg)
+        ErrorMessage(isError, errorMsg)
 
     }
 }
 
 @Composable
-private fun TextFieldErrorMessage(
+fun ErrorMessage(
     isError: Boolean,
     errorMsg: PresentationDataModel
 ) {
@@ -189,7 +188,7 @@ private fun TextFieldErrorMessage(
             text = errorMsg.stringValue,
             color = MaterialTheme.colors.error,
             style = MaterialTheme.typography.caption,
-            modifier = Modifier.padding(start = 16.dp)
+            modifier = Modifier.padding(start = 16.dp).wrapContentHeight()
         )
     }
 }
@@ -232,7 +231,7 @@ fun PAMBrownBackgroundAmountTextFieldItem(
             keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
             isError = isError
         )
-        TextFieldErrorMessage(isError = isError, errorMsg = errorMsg)
+        ErrorMessage(isError = isError, errorMsg = errorMsg)
     }
 }
 
@@ -247,7 +246,8 @@ fun PAMPunctualOrRecurrentSwitchButton(
     onMonthSelected: (month: PresentationDataModel) -> Unit,
     onYearSelected: (year: PresentationDataModel) -> Unit,
     selectableMonthList : List<PresentationDataModel>,
-    selectableYearList : List<PresentationDataModel>
+    selectableYearList : List<PresentationDataModel>,
+    isRecurrentSwitchError: Boolean
 
 ) {
     val transition = pAMRecurrentOptionButtonAnimation(isRecurrentOptionExpanded)
@@ -291,7 +291,8 @@ fun PAMPunctualOrRecurrentSwitchButton(
             selectedMonth = endDateSelectedMonth,
             selectedYear = endDateSelectedYear,
             selectableMonthList = selectableMonthList,
-            selectableYearList = selectableYearList
+            selectableYearList = selectableYearList,
+            isRecurrentSwitchError = isRecurrentSwitchError
         )
     }
 }
@@ -304,7 +305,8 @@ fun PAMRecurrentOptionPanel(
     selectedMonth: PresentationDataModel,
     selectedYear: PresentationDataModel,
     selectableMonthList : List<PresentationDataModel>,
-    selectableYearList : List<PresentationDataModel>
+    selectableYearList : List<PresentationDataModel>,
+    isRecurrentSwitchError : Boolean
 ) {
     Column(
         modifier = modifier
@@ -337,6 +339,9 @@ fun PAMRecurrentOptionPanel(
                 itemList = selectableYearList,
                 onItemSelected = { year -> onYearSelected(year) })
         }
+        ErrorMessage(
+            isError = isRecurrentSwitchError,
+            errorMsg =PresentationDataModel("Please, choose end date or recurrence be forever"))
     }
 }
 
@@ -347,9 +352,9 @@ fun PAMTransferOptionPanel(
     allAccountsList : List<PresentationDataModel>,
     beneficiaryAccountSelectedItem : PresentationDataModel,
     onSenderAccountSelected : (senderAccount : PresentationDataModel) -> Unit,
-    onBeneficiaryAccountSelected : ( beneficiaryAccount : PresentationDataModel) -> Unit
-
-
+    onBeneficiaryAccountSelected : ( beneficiaryAccount : PresentationDataModel) -> Unit,
+    isSenderAccountError : Boolean,
+    isBeneficiaryAccountError : Boolean
 ) {
     Column(
         modifier = Modifier.height(
@@ -361,13 +366,17 @@ fun PAMTransferOptionPanel(
         PAMBaseDropDownMenuWithBackground(
             selectedItem = senderAccountSelectedItem,
             itemList = allAccountsList,
-            onItemSelected = onSenderAccountSelected
+            onItemSelected = onSenderAccountSelected,
+            isError = isSenderAccountError ,
+            errorMessage = PresentationDataModel("Please select Sender account for transfer")
         )
 
         PAMBaseDropDownMenuWithBackground(
             selectedItem = beneficiaryAccountSelectedItem ,
             itemList = allAccountsList,
-            onItemSelected = onBeneficiaryAccountSelected
+            onItemSelected = onBeneficiaryAccountSelected,
+            isError = isBeneficiaryAccountError,
+            errorMessage = PresentationDataModel("Please select Beneficiary account for transfer")
         )
     }
 }

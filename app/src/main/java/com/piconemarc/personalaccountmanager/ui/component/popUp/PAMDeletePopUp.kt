@@ -13,7 +13,6 @@ import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMBa
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
 import com.piconemarc.viewmodel.viewModel.AppActionDispatcher
 import com.piconemarc.viewmodel.viewModel.AppActions
-import com.piconemarc.viewmodel.viewModel.AppSubscriber
 import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.deleteOperationPopUpUiState
 
 @Composable
