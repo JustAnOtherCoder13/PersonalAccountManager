@@ -12,7 +12,7 @@ class UpdateAccountBalanceInteractor @Inject constructor(val accountRepository: 
     ) {
         accountRepository.updateAccountBalance(
             accountId = accountId,
-            accountBalance = oldAccountBalance + (deletedOperationAMount * -1)
+            accountBalance = oldAccountBalance - (deletedOperationAMount)
         )
     }
 
@@ -23,7 +23,7 @@ class UpdateAccountBalanceInteractor @Inject constructor(val accountRepository: 
     ) {
         accountRepository.updateAccountBalance(
             accountId = accountId,
-            accountBalance = oldAccountBalance + addedOperationAmount
+            accountBalance = oldAccountBalance + (addedOperationAmount)
         )
     }
 }

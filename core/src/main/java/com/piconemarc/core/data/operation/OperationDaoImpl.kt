@@ -17,6 +17,10 @@ class OperationDaoImpl @Inject constructor( pamDatabase: PAMDatabase) : Operatio
        return operationDao.getAllOperationsForAccountId(accountId)
     }
 
+    override suspend fun getOperationForAccountIdWithOperationId(operationId: Long, accountId: Long) :OperationDTO {
+        return operationDao.getOperationForAccountIdWithOperationId(operationId,accountId)
+    }
+
     override suspend fun addNewOperation(operationDTO: OperationDTO){
         operationDao.addNewOperation(operationDTO)
     }

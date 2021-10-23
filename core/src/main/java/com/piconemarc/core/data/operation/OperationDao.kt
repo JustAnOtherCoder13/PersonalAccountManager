@@ -17,6 +17,9 @@ interface OperationDao {
     @Query("SELECT*FROM $OPERATION_TABLE WHERE $OPERATION_TABLE.accountId = :accountId")
     fun getAllOperationsForAccountId(accountId : Long) : Flow<List<OperationDTO>>
 
+    @Query("SELECT*FROM $OPERATION_TABLE WHERE $OPERATION_TABLE.id = :operationId AND $OPERATION_TABLE.accountId = :accountId")
+    suspend fun getOperationForAccountIdWithOperationId(operationId : Long, accountId: Long) : OperationDTO
+
     @Insert
     suspend fun addNewOperation(operationDTO: OperationDTO)
 

@@ -1,5 +1,6 @@
 package com.piconemarc.personalaccountmanager.ui.component.popUp
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
@@ -25,6 +26,7 @@ fun PAMAddOperationPopUp(
     PAMBasePopUp(
         title = addOperationPopUpUiState.addPopUpTitle,
         onAcceptButtonClicked = {
+            Log.i("TAG", "PAMAddOperationPopUp: ${myAccountDetailScreenUiState.accountName.objectIdReference} ")
             actionDispatcher.dispatchAction(
                 AppActions.AddOperationPopUpAction.AddNewOperation(
                     OperationModel(

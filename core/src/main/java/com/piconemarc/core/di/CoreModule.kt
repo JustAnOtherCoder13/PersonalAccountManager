@@ -11,10 +11,7 @@ import com.piconemarc.core.data.operation.OperationRepository
 import com.piconemarc.core.domain.interactor.account.*
 import com.piconemarc.core.domain.interactor.category.AddNewCategoryInteractor
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
-import com.piconemarc.core.domain.interactor.operation.AddNewOperationInteractor
-import com.piconemarc.core.domain.interactor.operation.DeleteOperationInteractor
-import com.piconemarc.core.domain.interactor.operation.GetAllOperationsForAccountIdInteractor
-import com.piconemarc.core.domain.interactor.operation.GetAllOperationsInteractor
+import com.piconemarc.core.domain.interactor.operation.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -129,6 +126,11 @@ class CoreModule {
     @Provides
     fun provideDeleteOperation(operationRepository: OperationRepository) : DeleteOperationInteractor{
         return DeleteOperationInteractor(operationRepository)
+    }
+
+    @Provides
+    fun provideGetOperationForId(operationRepository: OperationRepository) :GetOperationForIdInteractor{
+        return GetOperationForIdInteractor(operationRepository)
     }
 
 }

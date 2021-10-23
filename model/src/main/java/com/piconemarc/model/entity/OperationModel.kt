@@ -12,7 +12,8 @@ data class OperationModel(
     val categoryId : Long = 1,
     val emitDate : Date = Calendar.getInstance().time,
     val senderAccountId : Long? = null,
-    val beneficiaryAccountId : Long? = null
+    val beneficiaryAccountId : Long? = null,
+    val distantOperationIdRef : Long? = null
 )
 data class EndDate(
     val month : String? = null,

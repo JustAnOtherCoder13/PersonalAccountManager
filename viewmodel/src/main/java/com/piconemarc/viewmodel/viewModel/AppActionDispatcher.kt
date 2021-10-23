@@ -1,10 +1,12 @@
 package com.piconemarc.viewmodel.viewModel
 
+import android.util.Log
 import com.piconemarc.core.domain.interactor.account.*
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
 import com.piconemarc.core.domain.interactor.operation.AddNewOperationInteractor
 import com.piconemarc.core.domain.interactor.operation.DeleteOperationInteractor
 import com.piconemarc.core.domain.interactor.operation.GetAllOperationsForAccountIdInteractor
+import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteractor
 import com.piconemarc.model.entity.AccountModel
 import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.viewmodel.*
@@ -30,7 +32,8 @@ class AppActionDispatcher @Inject constructor(
     private val getAllOperationsForAccountIdInteractor: GetAllOperationsForAccountIdInteractor,
     private val deleteOperationInteractor: DeleteOperationInteractor,
     private val updateAccountBalanceInteractor: UpdateAccountBalanceInteractor,
-    private val addNewOperationInteractor: AddNewOperationInteractor
+    private val addNewOperationInteractor: AddNewOperationInteractor,
+    private val getOperationForIdInteractor: GetOperationForIdInteractor
 ) : ActionDispatcher<UiAction, ViewModelInnerStates.GlobalVmState>() {
 
     override val subscriber: StoreSubscriber<ViewModelInnerStates.GlobalVmState> =
@@ -42,6 +45,7 @@ class AppActionDispatcher @Inject constructor(
     private var myAccountScreenJob: Job? = null
     private var myAccountDetailScreenOperationsFlowJob: Job? = null
     private var myAccountDetailScreenAccountFlowJob: Job? = null
+    private var addOperationPopUpAccountJob: Job? = null
 
 
     override fun dispatchAction(action: UiAction) {
@@ -189,8 +193,8 @@ class AppActionDispatcher @Inject constructor(
                             }
                         }
 
-                    is AppActions.AddOperationPopUpAction.ExpandTransferOption ->
-                        getAllAccountsJob = scope.launch {
+                    is AppActions.AddOperationPopUpAction.ExpandTransferOption -> {
+                        addOperationPopUpAccountJob = scope.launch {
                             getAllAccountsInteractor.getAllAccountsToPresentationDataModel()
                                 .collect {
                                     updateAddOperationPopUpState(
@@ -200,49 +204,83 @@ class AppActionDispatcher @Inject constructor(
                                     )
                                 }
                         }
+                        updateAddOperationPopUpState(
+                            AppActions.AddOperationPopUpAction.SelectSenderAccount(
+                                myAccountDetailScreenUiState.accountName
+                            )
+                        )
+                    }
 
                     is AppActions.AddOperationPopUpAction.ClosePopUp -> {
-                        getAllAccountsJob?.cancel()
+                        addOperationPopUpAccountJob?.cancel()
                         getAllCategoriesJob?.cancel()
                     }
                     is AppActions.AddOperationPopUpAction.AddNewOperation -> {
-                        //todo check if transfer, if true add operation in two account
+
+                        //todo review for transfer, add a transfer entity?
                         if (!addOperationPopUpUiState.isOperationNameError
                             && !addOperationPopUpUiState.isOperationAmountError
                         ) {
                             scope.launch {
+                                if (addOperationPopUpUiState.isTransferExpanded
+                                    && !addOperationPopUpUiState.isSenderAccountError
+                                    && !addOperationPopUpUiState.isBeneficiaryAccountError
+                                ) {
+                                    scope.launch {
+                                        val beneficiaryAccount = getAccountForIdInteractor.getAccountForId(
+                                            addOperationPopUpUiState.beneficiaryAccount.objectIdReference
+                                        )
+                                        //add on beneficiary account
+                                        addNewOperationInteractor.addNewOperation(
+                                            action.operation.copy(
+                                                accountId = beneficiaryAccount.id,
+                                                amount = action.operation.amount,
+                                                beneficiaryAccountId = action.operation.id
+                                            )
+                                        )
+                                        updateAccountBalanceInteractor.updateAccountBalanceOnAddOperation(
+                                            accountId = beneficiaryAccount.id,
+                                            oldAccountBalance = beneficiaryAccount.accountBalance,
+                                            addedOperationAmount = action.operation.amount
+                                        )
+                                    }
+
+                                }
                                 try {
                                     addNewOperationInteractor.addNewOperation(
-                                        if (addOperationPopUpUiState.isAddOperation) action.operation
+                                        if (addOperationPopUpUiState.isAddOperation && !addOperationPopUpUiState.isTransferExpanded ) action.operation
                                         else action.operation.copy(amount = action.operation.amount * -1)
                                     )
                                     updateAccountBalanceInteractor.updateAccountBalanceOnAddOperation(
                                         accountId = action.operation.accountId,
                                         oldAccountBalance = myAccountDetailScreenUiState.accountBalance.stringValue.toDouble(),
-                                        addedOperationAmount = action.operation.amount
+                                        addedOperationAmount = if (addOperationPopUpUiState.isAddOperation) action.operation.amount
+                                        else action.operation.amount * -1
                                     )
                                     updateAddOperationPopUpState(
                                         AppActions.AddOperationPopUpAction.ClosePopUp
                                     )
                                 } catch (e: java.lang.Exception) {
-
+                                    Log.e("TAG", "dispatchAction: ", e)
                                 }
-
                             }
                         }
+
+
+
                     }
                     is AppActions.AddOperationPopUpAction.SelectOptionIcon -> {
                         updateAddOperationPopUpState(
                             AppActions.AddOperationPopUpAction.ExpandRecurrentOption
                         )
                         when (action.selectedIcon) {
-                            is PAMIconButtons.Payment -> updateAddOperationPopUpState(
+                            is PAMIconButtons.Payment -> this@AppActionDispatcher.dispatchAction(
                                 AppActions.AddOperationPopUpAction.ExpandPaymentOption
                             )
-                            is PAMIconButtons.Transfer -> updateAddOperationPopUpState(
+                            is PAMIconButtons.Transfer -> this@AppActionDispatcher.dispatchAction(
                                 AppActions.AddOperationPopUpAction.ExpandTransferOption
                             )
-                            else -> updateAddOperationPopUpState(
+                            else -> this@AppActionDispatcher.dispatchAction(
                                 AppActions.AddOperationPopUpAction.CollapseOptions
                             )
                         }
@@ -316,6 +354,21 @@ class AppActionDispatcher @Inject constructor(
                     }
                     is AppActions.DeleteOperationPopUpAction.DeleteOperation -> {
                         scope.launch {
+                            if (action.operationToDelete.beneficiaryAccountId != null) {
+                                deleteOperationInteractor.deleteOperation(
+                                    getOperationForIdInteractor.getOperationForId(
+                                        operationId = action.operationToDelete.distantOperationIdRef!! ,
+                                        accountId =action.operationToDelete.beneficiaryAccountId!! ,
+                                    )
+                                )
+                                updateAccountBalanceInteractor.updateAccountBalanceOnDeleteOperation(
+                                    accountId = action.operationToDelete.beneficiaryAccountId!!,
+                                    deletedOperationAMount = action.operationToDelete.amount * -1,
+                                    oldAccountBalance = getAccountForIdInteractor.getAccountForId(
+                                        action.operationToDelete.beneficiaryAccountId!!
+                                    ).accountBalance,
+                                )
+                            }
                             deleteOperationInteractor.deleteOperation(action.operationToDelete)
                             updateAccountBalanceInteractor.updateAccountBalanceOnDeleteOperation(
                                 accountId = action.operationToDelete.accountId,

@@ -21,7 +21,7 @@ object Constants {
     val PAYMENT_MODEL = PresentationDataModel(stringValue = "Payment")
     val TRANSFER_MODEL = PresentationDataModel(stringValue = "Transfer")
 
-    val CATEGORY_MODEL = PresentationDataModel(stringValue = "Category")
+    val CATEGORY_MODEL = PresentationDataModel(stringValue = "Category", objectIdReference = 1)
 
     val SENDER_ACCOUNT_MODEL = PresentationDataModel(stringValue = "Sender account")
     val BENEFICIARY_ACCOUNT_MODEL = PresentationDataModel(stringValue = "Beneficiary account")

@@ -21,4 +21,8 @@ class OperationRepository @Inject constructor(private val operationDaoImpl: Oper
     suspend fun deleteOperation(operationDTO: OperationDTO){
         operationDaoImpl.deleteOperation(operationDTO)
     }
+
+    suspend fun getOperationForAccountIdWithOperationId(operationId: Long, accountId: Long) :OperationDTO {
+        return operationDaoImpl.getOperationForAccountIdWithOperationId(operationId,accountId)
+    }
 }

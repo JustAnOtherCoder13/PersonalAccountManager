@@ -182,7 +182,7 @@ object AppReducers {
                     addPopUpTitle = Constants.TRANSFER_MODEL,
                     senderAccount = Constants.SENDER_ACCOUNT_MODEL,
                     beneficiaryAccount = Constants.BENEFICIARY_ACCOUNT_MODEL,
-                    isAddOrMinusEnable = false
+                    isAddOrMinusEnable = false,
                 )
                 is AppActions.AddOperationPopUpAction.UpdateAccountList -> old.copy(
                     allAccounts = action.accountList
