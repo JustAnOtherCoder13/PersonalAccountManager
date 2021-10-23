@@ -1,77 +1,93 @@
 package com.piconemarc.personalaccountmanager.ui.component.screen
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.piconemarc.model.entity.PresentationDataModel
-import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.AccountPostIt
-import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMAddButton
+import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.*
 import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
+import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
+import com.piconemarc.personalaccountmanager.ui.theme.ThinBorder
 import com.piconemarc.viewmodel.viewModel.AppActionDispatcher
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.myAccountDetailScreenUiState
 import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.myAccountScreenUiState
 
 @Composable
-fun MyAccountsBody(
+fun MyAccountsSheet(
     actionDispatcher: AppActionDispatcher,
 ) {
-    if (myAccountScreenUiState.isVisible)
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            LazyColumn(
-                modifier = Modifier
-                .weight(1f)
-                .padding(bottom = LittleMarge)
-            ) {
-                items(myAccountScreenUiState.allAccounts) { account ->
-                    AccountPostIt(
-                        accountName = PresentationDataModel(
-                            stringValue = account.name,
-                            objectIdReference = account.id
-                        ),
-                        onDeleteAccountButtonClicked = { accountName ->
-                            actionDispatcher.dispatchAction(
-                                AppActions.DeleteAccountAction.InitPopUp(accountName = accountName)
-                            )
-                        },
-                        accountBalanceValue = PresentationDataModel(
-                            stringValue = account.accountBalance.toString(),
-                            objectIdReference = account.id
-                        ),
-                        accountRestValue = PresentationDataModel(
-                            stringValue = (account.accountOverdraft + (account.accountBalance)).toString(),
-                            objectIdReference = account.id
-                        ),
-                        onAccountClicked = { selectedAccount ->
-                            actionDispatcher.dispatchAction(
-                                AppActions.MyAccountScreenAction.CloseScreen
-                            )
-                            actionDispatcher.dispatchAction(
-                                AppActions.MyAccountDetailScreenAction.InitScreen(selectedAccount = selectedAccount)
-                            )
-                        },
-                        selectedAccount = account
-                    )
-                }
-            }
-            PAMAddButton(
-                onAddButtonClicked = {
-                    actionDispatcher.dispatchAction(
-                        AppActions.AddAccountPopUpAction.InitPopUp
-                    )
-                }
+    if (myAccountScreenUiState.isVisible) MyAccountBody(actionDispatcher)
+    if (myAccountDetailScreenUiState.isVisible) MyAccountDetailBody(actionDispatcher)
+}
+
+
+
+@Composable
+private fun MyAccountBody(actionDispatcher: AppActionDispatcher) {
+    VerticalDispositionSheet(
+        body = { MyAccountBodyRecyclerView(actionDispatcher) },
+        footer = {
+            PAMAddButton(onAddButtonClicked = {
+                actionDispatcher.dispatchAction(
+                    AppActions.AddAccountPopUpAction.InitPopUp
+                )
+            })
+        },
+        bodyModifier = Modifier.padding(bottom = LittleMarge)
+    )
+}
+
+@Composable
+fun MyAccountDetailBody(
+    actionDispatcher: AppActionDispatcher
+) {
+    VerticalDispositionSheet(
+        header = {
+            AccountDetailTitle(
+                onBackIconClick = {
+                    actionDispatcher.dispatchAction(AppActions.MyAccountDetailScreenAction.CloseScreen)
+                    actionDispatcher.dispatchAction(AppActions.MyAccountScreenAction.InitScreen)
+                },
+                accountName = myAccountDetailScreenUiState.accountName
             )
-        }
-    if (myAccountDetailScreenUiState.isVisible) MyAccountDetailBody(actionDispatcher = actionDispatcher)
+        },
+        body = {
+            AccountDetailSheetRecyclerView(
+                allOperations = myAccountDetailScreenUiState.accountMonthlyOperations,
+                onDeleteItemButtonCLick = {
+                    actionDispatcher.dispatchAction(
+                        AppActions.DeleteOperationPopUpAction.InitPopUp(it)
+                    )
+                },
+                accountBalance = myAccountDetailScreenUiState.accountBalance.stringValue,
+                accountRest = myAccountDetailScreenUiState.accountRest.stringValue,
+            )
+
+        },
+        footer = {
+            PAMAddButton(onAddButtonClicked = {
+                actionDispatcher.dispatchAction(
+                    AppActions.AddOperationPopUpAction.InitPopUp
+                )
+            })
+        },
+        headerAndBodyColumnModifier = Modifier
+            .padding(bottom = RegularMarge)
+            .border(
+                width = ThinBorder,
+                color = MaterialTheme.colors.onSecondary,
+                shape = RoundedCornerShape(
+                    LittleMarge
+                )
+            )
+            .background(
+                color = MaterialTheme.colors.onPrimary, shape = RoundedCornerShape(
+                    LittleMarge
+                )
+            )
+    )
 }

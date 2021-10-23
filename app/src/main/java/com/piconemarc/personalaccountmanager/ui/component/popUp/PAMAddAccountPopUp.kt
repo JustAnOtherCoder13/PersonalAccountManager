@@ -17,7 +17,6 @@ import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.addAccount
 
 @Composable
 fun PAMAddAccountPopUp(actionDispatcher: AppActionDispatcher) {
-
     PAMBasePopUp(
         title = PresentationDataModel(stringResource(R.string.addAccountPopUpTitle)),
         onAcceptButtonClicked = {

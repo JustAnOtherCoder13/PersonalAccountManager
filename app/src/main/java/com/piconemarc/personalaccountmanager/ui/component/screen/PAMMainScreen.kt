@@ -1,6 +1,7 @@
 package com.piconemarc.personalaccountmanager.ui.component.screen
 
 import androidx.compose.runtime.Composable
+import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.BaseScreen
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMAppBody
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMAppFooter
@@ -9,7 +10,6 @@ import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMAddAccountPop
 import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMAddOperationPopUp
 import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMDeleteAccountPopUp
 import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMDeleteOperationPopUp
-import com.piconemarc.viewmodel.PAMIconButtons
 import com.piconemarc.viewmodel.viewModel.AppActionDispatcher
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.baseAppScreenUiState
@@ -32,7 +32,7 @@ fun PAMMainScreen(
                         }
                         is PAMIconButtons.Chart -> {
                         }
-                        else -> { MyAccountsBody(actionDispatcher = actionDispatcher) }
+                        else -> { MyAccountsSheet(actionDispatcher = actionDispatcher) }
                     }
                 }
             )

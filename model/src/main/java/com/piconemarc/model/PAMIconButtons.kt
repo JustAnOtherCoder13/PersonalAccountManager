@@ -1,4 +1,4 @@
-package com.piconemarc.viewmodel
+package com.piconemarc.model
 
 sealed class PAMIconButtons {
 

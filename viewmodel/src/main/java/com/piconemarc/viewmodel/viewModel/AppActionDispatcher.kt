@@ -7,9 +7,13 @@ import com.piconemarc.core.domain.interactor.operation.AddNewOperationInteractor
 import com.piconemarc.core.domain.interactor.operation.DeleteOperationInteractor
 import com.piconemarc.core.domain.interactor.operation.GetAllOperationsForAccountIdInteractor
 import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteractor
+import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.AccountModel
 import com.piconemarc.model.entity.PresentationDataModel
-import com.piconemarc.viewmodel.*
+import com.piconemarc.viewmodel.ActionDispatcher
+import com.piconemarc.viewmodel.DefaultStore
+import com.piconemarc.viewmodel.StoreSubscriber
+import com.piconemarc.viewmodel.UiAction
 import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.addAccountPopUpUiState
 import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.addOperationPopUpUiState
 import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.deleteAccountUiState
@@ -86,7 +90,7 @@ class AppActionDispatcher @Inject constructor(
                     is AppActions.MyAccountScreenAction.InitScreen -> {
                         updateBaseAppState(
                             AppActions.BaseAppScreenAction.UpdateInterlayerTiTle(
-                                R.string.myAccountsInterLayerTitle
+                                com.piconemarc.model.R.string.myAccountsInterLayerTitle
                             )
                         )
                         myAccountScreenJob = scope.launch {
@@ -111,7 +115,7 @@ class AppActionDispatcher @Inject constructor(
                     is AppActions.MyAccountDetailScreenAction.InitScreen -> {
                         updateBaseAppState(
                             AppActions.BaseAppScreenAction.UpdateInterlayerTiTle(
-                                R.string.detail
+                                com.piconemarc.model.R.string.detail
                             )
                         )
                         myAccountDetailScreenAccountFlowJob = scope.launch {

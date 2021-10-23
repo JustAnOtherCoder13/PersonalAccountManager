@@ -11,8 +11,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.personalaccountmanager.ui.theme.*
-import com.piconemarc.viewmodel.PAMIconButtons
 
 @Composable
 fun pAMBasePopUpEnterExitAnimation(isExpanded: Boolean): PAMUiDataAnimations.BasePopUpAnimationData {

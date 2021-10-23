@@ -1,9 +1,9 @@
 package com.piconemarc.viewmodel.viewModel
 
+import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.AccountModel
 import com.piconemarc.model.entity.OperationModel
 import com.piconemarc.model.entity.PresentationDataModel
-import com.piconemarc.viewmodel.PAMIconButtons
 import com.piconemarc.viewmodel.UiAction
 
 object AppActions {

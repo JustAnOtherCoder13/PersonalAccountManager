@@ -16,11 +16,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.animation.PAMUiDataAnimations
 import com.piconemarc.personalaccountmanager.ui.animation.pAMAddPopUpAddOrMinusTransition
 import com.piconemarc.personalaccountmanager.ui.theme.*
-import com.piconemarc.viewmodel.PAMIconButtons
 
 @Composable
 fun PAMCircleIcon(

@@ -1,5 +1,6 @@
 package com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -18,16 +19,55 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.AccountModel
 import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.animation.PAMUiDataAnimations
 import com.piconemarc.personalaccountmanager.ui.animation.pAMInterlayerAnimation
 import com.piconemarc.personalaccountmanager.ui.theme.*
-import com.piconemarc.viewmodel.PAMIconButtons
 import com.piconemarc.viewmodel.viewModel.AppActionDispatcher
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.baseAppScreenUiState
+
+@SuppressLint("ModifierParameter")
+@Composable
+fun VerticalDispositionSheet(
+    header: @Composable () -> Unit = {},
+    body: @Composable () -> Unit,
+    footer: @Composable () -> Unit = {},
+    sheetModifier: Modifier = Modifier.fillMaxSize(),
+    headerAndBodyColumnModifier: Modifier = Modifier.fillMaxSize(),
+    headerModifier: Modifier = Modifier.fillMaxWidth(),
+    bodyModifier: Modifier = Modifier.fillMaxWidth(),
+    footerModifier: Modifier = Modifier.wrapContentWidth(),
+    columnHorizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
+    columnVerticalArrangement: Arrangement.HorizontalOrVertical = Arrangement.SpaceBetween,
+) {
+    Column(
+        modifier = sheetModifier,
+        horizontalAlignment = columnHorizontalAlignment,
+        verticalArrangement = columnVerticalArrangement
+    ) {
+        Column(
+            modifier = headerAndBodyColumnModifier.weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally
+
+        ) {
+            Row(modifier = headerModifier) {
+                header()
+            }
+            Row(modifier = bodyModifier) {
+                body()
+            }
+        }
+        Row(
+            modifier = footerModifier,
+        ) {
+            footer()
+        }
+    }
+}
 
 @Composable
 fun BaseScreen(
@@ -35,17 +75,12 @@ fun BaseScreen(
     body: @Composable () -> Unit,
     footer: @Composable () -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxHeight()) {
-        Row() { header() }
-        Row(
-            modifier = Modifier
-                .weight(1f)
-                .padding(vertical = RegularMarge)
-        ) {
-            body()
-        }
-        Row() { footer() }
-    }
+    VerticalDispositionSheet(
+        header = header,
+        body = body,
+        footer = footer,
+        bodyModifier = Modifier.padding(vertical = RegularMarge)
+    )
 }
 
 @Composable
@@ -195,13 +230,11 @@ fun PAMAppBody(
         Folder(
             sheetHole = { SheetHoleColumn(transition.interlayerColor) },
             interlayers = {
-                Sheet(interlayerBackgroundColor = transition.interlayerColor) {
-                    InterLayerTitle(
-                        title = stringResource(id = baseAppScreenUiState.interLayerTitle)
+                Sheet(
+                    interlayerBackgroundColor = transition.interlayerColor,
+                    header = { InterLayerTitle(title = stringResource(id = baseAppScreenUiState.interLayerTitle)) },
+                    body = { body() }
                     )
-                    body()
-                }
-
             },
             interLayerIconPanel = {
                 InterlayerIconPanel(
@@ -233,6 +266,7 @@ private fun InterLayerTitle(title: String) {
 @Composable
 private fun Sheet(
     interlayerBackgroundColor: Color,
+    header: @Composable () -> Unit,
     body: @Composable () -> Unit
 ) {
     Column(
@@ -244,7 +278,13 @@ private fun Sheet(
             )
             .padding(LittleMarge)
     ) {
-        body()
+        Row {
+            header()
+        }
+        Row(modifier = Modifier.weight(1f)) {
+            body()
+        }
+
     }
 }
 
