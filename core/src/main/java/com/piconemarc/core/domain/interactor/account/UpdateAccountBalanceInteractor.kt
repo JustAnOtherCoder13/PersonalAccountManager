@@ -1,6 +1,7 @@
 package com.piconemarc.core.domain.interactor.account
 
 import com.piconemarc.core.data.account.AccountRepository
+import com.piconemarc.model.entity.AccountModel
 import javax.inject.Inject
 
 class UpdateAccountBalanceInteractor @Inject constructor(val accountRepository: AccountRepository) {
@@ -16,14 +17,12 @@ class UpdateAccountBalanceInteractor @Inject constructor(val accountRepository: 
         )
     }
 
-    suspend fun updateAccountBalanceOnAddOperation(
-        accountId: Long,
-        oldAccountBalance: Double,
-        addedOperationAmount: Double
+    suspend fun updateAccountBalance(
+        updatedAccount: AccountModel
     ) {
         accountRepository.updateAccountBalance(
-            accountId = accountId,
-            accountBalance = oldAccountBalance + (addedOperationAmount)
+            accountId = updatedAccount.id,
+            accountBalance = updatedAccount.accountBalance
         )
     }
 }

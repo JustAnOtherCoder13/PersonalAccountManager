@@ -115,7 +115,7 @@ fun AccountPostIt(
                 )
                 AccountPostItValue(
                     valueTitle = stringResource(R.string.restTitle),
-                    value = (account.accountOverdraft + (account.accountBalance)).toString()
+                    value = account.rest.toString()
                 )
             }
         }

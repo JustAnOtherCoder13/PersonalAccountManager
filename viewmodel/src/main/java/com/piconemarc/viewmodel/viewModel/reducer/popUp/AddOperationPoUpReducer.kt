@@ -113,7 +113,7 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
             )
             is AppActions.AddOperationPopUpAction.AddNewOperation -> old.copy(
                 isOperationNameError = action.operation.name.trim().isEmpty(),
-                isOperationAmountError = action.operation.amount == 0.0,
+                isOperationAmountError = action.operation.updatedAmount == 0.0,
                 isSenderAccountError = AppSubscriber.AppUiState.addOperationPopUpUiState.addPopUpOptionSelectedIcon == PAMIconButtons.Transfer
                         && AppSubscriber.AppUiState.addOperationPopUpUiState.senderAccount.name == "Sender account" ,
                 isBeneficiaryAccountError = AppSubscriber.AppUiState.addOperationPopUpUiState.addPopUpOptionSelectedIcon == PAMIconButtons.Transfer

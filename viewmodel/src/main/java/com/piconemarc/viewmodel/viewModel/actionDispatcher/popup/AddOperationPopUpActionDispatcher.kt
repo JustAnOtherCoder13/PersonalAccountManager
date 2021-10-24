@@ -12,6 +12,7 @@ import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.UiAction
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber
+import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.addOperationPopUpUiState
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import kotlinx.coroutines.CoroutineScope
@@ -86,45 +87,46 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
             is AppActions.AddOperationPopUpAction.AddNewOperation -> {
 
                 //todo review for transfer, add a transfer entity?
-                if (!AppSubscriber.AppUiState.addOperationPopUpUiState.isOperationNameError
-                    && !AppSubscriber.AppUiState.addOperationPopUpUiState.isOperationAmountError
+                if (!addOperationPopUpUiState.isOperationNameError
+                    && !addOperationPopUpUiState.isOperationAmountError
                 ) {
                     scope.launch {
-                        if (AppSubscriber.AppUiState.addOperationPopUpUiState.isTransferExpanded
-                            && !AppSubscriber.AppUiState.addOperationPopUpUiState.isSenderAccountError
-                            && !AppSubscriber.AppUiState.addOperationPopUpUiState.isBeneficiaryAccountError
+                        if (addOperationPopUpUiState.isTransferExpanded
+                            && !addOperationPopUpUiState.isSenderAccountError
+                            && !addOperationPopUpUiState.isBeneficiaryAccountError
                         ) {
-                            scope.launch {
+
                                 val beneficiaryAccount =
                                     getAccountForIdInteractor.getAccountForId(
-                                        AppSubscriber.AppUiState.addOperationPopUpUiState.beneficiaryAccount.id
+                                        addOperationPopUpUiState.beneficiaryAccount.id
                                     )
                                 //add on beneficiary account
                                 addNewOperationInteractor.addNewOperation(
                                     action.operation.copy(
                                         accountId = beneficiaryAccount.id,
-                                        amount = action.operation.amount,
-                                        beneficiaryAccountId = action.operation.id
+                                        beneficiaryAccountId = action.operation.id,
+                                        isAddOperation = addOperationPopUpUiState.isAddOperation
                                     )
                                 )
-                                updateAccountBalanceInteractor.updateAccountBalanceOnAddOperation(
-                                    accountId = beneficiaryAccount.id,
-                                    oldAccountBalance = beneficiaryAccount.accountBalance,
-                                    addedOperationAmount = action.operation.amount
+                                beneficiaryAccount.addOperation(operationAmount = action.operation.updatedAmount)
+                                updateAccountBalanceInteractor.updateAccountBalance(
+                                    updatedAccount = beneficiaryAccount
                                 )
                             }
 
-                        }
+
                         try {
                             addNewOperationInteractor.addNewOperation(
-                                if (AppSubscriber.AppUiState.addOperationPopUpUiState.isAddOperation && !AppSubscriber.AppUiState.addOperationPopUpUiState.isTransferExpanded) action.operation
-                                else action.operation.copy(amount = action.operation.amount * -1)
+                                    action.operation.copy(isAddOperation = addOperationPopUpUiState.isAddOperation)
                             )
-                            updateAccountBalanceInteractor.updateAccountBalanceOnAddOperation(
-                                accountId = action.operation.accountId,
-                                oldAccountBalance = AppSubscriber.AppUiState.myAccountDetailScreenUiState.accountBalance.toDouble(),
-                                addedOperationAmount = if (AppSubscriber.AppUiState.addOperationPopUpUiState.isAddOperation) action.operation.amount
-                                else action.operation.amount * -1
+                            val senderAccount = getAccountForIdInteractor.getAccountForId(action.operation.accountId)
+
+                            if (addOperationPopUpUiState.isAddOperation)
+                                senderAccount.addOperation(action.operation.updatedAmount)
+                            else senderAccount.minusOperation(action.operation.updatedAmount)
+
+                            updateAccountBalanceInteractor.updateAccountBalance(
+                                updatedAccount = senderAccount
                             )
                             updateState(
                                 GlobalAction.UpdateAddOperationPopUpState(

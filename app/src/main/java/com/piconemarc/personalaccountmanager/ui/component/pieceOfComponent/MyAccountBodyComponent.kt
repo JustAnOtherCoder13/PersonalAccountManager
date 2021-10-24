@@ -153,12 +153,12 @@ private fun OperationItem(
             style = MaterialTheme.typography.body1
         )
         Text(
-            text = if (operation.amount > 0) "+${operation.amount}" else operation.amount.toString(),
+            text = if (operation.updatedAmount > 0) "+${operation.updatedAmount}" else operation.updatedAmount.toString(),
             modifier = Modifier
                 .padding(start = LittleMarge)
                 .weight(0.9f),
             style = MaterialTheme.typography.body1,
-            color = if (operation.amount > 0) PositiveText else NegativeText
+            color = if (operation.updatedAmount > 0) PositiveText else NegativeText
         )
         Box(modifier = Modifier.size(35.dp)) {
             PAMIconButton(

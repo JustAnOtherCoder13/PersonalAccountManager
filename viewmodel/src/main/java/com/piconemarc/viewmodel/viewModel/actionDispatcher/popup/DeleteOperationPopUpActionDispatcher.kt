@@ -44,7 +44,7 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
                         )
                         updateAccountBalanceInteractor.updateAccountBalanceOnDeleteOperation(
                             accountId = action.operationToDelete.beneficiaryAccountId!!,
-                            deletedOperationAMount = action.operationToDelete.amount * -1,
+                            deletedOperationAMount = action.operationToDelete.updatedAmount * -1,
                             oldAccountBalance = getAccountForIdInteractor.getAccountForId(
                                 action.operationToDelete.beneficiaryAccountId!!
                             ).accountBalance,
@@ -53,7 +53,7 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
                     deleteOperationInteractor.deleteOperation(action.operationToDelete)
                     updateAccountBalanceInteractor.updateAccountBalanceOnDeleteOperation(
                         accountId = action.operationToDelete.accountId,
-                        deletedOperationAMount = action.operationToDelete.amount,
+                        deletedOperationAMount = action.operationToDelete.updatedAmount,
                         oldAccountBalance = AppSubscriber.AppUiState.myAccountDetailScreenUiState.accountBalance.toDouble(),
                     )
                 }

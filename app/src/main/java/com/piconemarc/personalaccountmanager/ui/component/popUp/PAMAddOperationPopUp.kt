@@ -28,7 +28,7 @@ fun PAMAddOperationPopUp(
                 AppActions.AddOperationPopUpAction.AddNewOperation(
                     OperationModel(
                         name = addOperationPopUpUiState.operationName,
-                        amount = try {
+                        amount_ = try {
                             addOperationPopUpUiState.operationAmount.toDouble()
                         } catch (e: NumberFormatException) {
                             0.0

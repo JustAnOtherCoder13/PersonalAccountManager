@@ -2,7 +2,6 @@ package com.piconemarc.core.domain.interactor.operation
 
 import com.piconemarc.core.data.operation.OperationRepository
 import com.piconemarc.core.domain.entityDTO.OperationDTO
-import com.piconemarc.model.entity.EndDate
 import com.piconemarc.model.entity.OperationModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -25,12 +24,7 @@ class GetAllOperationsForAccountIdInteractor @Inject constructor(private val ope
             OperationModel(
                 id = it.id,
                 name = it.name,
-                amount = it.amount,
-                endDate = EndDate(
-                    month = it.endDateMonth,
-                    year = it.endDateYear
-                ),
-                isRecurrent = it.isRecurrent,
+                amount_ = it.amount,
                 categoryId = it.categoryId,
                 emitDate = it.emitDate ?: Date(),
                 accountId = it.accountId

@@ -12,10 +12,7 @@ class DeleteOperationInteractor @Inject constructor(private val operationReposit
             OperationDTO(
                 id = operationModel.id,
                 name = operationModel.name,
-                amount = operationModel.amount,
-                endDateMonth = operationModel.endDate?.month,
-                endDateYear = operationModel.endDate?.year,
-                isRecurrent = operationModel.isRecurrent,
+                amount = operationModel.updatedAmount,
                 accountId = operationModel.accountId,
                 categoryId = operationModel.categoryId,
                 emitDate = operationModel.emitDate
