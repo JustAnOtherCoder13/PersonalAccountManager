@@ -1,8 +1,6 @@
 package com.piconemarc.viewmodel.viewModel.reducer.screen
 
-import android.util.Log
 import com.piconemarc.model.PAMIconButtons
-import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.viewmodel.Reducer
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.ViewModelInnerStates
@@ -14,7 +12,6 @@ internal val appBaseScreenReducer: Reducer<ViewModelInnerStates.BaseAppScreenVmS
             selectedInterlayerButton = PAMIconButtons.Home
         )
         is AppActions.BaseAppScreenAction.SelectInterlayer -> {
-            Log.i("TAG", ": ${action.selectedInterlayerButton}")
             old.copy(
                 selectedInterlayerButton = action.selectedInterlayerButton,
                 interLayerTitle = action.selectedInterlayerButton.iconName
@@ -28,7 +25,7 @@ internal val appBaseScreenReducer: Reducer<ViewModelInnerStates.BaseAppScreenVmS
                 allAccountBalance += it.accountBalance
             }
             old.copy(
-                footerBalance = PresentationDataModel(allAccountBalance.toString())
+                footerBalance = allAccountBalance.toString()
             )
         }
         is AppActions.BaseAppScreenAction.UpdateFooterRest -> {
@@ -37,7 +34,7 @@ internal val appBaseScreenReducer: Reducer<ViewModelInnerStates.BaseAppScreenVmS
                 allAccountRest += (it.accountBalance + it.accountOverdraft)
             }
             old.copy(
-                footerRest = PresentationDataModel(allAccountRest.toString())
+                footerRest = allAccountRest.toString()
             )
         }
         is AppActions.BaseAppScreenAction.UpdateFooterTitle -> old.copy(footerTitle = action.footerTitle)

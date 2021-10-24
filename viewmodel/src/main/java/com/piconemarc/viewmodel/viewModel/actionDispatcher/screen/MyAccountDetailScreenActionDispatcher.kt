@@ -2,7 +2,6 @@ package com.piconemarc.viewmodel.viewModel.actionDispatcher.screen
 
 import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
 import com.piconemarc.core.domain.interactor.operation.GetAllOperationsForAccountIdInteractor
-import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.viewmodel.ActionDispatcher
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.UiAction
@@ -35,18 +34,12 @@ class MyAccountDetailScreenActionDispatcher @Inject constructor(
                             updateState(
                                 GlobalAction.UpdateMyAccountDetailScreenState(
                                 AppActions.MyAccountDetailScreenAction.UpdateAccountBalance(
-                                    PresentationDataModel(
                                         it.accountBalance.toString(),
-                                        it.id
-                                    )
                                 )),
 
                                 GlobalAction.UpdateMyAccountDetailScreenState(
                                 AppActions.MyAccountDetailScreenAction.UpdateAccountRest(
-                                    PresentationDataModel(
                                         (it.accountOverdraft + it.accountBalance).toString(),
-                                        it.id
-                                    )
                                 )
                             ))
                         }
@@ -67,22 +60,18 @@ class MyAccountDetailScreenActionDispatcher @Inject constructor(
                         ),
                             GlobalAction.UpdateMyAccountDetailScreenState(
                             AppActions.MyAccountDetailScreenAction.UpdateAccountBalance(
-                                PresentationDataModel(action.selectedAccount.accountBalance.toString())
+                                action.selectedAccount.accountBalance.toString()
                             )
                         ),
                             GlobalAction.UpdateMyAccountDetailScreenState(
                             AppActions.MyAccountDetailScreenAction.UpdateAccountRest(
-                                PresentationDataModel(
                                     (action.selectedAccount.accountOverdraft + action.selectedAccount.accountBalance).toString()
-                                )
+
                             )),
 
                             GlobalAction.UpdateMyAccountDetailScreenState(
                             AppActions.MyAccountDetailScreenAction.UpdateAccountName(
-                                PresentationDataModel(
-                                    action.selectedAccount.name,
-                                    action.selectedAccount.id
-                                )
+                                    action.selectedAccount,
                             ))
                         )
                     }

@@ -1,6 +1,5 @@
 package com.piconemarc.viewmodel.viewModel.reducer.popUp
 
-import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.viewmodel.Reducer
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.ViewModelInnerStates
@@ -11,9 +10,9 @@ internal val addAccountPopUpReducer: Reducer<ViewModelInnerStates.AddAccountPopU
         when (action) {
             is AppActions.AddAccountPopUpAction.InitPopUp -> old.copy(
                 isPopUpExpanded = true,
-                accountName = PresentationDataModel(),
-                accountBalance = PresentationDataModel(),
-                accountOverdraft = PresentationDataModel(),
+                accountName = "",
+                accountBalance = "",
+                accountOverdraft = "",
                 isBalanceError = true,
                 isOverdraftError = true
             )
@@ -21,18 +20,18 @@ internal val addAccountPopUpReducer: Reducer<ViewModelInnerStates.AddAccountPopU
                 isPopUpExpanded = false
             )
             is AppActions.AddAccountPopUpAction.AddNewAccount -> old.copy(
-                isNameError = action.accountName.stringValue.trim().isEmpty()
+                isNameError = action.accountName.trim().isEmpty()
             )
             is AppActions.AddAccountPopUpAction.FillAccountName -> old.copy(
                 accountName = action.accountName
             )
             is AppActions.AddAccountPopUpAction.FillAccountBalance -> old.copy(
                 accountBalance = action.accountBalance,
-                isBalanceError = action.accountBalance.stringValue.trim().isEmpty()
+                isBalanceError = action.accountBalance.trim().isEmpty()
             )
             is AppActions.AddAccountPopUpAction.FillAccountOverdraft -> old.copy(
                 accountOverdraft = action.accountOverdraft,
-                isOverdraftError = action.accountOverdraft.stringValue.trim().isEmpty()
+                isOverdraftError = action.accountOverdraft.trim().isEmpty()
             )
         }
     }

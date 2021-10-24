@@ -1,6 +1,5 @@
 package com.piconemarc.personalaccountmanager.ui.component.popUp
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
@@ -9,12 +8,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.piconemarc.model.entity.EndDate
 import com.piconemarc.model.entity.OperationModel
-import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.animation.pAMAddOperationPopUpBackgroundColor
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.*
-import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.AppActions
+import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.addOperationPopUpUiState
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.myAccountDetailScreenUiState
 
@@ -29,23 +27,23 @@ fun PAMAddOperationPopUp(
             viewModel.dispatchAction(
                 AppActions.AddOperationPopUpAction.AddNewOperation(
                     OperationModel(
-                        name = addOperationPopUpUiState.operationName.stringValue,
+                        name = addOperationPopUpUiState.operationName,
                         amount = try {
-                            addOperationPopUpUiState.operationAmount.stringValue.toDouble()
+                            addOperationPopUpUiState.operationAmount.toDouble()
                         } catch (e: NumberFormatException) {
                             0.0
                         },
-                        accountId = myAccountDetailScreenUiState.accountName.objectIdReference,
-                        categoryId = addOperationPopUpUiState.selectedCategory.objectIdReference,
+                        accountId = myAccountDetailScreenUiState.selectedAccount.id,
+                        categoryId = addOperationPopUpUiState.selectedCategory.id,
                         isRecurrent = addOperationPopUpUiState.isRecurrentOptionExpanded,
                         endDate = if (!addOperationPopUpUiState.isRecurrentEndDateError) EndDate(
-                            month = addOperationPopUpUiState.enDateSelectedMonth.stringValue,
-                            year = addOperationPopUpUiState.endDateSelectedYear.stringValue
+                            month = addOperationPopUpUiState.enDateSelectedMonth,
+                            year = addOperationPopUpUiState.endDateSelectedYear
                         ) else null,
                         senderAccountId = if(!addOperationPopUpUiState.isSenderAccountError)
-                            addOperationPopUpUiState.senderAccount.objectIdReference else null,
+                            addOperationPopUpUiState.senderAccount.id else null,
                         beneficiaryAccountId = if(!addOperationPopUpUiState.isBeneficiaryAccountError)
-                            addOperationPopUpUiState.beneficiaryAccount.objectIdReference else null
+                            addOperationPopUpUiState.beneficiaryAccount.id else null
 
                     )
                 )
@@ -87,7 +85,7 @@ fun PAMAddOperationPopUp(
             )
             // operation name--------------------------
             PAMBrownBackgroundTextFieldItem(
-                title = PresentationDataModel(stringValue = stringResource(R.string.operationName)),
+                title =  stringResource(R.string.operationName),
                 onTextChange = { operationName ->
                     viewModel.dispatchAction(
                         AppActions.AddOperationPopUpAction.FillOperationName(
@@ -98,11 +96,11 @@ fun PAMAddOperationPopUp(
                 textValue = addOperationPopUpUiState.operationName,
                 isPopUpExpanded = addOperationPopUpUiState.isPopUpExpanded,
                 isError = addOperationPopUpUiState.isOperationNameError,
-                errorMsg = PresentationDataModel("Please, fill operation name")
+                errorMsg = "Please, fill operation name"
             )
             // operation Amount--------------------------
             PAMBrownBackgroundAmountTextFieldItem(
-                title = PresentationDataModel(stringValue = stringResource(R.string.operationAmount)),
+                title =  stringResource(R.string.operationAmount),
                 onTextChange = { operationAmount ->
                     viewModel.dispatchAction(
                         AppActions.AddOperationPopUpAction.FillOperationAmount(
@@ -113,7 +111,7 @@ fun PAMAddOperationPopUp(
                 amountValue = addOperationPopUpUiState.operationAmount,
                 isPopUpExpanded = addOperationPopUpUiState.isPopUpExpanded,
                 isError = addOperationPopUpUiState.isOperationAmountError,
-                errorMsg = PresentationDataModel("Please, fill an amount for this operation")
+                errorMsg = "Please, fill an amount for this operation"
             )
             //category drop down -----------------------------------
             PAMBaseDropDownMenuWithBackground(
@@ -127,7 +125,6 @@ fun PAMAddOperationPopUp(
                     )
                 }
             )
-
             //Payment Operation option--------------------------
             PAMPunctualOrRecurrentSwitchButton(
                 isRecurrentOptionExpanded = addOperationPopUpUiState.isRecurrentOptionExpanded,

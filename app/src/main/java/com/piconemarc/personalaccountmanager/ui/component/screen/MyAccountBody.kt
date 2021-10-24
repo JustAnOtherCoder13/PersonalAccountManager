@@ -11,8 +11,8 @@ import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.*
 import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
 import com.piconemarc.personalaccountmanager.ui.theme.ThinBorder
-import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.AppActions
+import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.myAccountDetailScreenUiState
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.myAccountScreenUiState
 
@@ -52,7 +52,7 @@ fun MyAccountDetailBody(
                     viewModel.dispatchAction(AppActions.MyAccountDetailScreenAction.CloseScreen)
                     viewModel.dispatchAction(AppActions.MyAccountScreenAction.InitScreen)
                 },
-                accountName = myAccountDetailScreenUiState.accountName
+                accountName = myAccountDetailScreenUiState.selectedAccount.name
             )
         },
         body = {
@@ -63,8 +63,8 @@ fun MyAccountDetailBody(
                         AppActions.DeleteOperationPopUpAction.InitPopUp(it)
                     )
                 },
-                accountBalance = myAccountDetailScreenUiState.accountBalance.stringValue,
-                accountRest = myAccountDetailScreenUiState.accountRest.stringValue,
+                accountBalance = myAccountDetailScreenUiState.accountBalance,
+                accountRest = myAccountDetailScreenUiState.accountRest,
             )
 
         },

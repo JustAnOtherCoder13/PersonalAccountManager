@@ -54,7 +54,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
 
             is AppActions.AddOperationPopUpAction.InitPopUp ->
                 scope.launch {
-                    getAllCategoriesInteractor.getAllCategoriesToDataUiModelList().collect {
+                    getAllCategoriesInteractor.getAllCategories().collect {
                         updateState(
                             GlobalAction.UpdateAddOperationPopUpState(
                             AppActions.AddOperationPopUpAction.UpdateCategoriesList(
@@ -66,7 +66,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
 
             is AppActions.AddOperationPopUpAction.ExpandTransferOption -> {
                  scope.launch {
-                    getAllAccountsInteractor.getAllAccountsToPresentationDataModel()
+                    getAllAccountsInteractor.getAllAccounts()
                         .collect {
                             updateState(
                                 GlobalAction.UpdateAddOperationPopUpState(
@@ -79,7 +79,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                 updateState(
                     GlobalAction.UpdateAddOperationPopUpState(
                     AppActions.AddOperationPopUpAction.SelectSenderAccount(
-                        AppSubscriber.AppUiState.myAccountDetailScreenUiState.accountName
+                        AppSubscriber.AppUiState.myAccountDetailScreenUiState.selectedAccount
                     )
                 ))
             }
@@ -97,7 +97,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                             scope.launch {
                                 val beneficiaryAccount =
                                     getAccountForIdInteractor.getAccountForId(
-                                        AppSubscriber.AppUiState.addOperationPopUpUiState.beneficiaryAccount.objectIdReference
+                                        AppSubscriber.AppUiState.addOperationPopUpUiState.beneficiaryAccount.id
                                     )
                                 //add on beneficiary account
                                 addNewOperationInteractor.addNewOperation(
@@ -122,7 +122,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                             )
                             updateAccountBalanceInteractor.updateAccountBalanceOnAddOperation(
                                 accountId = action.operation.accountId,
-                                oldAccountBalance = AppSubscriber.AppUiState.myAccountDetailScreenUiState.accountBalance.stringValue.toDouble(),
+                                oldAccountBalance = AppSubscriber.AppUiState.myAccountDetailScreenUiState.accountBalance.toDouble(),
                                 addedOperationAmount = if (AppSubscriber.AppUiState.addOperationPopUpUiState.isAddOperation) action.operation.amount
                                 else action.operation.amount * -1
                             )
