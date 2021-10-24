@@ -10,21 +10,21 @@ import androidx.compose.ui.unit.dp
 import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMBaseDeletePopUp
 import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
-import com.piconemarc.viewmodel.viewModel.AppActionDispatcher
+import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.AppActions
-import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.deleteAccountUiState
+import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.deleteAccountUiState
 
 @Composable
 fun PAMDeleteAccountPopUp(
-    actionDispatcher: AppActionDispatcher
+    viewModel: AppViewModel
 ) {
 
     PAMBaseDeletePopUp(
         deletePopUpTitle = PresentationDataModel("Delete Account"),
-        onAcceptButtonClicked = { actionDispatcher.dispatchAction(
+        onAcceptButtonClicked = { viewModel.dispatchAction(
             AppActions.DeleteAccountAction.DeleteAccount(deleteAccountUiState.accountToDeleteName.objectIdReference)
         ) },
-        onDismiss = { actionDispatcher.dispatchAction(
+        onDismiss = { viewModel.dispatchAction(
             AppActions.DeleteAccountAction.ClosePopUp
         ) },
         isExpanded = deleteAccountUiState.isPopUpExpanded

@@ -26,9 +26,9 @@ import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.animation.PAMUiDataAnimations
 import com.piconemarc.personalaccountmanager.ui.animation.pAMInterlayerAnimation
 import com.piconemarc.personalaccountmanager.ui.theme.*
-import com.piconemarc.viewmodel.viewModel.AppActionDispatcher
+import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.AppActions
-import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.baseAppScreenUiState
+import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.baseAppScreenUiState
 
 @SuppressLint("ModifierParameter")
 @Composable
@@ -220,7 +220,7 @@ private fun AccountPostItBackground(boxScope: BoxScope) {
 
 @Composable
 fun PAMAppBody(
-    actionDispatcher : AppActionDispatcher,
+    viewModel : AppViewModel,
     body: @Composable () -> Unit
 ) {
     val transition: PAMUiDataAnimations.InterlayerAnimationData = pAMInterlayerAnimation(
@@ -240,7 +240,7 @@ fun PAMAppBody(
                 InterlayerIconPanel(
                     transition = transition,
                     onInterlayerIconClicked = {
-                        actionDispatcher.dispatchAction(
+                        viewModel.dispatchAction(
                             AppActions.BaseAppScreenAction.SelectInterlayer(it)
                         )
                     },

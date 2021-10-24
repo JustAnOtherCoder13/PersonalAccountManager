@@ -8,30 +8,18 @@ import com.piconemarc.viewmodel.UiAction
 
 object AppActions {
 
-    sealed class GlobalAction : UiAction {
-        data class UpdateBaseAppScreenVmState(val baseAction: UiAction) : GlobalAction()
-        data class UpdateAddOperationPopUpState(val baseAction: UiAction) : GlobalAction()
-        data class UpdateDeleteAccountPopUpState(val baseAction: UiAction) : GlobalAction()
-        data class UpdateAddAccountPopUpState(val baseAction: UiAction) : GlobalAction()
-        data class UpdateMyAccountDetailScreenState(val baseAction: UiAction) : GlobalAction()
-        data class UpdateMyAccountScreenState(val baseAction: UiAction):GlobalAction()
-        data class UpdateDeleteOperationPopUpState(val baseAction: UiAction): GlobalAction()
-    }
+    //SCREEN----------------------------------------------------------------------------------------
 
     sealed class BaseAppScreenAction : UiAction {
         object InitScreen : BaseAppScreenAction()
-        data class SelectInterlayer(val selectedInterlayerButton: PAMIconButtons) :
-            BaseAppScreenAction()
+        data class SelectInterlayer(val selectedInterlayerButton: PAMIconButtons) : BaseAppScreenAction()
         data class UpdateInterlayerTiTle(val interlayerTitle : Int) : BaseAppScreenAction()
-
-
         data class UpdateAccounts(val allAccounts: List<AccountModel>) : BaseAppScreenAction()
-        data class UpdateFooterBalance(val allAccounts: List<AccountModel>) :
-            BaseAppScreenAction()
-
+        data class UpdateFooterBalance(val allAccounts: List<AccountModel>) : BaseAppScreenAction()
         data class UpdateFooterRest(val allAccounts: List<AccountModel>) : BaseAppScreenAction()
         data class UpdateFooterTitle(val footerTitle: PresentationDataModel) : BaseAppScreenAction()
     }
+
     sealed class MyAccountScreenAction : UiAction{
         object InitScreen : MyAccountScreenAction()
         object CloseScreen : MyAccountScreenAction()
@@ -48,6 +36,7 @@ object AppActions {
     }
 
 
+    //POP UP----------------------------------------------------------------------------------------
     sealed class AddOperationPopUpAction : UiAction {
         object InitPopUp : AddOperationPopUpAction()
         object ExpandPaymentOption : AddOperationPopUpAction()
@@ -57,38 +46,17 @@ object AppActions {
         object CloseRecurrentOption : AddOperationPopUpAction()
         object ClosePopUp : AddOperationPopUpAction()
         data class SelectCategory(val category: PresentationDataModel) : AddOperationPopUpAction()
-        data class FillOperationName(val operation: PresentationDataModel) :
-            AddOperationPopUpAction()
-
-        data class FillOperationAmount(val amount: PresentationDataModel) :
-            AddOperationPopUpAction()
-
-        data class UpdateCategoriesList(val allCategories: List<PresentationDataModel>) :
-            AddOperationPopUpAction()
-
-        data class UpdateAccountList(val accountList: List<PresentationDataModel>) :
-            AddOperationPopUpAction()
-
-        data class SelectEndDateYear(val selectedEndDateYear: PresentationDataModel) :
-            AddOperationPopUpAction()
-
-        data class SelectEndDateMonth(val selectedEndDateMonth: PresentationDataModel) :
-            AddOperationPopUpAction()
-
-        data class SelectSenderAccount(val senderAccount: PresentationDataModel) :
-            AddOperationPopUpAction()
-
-        data class SelectBeneficiaryAccount(val beneficiaryAccount: PresentationDataModel) :
-            AddOperationPopUpAction()
-
-        data class SelectOptionIcon(val selectedIcon: PAMIconButtons) :
-            AddOperationPopUpAction()
-
-        data class SelectAddOrMinus(val isAddOperation: Boolean) :
-            AddOperationPopUpAction()
-
-        data class AddNewOperation(val operation : OperationModel) :
-                AddOperationPopUpAction()
+        data class FillOperationName(val operation: PresentationDataModel) : AddOperationPopUpAction()
+        data class FillOperationAmount(val amount: PresentationDataModel) : AddOperationPopUpAction()
+        data class UpdateCategoriesList(val allCategories: List<PresentationDataModel>) : AddOperationPopUpAction()
+        data class UpdateAccountList(val accountList: List<PresentationDataModel>) : AddOperationPopUpAction()
+        data class SelectEndDateYear(val selectedEndDateYear: PresentationDataModel) : AddOperationPopUpAction()
+        data class SelectEndDateMonth(val selectedEndDateMonth: PresentationDataModel) : AddOperationPopUpAction()
+        data class SelectSenderAccount(val senderAccount: PresentationDataModel) : AddOperationPopUpAction()
+        data class SelectBeneficiaryAccount(val beneficiaryAccount: PresentationDataModel) : AddOperationPopUpAction()
+        data class SelectOptionIcon(val selectedIcon: PAMIconButtons) : AddOperationPopUpAction()
+        data class SelectAddOrMinus(val isAddOperation: Boolean) : AddOperationPopUpAction()
+        data class AddNewOperation(val operation : OperationModel) : AddOperationPopUpAction()
     }
 
     sealed class DeleteOperationPopUpAction : UiAction{
@@ -99,12 +67,9 @@ object AppActions {
     }
 
     sealed class DeleteAccountAction : UiAction {
-        data class InitPopUp(val accountName: PresentationDataModel) :
-            DeleteAccountAction()
-
+        data class InitPopUp(val accountName: PresentationDataModel) : DeleteAccountAction()
         object ClosePopUp : DeleteAccountAction()
         data class DeleteAccount(val accountId: Long) : DeleteAccountAction()
-
         data class UpdateAccountToDelete(val accountToDelete :AccountModel) : DeleteAccountAction()
     }
 
