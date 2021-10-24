@@ -2,7 +2,7 @@ package com.piconemarc.viewmodel.viewModel.actionDispatcher.popup
 
 import com.piconemarc.core.domain.interactor.account.DeleteAccountInteractor
 import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
-import com.piconemarc.viewmodel.ComponentActionDispatcher
+import com.piconemarc.viewmodel.ActionDispatcher
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.UiAction
 import com.piconemarc.viewmodel.viewModel.AppActions
@@ -18,12 +18,9 @@ class DeleteAccountPopUpActionDispatcher @Inject constructor(
     private val getAccountForIdInteractor: GetAccountForIdInteractor,
     private val deleteAccountInteractor: DeleteAccountInteractor
 
-) : ComponentActionDispatcher {
+) : ActionDispatcher {
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
-        updateState(
-            GlobalAction.UpdateDeleteAccountPopUpState(
-                action)
-        )
+        updateState(GlobalAction.UpdateDeleteAccountPopUpState(action))
         when (action) {
             is AppActions.DeleteAccountAction.InitPopUp -> {
                 scope.launch {

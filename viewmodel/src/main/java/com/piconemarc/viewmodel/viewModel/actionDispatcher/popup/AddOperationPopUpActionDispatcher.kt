@@ -7,7 +7,7 @@ import com.piconemarc.core.domain.interactor.account.UpdateAccountBalanceInterac
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
 import com.piconemarc.core.domain.interactor.operation.AddNewOperationInteractor
 import com.piconemarc.model.PAMIconButtons
-import com.piconemarc.viewmodel.ComponentActionDispatcher
+import com.piconemarc.viewmodel.ActionDispatcher
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.UiAction
 import com.piconemarc.viewmodel.viewModel.AppActions
@@ -15,7 +15,6 @@ import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,16 +26,11 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
     private val addNewOperationInteractor: AddNewOperationInteractor,
     private val updateAccountBalanceInteractor: UpdateAccountBalanceInteractor,
     private val getAccountForIdInteractor: GetAccountForIdInteractor
-) : ComponentActionDispatcher {
-
-    private var getAllCategoriesJob: Job? = null
-    private var addOperationPopUpAccountJob: Job? = null
+) : ActionDispatcher {
 
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
-        updateState(
-            GlobalAction.UpdateAddOperationPopUpState(action))
+        updateState(GlobalAction.UpdateAddOperationPopUpState(action))
         when (action) {
-
             is  AppActions.AddOperationPopUpAction.SelectOptionIcon -> {
                 updateState(
                     GlobalAction.UpdateAddOperationPopUpState(
@@ -59,7 +53,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
             }
 
             is AppActions.AddOperationPopUpAction.InitPopUp ->
-                getAllCategoriesJob = scope.launch {
+                scope.launch {
                     getAllCategoriesInteractor.getAllCategoriesToDataUiModelList().collect {
                         updateState(
                             GlobalAction.UpdateAddOperationPopUpState(
@@ -71,7 +65,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                 }
 
             is AppActions.AddOperationPopUpAction.ExpandTransferOption -> {
-                addOperationPopUpAccountJob = scope.launch {
+                 scope.launch {
                     getAllAccountsInteractor.getAllAccountsToPresentationDataModel()
                         .collect {
                             updateState(
@@ -88,11 +82,6 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                         AppSubscriber.AppUiState.myAccountDetailScreenUiState.accountName
                     )
                 ))
-            }
-
-            is AppActions.AddOperationPopUpAction.ClosePopUp -> {
-                addOperationPopUpAccountJob?.cancel()
-                getAllCategoriesJob?.cancel()
             }
             is AppActions.AddOperationPopUpAction.AddNewOperation -> {
 

@@ -26,7 +26,6 @@ fun PAMAddOperationPopUp(
     PAMBasePopUp(
         title = addOperationPopUpUiState.addPopUpTitle,
         onAcceptButtonClicked = {
-            Log.i("TAG", "PAMAddOperationPopUp: ${myAccountDetailScreenUiState.accountName.objectIdReference} ")
             viewModel.dispatchAction(
                 AppActions.AddOperationPopUpAction.AddNewOperation(
                     OperationModel(

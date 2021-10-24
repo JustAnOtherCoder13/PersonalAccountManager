@@ -4,7 +4,7 @@ import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
 import com.piconemarc.core.domain.interactor.account.UpdateAccountBalanceInteractor
 import com.piconemarc.core.domain.interactor.operation.DeleteOperationInteractor
 import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteractor
-import com.piconemarc.viewmodel.ComponentActionDispatcher
+import com.piconemarc.viewmodel.ActionDispatcher
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.UiAction
 import com.piconemarc.viewmodel.viewModel.AppActions
@@ -22,13 +22,9 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
     private val getAccountForIdInteractor: GetAccountForIdInteractor,
     private val updateAccountBalanceInteractor: UpdateAccountBalanceInteractor
 
-) : ComponentActionDispatcher {
+) : ActionDispatcher {
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
-        updateState(
-            GlobalAction.UpdateDeleteOperationPopUpState(
-                action
-            )
-        )
+        updateState(GlobalAction.UpdateDeleteOperationPopUpState(action))
         when (action) {
             is AppActions.DeleteOperationPopUpAction.InitPopUp -> {
                 updateState(

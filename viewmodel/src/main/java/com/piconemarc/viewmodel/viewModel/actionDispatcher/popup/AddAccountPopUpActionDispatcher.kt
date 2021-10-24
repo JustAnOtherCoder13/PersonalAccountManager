@@ -2,7 +2,7 @@ package com.piconemarc.viewmodel.viewModel.actionDispatcher.popup
 
 import com.piconemarc.core.domain.interactor.account.AddNewAccountInteractor
 import com.piconemarc.model.entity.AccountModel
-import com.piconemarc.viewmodel.ComponentActionDispatcher
+import com.piconemarc.viewmodel.ActionDispatcher
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.UiAction
 import com.piconemarc.viewmodel.viewModel.AppActions
@@ -16,14 +16,9 @@ import javax.inject.Inject
 class AddAccountPopUpActionDispatcher @Inject constructor(
     override val store: DefaultStore<GlobalVmState>,
     private val addNewAccountInteractor: AddNewAccountInteractor
-
-) : ComponentActionDispatcher {
+) : ActionDispatcher {
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
-        updateState(
-            GlobalAction.UpdateAddAccountPopUpState(
-                action
-            )
-        )
+        updateState(GlobalAction.UpdateAddAccountPopUpState(action))
         when (action) {
             is AppActions.AddAccountPopUpAction.AddNewAccount -> {
                 if (!AppSubscriber.AppUiState.addAccountPopUpUiState.isNameError)

@@ -3,14 +3,13 @@ package com.piconemarc.viewmodel.viewModel.actionDispatcher.screen
 import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
 import com.piconemarc.core.domain.interactor.operation.GetAllOperationsForAccountIdInteractor
 import com.piconemarc.model.entity.PresentationDataModel
-import com.piconemarc.viewmodel.ComponentActionDispatcher
+import com.piconemarc.viewmodel.ActionDispatcher
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.UiAction
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
@@ -20,14 +19,8 @@ class MyAccountDetailScreenActionDispatcher @Inject constructor(
     override val store: DefaultStore<GlobalVmState>,
     private val getAccountForIdInteractor :GetAccountForIdInteractor,
     private val getAllOperationsForAccountIdInteractor : GetAllOperationsForAccountIdInteractor
-): ComponentActionDispatcher  {
-
-    private var myAccountDetailScreenOperationsFlowJob: Job? = null
-    private var myAccountDetailScreenAccountFlowJob: Job? = null
-
+): ActionDispatcher  {
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
-        updateState(GlobalAction.UpdateMyAccountDetailScreenState(action))
-
         when (action) {
             is AppActions.MyAccountDetailScreenAction.InitScreen -> {
                 updateState(
@@ -36,7 +29,7 @@ class MyAccountDetailScreenActionDispatcher @Inject constructor(
                         com.piconemarc.model.R.string.detail
                     )
                 ))
-                myAccountDetailScreenAccountFlowJob = scope.launch {
+                scope.launch {
                     getAccountForIdInteractor.getAccountForIdFlow(action.selectedAccount.id)
                         .collect {
                             updateState(
@@ -58,7 +51,7 @@ class MyAccountDetailScreenActionDispatcher @Inject constructor(
                             ))
                         }
                 }
-                myAccountDetailScreenOperationsFlowJob = scope.launch {
+                scope.launch {
                     getAllOperationsForAccountIdInteractor.getAllOperationsForAccountId(
                         action.selectedAccount.id
                     ).collect {
@@ -94,10 +87,6 @@ class MyAccountDetailScreenActionDispatcher @Inject constructor(
                         )
                     }
                 }
-            }
-            is AppActions.MyAccountDetailScreenAction.CloseScreen -> {
-                myAccountDetailScreenOperationsFlowJob?.cancel()
-                myAccountDetailScreenAccountFlowJob?.cancel()
             }
         }
     }
