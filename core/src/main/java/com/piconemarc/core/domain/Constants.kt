@@ -1,6 +1,5 @@
 package com.piconemarc.core.domain
 
-import com.piconemarc.model.entity.PresentationDataModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -17,35 +16,35 @@ object Constants {
 
     val TODAY = Calendar.getInstance().time
 
-    val OPERATION_MODEL = PresentationDataModel(stringValue = "Operation")
-    val PAYMENT_MODEL = PresentationDataModel(stringValue = "Payment")
-    val TRANSFER_MODEL = PresentationDataModel(stringValue = "Transfer")
+    val OPERATION_MODEL =  "Operation"
+    val PAYMENT_MODEL =  "Payment"
+    val TRANSFER_MODEL =  "Transfer"
 
-    val CATEGORY_MODEL = PresentationDataModel(stringValue = "Category", objectIdReference = 1)
+    val CATEGORY_MODEL =  "Category"
 
-    val SENDER_ACCOUNT_MODEL = PresentationDataModel(stringValue = "Sender account")
-    val BENEFICIARY_ACCOUNT_MODEL = PresentationDataModel(stringValue = "Beneficiary account")
-
-
-
-    val YEAR_MODEL = PresentationDataModel(stringValue = "Year")
-    val MONTH_MODEL = PresentationDataModel(stringValue = "Month")
+    val SENDER_ACCOUNT_MODEL =  "Sender account"
+    val BENEFICIARY_ACCOUNT_MODEL =  "Beneficiary account"
 
 
-    val SELECTABLE_YEARS_LIST: List<PresentationDataModel> =
+
+    val YEAR_MODEL =  "Year"
+    val MONTH_MODEL =  "Month"
+
+
+    val SELECTABLE_YEARS_LIST: List<String> =
         mapFifteenNextYearToPresentationModelList()
 
-    private fun mapFifteenNextYearToPresentationModelList(): List<PresentationDataModel> {
-        val list: MutableList<PresentationDataModel> = mutableListOf()
+    private fun mapFifteenNextYearToPresentationModelList(): List<String> {
+        val list: MutableList<String> = mutableListOf()
         val actualYear: Int = Calendar.getInstance().get(Calendar.YEAR)
         for (i in actualYear..(actualYear + 15)) list.add(
-            PresentationDataModel(stringValue = i.toString())
+            i.toString()
         )
         return list
     }
 
-    val SELECTABLE_MONTHS_LIST : List<PresentationDataModel> =
-        DateFormatSymbols(Locale.FRENCH).months.toList().map { PresentationDataModel(stringValue = it )}
+    val SELECTABLE_MONTHS_LIST : List<String> =
+        DateFormatSymbols(Locale.FRENCH).months.toList()
 
     interface Interactor
 

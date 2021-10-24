@@ -54,7 +54,7 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
                     updateAccountBalanceInteractor.updateAccountBalanceOnDeleteOperation(
                         accountId = action.operationToDelete.accountId,
                         deletedOperationAMount = action.operationToDelete.amount,
-                        oldAccountBalance = AppSubscriber.AppUiState.myAccountDetailScreenUiState.accountBalance.stringValue.toDouble(),
+                        oldAccountBalance = AppSubscriber.AppUiState.myAccountDetailScreenUiState.accountBalance.toDouble(),
                     )
                 }
             }

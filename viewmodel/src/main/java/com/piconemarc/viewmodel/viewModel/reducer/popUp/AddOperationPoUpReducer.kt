@@ -2,7 +2,8 @@ package com.piconemarc.viewmodel.viewModel.reducer.popUp
 
 import com.piconemarc.core.domain.Constants
 import com.piconemarc.model.PAMIconButtons
-import com.piconemarc.model.entity.PresentationDataModel
+import com.piconemarc.model.entity.AccountModel
+import com.piconemarc.model.entity.CategoryModel
 import com.piconemarc.viewmodel.Reducer
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.ViewModelInnerStates
@@ -15,10 +16,10 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
             is AppActions.AddOperationPopUpAction.InitPopUp -> {
                 old.copy(
                     isPopUpExpanded = true,
-                    selectedCategory = Constants.CATEGORY_MODEL,
+                    selectedCategory = CategoryModel(),
                     addPopUpTitle = Constants.OPERATION_MODEL,
-                    operationName = PresentationDataModel(),
-                    operationAmount = PresentationDataModel(),
+                    operationName = "",
+                    operationAmount = "",
                     isAddOperation = true,
                     addPopUpOptionSelectedIcon = PAMIconButtons.Operation,
                     isAddOrMinusEnable = true,
@@ -78,8 +79,8 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
                 isTransferExpanded = true,
                 isRecurrentOptionExpanded = false,
                 addPopUpTitle = Constants.TRANSFER_MODEL,
-                senderAccount = Constants.SENDER_ACCOUNT_MODEL,
-                beneficiaryAccount = Constants.BENEFICIARY_ACCOUNT_MODEL,
+                senderAccount = AccountModel(name = Constants.SENDER_ACCOUNT_MODEL),
+                beneficiaryAccount = AccountModel(name = Constants.BENEFICIARY_ACCOUNT_MODEL),
                 isAddOrMinusEnable = false,
             )
             is AppActions.AddOperationPopUpAction.UpdateAccountList -> old.copy(
@@ -91,12 +92,12 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
             is AppActions.AddOperationPopUpAction.SelectEndDateYear -> {
                 old.copy(
                     endDateSelectedYear = action.selectedEndDateYear,
-                    isRecurrentEndDateError = AppSubscriber.AppUiState.addOperationPopUpUiState.enDateSelectedMonth.stringValue == "Month"
+                    isRecurrentEndDateError = AppSubscriber.AppUiState.addOperationPopUpUiState.enDateSelectedMonth == "Month"
                 )
             }
             is AppActions.AddOperationPopUpAction.SelectEndDateMonth -> old.copy(
                 enDateSelectedMonth = action.selectedEndDateMonth,
-                isRecurrentEndDateError = AppSubscriber.AppUiState.addOperationPopUpUiState.endDateSelectedYear.stringValue == "Year"
+                isRecurrentEndDateError = AppSubscriber.AppUiState.addOperationPopUpUiState.endDateSelectedYear == "Year"
             )
             is AppActions.AddOperationPopUpAction.SelectSenderAccount -> old.copy(
                 senderAccount = action.senderAccount
@@ -114,9 +115,9 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
                 isOperationNameError = action.operation.name.trim().isEmpty(),
                 isOperationAmountError = action.operation.amount == 0.0,
                 isSenderAccountError = AppSubscriber.AppUiState.addOperationPopUpUiState.addPopUpOptionSelectedIcon == PAMIconButtons.Transfer
-                        && AppSubscriber.AppUiState.addOperationPopUpUiState.senderAccount.stringValue == "Sender account" ,
+                        && AppSubscriber.AppUiState.addOperationPopUpUiState.senderAccount.name == "Sender account" ,
                 isBeneficiaryAccountError = AppSubscriber.AppUiState.addOperationPopUpUiState.addPopUpOptionSelectedIcon == PAMIconButtons.Transfer
-                        && AppSubscriber.AppUiState.addOperationPopUpUiState.beneficiaryAccount.stringValue == "Beneficiary account" ,
+                        && AppSubscriber.AppUiState.addOperationPopUpUiState.beneficiaryAccount.name == "Beneficiary account" ,
             )
 
         }

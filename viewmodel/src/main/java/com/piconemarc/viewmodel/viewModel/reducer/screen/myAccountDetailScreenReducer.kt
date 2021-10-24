@@ -24,7 +24,7 @@ internal val myAccountDetailScreenReducer: Reducer<ViewModelInnerStates.MyAccoun
                 accountMonthlyOperations = action.accountMonthlyOperations
             )
             is AppActions.MyAccountDetailScreenAction.UpdateAccountName -> old.copy(
-                accountName = action.accountName
+                selectedAccount = action.account
             )
         }
     }

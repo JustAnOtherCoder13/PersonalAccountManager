@@ -17,11 +17,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.OperationModel
-import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.theme.*
-import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.AppActions
+import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber
 import java.text.DateFormatSymbols
 import java.util.*
@@ -34,23 +33,12 @@ fun MyAccountBodyRecyclerView(viewModel: AppViewModel) {
     ) {
         items(AppSubscriber.AppUiState.myAccountScreenUiState.allAccounts) { account ->
             AccountPostIt(
-                accountName = PresentationDataModel(
-                    stringValue = account.name,
-                    objectIdReference = account.id
-                ),
-                onDeleteAccountButtonClicked = { accountName ->
+                account = account,
+                onDeleteAccountButtonClicked = { accountToDelete ->
                     viewModel.dispatchAction(
-                        AppActions.DeleteAccountAction.InitPopUp(accountName = accountName)
+                        AppActions.DeleteAccountAction.InitPopUp(accountToDelete = accountToDelete)
                     )
                 },
-                accountBalanceValue = PresentationDataModel(
-                    stringValue = account.accountBalance.toString(),
-                    objectIdReference = account.id
-                ),
-                accountRestValue = PresentationDataModel(
-                    stringValue = (account.accountOverdraft + (account.accountBalance)).toString(),
-                    objectIdReference = account.id
-                ),
                 onAccountClicked = { selectedAccount ->
                     viewModel.dispatchAction(
                         AppActions.MyAccountScreenAction.CloseScreen
@@ -58,8 +46,7 @@ fun MyAccountBodyRecyclerView(viewModel: AppViewModel) {
                     viewModel.dispatchAction(
                         AppActions.MyAccountDetailScreenAction.InitScreen(selectedAccount = selectedAccount)
                     )
-                },
-                selectedAccount = account
+                }
             )
         }
     }
@@ -222,7 +209,7 @@ private fun AccountDetailTitleAndDivider() {
 @Composable
 fun AccountDetailTitle(
     onBackIconClick: () -> Unit,
-    accountName: PresentationDataModel
+    accountName: String
 ) {
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -243,7 +230,7 @@ fun AccountDetailTitle(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = accountName.stringValue,
+                    text = accountName,
                     style = MaterialTheme.typography.h2
                 )
                 Text(

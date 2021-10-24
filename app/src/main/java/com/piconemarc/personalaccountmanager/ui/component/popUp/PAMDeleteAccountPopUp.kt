@@ -7,11 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMBaseDeletePopUp
 import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
-import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.AppActions
+import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.deleteAccountUiState
 
 @Composable
@@ -20,9 +19,9 @@ fun PAMDeleteAccountPopUp(
 ) {
 
     PAMBaseDeletePopUp(
-        deletePopUpTitle = PresentationDataModel("Delete Account"),
+        deletePopUpTitle = "Delete Account",
         onAcceptButtonClicked = { viewModel.dispatchAction(
-            AppActions.DeleteAccountAction.DeleteAccount(deleteAccountUiState.accountToDeleteName.objectIdReference)
+            AppActions.DeleteAccountAction.DeleteAccount(deleteAccountUiState.accountToDelete)
         ) },
         onDismiss = { viewModel.dispatchAction(
             AppActions.DeleteAccountAction.ClosePopUp
@@ -38,12 +37,12 @@ fun PAMDeleteAccountPopUp(
                 .height(100.dp)
         ) {
             Text(
-                text = deleteAccountUiState.accountToDeleteName.stringValue,
+                text = deleteAccountUiState.accountToDeleteName,
                 style = MaterialTheme.typography.h2,
                 modifier = Modifier.padding(vertical = LittleMarge)
             )
             Text(
-                text = deleteAccountUiState.accountToDeleteBalance.stringValue+" €",
+                text = deleteAccountUiState.accountToDeleteBalance+" €",
                 style = MaterialTheme.typography.body1,
                 modifier = Modifier.padding(vertical = LittleMarge)
             )

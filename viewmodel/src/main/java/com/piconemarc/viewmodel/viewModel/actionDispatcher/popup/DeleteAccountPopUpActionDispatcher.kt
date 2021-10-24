@@ -6,7 +6,6 @@ import com.piconemarc.viewmodel.ActionDispatcher
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.UiAction
 import com.piconemarc.viewmodel.viewModel.AppActions
-import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import kotlinx.coroutines.CoroutineScope
@@ -25,16 +24,17 @@ class DeleteAccountPopUpActionDispatcher @Inject constructor(
             is AppActions.DeleteAccountAction.InitPopUp -> {
                 scope.launch {
                     updateState(
+                        //todo no need to be in scope
                         GlobalAction.UpdateDeleteAccountPopUpState(
                         AppActions.DeleteAccountAction.UpdateAccountToDelete(
-                            getAccountForIdInteractor.getAccountForId(action.accountName.objectIdReference)
+                            action.accountToDelete
                         )
                     ))
                 }
             }
             is AppActions.DeleteAccountAction.DeleteAccount -> {
                 scope.launch {
-                    deleteAccountInteractor.deleteAccount(AppSubscriber.AppUiState.deleteAccountUiState.accountToDelete)
+                    deleteAccountInteractor.deleteAccount(action.accountToDelete)
                 }
             }
         }

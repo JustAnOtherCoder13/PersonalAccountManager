@@ -22,14 +22,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.piconemarc.model.PAMIconButtons
-import com.piconemarc.model.entity.PresentationDataModel
+import com.piconemarc.model.entity.AccountModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.animation.*
 import com.piconemarc.personalaccountmanager.ui.theme.*
 
 @Composable
 fun PAMBasePopUp(
-    title: PresentationDataModel,
+    title: String,
     onAcceptButtonClicked: () -> Unit,
     onDismiss: () -> Unit,
     isExpanded: Boolean,
@@ -75,10 +75,9 @@ fun PAMBasePopUp(
         }
 }
 
-
 @Composable
 fun PAMBaseDeletePopUp(
-    deletePopUpTitle: PresentationDataModel,
+    deletePopUpTitle: String,
     onAcceptButtonClicked: () -> Unit,
     onDismiss: () -> Unit,
     isExpanded: Boolean,
@@ -139,12 +138,12 @@ fun PAMAddOperationPopUpLeftSideMenuIconPanel(
 
 @Composable
 fun PAMBrownBackgroundTextFieldItem(
-    title: PresentationDataModel,
-    onTextChange: (text: PresentationDataModel) -> Unit,
-    textValue: PresentationDataModel,
+    title: String,
+    onTextChange: (text: String) -> Unit,
+    textValue: String,
     isPopUpExpanded : Boolean,
     isError : Boolean,
-    errorMsg : PresentationDataModel
+    errorMsg : String
 ) {
     val focusManager = LocalFocusManager.current
     if (!isPopUpExpanded) focusManager.clearFocus()
@@ -156,12 +155,12 @@ fun PAMBrownBackgroundTextFieldItem(
             shape = PopUpFieldBackgroundShape
         )) {
         TextField(
-            value = textValue.stringValue,
-            onValueChange = { onTextChange(textValue.copy(stringValue = it)) },
+            value = textValue,
+            onValueChange = { onTextChange(it) },
             textStyle = MaterialTheme.typography.body1.copy(
                 color = MaterialTheme.colors.onPrimary
             ),
-            label = { Text(text = title.stringValue) },
+            label = { Text(text = title) },
             colors = TextFieldDefaults.textFieldColors(
                 focusedLabelColor = MaterialTheme.colors.onPrimary,
                 unfocusedLabelColor = MaterialTheme.colors.onPrimary,
@@ -181,11 +180,11 @@ fun PAMBrownBackgroundTextFieldItem(
 @Composable
 fun ErrorMessage(
     isError: Boolean,
-    errorMsg: PresentationDataModel
+    errorMsg: String
 ) {
     if (isError) {
         Text(
-            text = errorMsg.stringValue,
+            text = errorMsg,
             color = MaterialTheme.colors.error,
             style = MaterialTheme.typography.caption,
             modifier = Modifier.padding(start = 16.dp).wrapContentHeight()
@@ -195,12 +194,12 @@ fun ErrorMessage(
 
 @Composable
 fun PAMBrownBackgroundAmountTextFieldItem(
-    title: PresentationDataModel,
-    onTextChange: (text: PresentationDataModel) -> Unit,
-    amountValue: PresentationDataModel,
+    title: String,
+    onTextChange: (text: String) -> Unit,
+    amountValue: String,
     isPopUpExpanded : Boolean,
     isError: Boolean,
-    errorMsg: PresentationDataModel
+    errorMsg: String
 ) {
     val focusManager = LocalFocusManager.current
     if (!isPopUpExpanded) focusManager.clearFocus()
@@ -214,10 +213,10 @@ fun PAMBrownBackgroundAmountTextFieldItem(
             )
     ) {
         TextField(
-            value = amountValue.stringValue,
-            onValueChange = { onTextChange(amountValue.copy(stringValue = it)) },
+            value = amountValue,
+            onValueChange = { onTextChange(it) },
             textStyle = MaterialTheme.typography.body1,
-            label = { Text(text = title.stringValue)  },
+            label = { Text(text = title)  },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Done
@@ -241,12 +240,12 @@ fun PAMPunctualOrRecurrentSwitchButton(
     isPaymentOptionExpanded: Boolean,
     onPunctualButtonSelected : ()-> Unit,
     onRecurrentButtonSelected : ()-> Unit,
-    endDateSelectedMonth : PresentationDataModel,
-    endDateSelectedYear : PresentationDataModel,
-    onMonthSelected: (month: PresentationDataModel) -> Unit,
-    onYearSelected: (year: PresentationDataModel) -> Unit,
-    selectableMonthList : List<PresentationDataModel>,
-    selectableYearList : List<PresentationDataModel>,
+    endDateSelectedMonth : String,
+    endDateSelectedYear : String,
+    onMonthSelected: (month: String) -> Unit,
+    onYearSelected: (year: String) -> Unit,
+    selectableMonthList : List<String>,
+    selectableYearList : List<String>,
     isRecurrentSwitchError: Boolean
 
 ) {
@@ -300,12 +299,12 @@ fun PAMPunctualOrRecurrentSwitchButton(
 @Composable
 fun PAMRecurrentOptionPanel(
     modifier: Modifier,
-    onMonthSelected: (month: PresentationDataModel) -> Unit,
-    onYearSelected: (year: PresentationDataModel) -> Unit,
-    selectedMonth: PresentationDataModel,
-    selectedYear: PresentationDataModel,
-    selectableMonthList : List<PresentationDataModel>,
-    selectableYearList : List<PresentationDataModel>,
+    onMonthSelected: (month: String) -> Unit,
+    onYearSelected: (year: String) -> Unit,
+    selectedMonth: String,
+    selectedYear: String,
+    selectableMonthList : List<String>,
+    selectableYearList : List<String>,
     isRecurrentSwitchError : Boolean
 ) {
     Column(
@@ -341,18 +340,19 @@ fun PAMRecurrentOptionPanel(
         }
         ErrorMessage(
             isError = isRecurrentSwitchError,
-            errorMsg =PresentationDataModel("Please, choose end date or recurrence be forever"))
+            errorMsg ="Please, choose end date or recurrence be forever"
+        )
     }
 }
 
 @Composable
 fun PAMTransferOptionPanel(
     isTransferOptionExpanded : Boolean,
-    senderAccountSelectedItem : PresentationDataModel,
-    allAccountsList : List<PresentationDataModel>,
-    beneficiaryAccountSelectedItem : PresentationDataModel,
-    onSenderAccountSelected : (senderAccount : PresentationDataModel) -> Unit,
-    onBeneficiaryAccountSelected : ( beneficiaryAccount : PresentationDataModel) -> Unit,
+    senderAccountSelectedItem : AccountModel,
+    allAccountsList : List<AccountModel>,
+    beneficiaryAccountSelectedItem : AccountModel,
+    onSenderAccountSelected : (senderAccount : AccountModel) -> Unit,
+    onBeneficiaryAccountSelected : ( beneficiaryAccount : AccountModel) -> Unit,
     isSenderAccountError : Boolean,
     isBeneficiaryAccountError : Boolean
 ) {
@@ -368,7 +368,7 @@ fun PAMTransferOptionPanel(
             itemList = allAccountsList,
             onItemSelected = onSenderAccountSelected,
             isError = isSenderAccountError ,
-            errorMessage = PresentationDataModel("Please select Sender account for transfer")
+            errorMessage = "Please select Sender account for transfer"
         )
 
         PAMBaseDropDownMenuWithBackground(
@@ -376,13 +376,13 @@ fun PAMTransferOptionPanel(
             itemList = allAccountsList,
             onItemSelected = onBeneficiaryAccountSelected,
             isError = isBeneficiaryAccountError,
-            errorMessage = PresentationDataModel("Please select Beneficiary account for transfer")
+            errorMessage = "Please select Beneficiary account for transfer"
         )
     }
 }
 
 @Composable
-fun PopUpTitle(title: PresentationDataModel) {
+fun PopUpTitle(title: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -392,7 +392,7 @@ fun PopUpTitle(title: PresentationDataModel) {
             )
     ) {
         Text(
-            text = title.stringValue,
+            text = title,
             color = MaterialTheme.colors.onPrimary,
             modifier = Modifier
                 .fillMaxWidth()

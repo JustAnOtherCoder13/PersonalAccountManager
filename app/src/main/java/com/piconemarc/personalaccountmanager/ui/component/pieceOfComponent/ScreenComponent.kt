@@ -21,13 +21,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.AccountModel
-import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.animation.PAMUiDataAnimations
 import com.piconemarc.personalaccountmanager.ui.animation.pAMInterlayerAnimation
 import com.piconemarc.personalaccountmanager.ui.theme.*
-import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.AppActions
+import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.baseAppScreenUiState
 
 @SuppressLint("ModifierParameter")
@@ -85,17 +84,14 @@ fun BaseScreen(
 
 @Composable
 fun AccountPostIt(
-    accountName: PresentationDataModel,
-    onDeleteAccountButtonClicked: (accountName: PresentationDataModel) -> Unit,
-    accountBalanceValue: PresentationDataModel,
-    accountRestValue: PresentationDataModel,
+    account: AccountModel,
+    onDeleteAccountButtonClicked: (account: AccountModel) -> Unit,
     onAccountClicked: (account: AccountModel) -> Unit,
-    selectedAccount : AccountModel
 ) {
     Box(modifier = Modifier
         .size(width = AccountPostItWidth, height = AccountPostItHeight)
         .padding(bottom = BigMarge)
-        .clickable { onAccountClicked(selectedAccount) }
+        .clickable { onAccountClicked(account) }
     ) {
         AccountPostItBackground(this)
         Column(
@@ -104,8 +100,8 @@ fun AccountPostIt(
                 .fillMaxWidth()
         ) {
             AccountPostItTitle(
-                accountName = accountName,
-                onDeleteAccountButtonClicked = { onDeleteAccountButtonClicked(accountName) }
+                account = account.name,
+                onDeleteAccountButtonClicked = { onDeleteAccountButtonClicked(account) }
             )
             Column(
                 modifier = Modifier
@@ -115,11 +111,11 @@ fun AccountPostIt(
             ) {
                 AccountPostItValue(
                     valueTitle = stringResource(R.string.balanceTitle),
-                    value = accountBalanceValue
+                    value = account.accountBalance.toString()
                 )
                 AccountPostItValue(
                     valueTitle = stringResource(R.string.restTitle),
-                    value = accountRestValue
+                    value = (account.accountOverdraft + (account.accountBalance)).toString()
                 )
             }
         }
@@ -129,7 +125,7 @@ fun AccountPostIt(
 @Composable
 private fun AccountPostItValue(
     valueTitle: String,
-    value: PresentationDataModel
+    value: String
 ) {
     Row(
         modifier = Modifier
@@ -141,7 +137,7 @@ private fun AccountPostItValue(
             style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.Bold)
         )
         Text(
-            text = value.stringValue,
+            text = value,
             style = MaterialTheme.typography.body1,
             modifier = Modifier.padding(start = LittleMarge)
         )
@@ -150,7 +146,7 @@ private fun AccountPostItValue(
 
 @Composable
 private fun AccountPostItTitle(
-    accountName: PresentationDataModel,
+    account: String,
     onDeleteAccountButtonClicked: () -> Unit
 ) {
     Row(
@@ -161,7 +157,7 @@ private fun AccountPostItTitle(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = accountName.stringValue,
+            text = account,
             style = MaterialTheme.typography.h3
         )
         IconButton(
@@ -370,9 +366,9 @@ private fun SheetHole() {
 
 @Composable
 fun PAMAppFooter(
-    footerAccountName: PresentationDataModel,
-    footerAccountBalance: PresentationDataModel,
-    footerAccountRest: PresentationDataModel
+    footerAccountName: String,
+    footerAccountBalance: String,
+    footerAccountRest: String
 ) {
     Column(
         modifier = Modifier
@@ -402,7 +398,7 @@ fun PAMAppFooter(
     ) {
         Row() {
             Text(
-                text = footerAccountName.stringValue,
+                text = footerAccountName,
                 style = MaterialTheme.typography.h2,
                 color = MaterialTheme.colors.onPrimary
             )
@@ -424,11 +420,11 @@ fun PAMAppFooter(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = stringResource(R.string.restTitle) + footerAccountRest.stringValue,
+                text = stringResource(R.string.restTitle) + footerAccountRest,
                 style = MaterialTheme.typography.body1
             )
             Text(
-                text = stringResource(R.string.balanceTitle) + footerAccountBalance.stringValue,
+                text = stringResource(R.string.balanceTitle) + footerAccountBalance,
                 style = MaterialTheme.typography.body1
             )
         }

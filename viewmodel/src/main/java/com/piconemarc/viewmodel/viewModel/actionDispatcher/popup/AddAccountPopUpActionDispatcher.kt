@@ -26,14 +26,14 @@ class AddAccountPopUpActionDispatcher @Inject constructor(
                         try {
                             addNewAccountInteractor.addNewAccount(
                                 AccountModel(
-                                    name = action.accountName.stringValue,
+                                    name = action.accountName,
                                     accountBalance = try {
-                                        action.accountBalance.stringValue.toDouble()
+                                        action.accountBalance.toDouble()
                                     } catch (e: NumberFormatException) {
                                         0.0
                                     },
                                     accountOverdraft = try {
-                                        action.accountOverdraft.stringValue.toDouble()
+                                        action.accountOverdraft.toDouble()
                                     } catch (e: NumberFormatException) {
                                         0.0
                                     }

@@ -8,17 +8,16 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMBaseDeletePopUp
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
-import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.AppActions
+import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.deleteOperationPopUpUiState
 
 @Composable
 fun PAMDeleteOperationPopUp(viewModel: AppViewModel) {
     PAMBaseDeletePopUp(
-        deletePopUpTitle = PresentationDataModel("Delete Operation"),
+        deletePopUpTitle = "Delete Operation",
         onAcceptButtonClicked = {
                                 viewModel.dispatchAction(
                                     AppActions.DeleteOperationPopUpAction.DeleteOperation(
