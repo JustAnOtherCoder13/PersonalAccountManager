@@ -39,7 +39,7 @@ class MyAccountDetailScreenActionDispatcher @Inject constructor(
 
                                 GlobalAction.UpdateMyAccountDetailScreenState(
                                 AppActions.MyAccountDetailScreenAction.UpdateAccountRest(
-                                        (it.accountOverdraft + it.accountBalance).toString(),
+                                        it.rest.toString(),
                                 )
                             ))
                         }
@@ -65,7 +65,7 @@ class MyAccountDetailScreenActionDispatcher @Inject constructor(
                         ),
                             GlobalAction.UpdateMyAccountDetailScreenState(
                             AppActions.MyAccountDetailScreenAction.UpdateAccountRest(
-                                    (action.selectedAccount.accountOverdraft + action.selectedAccount.accountBalance).toString()
+                                    action.selectedAccount.rest.toString()
 
                             )),
 

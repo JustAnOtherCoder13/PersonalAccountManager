@@ -31,7 +31,7 @@ internal val appBaseScreenReducer: Reducer<ViewModelInnerStates.BaseAppScreenVmS
         is AppActions.BaseAppScreenAction.UpdateFooterRest -> {
             var allAccountRest = 0.0
             action.allAccounts.forEach {
-                allAccountRest += (it.accountBalance + it.accountOverdraft)
+                allAccountRest += it.rest
             }
             old.copy(
                 footerRest = allAccountRest.toString()
