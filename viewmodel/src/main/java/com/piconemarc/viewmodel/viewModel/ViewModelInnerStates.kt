@@ -8,17 +8,6 @@ import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.viewmodel.VMState
 
 object ViewModelInnerStates {
-
-    data class GlobalVmState(
-        var baseAppScreenVmState: BaseAppScreenVmState,
-        var addOperationPopUpVMState: AddOperationPopUpVMState,
-        var deleteAccountPopUpVMState: DeleteAccountPopUpVMState,
-        var addAccountPopUpVMState: AddAccountPopUpVMState,
-        var myAccountScreenVmState: MyAccountScreenVMState,
-        var myAccountDetailScreenVMState: MyAccountDetailScreenVMState,
-        var deleteOperationPopUpVmState : DeleteOperationPopUpVMState
-    ) : VMState
-
     data class BaseAppScreenVmState(
         val selectedInterlayerButton: PAMIconButtons = PAMIconButtons.Home,
         val interLayerTitle: Int = com.piconemarc.model.R.string.myAccountsInterLayerTitle,
@@ -91,7 +80,4 @@ object ViewModelInnerStates {
         val isBalanceError: Boolean = true,
         val isOverdraftError: Boolean = true
     ) : VMState
-
-
-
 }

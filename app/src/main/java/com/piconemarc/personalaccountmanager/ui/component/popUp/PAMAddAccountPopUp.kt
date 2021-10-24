@@ -11,23 +11,23 @@ import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMBa
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMBrownBackgroundAmountTextFieldItem
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMBrownBackgroundTextFieldItem
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
-import com.piconemarc.viewmodel.viewModel.AppActionDispatcher
+import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.AppActions
-import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.addAccountPopUpUiState
+import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.addAccountPopUpUiState
 
 @Composable
-fun PAMAddAccountPopUp(actionDispatcher: AppActionDispatcher) {
+fun PAMAddAccountPopUp(viewModel: AppViewModel) {
     PAMBasePopUp(
         title = PresentationDataModel(stringResource(R.string.addAccountPopUpTitle)),
         onAcceptButtonClicked = {
-            actionDispatcher.dispatchAction(AppActions.AddAccountPopUpAction.AddNewAccount(
+            viewModel.dispatchAction(AppActions.AddAccountPopUpAction.AddNewAccount(
                 accountName = addAccountPopUpUiState.accountName,
                 accountBalance = addAccountPopUpUiState.accountBalance,
                 accountOverdraft = addAccountPopUpUiState.accountOverdraft
             ))
         },
         onDismiss = {
-                    actionDispatcher.dispatchAction(AppActions.AddAccountPopUpAction.ClosePopUp)
+                    viewModel.dispatchAction(AppActions.AddAccountPopUpAction.ClosePopUp)
                     },
         isExpanded = addAccountPopUpUiState.isPopUpExpanded
     ) {
@@ -35,7 +35,7 @@ fun PAMAddAccountPopUp(actionDispatcher: AppActionDispatcher) {
             PAMBrownBackgroundTextFieldItem(
                 title = PresentationDataModel(stringResource(R.string.accountNameTitle)),
                 onTextChange = { accountName ->
-                    actionDispatcher.dispatchAction(
+                    viewModel.dispatchAction(
                         AppActions.AddAccountPopUpAction.FillAccountName(accountName = accountName)
                     )
                 },
@@ -47,7 +47,7 @@ fun PAMAddAccountPopUp(actionDispatcher: AppActionDispatcher) {
             PAMBrownBackgroundAmountTextFieldItem(
                 title = PresentationDataModel(stringResource(R.string.initialBalanceTitle)),
                 onTextChange = { accountBalance ->
-                    actionDispatcher.dispatchAction(
+                    viewModel.dispatchAction(
                         AppActions.AddAccountPopUpAction.FillAccountBalance(accountBalance = accountBalance)
                     )
                 },
@@ -59,7 +59,7 @@ fun PAMAddAccountPopUp(actionDispatcher: AppActionDispatcher) {
             PAMBrownBackgroundAmountTextFieldItem(
                 title = PresentationDataModel(stringResource(R.string.overdraftTitle)),
                 onTextChange = { accountOverdraft ->
-                    actionDispatcher.dispatchAction(
+                    viewModel.dispatchAction(
                         AppActions.AddAccountPopUpAction.FillAccountOverdraft(accountOverdraft = accountOverdraft)
                     )
                 },

@@ -1,7 +1,7 @@
 package com.piconemarc.viewmodel
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
+import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import kotlinx.coroutines.CoroutineScope
 
 
@@ -39,14 +39,16 @@ class DefaultStore<S : VMState>(
     override fun remove(subscriber: StoreSubscriber<S>): Boolean = subscribers.remove(subscriber)
 }
 
-abstract class ActionDispatcher<A : UiAction, S : VMState> : ViewModel(){
+interface ActionDispatcher {
 
-    val scope: CoroutineScope = viewModelScope
-    abstract val store: DefaultStore<S>
-    abstract fun dispatchAction(action: A)
+    val store: DefaultStore<GlobalVmState>
 
-    fun addSubscriber() = store.add(subscriber)
-    fun removeSubscriber() = store.remove(subscriber)
+    fun dispatchAction(action: UiAction, scope: CoroutineScope)
 
-    abstract val subscriber: StoreSubscriber<S>
+    fun updateState(vararg action: GlobalAction) {
+        action.forEach {
+            store.dispatch(it)
+        }
+    }
+
 }

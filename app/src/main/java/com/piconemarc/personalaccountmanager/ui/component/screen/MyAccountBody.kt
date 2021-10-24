@@ -11,28 +11,28 @@ import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.*
 import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
 import com.piconemarc.personalaccountmanager.ui.theme.ThinBorder
-import com.piconemarc.viewmodel.viewModel.AppActionDispatcher
+import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.AppActions
-import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.myAccountDetailScreenUiState
-import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.myAccountScreenUiState
+import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.myAccountDetailScreenUiState
+import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.myAccountScreenUiState
 
 @Composable
 fun MyAccountsSheet(
-    actionDispatcher: AppActionDispatcher,
+    viewModel: AppViewModel,
 ) {
-    if (myAccountScreenUiState.isVisible) MyAccountBody(actionDispatcher)
-    if (myAccountDetailScreenUiState.isVisible) MyAccountDetailBody(actionDispatcher)
+    if (myAccountScreenUiState.isVisible) MyAccountBody(viewModel)
+    if (myAccountDetailScreenUiState.isVisible) MyAccountDetailBody(viewModel)
 }
 
 
 
 @Composable
-private fun MyAccountBody(actionDispatcher: AppActionDispatcher) {
+private fun MyAccountBody(viewModel: AppViewModel) {
     VerticalDispositionSheet(
-        body = { MyAccountBodyRecyclerView(actionDispatcher) },
+        body = { MyAccountBodyRecyclerView(viewModel) },
         footer = {
             PAMAddButton(onAddButtonClicked = {
-                actionDispatcher.dispatchAction(
+                viewModel.dispatchAction(
                     AppActions.AddAccountPopUpAction.InitPopUp
                 )
             })
@@ -43,14 +43,14 @@ private fun MyAccountBody(actionDispatcher: AppActionDispatcher) {
 
 @Composable
 fun MyAccountDetailBody(
-    actionDispatcher: AppActionDispatcher
+    viewModel: AppViewModel
 ) {
     VerticalDispositionSheet(
         header = {
             AccountDetailTitle(
                 onBackIconClick = {
-                    actionDispatcher.dispatchAction(AppActions.MyAccountDetailScreenAction.CloseScreen)
-                    actionDispatcher.dispatchAction(AppActions.MyAccountScreenAction.InitScreen)
+                    viewModel.dispatchAction(AppActions.MyAccountDetailScreenAction.CloseScreen)
+                    viewModel.dispatchAction(AppActions.MyAccountScreenAction.InitScreen)
                 },
                 accountName = myAccountDetailScreenUiState.accountName
             )
@@ -59,7 +59,7 @@ fun MyAccountDetailBody(
             AccountDetailSheetRecyclerView(
                 allOperations = myAccountDetailScreenUiState.accountMonthlyOperations,
                 onDeleteItemButtonCLick = {
-                    actionDispatcher.dispatchAction(
+                    viewModel.dispatchAction(
                         AppActions.DeleteOperationPopUpAction.InitPopUp(it)
                     )
                 },
@@ -70,7 +70,7 @@ fun MyAccountDetailBody(
         },
         footer = {
             PAMAddButton(onAddButtonClicked = {
-                actionDispatcher.dispatchAction(
+                viewModel.dispatchAction(
                     AppActions.AddOperationPopUpAction.InitPopUp
                 )
             })

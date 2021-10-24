@@ -11,23 +11,23 @@ import androidx.compose.ui.Modifier
 import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMBaseDeletePopUp
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
-import com.piconemarc.viewmodel.viewModel.AppActionDispatcher
+import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.AppActions
-import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.deleteOperationPopUpUiState
+import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.deleteOperationPopUpUiState
 
 @Composable
-fun PAMDeleteOperationPopUp(actionDispatcher: AppActionDispatcher) {
+fun PAMDeleteOperationPopUp(viewModel: AppViewModel) {
     PAMBaseDeletePopUp(
         deletePopUpTitle = PresentationDataModel("Delete Operation"),
         onAcceptButtonClicked = {
-                                actionDispatcher.dispatchAction(
+                                viewModel.dispatchAction(
                                     AppActions.DeleteOperationPopUpAction.DeleteOperation(
                                        deleteOperationPopUpUiState.operationToDelete
                                     )
                                 )
         },
         onDismiss = {
-                    actionDispatcher.dispatchAction(
+                    viewModel.dispatchAction(
                         AppActions.DeleteOperationPopUpAction.ClosePopUp
                     )
         },

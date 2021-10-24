@@ -1,17 +1,50 @@
 package com.piconemarc.viewmodel.di
 
 import com.piconemarc.viewmodel.DefaultStore
-import com.piconemarc.viewmodel.viewModel.AppReducers
 import com.piconemarc.viewmodel.viewModel.ViewModelInnerStates
+import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
+import com.piconemarc.viewmodel.viewModel.reducer.appReducer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
 class GlobalReducerModule {
 
+
+    @Singleton
+    @Provides
+    fun provideGlobalStore(state: GlobalVmState): DefaultStore<GlobalVmState> {
+        return DefaultStore(
+            initialState = state,
+            reducer = appReducer
+        )
+    }
+
+    @Provides
+    fun provideGlobalState(
+        baseAppScreenVmState: ViewModelInnerStates.BaseAppScreenVmState,
+        addOperationPopUpVMState: ViewModelInnerStates.AddOperationPopUpVMState,
+        deleteAccountPopUpVMState: ViewModelInnerStates.DeleteAccountPopUpVMState,
+        addAccountPopUpVMState: ViewModelInnerStates.AddAccountPopUpVMState,
+        myAccountDetailScreenVMState: ViewModelInnerStates.MyAccountDetailScreenVMState,
+        myAccountScreenVMState: ViewModelInnerStates.MyAccountScreenVMState,
+        deleteOperationPopUpVMState: ViewModelInnerStates.DeleteOperationPopUpVMState
+    ): GlobalVmState =
+        GlobalVmState(
+            baseAppScreenVmState = baseAppScreenVmState,
+            addOperationPopUpVMState = addOperationPopUpVMState,
+            deleteAccountPopUpVMState = deleteAccountPopUpVMState,
+            addAccountPopUpVMState = addAccountPopUpVMState,
+            myAccountDetailScreenVMState = myAccountDetailScreenVMState,
+            myAccountScreenVmState = myAccountScreenVMState,
+            deleteOperationPopUpVmState = deleteOperationPopUpVMState
+        )
+
+    //Provided states, provide each new state and and it to provideGlobalState
     @Provides
     fun provideAddOperationState(): ViewModelInnerStates.AddOperationPopUpVMState =
         ViewModelInnerStates.AddOperationPopUpVMState()
@@ -38,34 +71,5 @@ class GlobalReducerModule {
     @Provides
     fun provideDeleteOperationPopUpVmState() : ViewModelInnerStates.DeleteOperationPopUpVMState =
         ViewModelInnerStates.DeleteOperationPopUpVMState()
-
-    @Provides
-    fun provideGlobalState(
-        baseAppScreenVmState: ViewModelInnerStates.BaseAppScreenVmState,
-        addOperationPopUpVMState: ViewModelInnerStates.AddOperationPopUpVMState,
-        deleteAccountPopUpVMState: ViewModelInnerStates.DeleteAccountPopUpVMState,
-        addAccountPopUpVMState: ViewModelInnerStates.AddAccountPopUpVMState,
-        myAccountDetailScreenVMState: ViewModelInnerStates.MyAccountDetailScreenVMState,
-        myAccountScreenVMState: ViewModelInnerStates.MyAccountScreenVMState,
-        deleteOperationPopUpVMState: ViewModelInnerStates.DeleteOperationPopUpVMState
-    ): ViewModelInnerStates.GlobalVmState =
-        ViewModelInnerStates.GlobalVmState(
-            baseAppScreenVmState = baseAppScreenVmState,
-            addOperationPopUpVMState = addOperationPopUpVMState,
-            deleteAccountPopUpVMState = deleteAccountPopUpVMState,
-            addAccountPopUpVMState = addAccountPopUpVMState,
-            myAccountDetailScreenVMState = myAccountDetailScreenVMState,
-            myAccountScreenVmState = myAccountScreenVMState,
-            deleteOperationPopUpVmState = deleteOperationPopUpVMState
-        )
-
-
-    @Provides
-    fun provideGlobalStore(state: ViewModelInnerStates.GlobalVmState): DefaultStore<ViewModelInnerStates.GlobalVmState> {
-        return DefaultStore(
-            initialState = state,
-            reducer = AppReducers.globalReducer
-        )
-    }
 
 }

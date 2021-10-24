@@ -20,26 +20,26 @@ import com.piconemarc.model.entity.OperationModel
 import com.piconemarc.model.entity.PresentationDataModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.theme.*
-import com.piconemarc.viewmodel.viewModel.AppActionDispatcher
+import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.AppActions
-import com.piconemarc.viewmodel.viewModel.AppSubscriber
+import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber
 import java.text.DateFormatSymbols
 import java.util.*
 
 @Composable
-fun MyAccountBodyRecyclerView(actionDispatcher: AppActionDispatcher) {
+fun MyAccountBodyRecyclerView(viewModel: AppViewModel) {
     LazyColumn(
         modifier = Modifier
             .padding(bottom = LittleMarge)
     ) {
-        items(AppSubscriber.GlobalUiState.myAccountScreenUiState.allAccounts) { account ->
+        items(AppSubscriber.AppUiState.myAccountScreenUiState.allAccounts) { account ->
             AccountPostIt(
                 accountName = PresentationDataModel(
                     stringValue = account.name,
                     objectIdReference = account.id
                 ),
                 onDeleteAccountButtonClicked = { accountName ->
-                    actionDispatcher.dispatchAction(
+                    viewModel.dispatchAction(
                         AppActions.DeleteAccountAction.InitPopUp(accountName = accountName)
                     )
                 },
@@ -52,10 +52,10 @@ fun MyAccountBodyRecyclerView(actionDispatcher: AppActionDispatcher) {
                     objectIdReference = account.id
                 ),
                 onAccountClicked = { selectedAccount ->
-                    actionDispatcher.dispatchAction(
+                    viewModel.dispatchAction(
                         AppActions.MyAccountScreenAction.CloseScreen
                     )
-                    actionDispatcher.dispatchAction(
+                    viewModel.dispatchAction(
                         AppActions.MyAccountDetailScreenAction.InitScreen(selectedAccount = selectedAccount)
                     )
                 },

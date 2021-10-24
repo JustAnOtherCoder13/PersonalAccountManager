@@ -10,29 +10,29 @@ import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMAddAccountPop
 import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMAddOperationPopUp
 import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMDeleteAccountPopUp
 import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMDeleteOperationPopUp
-import com.piconemarc.viewmodel.viewModel.AppActionDispatcher
+import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.AppActions
-import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.baseAppScreenUiState
+import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.baseAppScreenUiState
 
 @Composable
 fun PAMMainScreen(
-    actionDispatcher: AppActionDispatcher,
+    viewModel: AppViewModel,
 ) {
-    actionDispatcher.dispatchAction(AppActions.BaseAppScreenAction.InitScreen)
-    actionDispatcher.dispatchAction(AppActions.MyAccountScreenAction.InitScreen)
+    viewModel.dispatchAction(AppActions.BaseAppScreenAction.InitScreen)
+    viewModel.dispatchAction(AppActions.MyAccountScreenAction.InitScreen)
 
     BaseScreen(
         header = { PAMAppHeader() },
         body = {
             PAMAppBody(
-                actionDispatcher = actionDispatcher,
+                viewModel = viewModel,
                 body = {
                     when (baseAppScreenUiState.selectedInterlayerButton) {
                         is PAMIconButtons.Payment -> {
                         }
                         is PAMIconButtons.Chart -> {
                         }
-                        else -> { MyAccountsSheet(actionDispatcher = actionDispatcher) }
+                        else -> { MyAccountsSheet(viewModel = viewModel) }
                     }
                 }
             )
@@ -45,8 +45,8 @@ fun PAMMainScreen(
             )
         }
     )
-    PAMAddOperationPopUp(actionDispatcher = actionDispatcher)
-    PAMDeleteAccountPopUp(actionDispatcher = actionDispatcher)
-    PAMAddAccountPopUp(actionDispatcher = actionDispatcher)
-    PAMDeleteOperationPopUp(actionDispatcher = actionDispatcher)
+    PAMAddOperationPopUp(viewModel = viewModel)
+    PAMDeleteAccountPopUp(viewModel = viewModel)
+    PAMAddAccountPopUp(viewModel = viewModel)
+    PAMDeleteOperationPopUp(viewModel = viewModel)
 }
