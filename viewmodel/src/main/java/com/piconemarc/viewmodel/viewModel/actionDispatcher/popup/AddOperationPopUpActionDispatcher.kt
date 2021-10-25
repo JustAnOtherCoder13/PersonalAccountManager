@@ -1,5 +1,6 @@
 package com.piconemarc.viewmodel.viewModel.actionDispatcher.popup
 
+import android.util.Log
 import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.core.domain.interactor.account.UpdateAccountBalanceInteractor
@@ -11,11 +12,13 @@ import com.piconemarc.viewmodel.UiAction
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.addOperationPopUpUiState
+import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.myAccountDetailScreenUiState
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import javax.inject.Inject
 
 class AddOperationPopUpActionDispatcher @Inject constructor(
@@ -99,7 +102,20 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                     && !addOperationPopUpUiState.isOperationAmountError
                 ){
                     scope.launch {
-                        addNewOperationInteractor.addNewOperation(action.operation)
+                        try {
+                            addNewOperationInteractor.addNewOperation(action.operation)
+                            updateAccountBalanceInteractor.updateAccountBalance(
+                                myAccountDetailScreenUiState.selectedAccount.updateAccountBalance(action.operation)
+                            )
+                            updateState(
+                                GlobalAction.UpdateAddOperationPopUpState(
+                                    AppActions.AddOperationPopUpAction.ClosePopUp
+                                )
+                            )
+                        }catch (e:Exception){
+                            Log.e("TAG", "dispatchAction: ", e)
+                        }
+
                     }
 
                 }
@@ -147,11 +163,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                             updateAccountBalanceInteractor.updateAccountBalance(
                                 updatedAccount = senderAccount
                             )
-                            updateState(
-                                GlobalAction.UpdateAddOperationPopUpState(
-                                    AppActions.AddOperationPopUpAction.ClosePopUp
-                                )
-                            )
+
                         } catch (e: java.lang.Exception) {
                             Log.e("TAG", "dispatchAction: ", e)
                         }

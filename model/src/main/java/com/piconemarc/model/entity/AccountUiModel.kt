@@ -9,11 +9,9 @@ data class AccountUiModel(
 
     val rest: Double = accountOverdraft + accountBalance
 
-    fun minusOperation(operationAmount: Double) {
-        this.accountBalance -= operationAmount
-    }
-
-    fun addOperation(operationAmount: Double) {
-        this.accountBalance += operationAmount
+    fun updateAccountBalance(operation : OperationUiModel):AccountUiModel{
+        return this.copy(
+            accountBalance = this.accountBalance+operation.amount
+        )
     }
 }

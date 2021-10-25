@@ -26,7 +26,7 @@ private val OPERATIONS : List<OperationDTO> = listOf(
     }
 
 private val CATEGORIES: List<CategoryDTO> = listOf(
-    CategoryDTO(),
+    CategoryDTO(id=1, name = "None"),
     CategoryDTO(id = 2,name = "cat2"),
     CategoryDTO(id = 3,name = "cat3")
 )

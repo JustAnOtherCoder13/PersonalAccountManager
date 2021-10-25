@@ -8,6 +8,7 @@ import com.piconemarc.viewmodel.Reducer
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.ViewModelInnerStates
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber
+import java.lang.NumberFormatException
 
 internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperationPopUpVMState> =
     { old, action ->
@@ -84,7 +85,12 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
                 allAccountUis = action.accountUiList
             )
             is AppActions.AddOperationPopUpAction.FillOperationAmount -> old.copy(
-                operationAmount = action.amount
+                operationAmount = action.amount,
+                isAddOperation = try {
+                    action.amount.toDouble() >= 0
+                }catch (e:NumberFormatException){
+                    action.amount != "-"
+                }
             )
             is AppActions.AddOperationPopUpAction.SelectEndDateYear -> {
                 old.copy(
@@ -106,7 +112,8 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
                 //addPopUpOptionSelectedIcon = action.selectedIcon
             )
             is AppActions.AddOperationPopUpAction.SelectAddOrMinus -> old.copy(
-                isAddOperation = action.isAddOperation
+                isAddOperation = action.isAddOperation,
+                operationAmount =if (!action.isAddOperation) "-" else ""
             )
             is AppActions.AddOperationPopUpAction.AddNewOperation -> old.copy(
                 isOperationNameError = action.operation.name.trim().isEmpty(),

@@ -51,9 +51,11 @@ class MyAccountDetailScreenActionDispatcher @Inject constructor(
                 scope.launch {
                     getAccountForIdInteractor.getAccountForIdFlow(action.selectedAccountUi.id)
                         .collect {
-                            GlobalAction.UpdateMyAccountDetailScreenState(
-                                AppActions.MyAccountDetailScreenAction.UpdateSelectedAccount(
-                                    action.selectedAccountUi
+                            updateState(
+                                GlobalAction.UpdateMyAccountDetailScreenState(
+                                    AppActions.MyAccountDetailScreenAction.UpdateSelectedAccount(
+                                        it
+                                    )
                                 )
                             )
                         }
