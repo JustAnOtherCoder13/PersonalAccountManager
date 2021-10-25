@@ -25,4 +25,8 @@ class OperationRepository @Inject constructor(private val operationDaoImpl: Oper
     suspend fun getOperationForAccountIdWithOperationId(operationId: Long, accountId: Long) :OperationDTO {
         return operationDaoImpl.getOperationForAccountIdWithOperationId(operationId,accountId)
     }
+
+    suspend fun updateOperationPaymentId(paymentId: Long, operationId: Long) {
+        operationDaoImpl.updateOperationPaymentId(paymentId, operationId)
+    }
 }

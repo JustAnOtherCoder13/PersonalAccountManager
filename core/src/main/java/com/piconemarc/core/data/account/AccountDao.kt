@@ -27,6 +27,6 @@ interface AccountDao {
     @Delete
     suspend fun deleteAccount(accountDTO: AccountDTO)
 
-    @Query("UPDATE account_table SET accountBalance = :accountBalance WHERE id = :accountId")
+    @Query("UPDATE $ACCOUNT_TABLE SET accountBalance = :accountBalance WHERE id = :accountId")
     suspend fun updateAccountBalance(accountId : Long, accountBalance : Double)
 }

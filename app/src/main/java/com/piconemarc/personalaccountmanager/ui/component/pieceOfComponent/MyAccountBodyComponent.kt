@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.OperationUiModel
 import com.piconemarc.personalaccountmanager.R
+import com.piconemarc.personalaccountmanager.toStringWithTwoDec
 import com.piconemarc.personalaccountmanager.ui.theme.*
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.AppViewModel
@@ -33,7 +34,7 @@ fun MyAccountBodyRecyclerView(viewModel: AppViewModel) {
     ) {
         items(AppSubscriber.AppUiState.myAccountScreenUiState.allAccountUis) { account ->
             AccountPostIt(
-                accountUi = account,
+                account = account,
                 onDeleteAccountButtonClicked = { accountToDelete ->
                     viewModel.dispatchAction(
                         AppActions.DeleteAccountAction.InitPopUp(accountUiToDelete = accountToDelete)
@@ -153,7 +154,7 @@ private fun OperationItem(
             style = MaterialTheme.typography.body1
         )
         Text(
-            text = if (operation.amount > 0) "+${operation.amount}" else operation.amount.toString(),
+            text = if (operation.amount > 0) "+${operation.amount.toStringWithTwoDec()}" else operation.amount.toStringWithTwoDec(),
             modifier = Modifier
                 .padding(start = LittleMarge)
                 .weight(0.9f),

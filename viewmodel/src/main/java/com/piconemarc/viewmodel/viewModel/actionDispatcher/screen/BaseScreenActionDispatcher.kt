@@ -24,6 +24,9 @@ class BaseScreenActionDispatcher @Inject constructor(
         updateState(GlobalAction.UpdateBaseAppScreenVmState(action))
         when (action) {
             is BaseAppScreenAction.InitScreen -> {
+                //todo check date, if on first of month for each payment add operation if end date not passed or null
+                // else delete payment
+                // finds a way to actualize only one time
                 getAllAccountsJob = scope.launch {
                     getAllAccountsInteractor.getAllAccounts().collect { allAccounts ->
                         updateState(

@@ -2,6 +2,7 @@ package com.piconemarc.personalaccountmanager.ui.component.screen
 
 import androidx.compose.runtime.Composable
 import com.piconemarc.model.PAMIconButtons
+import com.piconemarc.personalaccountmanager.toStringWithTwoDec
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.BaseScreen
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMAppBody
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMAppFooter
@@ -39,9 +40,9 @@ fun PAMMainScreen(
         },
         footer = {
             PAMAppFooter(
-                footerAccountBalance = baseAppScreenUiState.footerBalance,
+                footerAccountBalance = baseAppScreenUiState.footerBalance.toStringWithTwoDec(),
                 footerAccountName = baseAppScreenUiState.footerTitle,
-                footerAccountRest = baseAppScreenUiState.footerRest
+                footerAccountRest = baseAppScreenUiState.footerRest.toStringWithTwoDec()
             )
         }
     )

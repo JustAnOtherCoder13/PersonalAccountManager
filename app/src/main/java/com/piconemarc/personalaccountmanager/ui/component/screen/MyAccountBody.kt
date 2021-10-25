@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.piconemarc.personalaccountmanager.toStringWithTwoDec
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.*
 import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
@@ -63,8 +64,8 @@ fun MyAccountDetailBody(
                         AppActions.DeleteOperationPopUpAction.InitPopUp(it)
                     )
                 },
-                accountBalance = myAccountDetailScreenUiState.selectedAccount.accountBalance.toString(),
-                accountRest = myAccountDetailScreenUiState.selectedAccount.rest.toString(),
+                accountBalance = myAccountDetailScreenUiState.selectedAccount.accountBalance.toStringWithTwoDec(),
+                accountRest = myAccountDetailScreenUiState.selectedAccount.rest.toStringWithTwoDec(),
             )
 
         },
@@ -91,3 +92,4 @@ fun MyAccountDetailBody(
             )
     )
 }
+

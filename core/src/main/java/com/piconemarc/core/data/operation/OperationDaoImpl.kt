@@ -28,4 +28,8 @@ class OperationDaoImpl @Inject constructor( pamDatabase: PAMDatabase) : Operatio
     override suspend fun deleteOperation(operationDTO: OperationDTO){
         operationDao.deleteOperation(operationDTO)
     }
+
+    override suspend fun updateOperationPaymentId(paymentId: Long, operationId: Long) {
+        operationDao.updateOperationPaymentId(paymentId, operationId)
+    }
 }

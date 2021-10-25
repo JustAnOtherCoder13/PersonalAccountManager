@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.AccountUiModel
 import com.piconemarc.personalaccountmanager.R
+import com.piconemarc.personalaccountmanager.toStringWithTwoDec
 import com.piconemarc.personalaccountmanager.ui.animation.PAMUiDataAnimations
 import com.piconemarc.personalaccountmanager.ui.animation.pAMInterlayerAnimation
 import com.piconemarc.personalaccountmanager.ui.theme.*
@@ -84,14 +85,14 @@ fun BaseScreen(
 
 @Composable
 fun AccountPostIt(
-    accountUi: AccountUiModel,
+    account: AccountUiModel,
     onDeleteAccountButtonClicked: (accountUi: AccountUiModel) -> Unit,
     onAccountClicked: (accountUi: AccountUiModel) -> Unit,
 ) {
     Box(modifier = Modifier
         .size(width = AccountPostItWidth, height = AccountPostItHeight)
         .padding(bottom = BigMarge)
-        .clickable { onAccountClicked(accountUi) }
+        .clickable { onAccountClicked(account) }
     ) {
         AccountPostItBackground(this)
         Column(
@@ -100,8 +101,8 @@ fun AccountPostIt(
                 .fillMaxWidth()
         ) {
             AccountPostItTitle(
-                account = accountUi.name,
-                onDeleteAccountButtonClicked = { onDeleteAccountButtonClicked(accountUi) }
+                account = account.name,
+                onDeleteAccountButtonClicked = { onDeleteAccountButtonClicked(account) }
             )
             Column(
                 modifier = Modifier
@@ -111,11 +112,11 @@ fun AccountPostIt(
             ) {
                 AccountPostItValue(
                     valueTitle = stringResource(R.string.balanceTitle),
-                    value = accountUi.accountBalance.toString()
+                    value = account.accountBalance.toStringWithTwoDec()
                 )
                 AccountPostItValue(
                     valueTitle = stringResource(R.string.restTitle),
-                    value = accountUi.rest.toString()
+                    value = account.rest.toStringWithTwoDec()
                 )
             }
         }

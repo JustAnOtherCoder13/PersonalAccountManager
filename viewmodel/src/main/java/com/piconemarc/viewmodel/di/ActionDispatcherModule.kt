@@ -2,10 +2,8 @@ package com.piconemarc.viewmodel.di
 
 import com.piconemarc.core.domain.interactor.account.*
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
-import com.piconemarc.core.domain.interactor.operation.AddNewOperationInteractor
-import com.piconemarc.core.domain.interactor.operation.DeleteOperationInteractor
-import com.piconemarc.core.domain.interactor.operation.GetAllOperationsForAccountIdInteractor
-import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteractor
+import com.piconemarc.core.domain.interactor.operation.*
+import com.piconemarc.core.domain.interactor.payment.AddNewPaymentInteractor
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddAccountPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddOperationPopUpActionDispatcher
@@ -69,6 +67,8 @@ class ActionDispatcherModule {
         getAllAccountsInteractor: GetAllAccountsInteractor,
         getAllCategoriesInteractor: GetAllCategoriesInteractor,
         updateAccountBalanceInteractor: UpdateAccountBalanceInteractor,
+        addNewPaymentInteractor: AddNewPaymentInteractor,
+        updateOperationPaymentIdInteractor: UpdateOperationPaymentIdInteractor
     ):AddOperationPopUpActionDispatcher{
         return AddOperationPopUpActionDispatcher(
             store = globalStore,
@@ -76,7 +76,9 @@ class ActionDispatcherModule {
             getAccountForIdInteractor = getAccountForIdInteractor,
             getAllAccountsInteractor = getAllAccountsInteractor,
             getAllCategoriesInteractor = getAllCategoriesInteractor,
-            updateAccountBalanceInteractor = updateAccountBalanceInteractor
+            updateAccountBalanceInteractor = updateAccountBalanceInteractor,
+            addNewPaymentInteractor = addNewPaymentInteractor,
+            updateOperationPaymentIdInteractor = updateOperationPaymentIdInteractor
         )
     }
 

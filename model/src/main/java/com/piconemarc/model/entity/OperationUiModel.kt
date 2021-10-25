@@ -9,7 +9,8 @@ open class OperationUiModel(
     open val amount : Double = 0.0,
     open val categoryId : Long = 1,
     open val emitDate : Date = Calendar.getInstance().time,
-    open var isAddOperation : Boolean = false
+    open var isAddOperation : Boolean = false,
+    var paymentId : Long? = null
 ): BaseUiModel(){
     fun deleteOperation() : OperationUiModel{
         return OperationUiModel(

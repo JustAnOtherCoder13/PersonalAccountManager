@@ -13,8 +13,8 @@ object ViewModelInnerStates {
         val interLayerTitle: Int = com.piconemarc.model.R.string.myAccountsInterLayerTitle,
         val allAccountUis: List<AccountUiModel> = listOf(),
         val footerTitle: String = "All Accounts",
-        val footerBalance: String = "0.0",
-        val footerRest: String = "0.0"
+        val footerBalance: Double = 0.0,
+        val footerRest: Double = 0.0
     ) : VMState
 
     data class MyAccountScreenVMState(

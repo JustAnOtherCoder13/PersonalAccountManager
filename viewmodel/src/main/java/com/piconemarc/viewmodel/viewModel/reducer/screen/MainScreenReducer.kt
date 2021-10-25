@@ -21,11 +21,10 @@ internal val appBaseScreenReducer: Reducer<ViewModelInnerStates.BaseAppScreenVmS
         is AppActions.BaseAppScreenAction.UpdateFooterBalance -> {
             var allAccountBalance = 0.0
             action.allAccountUis.forEach {
-
                 allAccountBalance += it.accountBalance
             }
             old.copy(
-                footerBalance = allAccountBalance.toString()
+                footerBalance = allAccountBalance
             )
         }
         is AppActions.BaseAppScreenAction.UpdateFooterRest -> {
@@ -34,7 +33,7 @@ internal val appBaseScreenReducer: Reducer<ViewModelInnerStates.BaseAppScreenVmS
                 allAccountRest += it.rest
             }
             old.copy(
-                footerRest = allAccountRest.toString()
+                footerRest = allAccountRest
             )
         }
         is AppActions.BaseAppScreenAction.UpdateFooterTitle -> old.copy(footerTitle = action.footerTitle)

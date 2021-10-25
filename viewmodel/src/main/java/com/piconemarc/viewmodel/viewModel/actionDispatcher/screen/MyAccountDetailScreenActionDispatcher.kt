@@ -1,5 +1,6 @@
 package com.piconemarc.viewmodel.viewModel.actionDispatcher.screen
 
+import android.util.Log
 import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
 import com.piconemarc.core.domain.interactor.operation.GetAllOperationsForAccountIdInteractor
 import com.piconemarc.viewmodel.ActionDispatcher

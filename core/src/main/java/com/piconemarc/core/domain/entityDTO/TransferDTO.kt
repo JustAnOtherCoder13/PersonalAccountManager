@@ -11,14 +11,14 @@ import com.piconemarc.core.domain.Constants.TRANSFER_TABLE
 @Entity(
     foreignKeys = [
         ForeignKey(
-            entity = AccountDTO::class,
+            entity = OperationDTO::class,
             parentColumns = arrayOf("id"),
-            childColumns = arrayOf("senderAccountId"),
+            childColumns = arrayOf("senderOperationId"),
         ),
         ForeignKey(
-            entity = AccountDTO::class,
+            entity = OperationDTO::class,
             parentColumns = arrayOf("id"),
-            childColumns = arrayOf("beneficiaryAccountId"),
+            childColumns = arrayOf("beneficiaryOperationId"),
         )
     ], tableName = TRANSFER_TABLE
 )
@@ -27,9 +27,7 @@ data class TransferDTO(
     val id: Long=0,
     val name: String="",
     @ColumnInfo(index = true)
-    val senderAccountId: Long=0,
     val senderOperationId: Long=0,
     @ColumnInfo(index = true)
-    val beneficiaryAccountId: Long=0,
     val beneficiaryOperationId: Long=0,
 )

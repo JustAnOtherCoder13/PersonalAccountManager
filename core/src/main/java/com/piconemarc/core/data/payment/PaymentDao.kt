@@ -11,7 +11,7 @@ import com.piconemarc.core.domain.entityDTO.PaymentDTO
 interface PaymentDao {
 
     @Insert
-    suspend fun addNewPayment(paymentDTO: PaymentDTO)
+    suspend fun addNewPayment(paymentDTO: PaymentDTO) : Long
 
     @Delete
     suspend fun deletePayment(paymentDTO: PaymentDTO)

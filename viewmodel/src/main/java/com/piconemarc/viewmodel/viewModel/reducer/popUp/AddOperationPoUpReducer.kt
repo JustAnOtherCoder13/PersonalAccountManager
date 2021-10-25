@@ -109,7 +109,7 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
                 beneficiaryAccountUi = action.beneficiaryAccountUi
             )
             is AppActions.AddOperationPopUpAction.SelectOptionIcon -> old.copy(
-                //addPopUpOptionSelectedIcon = action.selectedIcon
+                addPopUpOptionSelectedIcon = action.selectedIcon
             )
             is AppActions.AddOperationPopUpAction.SelectAddOrMinus -> old.copy(
                 isAddOperation = action.isAddOperation,

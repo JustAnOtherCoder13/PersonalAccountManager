@@ -25,4 +25,8 @@ interface OperationDao {
 
     @Delete
     suspend fun deleteOperation (operationDTO: OperationDTO)
+
+    @Query("UPDATE $OPERATION_TABLE SET paymentId = :paymentId WHERE id = :operationId" )
+    suspend fun updateOperationPaymentId(paymentId : Long, operationId : Long)
+
 }

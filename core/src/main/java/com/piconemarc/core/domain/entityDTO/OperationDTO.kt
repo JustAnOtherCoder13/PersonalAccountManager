@@ -18,9 +18,13 @@ import java.util.*
             entity = CategoryDTO::class,
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("categoryId")
+        ),
+        ForeignKey(
+            entity = PaymentDTO::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("paymentId")
         )],
     tableName = OPERATION_TABLE,
-
     )
 data class OperationDTO(
     @PrimaryKey(autoGenerate = true)
@@ -31,7 +35,9 @@ data class OperationDTO(
     val accountId: Long = 0,
     @ColumnInfo(index = true)
     val categoryId: Long = 1,
-    val emitDate: Date? = Date()
+    val emitDate: Date? = null,
+    @ColumnInfo(index = true)
+    val paymentId : Long? = null
 ) {
     @Ignore
     fun fromOperationModel(operationUiModel: OperationUiModel): OperationDTO {
@@ -41,12 +47,13 @@ data class OperationDTO(
             amount = operationUiModel.amount,
             accountId = operationUiModel.accountId,
             categoryId = operationUiModel.categoryId,
-            emitDate = operationUiModel.emitDate
+            emitDate = operationUiModel.emitDate,
+            paymentId = operationUiModel.paymentId
         )
     }
 
     @Ignore
     fun toOperationUiModel(): OperationUiModel {
-        return OperationUiModel(id, accountId, name, amount, categoryId, emitDate ?: Date())
+        return OperationUiModel(id, accountId, name, amount, categoryId, emitDate ?: Date(), paymentId = paymentId)
     }
 }

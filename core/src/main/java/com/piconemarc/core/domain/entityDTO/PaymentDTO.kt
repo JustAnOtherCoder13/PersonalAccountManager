@@ -1,11 +1,9 @@
 package com.piconemarc.core.domain.entityDTO
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.ForeignKey
+import androidx.room.*
 import androidx.room.ForeignKey.CASCADE
-import androidx.room.PrimaryKey
 import com.piconemarc.core.domain.Constants.PAYMENT_TABLE
+import com.piconemarc.model.entity.PaymentUiModel
 import java.util.*
 
 
@@ -33,5 +31,15 @@ data class PaymentDTO(
     val operationId : Long = 0,
     @ColumnInfo(index = true)
     val accountId : Long = 0,
-    val endDate: Date = Date()
-)
+    val endDate: Date? = null
+){
+    @Ignore
+    fun fromPaymentModel(paymentUiModel: PaymentUiModel): PaymentDTO{
+        return PaymentDTO(
+            name = paymentUiModel.name,
+            operationId = paymentUiModel.operationId,
+            accountId = paymentUiModel.accountId,
+            endDate = paymentUiModel.endDate
+        )
+    }
+}
