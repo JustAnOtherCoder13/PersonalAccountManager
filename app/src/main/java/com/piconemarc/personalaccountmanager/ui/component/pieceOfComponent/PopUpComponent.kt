@@ -2,6 +2,7 @@ package com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CornerSize
@@ -10,6 +11,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
@@ -348,12 +350,10 @@ fun PAMRecurrentOptionPanel(
 @Composable
 fun PAMTransferOptionPanel(
     isTransferOptionExpanded : Boolean,
-    senderAccountUiSelectedItem : AccountUiModel,
+    senderAccount : AccountUiModel,
     allAccountsList : List<AccountUiModel>,
     beneficiaryAccountUiSelectedItem : AccountUiModel,
-    onSenderAccountSelected : (senderAccountUi : AccountUiModel) -> Unit,
     onBeneficiaryAccountSelected : (beneficiaryAccountUi : AccountUiModel) -> Unit,
-    isSenderAccountError : Boolean,
     isBeneficiaryAccountError : Boolean
 ) {
     Column(
@@ -363,13 +363,34 @@ fun PAMTransferOptionPanel(
             ).value
         )
     ) {
-        PAMBaseDropDownMenuWithBackground(
-            selectedItem = senderAccountUiSelectedItem,
-            itemList = allAccountsList,
-            onItemSelected = onSenderAccountSelected,
-            isError = isSenderAccountError ,
-            errorMessage = "Please select Sender account for transfer"
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = RegularMarge, bottom = RegularMarge, end = RegularMarge)
+                .background(
+                    color = MaterialTheme.colors.primary,
+                    shape = PopUpFieldBackgroundShape
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(
+                modifier = Modifier
+                    .wrapContentSize()
+                    .padding(top = RegularMarge, bottom = RegularMarge)
+                    .border(
+                        width = ThinBorder,
+                        color = MaterialTheme.colors.onPrimary,
+                        shape = RoundedCornerShape(RegularMarge)
+                    )
+            ) {
+                Text(
+                    text = senderAccount.name,
+                    color = MaterialTheme.colors.onPrimary,
+                    modifier = Modifier.padding(start = RegularMarge, end = RegularMarge),
+                    style = MaterialTheme.typography.h3
+                )
+            }
+        }
 
         PAMBaseDropDownMenuWithBackground(
             selectedItem = beneficiaryAccountUiSelectedItem ,

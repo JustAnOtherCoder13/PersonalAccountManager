@@ -34,16 +34,6 @@ fun PAMAddOperationPopUp(
                         categoryId = addOperationPopUpUiState.selectedCategory.id,
                         emitDate = Calendar.getInstance().time,
                         isAddOperation = addOperationPopUpUiState.isAddOperation
-                        /*isRecurrent = addOperationPopUpUiState.isRecurrentOptionExpanded,
-                        endDate = if (!addOperationPopUpUiState.isRecurrentEndDateError) EndDate(
-                            month = addOperationPopUpUiState.enDateSelectedMonth,
-                            year = addOperationPopUpUiState.endDateSelectedYear
-                        ) else null,
-                        senderAccountId = if(!addOperationPopUpUiState.isSenderAccountError)
-                            addOperationPopUpUiState.senderAccountUi.id else null,
-                        beneficiaryAccountId = if(!addOperationPopUpUiState.isBeneficiaryAccountError)
-                            addOperationPopUpUiState.beneficiaryAccountUi.id else null*/
-
                     )
                 )
             )
@@ -159,16 +149,10 @@ fun PAMAddOperationPopUp(
             //Transfer Operation option---------------------------
             PAMTransferOptionPanel(
                 isTransferOptionExpanded = addOperationPopUpUiState.isTransferExpanded,
-                senderAccountUiSelectedItem = addOperationPopUpUiState.senderAccountUi,
-                allAccountsList = addOperationPopUpUiState.allAccountUis,
-                beneficiaryAccountUiSelectedItem = addOperationPopUpUiState.beneficiaryAccountUi,
-                onSenderAccountSelected = { senderAccount ->
-                    viewModel.dispatchAction(
-                        AppActions.AddOperationPopUpAction.SelectSenderAccount(
-                            senderAccount
-                        )
-                    )
-                },
+                senderAccount = myAccountDetailScreenUiState.selectedAccount,
+                allAccountsList = addOperationPopUpUiState.allAccounts,
+                beneficiaryAccountUiSelectedItem = addOperationPopUpUiState.beneficiaryAccount,
+
                 onBeneficiaryAccountSelected = { beneficiaryAccount ->
                     viewModel.dispatchAction(
                         AppActions.AddOperationPopUpAction.SelectBeneficiaryAccount(
@@ -176,7 +160,6 @@ fun PAMAddOperationPopUp(
                         )
                     )
                 },
-                isSenderAccountError = addOperationPopUpUiState.isSenderAccountError,
                 isBeneficiaryAccountError = addOperationPopUpUiState.isBeneficiaryAccountError
             )
         }

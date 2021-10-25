@@ -33,12 +33,12 @@ object AppActions {
     }
 
     sealed class MyAccountDetailScreenAction : UiAction {
-        data class InitScreen(val selectedAccountUi: AccountUiModel) : MyAccountDetailScreenAction()
+        data class InitScreen(val selectedAccount: AccountUiModel) : MyAccountDetailScreenAction()
         object CloseScreen : MyAccountDetailScreenAction()
         data class UpdateAccountMonthlyOperations(val accountMonthlyOperations: List<OperationUiModel>) :
             MyAccountDetailScreenAction()
 
-        data class UpdateSelectedAccount(val accountUi: AccountUiModel) :
+        data class UpdateSelectedAccount(val account: AccountUiModel) :
             MyAccountDetailScreenAction()
     }
 
@@ -58,13 +58,11 @@ object AppActions {
         data class UpdateCategoriesList(val allCategories: List<CategoryModel>) :
             AddOperationPopUpAction()
 
-        data class UpdateAccountList(val accountUiList: List<AccountUiModel>) :
+        data class UpdateAccountList(val accountList: List<AccountUiModel>) :
             AddOperationPopUpAction()
 
         data class SelectEndDateYear(val selectedEndDateYear: String) : AddOperationPopUpAction()
         data class SelectEndDateMonth(val selectedEndDateMonth: String) : AddOperationPopUpAction()
-        data class SelectSenderAccount(val senderAccountUi: AccountUiModel) :
-            AddOperationPopUpAction()
 
         data class SelectBeneficiaryAccount(val beneficiaryAccountUi: AccountUiModel) :
             AddOperationPopUpAction()

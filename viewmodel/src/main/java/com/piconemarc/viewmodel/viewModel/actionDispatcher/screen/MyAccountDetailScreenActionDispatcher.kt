@@ -1,6 +1,5 @@
 package com.piconemarc.viewmodel.viewModel.actionDispatcher.screen
 
-import android.util.Log
 import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
 import com.piconemarc.core.domain.interactor.operation.GetAllOperationsForAccountIdInteractor
 import com.piconemarc.viewmodel.ActionDispatcher
@@ -32,13 +31,13 @@ class MyAccountDetailScreenActionDispatcher @Inject constructor(
                     //init selectedAccount
                     GlobalAction.UpdateMyAccountDetailScreenState(
                         AppActions.MyAccountDetailScreenAction.UpdateSelectedAccount(
-                            action.selectedAccountUi
+                            action.selectedAccount
                         )
                     )
                 )
                 scope.launch {
                     getAllOperationsForAccountIdInteractor.getAllOperationsForAccountId(
-                        action.selectedAccountUi.id
+                        action.selectedAccount.id
                     ).collect { accountOperations ->
                         updateState(
                             GlobalAction.UpdateMyAccountDetailScreenState(
@@ -50,7 +49,7 @@ class MyAccountDetailScreenActionDispatcher @Inject constructor(
                     }
                 }
                 scope.launch {
-                    getAccountForIdInteractor.getAccountForIdFlow(action.selectedAccountUi.id)
+                    getAccountForIdInteractor.getAccountForIdFlow(action.selectedAccount.id)
                         .collect {
                             updateState(
                                 GlobalAction.UpdateMyAccountDetailScreenState(

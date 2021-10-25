@@ -18,11 +18,14 @@ class UpdateAccountBalanceInteractor @Inject constructor(val accountRepository: 
     }
 
     suspend fun updateAccountBalance(
-        updatedAccountUi: AccountUiModel
+        vararg updatedAccountUi: AccountUiModel
     ) {
-        accountRepository.updateAccountBalance(
-            accountId = updatedAccountUi.id,
-            accountBalance = updatedAccountUi.accountBalance
-        )
+        updatedAccountUi.forEach {
+            accountRepository.updateAccountBalance(
+                accountId = it.id,
+                accountBalance = it.accountBalance
+            )
+        }
+
     }
 }

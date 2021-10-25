@@ -29,4 +29,9 @@ interface OperationDao {
     @Query("UPDATE $OPERATION_TABLE SET paymentId = :paymentId WHERE id = :operationId" )
     suspend fun updateOperationPaymentId(paymentId : Long, operationId : Long)
 
+    @Query("UPDATE $OPERATION_TABLE SET transferId = :transferId WHERE id  IN (:operationId)" )
+    suspend fun updateOperationTransferId(transferId : Long, operationId : Long)
+
+
+
 }

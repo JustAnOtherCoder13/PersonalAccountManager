@@ -11,7 +11,7 @@ import com.piconemarc.core.domain.entityDTO.TransferDTO
 interface TransferDao {
 
     @Insert
-    suspend fun addNewTransferOperation(transferDTO: TransferDTO)
+    suspend fun addNewTransferOperation(transferDTO: TransferDTO) : Long
 
     @Delete
     suspend fun deleteTransferOperation(transferDTO: TransferDTO)

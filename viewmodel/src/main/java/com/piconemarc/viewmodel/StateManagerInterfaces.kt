@@ -1,5 +1,6 @@
 package com.piconemarc.viewmodel
 
+import android.util.Log
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import kotlinx.coroutines.CoroutineScope

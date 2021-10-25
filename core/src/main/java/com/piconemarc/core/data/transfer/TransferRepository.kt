@@ -7,8 +7,8 @@ class TransferRepository @Inject constructor(
     private val transferDao: TransferDaoImpl
 ) {
 
-     suspend fun addNewTransferOperation(transferDTO: TransferDTO) {
-        transferDao.addNewTransferOperation(transferDTO)
+     suspend fun addNewTransferOperation(transferDTO: TransferDTO) : Long {
+        return transferDao.addNewTransferOperation(transferDTO)
     }
 
      suspend fun deleteTransferOperation(transferDTO: TransferDTO) {

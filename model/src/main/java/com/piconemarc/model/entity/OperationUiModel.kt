@@ -2,17 +2,18 @@ package com.piconemarc.model.entity
 
 import java.util.*
 
-open class OperationUiModel(
-    override val id : Long = 0,
-    open val accountId : Long = 0,
-    override val name : String = "",
-    open val amount : Double = 0.0,
-    open val categoryId : Long = 1,
-    open val emitDate : Date = Calendar.getInstance().time,
-    open var isAddOperation : Boolean = false,
-    var paymentId : Long? = null
-): BaseUiModel(){
-    fun deleteOperation() : OperationUiModel{
+data class OperationUiModel(
+    override val id: Long = 0,
+    val accountId: Long = 0,
+    override val name: String = "",
+    var amount: Double = 0.0,
+    val categoryId: Long = 1,
+    val emitDate: Date = Calendar.getInstance().time,
+    var isAddOperation: Boolean = true,
+    val paymentId: Long? = null,
+    val transferId: Long? = null
+) : BaseUiModel() {
+    fun deleteOperation(): OperationUiModel {
         return OperationUiModel(
             id = this.id,
             accountId = this.accountId,
@@ -23,5 +24,8 @@ open class OperationUiModel(
             amount = this.amount * -1
         )
     }
+
+    val beneficiaryAmount = amount
+    val senderAmount = amount * -1
 }
 

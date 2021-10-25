@@ -169,6 +169,11 @@ class CoreModule {
     fun provideUpdateOperationPaymentId(operationRepository: OperationRepository):UpdateOperationPaymentIdInteractor{
         return UpdateOperationPaymentIdInteractor(operationRepository)
     }
+
+    @Provides
+    fun provideUpdateOperationTransferId(operationRepository: OperationRepository):UpdateOperationTransferIdInteractor{
+        return UpdateOperationTransferIdInteractor(operationRepository)
+    }
     //PAYMENT
     @Provides
     fun provideAddNewPayment(paymentRepository: PaymentRepository): AddNewPaymentInteractor{

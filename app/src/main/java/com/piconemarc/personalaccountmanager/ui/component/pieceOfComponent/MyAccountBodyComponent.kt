@@ -45,7 +45,7 @@ fun MyAccountBodyRecyclerView(viewModel: AppViewModel) {
                         AppActions.MyAccountScreenAction.CloseScreen
                     )
                     viewModel.dispatchAction(
-                        AppActions.MyAccountDetailScreenAction.InitScreen(selectedAccountUi = selectedAccount)
+                        AppActions.MyAccountDetailScreenAction.InitScreen(selectedAccount = selectedAccount)
                     )
                 }
             )

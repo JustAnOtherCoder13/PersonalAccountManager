@@ -23,6 +23,12 @@ import java.util.*
             entity = PaymentDTO::class,
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("paymentId")
+        ),
+        ForeignKey(
+            entity = TransferDTO::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("transferId"),
+            onDelete = CASCADE
         )],
     tableName = OPERATION_TABLE,
     )
@@ -37,7 +43,9 @@ data class OperationDTO(
     val categoryId: Long = 1,
     val emitDate: Date? = null,
     @ColumnInfo(index = true)
-    val paymentId : Long? = null
+    val paymentId : Long? = null,
+    @ColumnInfo(index = true)
+    val transferId : Long? = null,
 ) {
     @Ignore
     fun fromOperationModel(operationUiModel: OperationUiModel): OperationDTO {
@@ -48,7 +56,8 @@ data class OperationDTO(
             accountId = operationUiModel.accountId,
             categoryId = operationUiModel.categoryId,
             emitDate = operationUiModel.emitDate,
-            paymentId = operationUiModel.paymentId
+            paymentId = operationUiModel.paymentId,
+            transferId = operationUiModel.transferId
         )
     }
 
