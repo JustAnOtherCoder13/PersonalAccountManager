@@ -20,7 +20,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.piconemarc.model.PAMIconButtons
-import com.piconemarc.model.entity.AccountModel
+import com.piconemarc.model.entity.AccountUiModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.animation.PAMUiDataAnimations
 import com.piconemarc.personalaccountmanager.ui.animation.pAMInterlayerAnimation
@@ -84,14 +84,14 @@ fun BaseScreen(
 
 @Composable
 fun AccountPostIt(
-    account: AccountModel,
-    onDeleteAccountButtonClicked: (account: AccountModel) -> Unit,
-    onAccountClicked: (account: AccountModel) -> Unit,
+    accountUi: AccountUiModel,
+    onDeleteAccountButtonClicked: (accountUi: AccountUiModel) -> Unit,
+    onAccountClicked: (accountUi: AccountUiModel) -> Unit,
 ) {
     Box(modifier = Modifier
         .size(width = AccountPostItWidth, height = AccountPostItHeight)
         .padding(bottom = BigMarge)
-        .clickable { onAccountClicked(account) }
+        .clickable { onAccountClicked(accountUi) }
     ) {
         AccountPostItBackground(this)
         Column(
@@ -100,8 +100,8 @@ fun AccountPostIt(
                 .fillMaxWidth()
         ) {
             AccountPostItTitle(
-                account = account.name,
-                onDeleteAccountButtonClicked = { onDeleteAccountButtonClicked(account) }
+                account = accountUi.name,
+                onDeleteAccountButtonClicked = { onDeleteAccountButtonClicked(accountUi) }
             )
             Column(
                 modifier = Modifier
@@ -111,11 +111,11 @@ fun AccountPostIt(
             ) {
                 AccountPostItValue(
                     valueTitle = stringResource(R.string.balanceTitle),
-                    value = account.accountBalance.toString()
+                    value = accountUi.accountBalance.toString()
                 )
                 AccountPostItValue(
                     valueTitle = stringResource(R.string.restTitle),
-                    value = account.rest.toString()
+                    value = accountUi.rest.toString()
                 )
             }
         }

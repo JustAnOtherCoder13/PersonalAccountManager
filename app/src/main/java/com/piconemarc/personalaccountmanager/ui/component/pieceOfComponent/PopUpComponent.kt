@@ -22,7 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.piconemarc.model.PAMIconButtons
-import com.piconemarc.model.entity.AccountModel
+import com.piconemarc.model.entity.AccountUiModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.animation.*
 import com.piconemarc.personalaccountmanager.ui.theme.*
@@ -348,11 +348,11 @@ fun PAMRecurrentOptionPanel(
 @Composable
 fun PAMTransferOptionPanel(
     isTransferOptionExpanded : Boolean,
-    senderAccountSelectedItem : AccountModel,
-    allAccountsList : List<AccountModel>,
-    beneficiaryAccountSelectedItem : AccountModel,
-    onSenderAccountSelected : (senderAccount : AccountModel) -> Unit,
-    onBeneficiaryAccountSelected : ( beneficiaryAccount : AccountModel) -> Unit,
+    senderAccountUiSelectedItem : AccountUiModel,
+    allAccountsList : List<AccountUiModel>,
+    beneficiaryAccountUiSelectedItem : AccountUiModel,
+    onSenderAccountSelected : (senderAccountUi : AccountUiModel) -> Unit,
+    onBeneficiaryAccountSelected : (beneficiaryAccountUi : AccountUiModel) -> Unit,
     isSenderAccountError : Boolean,
     isBeneficiaryAccountError : Boolean
 ) {
@@ -364,7 +364,7 @@ fun PAMTransferOptionPanel(
         )
     ) {
         PAMBaseDropDownMenuWithBackground(
-            selectedItem = senderAccountSelectedItem,
+            selectedItem = senderAccountUiSelectedItem,
             itemList = allAccountsList,
             onItemSelected = onSenderAccountSelected,
             isError = isSenderAccountError ,
@@ -372,7 +372,7 @@ fun PAMTransferOptionPanel(
         )
 
         PAMBaseDropDownMenuWithBackground(
-            selectedItem = beneficiaryAccountSelectedItem ,
+            selectedItem = beneficiaryAccountUiSelectedItem ,
             itemList = allAccountsList,
             onItemSelected = onBeneficiaryAccountSelected,
             isError = isBeneficiaryAccountError,

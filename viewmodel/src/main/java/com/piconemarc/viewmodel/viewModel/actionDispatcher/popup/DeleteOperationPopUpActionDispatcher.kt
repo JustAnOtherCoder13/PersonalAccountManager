@@ -35,7 +35,10 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
             }
             is AppActions.DeleteOperationPopUpAction.DeleteOperation -> {
                 scope.launch {
-                    if (action.operationToDelete.beneficiaryAccountId != null) {
+
+
+
+                   /* if (action.operationToDelete.beneficiaryAccountId != null) {
                         deleteOperationInteractor.deleteOperation(
                             getOperationForIdInteractor.getOperationForId(
                                 operationId = action.operationToDelete.distantOperationIdRef!!,
@@ -54,8 +57,8 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
                     updateAccountBalanceInteractor.updateAccountBalanceOnDeleteOperation(
                         accountId = action.operationToDelete.accountId,
                         deletedOperationAMount = action.operationToDelete.updatedAmount,
-                        oldAccountBalance = AppSubscriber.AppUiState.myAccountDetailScreenUiState.accountBalance.toDouble(),
-                    )
+                        oldAccountBalance = AppSubscriber.AppUiState.myAccountDetailScreenUiState.selectedAccountUi.accountBalance,
+                    )*/
                 }
             }
         }

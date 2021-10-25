@@ -20,7 +20,7 @@ internal val myAccountScreenReducer: Reducer<ViewModelInnerStates.MyAccountScree
             )
             is AppActions.MyAccountScreenAction.UpdateAccountList -> {
                 old.copy(
-                    allAccounts = action.accountList
+                    allAccountUis = action.accountUiList
                 )
             }
 

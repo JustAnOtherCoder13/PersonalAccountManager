@@ -2,7 +2,7 @@ package com.piconemarc.viewmodel.viewModel.reducer.popUp
 
 import com.piconemarc.core.domain.Constants
 import com.piconemarc.model.PAMIconButtons
-import com.piconemarc.model.entity.AccountModel
+import com.piconemarc.model.entity.AccountUiModel
 import com.piconemarc.model.entity.CategoryModel
 import com.piconemarc.viewmodel.Reducer
 import com.piconemarc.viewmodel.viewModel.AppActions
@@ -34,7 +34,6 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
                 isPaymentExpanded = false,
                 isRecurrentOptionExpanded = false,
                 isTransferExpanded = false,
-
                 )
             is AppActions.AddOperationPopUpAction.SelectCategory -> old.copy(
                 selectedCategory = action.category
@@ -55,7 +54,6 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
             )
             is AppActions.AddOperationPopUpAction.CollapseOptions -> old.copy(
                 isPaymentExpanded = false,
-                isRecurrentOptionExpanded = false,
                 isTransferExpanded = false,
                 addPopUpTitle = Constants.OPERATION_MODEL,
                 isAddOrMinusEnable = true,
@@ -77,14 +75,13 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
             is AppActions.AddOperationPopUpAction.ExpandTransferOption -> old.copy(
                 isPaymentExpanded = true,
                 isTransferExpanded = true,
-                isRecurrentOptionExpanded = false,
                 addPopUpTitle = Constants.TRANSFER_MODEL,
-                senderAccount = AccountModel(name = Constants.SENDER_ACCOUNT_MODEL),
-                beneficiaryAccount = AccountModel(name = Constants.BENEFICIARY_ACCOUNT_MODEL),
+                senderAccountUi = AccountUiModel(name = Constants.SENDER_ACCOUNT_MODEL),
+                beneficiaryAccountUi = AccountUiModel(name = Constants.BENEFICIARY_ACCOUNT_MODEL),
                 isAddOrMinusEnable = false,
             )
             is AppActions.AddOperationPopUpAction.UpdateAccountList -> old.copy(
-                allAccounts = action.accountList
+                allAccountUis = action.accountUiList
             )
             is AppActions.AddOperationPopUpAction.FillOperationAmount -> old.copy(
                 operationAmount = action.amount
@@ -100,24 +97,24 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
                 isRecurrentEndDateError = AppSubscriber.AppUiState.addOperationPopUpUiState.endDateSelectedYear == "Year"
             )
             is AppActions.AddOperationPopUpAction.SelectSenderAccount -> old.copy(
-                senderAccount = action.senderAccount
+                senderAccountUi = action.senderAccountUi
             )
             is AppActions.AddOperationPopUpAction.SelectBeneficiaryAccount -> old.copy(
-                beneficiaryAccount = action.beneficiaryAccount
+                beneficiaryAccountUi = action.beneficiaryAccountUi
             )
             is AppActions.AddOperationPopUpAction.SelectOptionIcon -> old.copy(
-                addPopUpOptionSelectedIcon = action.selectedIcon
+                //addPopUpOptionSelectedIcon = action.selectedIcon
             )
             is AppActions.AddOperationPopUpAction.SelectAddOrMinus -> old.copy(
                 isAddOperation = action.isAddOperation
             )
             is AppActions.AddOperationPopUpAction.AddNewOperation -> old.copy(
                 isOperationNameError = action.operation.name.trim().isEmpty(),
-                isOperationAmountError = action.operation.updatedAmount == 0.0,
+                isOperationAmountError = action.operation.amount == 0.0,
                 isSenderAccountError = AppSubscriber.AppUiState.addOperationPopUpUiState.addPopUpOptionSelectedIcon == PAMIconButtons.Transfer
-                        && AppSubscriber.AppUiState.addOperationPopUpUiState.senderAccount.name == "Sender account" ,
+                        && AppSubscriber.AppUiState.addOperationPopUpUiState.senderAccountUi.name == "Sender account" ,
                 isBeneficiaryAccountError = AppSubscriber.AppUiState.addOperationPopUpUiState.addPopUpOptionSelectedIcon == PAMIconButtons.Transfer
-                        && AppSubscriber.AppUiState.addOperationPopUpUiState.beneficiaryAccount.name == "Beneficiary account" ,
+                        && AppSubscriber.AppUiState.addOperationPopUpUiState.beneficiaryAccountUi.name == "Beneficiary account" ,
             )
 
         }

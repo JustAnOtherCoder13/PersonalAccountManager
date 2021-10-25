@@ -63,8 +63,8 @@ fun MyAccountDetailBody(
                         AppActions.DeleteOperationPopUpAction.InitPopUp(it)
                     )
                 },
-                accountBalance = myAccountDetailScreenUiState.accountBalance,
-                accountRest = myAccountDetailScreenUiState.accountRest,
+                accountBalance = myAccountDetailScreenUiState.selectedAccount.accountBalance.toString(),
+                accountRest = myAccountDetailScreenUiState.selectedAccount.rest.toString(),
             )
 
         },

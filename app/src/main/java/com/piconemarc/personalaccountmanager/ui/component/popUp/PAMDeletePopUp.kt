@@ -42,7 +42,7 @@ fun PAMDeleteOperationPopUp(viewModel: AppViewModel) {
                 )
                 Text(
                     modifier = Modifier.padding(vertical = RegularMarge),
-                    text = deleteOperationPopUpUiState.operationToDelete.updatedAmount.toString()+" €",
+                    text = deleteOperationPopUpUiState.operationToDelete.amount.toString()+" €",
                 )
             }
         }

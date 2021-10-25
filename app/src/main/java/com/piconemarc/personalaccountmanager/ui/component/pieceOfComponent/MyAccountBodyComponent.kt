@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.piconemarc.model.PAMIconButtons
-import com.piconemarc.model.entity.OperationModel
+import com.piconemarc.model.entity.OperationUiModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.theme.*
 import com.piconemarc.viewmodel.viewModel.AppActions
@@ -31,12 +31,12 @@ fun MyAccountBodyRecyclerView(viewModel: AppViewModel) {
         modifier = Modifier
             .padding(bottom = LittleMarge)
     ) {
-        items(AppSubscriber.AppUiState.myAccountScreenUiState.allAccounts) { account ->
+        items(AppSubscriber.AppUiState.myAccountScreenUiState.allAccountUis) { account ->
             AccountPostIt(
-                account = account,
+                accountUi = account,
                 onDeleteAccountButtonClicked = { accountToDelete ->
                     viewModel.dispatchAction(
-                        AppActions.DeleteAccountAction.InitPopUp(accountToDelete = accountToDelete)
+                        AppActions.DeleteAccountAction.InitPopUp(accountUiToDelete = accountToDelete)
                     )
                 },
                 onAccountClicked = { selectedAccount ->
@@ -44,7 +44,7 @@ fun MyAccountBodyRecyclerView(viewModel: AppViewModel) {
                         AppActions.MyAccountScreenAction.CloseScreen
                     )
                     viewModel.dispatchAction(
-                        AppActions.MyAccountDetailScreenAction.InitScreen(selectedAccount = selectedAccount)
+                        AppActions.MyAccountDetailScreenAction.InitScreen(selectedAccountUi = selectedAccount)
                     )
                 }
             )
@@ -54,8 +54,8 @@ fun MyAccountBodyRecyclerView(viewModel: AppViewModel) {
 
 @Composable
 fun AccountDetailSheetRecyclerView(
-    allOperations: List<OperationModel>,
-    onDeleteItemButtonCLick: (operation: OperationModel) -> Unit,
+    allOperations: List<OperationUiModel>,
+    onDeleteItemButtonCLick: (operation: OperationUiModel) -> Unit,
     accountRest: String,
     accountBalance: String
 ) {
@@ -119,8 +119,8 @@ private fun AccountDetailFooter(accountRest: String, accountBalance: String) {
 
 @Composable
 private fun OperationRecyclerView(
-    accountMonthlyOperations: List<OperationModel>,
-    onDeleteItemButtonCLick: (operation: OperationModel) -> Unit
+    accountMonthlyOperations: List<OperationUiModel>,
+    onDeleteItemButtonCLick: (operation: OperationUiModel) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -138,8 +138,8 @@ private fun OperationRecyclerView(
 
 @Composable
 private fun OperationItem(
-    operation: OperationModel,
-    onDeleteItemButtonCLick: (operation: OperationModel) -> Unit
+    operation: OperationUiModel,
+    onDeleteItemButtonCLick: (operation: OperationUiModel) -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -153,12 +153,12 @@ private fun OperationItem(
             style = MaterialTheme.typography.body1
         )
         Text(
-            text = if (operation.updatedAmount > 0) "+${operation.updatedAmount}" else operation.updatedAmount.toString(),
+            text = if (operation.amount > 0) "+${operation.amount}" else operation.amount.toString(),
             modifier = Modifier
                 .padding(start = LittleMarge)
                 .weight(0.9f),
             style = MaterialTheme.typography.body1,
-            color = if (operation.updatedAmount > 0) PositiveText else NegativeText
+            color = if (operation.amount > 0) PositiveText else NegativeText
         )
         Box(modifier = Modifier.size(35.dp)) {
             PAMIconButton(

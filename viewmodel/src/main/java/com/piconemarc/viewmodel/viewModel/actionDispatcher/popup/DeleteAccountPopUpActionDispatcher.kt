@@ -27,14 +27,14 @@ class DeleteAccountPopUpActionDispatcher @Inject constructor(
                         //todo no need to be in scope
                         GlobalAction.UpdateDeleteAccountPopUpState(
                         AppActions.DeleteAccountAction.UpdateAccountToDelete(
-                            action.accountToDelete
+                            action.accountUiToDelete
                         )
                     ))
                 }
             }
             is AppActions.DeleteAccountAction.DeleteAccount -> {
                 scope.launch {
-                    deleteAccountInteractor.deleteAccount(action.accountToDelete)
+                    deleteAccountInteractor.deleteAccount(action.accountUiToDelete)
                 }
             }
         }

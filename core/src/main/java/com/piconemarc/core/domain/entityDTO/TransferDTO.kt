@@ -14,19 +14,11 @@ import com.piconemarc.core.domain.Constants.TRANSFER_TABLE
             entity = AccountDTO::class,
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("senderAccountId"),
-            onDelete = CASCADE
         ),
         ForeignKey(
             entity = AccountDTO::class,
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("beneficiaryAccountId"),
-            onDelete = CASCADE
-        ),
-        ForeignKey(
-            entity = AccountDTO::class,
-            parentColumns = arrayOf("id"),
-            childColumns = arrayOf("beneficiaryAccountId"),
-            onDelete = CASCADE
         )
     ], tableName = TRANSFER_TABLE
 )

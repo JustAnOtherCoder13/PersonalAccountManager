@@ -21,7 +21,7 @@ fun PAMDeleteAccountPopUp(
     PAMBaseDeletePopUp(
         deletePopUpTitle = "Delete Account",
         onAcceptButtonClicked = { viewModel.dispatchAction(
-            AppActions.DeleteAccountAction.DeleteAccount(deleteAccountUiState.accountToDelete)
+            AppActions.DeleteAccountAction.DeleteAccount(deleteAccountUiState.accountUiToDelete)
         ) },
         onDismiss = { viewModel.dispatchAction(
             AppActions.DeleteAccountAction.ClosePopUp
@@ -37,12 +37,12 @@ fun PAMDeleteAccountPopUp(
                 .height(100.dp)
         ) {
             Text(
-                text = deleteAccountUiState.accountToDeleteName,
+                text = deleteAccountUiState.accountUiToDelete.name,
                 style = MaterialTheme.typography.h2,
                 modifier = Modifier.padding(vertical = LittleMarge)
             )
             Text(
-                text = deleteAccountUiState.accountToDeleteBalance+" €",
+                text = deleteAccountUiState.accountUiToDelete.accountBalance.toString() +" €",
                 style = MaterialTheme.typography.body1,
                 modifier = Modifier.padding(vertical = LittleMarge)
             )

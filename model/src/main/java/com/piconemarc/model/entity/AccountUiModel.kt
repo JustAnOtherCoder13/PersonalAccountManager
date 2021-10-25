@@ -1,6 +1,6 @@
 package com.piconemarc.model.entity
 
-data class AccountModel(
+data class AccountUiModel(
     override val id: Long = 0,
     override val name: String = "",
     var accountBalance: Double = 0.0,

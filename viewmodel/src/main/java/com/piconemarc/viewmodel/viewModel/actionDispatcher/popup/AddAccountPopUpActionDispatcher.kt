@@ -1,7 +1,7 @@
 package com.piconemarc.viewmodel.viewModel.actionDispatcher.popup
 
 import com.piconemarc.core.domain.interactor.account.AddNewAccountInteractor
-import com.piconemarc.model.entity.AccountModel
+import com.piconemarc.model.entity.AccountUiModel
 import com.piconemarc.viewmodel.ActionDispatcher
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.UiAction
@@ -25,7 +25,7 @@ class AddAccountPopUpActionDispatcher @Inject constructor(
                     scope.launch {
                         try {
                             addNewAccountInteractor.addNewAccount(
-                                AccountModel(
+                                AccountUiModel(
                                     name = action.accountName,
                                     accountBalance = try {
                                         action.accountBalance.toDouble()

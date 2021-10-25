@@ -21,7 +21,7 @@ interface OperationDao {
     suspend fun getOperationForAccountIdWithOperationId(operationId : Long, accountId: Long) : OperationDTO
 
     @Insert
-    suspend fun addNewOperation(operationDTO: OperationDTO)
+    suspend fun addNewOperation(operationDTO: OperationDTO) : Long
 
     @Delete
     suspend fun deleteOperation (operationDTO: OperationDTO)

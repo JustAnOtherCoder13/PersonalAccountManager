@@ -16,65 +16,47 @@ import javax.inject.Inject
 
 class MyAccountDetailScreenActionDispatcher @Inject constructor(
     override val store: DefaultStore<GlobalVmState>,
-    private val getAccountForIdInteractor :GetAccountForIdInteractor,
-    private val getAllOperationsForAccountIdInteractor : GetAllOperationsForAccountIdInteractor
-): ActionDispatcher  {
+    private val getAccountForIdInteractor: GetAccountForIdInteractor,
+    private val getAllOperationsForAccountIdInteractor: GetAllOperationsForAccountIdInteractor
+) : ActionDispatcher {
+
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
+
         when (action) {
             is AppActions.MyAccountDetailScreenAction.InitScreen -> {
                 updateState(
                     GlobalAction.UpdateBaseAppScreenVmState(
-                    AppActions.BaseAppScreenAction.UpdateInterlayerTiTle(
-                        com.piconemarc.model.R.string.detail
+                        AppActions.BaseAppScreenAction.UpdateInterlayerTiTle(com.piconemarc.model.R.string.detail)
+                    ),
+                    //init selectedAccount
+                    GlobalAction.UpdateMyAccountDetailScreenState(
+                        AppActions.MyAccountDetailScreenAction.UpdateSelectedAccount(
+                            action.selectedAccountUi
+                        )
                     )
-                ))
-                scope.launch {
-                    getAccountForIdInteractor.getAccountForIdFlow(action.selectedAccount.id)
-                        .collect {
-                            updateState(
-                                GlobalAction.UpdateMyAccountDetailScreenState(
-                                AppActions.MyAccountDetailScreenAction.UpdateAccountBalance(
-                                        it.accountBalance.toString(),
-                                )),
-
-                                GlobalAction.UpdateMyAccountDetailScreenState(
-                                AppActions.MyAccountDetailScreenAction.UpdateAccountRest(
-                                        it.rest.toString(),
-                                )
-                            ))
-                        }
-                }
+                )
                 scope.launch {
                     getAllOperationsForAccountIdInteractor.getAllOperationsForAccountId(
-                        action.selectedAccount.id
-                    ).collect {
-                        //todo pass in dao
-                        val filteredList = it.filter {
-                            it.emitDate.month.compareTo(Calendar.getInstance().time.month) == 0
-                        }
+                        action.selectedAccountUi.id
+                    ).collect { accountOperations ->
                         updateState(
                             GlobalAction.UpdateMyAccountDetailScreenState(
-                            AppActions.MyAccountDetailScreenAction.UpdateAccountMonthlyOperations(
-                                filteredList
-                            )
-                        ),
-                            GlobalAction.UpdateMyAccountDetailScreenState(
-                            AppActions.MyAccountDetailScreenAction.UpdateAccountBalance(
-                                action.selectedAccount.accountBalance.toString()
-                            )
-                        ),
-                            GlobalAction.UpdateMyAccountDetailScreenState(
-                            AppActions.MyAccountDetailScreenAction.UpdateAccountRest(
-                                    action.selectedAccount.rest.toString()
-
-                            )),
-
-                            GlobalAction.UpdateMyAccountDetailScreenState(
-                            AppActions.MyAccountDetailScreenAction.UpdateAccountName(
-                                    action.selectedAccount,
-                            ))
+                                AppActions.MyAccountDetailScreenAction.UpdateAccountMonthlyOperations(
+                                    accountOperations.filter { it.emitDate.month.compareTo(Calendar.getInstance().time.month) == 0 }
+                                )
+                            ),
                         )
                     }
+                }
+                scope.launch {
+                    getAccountForIdInteractor.getAccountForIdFlow(action.selectedAccountUi.id)
+                        .collect {
+                            GlobalAction.UpdateMyAccountDetailScreenState(
+                                AppActions.MyAccountDetailScreenAction.UpdateSelectedAccount(
+                                    action.selectedAccountUi
+                                )
+                            )
+                        }
                 }
             }
         }
