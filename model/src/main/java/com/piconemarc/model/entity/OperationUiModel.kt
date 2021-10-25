@@ -11,15 +11,16 @@ open class OperationUiModel(
     open val emitDate : Date = Calendar.getInstance().time,
     open var isAddOperation : Boolean = false
 ): BaseUiModel(){
-
-    open fun updateAccountBalance(account : AccountUiModel) : Double{
-      return  account.accountBalance.plus(if (isAddOperation)amount else amount*-1)
+    fun deleteOperation() : OperationUiModel{
+        return OperationUiModel(
+            id = this.id,
+            accountId = this.accountId,
+            name = this.name,
+            categoryId = this.categoryId,
+            emitDate = this.emitDate,
+            isAddOperation = this.isAddOperation,
+            amount = this.amount * -1
+        )
     }
-
 }
 
-
-data class EndDate(
-    val month : String? = null,
-    val year : String? = null
-)
