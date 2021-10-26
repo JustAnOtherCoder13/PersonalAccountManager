@@ -2,10 +2,7 @@ package com.piconemarc.viewmodel.viewModel.actionDispatcher.popup
 
 import com.piconemarc.core.domain.interactor.account.AddNewAccountInteractor
 import com.piconemarc.model.entity.AccountUiModel
-import com.piconemarc.viewmodel.ActionDispatcher
-import com.piconemarc.viewmodel.DefaultStore
-import com.piconemarc.viewmodel.UiAction
-import com.piconemarc.viewmodel.launchCatchingError
+import com.piconemarc.viewmodel.*
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
@@ -22,7 +19,7 @@ class AddAccountPopUpActionDispatcher @Inject constructor(
         when (action) {
             is AppActions.AddAccountPopUpAction.AddNewAccount -> {
                 if (!AppSubscriber.AppUiState.addAccountPopUpUiState.isNameError)
-                    scope.launchCatchingError(
+                    scope.launchOnIOCatchingError(
                         block = {
                             addNewAccountInteractor.addNewAccount(
                                 AccountUiModel(

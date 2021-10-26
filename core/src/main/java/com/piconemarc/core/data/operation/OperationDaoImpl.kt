@@ -25,6 +25,35 @@ class OperationDaoImpl @Inject constructor(pamDatabase: PAMDatabase) : Operation
         super.addTransferOperation(operation, beneficiaryAccountId)
     }
 
+    override suspend fun deleteOperation_(operationDTO: OperationDTO) {
+        super.deleteOperation_(operationDTO)
+    }
+
+    override suspend fun deletePayment(operationDTO: OperationDTO) {
+        super.deletePayment(operationDTO)
+    }
+
+    override suspend fun deleteTransfer(operationDTO: OperationDTO,transfer : TransferDTO) {
+        super.deleteTransfer(operationDTO,transfer)
+    }
+
+
+    override suspend fun deletePayment(paymentDTO: PaymentDTO) {
+        operationDao.deletePayment(paymentDTO)
+    }
+
+    override suspend fun deleteTransferOperation(transferDTO: TransferDTO) {
+        operationDao.deleteTransferOperation(transferDTO)
+    }
+
+    override suspend fun getTransferOperationForId(transferId: Long): TransferDTO {
+        return getTransferOperationForId(transferId)
+    }
+
+    override suspend fun getPaymentForId(id: Long): PaymentDTO {
+        return operationDao.getPaymentForId(id)
+    }
+
     override suspend fun addNewTransferOperation(transferDTO: TransferDTO): Long {
         return operationDao.addNewTransferOperation(transferDTO)
     }

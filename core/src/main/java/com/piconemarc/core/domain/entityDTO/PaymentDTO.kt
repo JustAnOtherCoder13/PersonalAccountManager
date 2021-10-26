@@ -14,8 +14,7 @@ import java.util.*
     ForeignKey(
         entity = OperationDTO::class,
         parentColumns = arrayOf("id"),
-        childColumns = arrayOf("operationId"),
-        onDelete = CASCADE
+        childColumns = arrayOf("operationId")
     ),
     ForeignKey(
         entity = AccountDTO::class,

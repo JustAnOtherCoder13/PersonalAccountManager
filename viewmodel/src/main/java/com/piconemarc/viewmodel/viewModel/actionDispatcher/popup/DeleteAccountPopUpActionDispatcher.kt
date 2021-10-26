@@ -1,10 +1,7 @@
 package com.piconemarc.viewmodel.viewModel.actionDispatcher.popup
 
 import com.piconemarc.core.domain.interactor.account.DeleteAccountInteractor
-import com.piconemarc.viewmodel.ActionDispatcher
-import com.piconemarc.viewmodel.DefaultStore
-import com.piconemarc.viewmodel.UiAction
-import com.piconemarc.viewmodel.launchCatchingError
+import com.piconemarc.viewmodel.*
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
@@ -29,7 +26,7 @@ class DeleteAccountPopUpActionDispatcher @Inject constructor(
                 )
             }
             is AppActions.DeleteAccountAction.DeleteAccount -> {
-                scope.launchCatchingError(
+                scope.launchOnIOCatchingError(
                     block = { deleteAccountInteractor.deleteAccount(action.accountUiToDelete) },
                     doOnSuccess = {
                         updateState(

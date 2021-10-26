@@ -8,10 +8,6 @@ import javax.inject.Inject
 
 class AddNewOperationInteractor @Inject constructor(private val operationRepository: OperationRepository) {
 
-    suspend fun addNewOperation(operationModel: OperationUiModel) : Long {
-        return operationRepository.addNewOperation(OperationDTO().fromUiModel(operationModel))
-    }
-
     suspend fun addOperation(operationModel: OperationUiModel) {
         return operationRepository.addOperation(OperationDTO().fromUiModel(operationModel))
     }

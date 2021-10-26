@@ -10,10 +10,7 @@ import com.piconemarc.core.domain.interactor.payment.AddNewPaymentInteractor
 import com.piconemarc.core.domain.interactor.transfer.AddNewTransferInteractor
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.TransferUiModel
-import com.piconemarc.viewmodel.ActionDispatcher
-import com.piconemarc.viewmodel.DefaultStore
-import com.piconemarc.viewmodel.UiAction
-import com.piconemarc.viewmodel.launchCatchingError
+import com.piconemarc.viewmodel.*
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.addOperationPopUpUiState
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.myAccountDetailScreenUiState
@@ -111,13 +108,13 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                     //Check selected icon ------------------------------------------------------------
                     when (addOperationPopUpUiState.addPopUpOptionSelectedIcon) {
                         is PAMIconButtons.Operation -> {
-                            scope.launchCatchingError(
+                            scope.launchOnIOCatchingError(
                                 block = { addNewOperationInteractor.addOperation(action.operation) },
                                 doOnSuccess = { closePopUp() }
                             )
                         }
                         is PAMIconButtons.Payment -> {
-                            scope.launchCatchingError(
+                            scope.launchOnIOCatchingError(
                                 block = {
                                     addNewOperationInteractor.addPaymentOperation(
                                         operation = action.operation,
@@ -136,7 +133,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                         }
                         is PAMIconButtons.Transfer -> {
                             if (!addOperationPopUpUiState.isBeneficiaryAccountError) {
-                                scope.launchCatchingError(
+                                scope.launchOnIOCatchingError(
                                     block = {
                                         addNewOperationInteractor.addTransferOperation(
                                             operation = action.operation,

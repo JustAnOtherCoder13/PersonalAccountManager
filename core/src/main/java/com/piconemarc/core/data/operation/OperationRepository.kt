@@ -1,6 +1,7 @@
 package com.piconemarc.core.data.operation
 
 import com.piconemarc.core.domain.entityDTO.OperationDTO
+import com.piconemarc.core.domain.entityDTO.TransferDTO
 import kotlinx.coroutines.flow.Flow
 import java.util.*
 import javax.inject.Inject
@@ -19,7 +20,6 @@ class OperationRepository @Inject constructor(private val operationDaoImpl: Oper
         operationDaoImpl.addTransferOperation(operation, beneficiaryAccountId)
     }
 
-
     fun getAllOperations(): Flow<List<OperationDTO>> {
         return operationDaoImpl.getAllOperations()
     }
@@ -28,12 +28,20 @@ class OperationRepository @Inject constructor(private val operationDaoImpl: Oper
         return operationDaoImpl.getAllOperationsForAccountId(accountId)
     }
 
-    suspend fun addNewOperation(operationDTO: OperationDTO): Long {
-        return operationDaoImpl.addNewOperation(operationDTO)
-    }
-
     suspend fun deleteOperation(operationDTO: OperationDTO) {
         operationDaoImpl.deleteOperation(operationDTO)
+    }
+
+    suspend fun deleteOperation_(operationDTO: OperationDTO) {
+        operationDaoImpl.deleteOperation_(operationDTO)
+    }
+
+    suspend fun deletePayment(operationDTO: OperationDTO) {
+        operationDaoImpl.deletePayment(operationDTO)
+    }
+
+    suspend fun deleteTransfer(operationDTO: OperationDTO,transfer : TransferDTO) {
+        operationDaoImpl.deleteTransfer(operationDTO,transfer)
     }
 
     suspend fun getOperationForId(operationId: Long): OperationDTO {

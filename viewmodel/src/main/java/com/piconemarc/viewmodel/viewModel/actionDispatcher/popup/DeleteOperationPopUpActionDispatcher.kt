@@ -1,5 +1,6 @@
 package com.piconemarc.viewmodel.viewModel.actionDispatcher.popup
 
+import android.util.Log
 import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
 import com.piconemarc.core.domain.interactor.account.UpdateAccountBalanceInteractor
 import com.piconemarc.core.domain.interactor.operation.DeleteOperationInteractor
@@ -11,10 +12,7 @@ import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
 import com.piconemarc.model.entity.OperationUiModel
 import com.piconemarc.model.entity.PaymentUiModel
 import com.piconemarc.model.entity.TransferUiModel
-import com.piconemarc.viewmodel.ActionDispatcher
-import com.piconemarc.viewmodel.DefaultStore
-import com.piconemarc.viewmodel.UiAction
-import com.piconemarc.viewmodel.launchCatchingError
+import com.piconemarc.viewmodel.*
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.deleteOperationPopUpUiState
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.myAccountDetailScreenUiState
@@ -28,17 +26,12 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
     private val deleteOperationInteractor: DeleteOperationInteractor,
     private val getOperationForIdInteractor: GetOperationForIdInteractor,
     private val getAccountForIdInteractor: GetAccountForIdInteractor,
-    private val updateAccountBalanceInteractor: UpdateAccountBalanceInteractor,
     private val getTransferForIdInteractor: GetTransferForIdInteractor,
-    private val getPaymentForIdInteractor: GetPaymentForIdInteractor,
-    private val deletePaymentInteractor: DeletePaymentInteractor,
-    private val deleteTransferInteractor: DeleteTransferInteractor
 
 ) : ActionDispatcher {
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
-        var transfer : TransferUiModel
-        var transferRelatedOperation : OperationUiModel
-        var payment : PaymentUiModel
+        var transfer: TransferUiModel
+        var transferRelatedOperation: OperationUiModel
 
         updateState(GlobalAction.UpdateDeleteOperationPopUpState(action))
         when (action) {
@@ -52,14 +45,25 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
                 //if operation have transfer id get related account to inform
                 // user that operation will deleted on distant account
                 if (action.operationToDelete.transferId != null)
-                    scope.launchCatchingError(
+                    scope.launchOnIOCatchingError(
                         block = {
-                            transfer = getTransferForIdInteractor.getTransferForId(action.operationToDelete.transferId!!)
-                            transferRelatedOperation = getTransferRelatedOperation(action, transfer)
+                            transfer =
+                                getTransferForIdInteractor.getTransferForId(action.operationToDelete.transferId!!)
+                            transferRelatedOperation = getOperationForIdInteractor.getOperationForId(
+                                //if operation id is equal to senderOperationId
+                                // that means that distant operation is beneficiary one, else is sender one
+                                if (action.operationToDelete.id == transfer.senderOperationId) {
+                                    transfer.beneficiaryOperationId
+                                } else {
+                                    transfer.senderOperationId
+                                }
+                            )
                             updateState(
                                 GlobalAction.UpdateDeleteOperationPopUpState(
                                     AppActions.DeleteOperationPopUpAction.UpdateTransferRelatedAccount(
-                                        getAccountForIdInteractor.getAccountForId(transferRelatedOperation.accountId)
+                                        getAccountForIdInteractor.getAccountForId(
+                                            transferRelatedOperation.accountId
+                                        )
                                     )
                                 )
                             )
@@ -69,18 +73,10 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
             is AppActions.DeleteOperationPopUpAction.DeleteOperation -> {
                 // if payment id exist and user want to delete operation and payment
                 if (action.operationToDelete.paymentId != null
-                    && deleteOperationPopUpUiState.isDeletedPermanently) {
-                    scope.launchCatchingError(
-                        block = {
-                            payment = getPaymentForIdInteractor.getPaymentForId(action.operationToDelete.paymentId!!)
-                            deletePaymentInteractor.deletePayment(payment)
-                            deleteOperationInteractor.deleteOperation(action.operationToDelete)
-                            updateAccountBalanceInteractor.updateAccountBalance(
-                                myAccountDetailScreenUiState.selectedAccount.updateAccountBalance(
-                                    action.operationToDelete.deleteOperation()
-                                )
-                            )
-                        },
+                    && deleteOperationPopUpUiState.isDeletedPermanently
+                ) {
+                    scope.launchOnIOCatchingError(
+                        block = { deleteOperationInteractor.deletePayment(action.operationToDelete) },
                         doOnSuccess = { closePopUp() }
                     )
                 }
@@ -88,45 +84,21 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
                 // and update sender and beneficiary account
                 else if (action.operationToDelete.transferId != null) {
 
-                    scope.launchCatchingError(
+                    scope.launchOnIOCatchingError(
                         block = {
                             transfer = getTransferForIdInteractor.getTransferForId(action.operationToDelete.transferId!!)
-
-                            transferRelatedOperation = getTransferRelatedOperation(action, transfer)
-                            val transferRelatedAccount = getAccountForIdInteractor.getAccountForId(transferRelatedOperation.accountId)
-
-                            // if payment id exist and user want to delete operation and payment
-                            if (transfer.paymentId != null &&  deleteOperationPopUpUiState.isDeletedPermanently) {
-                                payment = getPaymentForIdInteractor.getPaymentForId(transfer.paymentId!!)
-                                deletePaymentInteractor.deletePayment(payment)
-                            } else {
-                                deleteTransferInteractor.deleteTransfer(transfer)
-                                updateAccountBalanceInteractor.updateAccountBalance(
-                                    myAccountDetailScreenUiState.selectedAccount.updateAccountBalance(
-                                        action.operationToDelete.deleteOperation()
-                                    ),
-                                    transferRelatedAccount.updateAccountBalance(
-                                        transferRelatedOperation.deleteOperation()
-                                    )
-                                )
-                            }
+                            deleteOperationInteractor.deleteTransfer(
+                                action.operationToDelete,
+                                transfer
+                            )
                         },
                         doOnSuccess = { closePopUp() }
                     )
 
                 } else {
-                    //else delete base operation and update account
-                    scope.launchCatchingError(
-                        block = { deleteOperationInteractor.deleteOperation(action.operationToDelete) }
-                    )
-                    scope.launchCatchingError(
-                        block = {
-                            updateAccountBalanceInteractor.updateAccountBalance(
-                                myAccountDetailScreenUiState.selectedAccount.updateAccountBalance(
-                                    action.operationToDelete.deleteOperation()
-                                )
-                            )
-                        },
+                    //else delete base operation
+                    scope.launchOnIOCatchingError(
+                        block = { deleteOperationInteractor.deleteOperation_(action.operationToDelete) },
                         doOnSuccess = { closePopUp() }
                     )
                 }
@@ -134,31 +106,6 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
         }
     }
 
-    private suspend fun getTransferRelatedOperation(
-        action: AppActions.DeleteOperationPopUpAction.DeleteOperation,
-        transfer: TransferUiModel
-    ) = getOperationForIdInteractor.getOperationForId(
-        //if operation id is equal to senderOperationId
-        // that means that distant operation is beneficiary one, else is sender one
-        if (action.operationToDelete.id == transfer.senderOperationId) {
-            transfer.beneficiaryOperationId
-        } else {
-            transfer.senderOperationId
-        }
-    )
-
-    private suspend fun getTransferRelatedOperation(
-        action: AppActions.DeleteOperationPopUpAction.InitPopUp,
-        transfer: TransferUiModel
-    ) = getOperationForIdInteractor.getOperationForId(
-        //if operation id is equal to senderOperationId
-        // that means that distant operation is beneficiary one, else is sender one
-        if (action.operationToDelete.id == transfer.senderOperationId) {
-            transfer.beneficiaryOperationId
-        } else {
-            transfer.senderOperationId
-        }
-    )
 
     private fun closePopUp() {
         updateState(

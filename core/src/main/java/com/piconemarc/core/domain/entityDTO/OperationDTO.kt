@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
+import androidx.room.ForeignKey.SET_NULL
 import androidx.room.PrimaryKey
 import com.piconemarc.core.domain.utils.Constants.OPERATION_TABLE
 import com.piconemarc.model.entity.OperationUiModel
@@ -20,12 +21,14 @@ import java.util.*
         ForeignKey(
             entity = CategoryDTO::class,
             parentColumns = arrayOf("id"),
-            childColumns = arrayOf("categoryId")
+            childColumns = arrayOf("categoryId"),
+            onDelete = SET_NULL
         ),
         ForeignKey(
             entity = PaymentDTO::class,
             parentColumns = arrayOf("id"),
-            childColumns = arrayOf("paymentId")
+            childColumns = arrayOf("paymentId"),
+            onDelete = SET_NULL
         ),
         ForeignKey(
             entity = TransferDTO::class,

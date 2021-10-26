@@ -1,5 +1,6 @@
 package com.piconemarc.core.data.operation
 
+import android.util.Log
 import androidx.room.*
 import com.piconemarc.core.domain.entityDTO.AccountDTO
 import com.piconemarc.core.domain.entityDTO.OperationDTO
@@ -7,10 +8,7 @@ import com.piconemarc.core.domain.entityDTO.PaymentDTO
 import com.piconemarc.core.domain.entityDTO.TransferDTO
 import com.piconemarc.core.domain.utils.Constants
 import com.piconemarc.core.domain.utils.Constants.OPERATION_TABLE
-import com.piconemarc.model.entity.TransferUiModel
 import kotlinx.coroutines.flow.Flow
-import java.text.ParseException
-import java.text.SimpleDateFormat
 import java.util.*
 
 @Dao
@@ -36,6 +34,7 @@ interface OperationDao {
                 endDate = endDate
             )
         )
+        Log.i("TAG", "addPaymentOperation: $operationId  $paymentId")
         updateOperationPaymentId(paymentId, operationId)
     }
 
@@ -55,6 +54,51 @@ interface OperationDao {
         updateOperationTransferId(transferId,senderOperationId)
         updateOperationTransferId(transferId,beneficiaryOperationId)
     }
+
+    @Transaction
+    suspend fun deleteOperation_(operationDTO: OperationDTO){
+        deleteOperation(operationDTO)
+        val account = getAccountForId(operationDTO.accountId).toUiModel()
+            .updateAccountBalance(operationDTO.toUiModel().deleteOperation())
+        updateAccountBalance(operationDTO.accountId,account.accountBalance)
+    }
+
+    @Transaction
+    suspend fun deletePayment(operationDTO: OperationDTO){
+        val payment = getPaymentForId(operationDTO.paymentId!!)
+        deletePayment(payment)
+        deleteOperation_(operationDTO)
+    }
+
+    @Transaction
+    suspend fun deleteTransfer(operationDTO: OperationDTO,transfer : TransferDTO){
+        //val transfer = getTransferOperationForId(operationDTO.transferId!!)
+        val distantOperation = getOperationForId(
+            if (operationDTO.id == transfer.senderOperationId) {
+                transfer.beneficiaryOperationId
+            } else {
+                transfer.senderOperationId
+            }
+        )
+        val selectedAccount = getAccountForId(operationDTO.accountId).toUiModel().updateAccountBalance(operationDTO.toUiModel().deleteOperation())
+        val distantAccount = getAccountForId(distantOperation.accountId).toUiModel().updateAccountBalance(distantOperation.toUiModel().deleteOperation())
+        deleteTransferOperation(transfer)
+        updateAccountBalance(operationDTO.accountId, selectedAccount.accountBalance)
+        updateAccountBalance(distantAccount.id,distantAccount.accountBalance)
+    }
+
+
+    @Delete
+    suspend fun deleteTransferOperation(transferDTO: TransferDTO)
+
+    @Query("SELECT*FROM ${Constants.TRANSFER_TABLE} WHERE ${Constants.TRANSFER_TABLE}.id = :transferId")
+    suspend fun getTransferOperationForId(transferId : Long) : TransferDTO
+
+    @Delete
+    suspend fun deletePayment(paymentDTO: PaymentDTO)
+
+    @Query("SELECT*FROM ${Constants.PAYMENT_TABLE} WHERE ${Constants.PAYMENT_TABLE}.id = :id")
+    suspend fun getPaymentForId(id : Long) : PaymentDTO
 
     @Insert
     suspend fun addNewTransferOperation(transferDTO: TransferDTO) : Long

@@ -106,22 +106,14 @@ class ActionDispatcherModule {
         deleteOperationInteractor: DeleteOperationInteractor,
         getAccountForIdInteractor: GetAccountForIdInteractor,
         getOperationForIdInteractor: GetOperationForIdInteractor,
-        updateAccountBalanceInteractor: UpdateAccountBalanceInteractor,
         getTransferForIdInteractor: GetTransferForIdInteractor,
-        getPaymentForIdInteractor: GetPaymentForIdInteractor,
-        deletePaymentInteractor: DeletePaymentInteractor,
-        deleteTransferInteractor: DeleteTransferInteractor
     ): DeleteOperationPopUpActionDispatcher{
         return DeleteOperationPopUpActionDispatcher(
             store = globalStore,
             deleteOperationInteractor = deleteOperationInteractor,
             getAccountForIdInteractor = getAccountForIdInteractor,
             getOperationForIdInteractor = getOperationForIdInteractor,
-            updateAccountBalanceInteractor = updateAccountBalanceInteractor,
             getTransferForIdInteractor = getTransferForIdInteractor,
-            getPaymentForIdInteractor = getPaymentForIdInteractor,
-            deletePaymentInteractor = deletePaymentInteractor,
-            deleteTransferInteractor = deleteTransferInteractor
         )
     }
 }

@@ -5,6 +5,7 @@ import android.util.Log
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -60,7 +61,23 @@ fun CoroutineScope.launchCatchingError(
     doOnSuccess : ()-> Unit = {},
     doOnError : ()-> Unit = {},
 ) : Job {
-    return this.launch {
+    return this.launch() {
+        try {
+            block()
+        }catch (e : SQLiteException){
+            Log.e(this::class.java.simpleName, "dispatchEvent: ", e)
+            doOnError()
+        }
+        doOnSuccess()
+    }
+}
+
+fun CoroutineScope.launchOnIOCatchingError(
+    block : suspend CoroutineScope.() -> Unit,
+    doOnSuccess : ()-> Unit = {},
+    doOnError : ()-> Unit = {},
+) : Job {
+    return this.launch(Dispatchers.IO) {
         try {
             block()
         }catch (e : SQLiteException){
