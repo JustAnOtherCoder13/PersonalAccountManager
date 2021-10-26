@@ -8,16 +8,21 @@ import com.piconemarc.core.data.category.CategoryDaoImpl
 import com.piconemarc.core.data.category.CategoryRepository
 import com.piconemarc.core.data.operation.OperationDaoImpl
 import com.piconemarc.core.data.operation.OperationRepository
-import com.piconemarc.core.domain.interactor.account.AddNewAccountInteractor
-import com.piconemarc.core.domain.interactor.account.DeleteAccountInteractor
-import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
-import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
+import com.piconemarc.core.data.payment.PaymentDaoImpl
+import com.piconemarc.core.data.payment.PaymentRepository
+import com.piconemarc.core.data.transfer.TransferDaoImpl
+import com.piconemarc.core.data.transfer.TransferRepository
+import com.piconemarc.core.domain.interactor.account.*
 import com.piconemarc.core.domain.interactor.category.AddNewCategoryInteractor
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
-import com.piconemarc.core.domain.interactor.operation.AddNewOperationInteractor
-import com.piconemarc.core.domain.interactor.operation.DeleteOperationInteractor
-import com.piconemarc.core.domain.interactor.operation.GetAllOperationsForAccountIdInteractor
-import com.piconemarc.core.domain.interactor.operation.GetAllOperationsInteractor
+import com.piconemarc.core.domain.interactor.operation.*
+import com.piconemarc.core.domain.interactor.payment.AddNewPaymentInteractor
+import com.piconemarc.core.domain.interactor.payment.DeletePaymentInteractor
+import com.piconemarc.core.domain.interactor.payment.GetAllPaymentForAccountIdInteractor
+import com.piconemarc.core.domain.interactor.payment.GetPaymentForIdInteractor
+import com.piconemarc.core.domain.interactor.transfer.AddNewTransferInteractor
+import com.piconemarc.core.domain.interactor.transfer.DeleteTransferInteractor
+import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -56,6 +61,18 @@ class CoreModule {
         return CategoryDaoImpl(pamDatabase)
     }
 
+    @Singleton
+    @Provides
+    fun provideTransferDao(pamDatabase: PAMDatabase):TransferDaoImpl{
+        return TransferDaoImpl(pamDatabase)
+    }
+
+    @Singleton
+    @Provides
+    fun providePaymentDao(pamDatabase: PAMDatabase): PaymentDaoImpl{
+        return PaymentDaoImpl(pamDatabase)
+    }
+
     //-----------------------------REPOSITORY--------------------------------
 
     @Provides
@@ -71,6 +88,16 @@ class CoreModule {
     @Provides
     fun provideAccountRepository(accountDaoImpl: AccountDaoImpl) : AccountRepository{
         return AccountRepository(accountDaoImpl)
+    }
+
+    @Provides
+    fun provideTransferRepository(transferDaoImpl: TransferDaoImpl): TransferRepository{
+        return TransferRepository(transferDaoImpl)
+    }
+
+    @Provides
+    fun providePaymentRepository(paymentDaoImpl: PaymentDaoImpl) : PaymentRepository{
+        return PaymentRepository(paymentDaoImpl)
     }
 
     //------------------------------INTERACTORS----------------------------------
@@ -94,6 +121,11 @@ class CoreModule {
     @Provides
     fun provideDeleteAccount(accountRepository: AccountRepository) : DeleteAccountInteractor{
         return DeleteAccountInteractor(accountRepository)
+    }
+
+    @Provides
+    fun provideUpdateAccountBalanceInteractor (accountRepository: AccountRepository) :UpdateAccountBalanceInteractor{
+        return UpdateAccountBalanceInteractor(accountRepository)
     }
 
     //CATEGORY
@@ -127,6 +159,57 @@ class CoreModule {
     @Provides
     fun provideDeleteOperation(operationRepository: OperationRepository) : DeleteOperationInteractor{
         return DeleteOperationInteractor(operationRepository)
+    }
+
+    @Provides
+    fun provideGetOperationForId(operationRepository: OperationRepository) :GetOperationForIdInteractor{
+        return GetOperationForIdInteractor(operationRepository)
+    }
+
+    @Provides
+    fun provideUpdateOperationPaymentId(operationRepository: OperationRepository):UpdateOperationPaymentIdInteractor{
+        return UpdateOperationPaymentIdInteractor(operationRepository)
+    }
+
+    @Provides
+    fun provideUpdateOperationTransferId(operationRepository: OperationRepository):UpdateOperationTransferIdInteractor{
+        return UpdateOperationTransferIdInteractor(operationRepository)
+    }
+    //PAYMENT
+    @Provides
+    fun provideAddNewPayment(paymentRepository: PaymentRepository): AddNewPaymentInteractor{
+        return AddNewPaymentInteractor(paymentRepository)
+    }
+
+    @Provides
+    fun provideDeletePayment(paymentRepository: PaymentRepository) :DeletePaymentInteractor{
+        return DeletePaymentInteractor(paymentRepository)
+    }
+
+    @Provides
+    fun provideGetAllPaymentForAccountId(paymentRepository: PaymentRepository): GetAllPaymentForAccountIdInteractor{
+        return GetAllPaymentForAccountIdInteractor(paymentRepository)
+    }
+
+    @Provides
+    fun provideGetPaymentForId(paymentRepository: PaymentRepository) : GetPaymentForIdInteractor{
+        return GetPaymentForIdInteractor(paymentRepository)
+    }
+
+    //TRANSFER
+    @Provides
+    fun provideAddNewTransfer(transferRepository: TransferRepository): AddNewTransferInteractor{
+        return AddNewTransferInteractor(transferRepository)
+    }
+
+    @Provides
+    fun provideDeleteTransfer(transferRepository: TransferRepository): DeleteTransferInteractor{
+        return DeleteTransferInteractor(transferRepository)
+    }
+
+    @Provides
+    fun provideGetTransferForId(transferRepository: TransferRepository): GetTransferForIdInteractor{
+        return GetTransferForIdInteractor(transferRepository)
     }
 
 }

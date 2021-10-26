@@ -1,26 +1,32 @@
 package com.piconemarc.viewmodel.viewModel
 
-import com.piconemarc.core.domain.Constants
-import com.piconemarc.model.entity.AccountModel
-import com.piconemarc.model.entity.PresentationDataModel
-import com.piconemarc.viewmodel.PAMIconButtons
+import com.piconemarc.core.domain.utils.Constants
+import com.piconemarc.model.PAMIconButtons
+import com.piconemarc.model.entity.AccountUiModel
+import com.piconemarc.model.entity.CategoryUiModel
+import com.piconemarc.model.entity.OperationUiModel
 import com.piconemarc.viewmodel.VMState
 
 object ViewModelInnerStates {
-
-    data class GlobalVmState(
-        var baseAppScreenVmState: BaseAppScreenVmState ,
-        var addOperationPopUpVMState: AddOperationPopUpVMState ,
-        var deleteAccountPopUpVMState: DeleteAccountPopUpVMState,
-        var addAccountPopUpVMState: AddAccountPopUpVMState
+    data class BaseAppScreenVmState(
+        val selectedInterlayerButton: PAMIconButtons = PAMIconButtons.Home,
+        val interLayerTitle: Int = com.piconemarc.model.R.string.myAccountsInterLayerTitle,
+        val allAccountUis: List<AccountUiModel> = listOf(),
+        val footerTitle: String = "All Accounts",
+        val footerBalance: Double = 0.0,
+        val footerRest: Double = 0.0
     ) : VMState
 
-    data class BaseAppScreenVmState(
-        val selectedInterlayerButton : PAMIconButtons = PAMIconButtons.Home,
-        val allAccounts : List<AccountModel> =  listOf(),
-        val footerTitle : PresentationDataModel = PresentationDataModel("All Accounts"),
-        val footerBalance : PresentationDataModel = PresentationDataModel("0.0"),
-        val footerRest : PresentationDataModel = PresentationDataModel("0.0")
+    data class MyAccountScreenVMState(
+        val allAccounts: List<AccountUiModel> = listOf(),
+        val isVisible: Boolean = true
+    ) : VMState
+
+    data class MyAccountDetailScreenVMState(
+        val selectedAccount: AccountUiModel = AccountUiModel(),
+        val accountMonthlyOperations: List<OperationUiModel> = listOf(),
+        val actualMonth: String = "",
+        val isVisible: Boolean = false
     ) : VMState
 
     data class AddOperationPopUpVMState(
@@ -28,37 +34,45 @@ object ViewModelInnerStates {
         val isPaymentExpanded: Boolean = false,
         val isRecurrentOptionExpanded: Boolean = false,
         val isTransferExpanded: Boolean = false,
-        val allCategories: List<PresentationDataModel> = listOf(),
-        val allAccounts: List<PresentationDataModel> = listOf(),
-        val selectableEndDateYears: List<PresentationDataModel> = listOf(),
-        val selectableEndDateMonths: List<PresentationDataModel> = listOf(),
-        val selectedCategory: PresentationDataModel = PresentationDataModel(),
-        val operationName: PresentationDataModel = PresentationDataModel(),
-        val operationAmount: PresentationDataModel = PresentationDataModel(),
-        val enDateSelectedMonth: PresentationDataModel = PresentationDataModel(),
-        val endDateSelectedYear: PresentationDataModel = PresentationDataModel(),
-        val senderAccount: PresentationDataModel = PresentationDataModel(),
-        val beneficiaryAccount: PresentationDataModel = PresentationDataModel(),
-        val addPopUpTitle: PresentationDataModel = Constants.OPERATION_MODEL,
-        val isAddOperation : Boolean = true,
-        val addPopUpOptionSelectedIcon : PAMIconButtons = PAMIconButtons.Operation
+        val isAddOperation: Boolean = true,
+        val isAddOrMinusEnable : Boolean = true,
+        val allCategories: List<CategoryUiModel> = listOf(),
+        val allAccounts: List<AccountUiModel> = listOf(),
+        val selectableEndDateYears: List<String> = listOf(),
+        val selectableEndDateMonths: List<String> = listOf(),
+        val selectedCategory: CategoryUiModel = CategoryUiModel(),
+        val operationName: String = "",
+        val operationAmount: String = "",
+        val enDateSelectedMonth: String = "",
+        val endDateSelectedYear: String = "",
+        val beneficiaryAccount: AccountUiModel = AccountUiModel(),
+        val addPopUpTitle: String = Constants.OPERATION_MODEL,
+        val addPopUpOptionSelectedIcon: PAMIconButtons = PAMIconButtons.Operation,
+        val isOperationNameError : Boolean=false,
+        val isOperationAmountError : Boolean=false,
+        val isRecurrentEndDateError : Boolean = true,
+        val isBeneficiaryAccountError : Boolean = false,
+        ) : VMState
+
+    data class DeleteOperationPopUpVMState(
+        val isPopUpExpanded: Boolean=false,
+        val operationToDelete : OperationUiModel = OperationUiModel(),
+        val isDeletedPermanently : Boolean = true,
+        val transferRelatedAccount : AccountUiModel = AccountUiModel(),
     ) : VMState
 
     data class DeleteAccountPopUpVMState(
         val isPopUpExpanded: Boolean = false,
-        val accountToDeleteName : PresentationDataModel = PresentationDataModel(),
-        val accountToDeleteBalance :PresentationDataModel = PresentationDataModel(),
-        val accountToDelete : AccountModel = AccountModel()
+        val accountUiToDelete: AccountUiModel = AccountUiModel()
     ) : VMState
 
     data class AddAccountPopUpVMState(
-        val isPopUpExpanded : Boolean = false,
-        val accountName : PresentationDataModel = PresentationDataModel(),
-        val accountBalance : PresentationDataModel = PresentationDataModel(),
-        val accountOverdraft : PresentationDataModel = PresentationDataModel(),
-        val isNameError : Boolean = false,
-        val isBalanceError : Boolean = true,
-        val isOverdraftError : Boolean = true
-    ):VMState
-
+        val isPopUpExpanded: Boolean = false,
+        val accountName: String = "",
+        val accountBalance: String = "",
+        val accountOverdraft: String = "",
+        val isNameError: Boolean = false,
+        val isBalanceError: Boolean = true,
+        val isOverdraftError: Boolean = true
+    ) : VMState
 }

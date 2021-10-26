@@ -7,16 +7,16 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.piconemarc.core.data.account.AccountDao
 import com.piconemarc.core.data.category.CategoryDao
 import com.piconemarc.core.data.operation.OperationDao
-import com.piconemarc.core.domain.Constants.ACCOUNT_TABLE
-import com.piconemarc.core.domain.Constants.CATEGORY_TABLE
-import com.piconemarc.core.domain.Constants.OPERATION_TABLE
-import com.piconemarc.core.domain.DateTypeConverter
-import com.piconemarc.core.domain.entityDTO.AccountDTO
-import com.piconemarc.core.domain.entityDTO.CategoryDTO
-import com.piconemarc.core.domain.entityDTO.OperationDTO
+import com.piconemarc.core.data.payment.PaymentDao
+import com.piconemarc.core.data.transfer.TransferDao
+import com.piconemarc.core.domain.entityDTO.*
+import com.piconemarc.core.domain.utils.Constants.ACCOUNT_TABLE
+import com.piconemarc.core.domain.utils.Constants.CATEGORY_TABLE
+import com.piconemarc.core.domain.utils.Constants.OPERATION_TABLE
+import com.piconemarc.core.domain.utils.DateTypeConverter
 
 @Database(
-    entities = [AccountDTO::class, CategoryDTO::class, OperationDTO::class],
+    entities = [AccountDTO::class, CategoryDTO::class, OperationDTO::class, TransferDTO::class, PaymentDTO::class],
     version = 1,
     exportSchema = false
 )
@@ -27,6 +27,8 @@ abstract class PAMDatabase : RoomDatabase() {
     abstract fun accountDao(): AccountDao
     abstract fun categoryDao(): CategoryDao
     abstract fun operationDao(): OperationDao
+    abstract fun transferDao():TransferDao
+    abstract fun paymentDao(): PaymentDao
 
     companion object {
 
@@ -86,9 +88,6 @@ abstract class PAMDatabase : RoomDatabase() {
                     contentValues.put("id", operation.id)
                     contentValues.put("amount", operation.amount)
                     contentValues.put("name", operation.name)
-                    contentValues.put("isRecurrent", operation.isRecurrent)
-                    contentValues.put("endDateMonth", operation.endDateMonth)
-                    contentValues.put("endDateYear", operation.endDateYear)
                     contentValues.put("accountId", operation.accountId)
                     contentValues.put("categoryId",operation.categoryId)
                     contentValues.put("categoryId",operation.emitDate?.time)

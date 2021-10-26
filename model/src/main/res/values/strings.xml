@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="homeIconContentDescription">Home icon button</string>
+    <string name="operationIconContentDescription">Operation icon button</string>
+    <string name="paymentIconContentDescription">Payment operation icon button</string>
+    <string name="transferIconContentDescription">Transfer operation icon button</string>
+    <string name="chartIconContentDescription">Chart icon button</string>
+    <string name="addIconContentDescription">Add icon button</string>
+    <string name="deleteIconContentDescription">Delete icon button</string>
+    <string name="minusIconContentDescription">Minus icon button</string>
+    <string name="operation">Operation</string>
+    <string name="payment">Payment Operation</string>
+    <string name="transfer">Transfer Operation</string>
+    <string name="myPaymentInterlayerTitle">My Payment</string>
+    <string name="myAccountsInterLayerTitle">My Accounts</string>
+    <string name="detail">Detail</string>
+    <string name="homeInterlayerTitle">My Accounts</string>
+    <string name="chartInterlayerTitle">Chart</string>
+    <string name="backIconButtonContentDescription">Back icon button</string>
+
+</resources>

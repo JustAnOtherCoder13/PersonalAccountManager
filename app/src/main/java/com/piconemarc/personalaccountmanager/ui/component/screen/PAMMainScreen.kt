@@ -1,6 +1,8 @@
 package com.piconemarc.personalaccountmanager.ui.component.screen
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import com.piconemarc.model.PAMIconButtons
+import com.piconemarc.personalaccountmanager.toStringWithTwoDec
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.BaseScreen
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMAppBody
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMAppFooter
@@ -8,49 +10,44 @@ import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMAp
 import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMAddAccountPopUp
 import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMAddOperationPopUp
 import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMDeleteAccountPopUp
-import com.piconemarc.viewmodel.PAMIconButtons
-import com.piconemarc.viewmodel.viewModel.AppActionDispatcher
+import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMDeleteOperationPopUp
 import com.piconemarc.viewmodel.viewModel.AppActions
-import com.piconemarc.viewmodel.viewModel.AppSubscriber.GlobalUiState.baseAppScreenUiState
+import com.piconemarc.viewmodel.viewModel.AppViewModel
+import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.baseAppScreenUiState
 
 @Composable
 fun PAMMainScreen(
-    actionDispatcher: AppActionDispatcher,
+    viewModel: AppViewModel,
 ) {
-    actionDispatcher.dispatchAction(AppActions.BaseAppScreenAction.InitScreen)
-    var isPop by remember {
-        mutableStateOf(false)
-    }
+    viewModel.dispatchAction(AppActions.BaseAppScreenAction.InitScreen)
+    viewModel.dispatchAction(AppActions.MyAccountScreenAction.InitScreen)
+
     BaseScreen(
         header = { PAMAppHeader() },
         body = {
             PAMAppBody(
-                onInterlayerIconClicked = {
-                    actionDispatcher.dispatchAction(
-                        AppActions.BaseAppScreenAction.SelectInterlayer(it)
-                    )
-                },
-                selectedInterlayerIconButton = baseAppScreenUiState.selectedInterlayerButton,
+                viewModel = viewModel,
                 body = {
                     when (baseAppScreenUiState.selectedInterlayerButton) {
                         is PAMIconButtons.Payment -> {
                         }
                         is PAMIconButtons.Chart -> {
                         }
-                        else -> { MyAccountsBody(actionDispatcher = actionDispatcher) }
+                        else -> { MyAccountsSheet(viewModel = viewModel) }
                     }
                 }
             )
         },
         footer = {
             PAMAppFooter(
-                footerAccountBalance = baseAppScreenUiState.footerBalance,
+                footerAccountBalance = baseAppScreenUiState.footerBalance.toStringWithTwoDec(),
                 footerAccountName = baseAppScreenUiState.footerTitle,
-                footerAccountRest = baseAppScreenUiState.footerRest
+                footerAccountRest = baseAppScreenUiState.footerRest.toStringWithTwoDec()
             )
         }
     )
-    PAMAddOperationPopUp(actionDispatcher = actionDispatcher)
-    PAMDeleteAccountPopUp(actionDispatcher = actionDispatcher)
-    PAMAddAccountPopUp(actionDispatcher = actionDispatcher)
+    PAMAddOperationPopUp(viewModel = viewModel)
+    PAMDeleteAccountPopUp(viewModel = viewModel)
+    PAMAddAccountPopUp(viewModel = viewModel)
+    PAMDeleteOperationPopUp(viewModel = viewModel)
 }

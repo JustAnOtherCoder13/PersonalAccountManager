@@ -1,32 +1,47 @@
 package com.piconemarc.viewmodel.viewModel
 
-import com.piconemarc.model.entity.AccountModel
-import com.piconemarc.model.entity.PresentationDataModel
-import com.piconemarc.viewmodel.PAMIconButtons
+import com.piconemarc.model.PAMIconButtons
+import com.piconemarc.model.entity.*
 import com.piconemarc.viewmodel.UiAction
 
 object AppActions {
 
-    sealed class GlobalAction : UiAction {
-        data class UpdateBaseAppScreenVmState(val baseAction: UiAction) : GlobalAction()
-        data class UpdateAddOperationPopUpState(val baseAction: UiAction) : GlobalAction()
-        data class UpdateDeleteAccountPopUpState(val baseAction: UiAction) : GlobalAction()
-        data class UpdateAddAccountPopUpState(val baseAction: UiAction) : GlobalAction()
-    }
+    //SCREEN----------------------------------------------------------------------------------------
 
     sealed class BaseAppScreenAction : UiAction {
         object InitScreen : BaseAppScreenAction()
+        object CloseApp : BaseAppScreenAction()
         data class SelectInterlayer(val selectedInterlayerButton: PAMIconButtons) :
             BaseAppScreenAction()
 
-        data class UpdateAccounts(val allAccounts: List<AccountModel>) : BaseAppScreenAction()
-        data class UpdateFooterBalance(val allAccounts: List<AccountModel>) :
+        data class UpdateInterlayerTiTle(val interlayerTitle: Int) : BaseAppScreenAction()
+        data class UpdateAccounts(val allAccountUis: List<AccountUiModel>) : BaseAppScreenAction()
+        data class UpdateFooterBalance(val allAccounts: List<AccountUiModel>) :
             BaseAppScreenAction()
 
-        data class UpdateFooterRest(val allAccounts: List<AccountModel>) : BaseAppScreenAction()
-        data class UpdateFooterTitle(val footerTitle: PresentationDataModel) : BaseAppScreenAction()
+        data class UpdateFooterRest(val allAccountUis: List<AccountUiModel>) : BaseAppScreenAction()
+        data class UpdateFooterTitle(val footerTitle: String) : BaseAppScreenAction()
     }
 
+    sealed class MyAccountScreenAction : UiAction {
+        object InitScreen : MyAccountScreenAction()
+        object CloseScreen : MyAccountScreenAction()
+        data class UpdateAccountList(val accountList: List<AccountUiModel>) :
+            MyAccountScreenAction()
+    }
+
+    sealed class MyAccountDetailScreenAction : UiAction {
+        data class InitScreen(val selectedAccount: AccountUiModel) : MyAccountDetailScreenAction()
+        object CloseScreen : MyAccountDetailScreenAction()
+        data class UpdateAccountMonthlyOperations(val accountMonthlyOperations: List<OperationUiModel>) :
+            MyAccountDetailScreenAction()
+
+        data class UpdateSelectedAccount(val account: AccountUiModel) :
+            MyAccountDetailScreenAction()
+    }
+
+
+    //POP UP----------------------------------------------------------------------------------------
     sealed class AddOperationPopUpAction : UiAction {
         object InitPopUp : AddOperationPopUpAction()
         object ExpandPaymentOption : AddOperationPopUpAction()
@@ -35,59 +50,59 @@ object AppActions {
         object ExpandRecurrentOption : AddOperationPopUpAction()
         object CloseRecurrentOption : AddOperationPopUpAction()
         object ClosePopUp : AddOperationPopUpAction()
-        data class SelectCategory(val category: PresentationDataModel) : AddOperationPopUpAction()
-        data class FillOperationName(val operation: PresentationDataModel) :
+        data class SelectCategory(val category: CategoryUiModel) : AddOperationPopUpAction()
+        data class FillOperationName(val operation: String) : AddOperationPopUpAction()
+        data class FillOperationAmount(val amount: String) : AddOperationPopUpAction()
+        data class UpdateCategoriesList(val allCategories: List<CategoryUiModel>) :
             AddOperationPopUpAction()
 
-        data class FillOperationAmount(val amount: PresentationDataModel) :
+        data class UpdateAccountList(val accountList: List<AccountUiModel>) :
             AddOperationPopUpAction()
 
-        data class UpdateCategoriesList(val allCategories: List<PresentationDataModel>) :
+        data class SelectEndDateYear(val selectedEndDateYear: String) : AddOperationPopUpAction()
+        data class SelectEndDateMonth(val selectedEndDateMonth: String) : AddOperationPopUpAction()
+
+        data class SelectBeneficiaryAccount(val beneficiaryAccountUi: AccountUiModel) :
             AddOperationPopUpAction()
 
-        data class UpdateAccountList(val accountList: List<PresentationDataModel>) :
-            AddOperationPopUpAction()
+        data class SelectOptionIcon(val selectedIcon: PAMIconButtons) : AddOperationPopUpAction()
+        data class SelectAddOrMinus(val isAddOperation: Boolean) : AddOperationPopUpAction()
+        data class AddNewOperation(val operation: OperationUiModel) : AddOperationPopUpAction()
+    }
 
-        data class SelectEndDateYear(val selectedEndDateYear: PresentationDataModel) :
-            AddOperationPopUpAction()
+    sealed class DeleteOperationPopUpAction : UiAction {
+        data class InitPopUp(val operationToDelete: OperationUiModel) : DeleteOperationPopUpAction()
+        object ClosePopUp : DeleteOperationPopUpAction()
+        data class UpdateOperationToDelete(val operationToDelete: OperationUiModel) :
+            DeleteOperationPopUpAction()
 
-        data class SelectEndDateMonth(val selectedEndDateMonth: PresentationDataModel) :
-            AddOperationPopUpAction()
-
-        data class SelectSenderAccount(val senderAccount: PresentationDataModel) :
-            AddOperationPopUpAction()
-
-        data class SelectBeneficiaryAccount(val beneficiaryAccount: PresentationDataModel) :
-            AddOperationPopUpAction()
-
-        data class SelectOptionIcon(val selectedIcon: PAMIconButtons) :
-            AddOperationPopUpAction()
-
-        data class SelectAddOrMinus(val isAddOperation: Boolean) :
-            AddOperationPopUpAction()
+        data class DeleteOperation(val operationToDelete: OperationUiModel) :
+            DeleteOperationPopUpAction()
+        data class DeletePayment(val paymentToDelete: PaymentUiModel) : DeleteOperationPopUpAction()
+        data class DeleteTransfer(val transferToDelete : TransferUiModel) :DeleteOperationPopUpAction()
+        data class UpdateTransferRelatedAccount(val transferRelatedAccount : AccountUiModel) : DeleteOperationPopUpAction()
+        data class UpdateIsDeletedPermanently(val isDeletedPermanently : Boolean) : DeleteOperationPopUpAction()
     }
 
     sealed class DeleteAccountAction : UiAction {
-        data class InitPopUp(val accountName: PresentationDataModel) :
-            DeleteAccountAction()
-
+        data class InitPopUp(val accountUiToDelete: AccountUiModel) : DeleteAccountAction()
         object ClosePopUp : DeleteAccountAction()
-        data class DeleteAccount(val accountId: Long) : DeleteAccountAction()
-
-        data class UpdateAccountToDelete(val accountToDelete :AccountModel) : DeleteAccountAction()
+        data class DeleteAccount(val accountUiToDelete: AccountUiModel) : DeleteAccountAction()
+        data class UpdateAccountToDelete(val accountToDelete: AccountUiModel) :
+            DeleteAccountAction()
     }
 
     sealed class AddAccountPopUpAction : UiAction {
         object InitPopUp : AddAccountPopUpAction()
         object ClosePopUp : AddAccountPopUpAction()
         data class AddNewAccount(
-            val accountName: PresentationDataModel,
-            val accountBalance: PresentationDataModel,
-            val accountOverdraft: PresentationDataModel
-        ): AddAccountPopUpAction()
-        data class FillAccountName(val accountName : PresentationDataModel): AddAccountPopUpAction()
-        data class FillAccountBalance (val accountBalance : PresentationDataModel): AddAccountPopUpAction()
-        data class FillAccountOverdraft (val accountOverdraft : PresentationDataModel): AddAccountPopUpAction()
-    }
+            val accountName: String,
+            val accountBalance: String,
+            val accountOverdraft: String
+        ) : AddAccountPopUpAction()
 
+        data class FillAccountName(val accountName: String) : AddAccountPopUpAction()
+        data class FillAccountBalance(val accountBalance: String) : AddAccountPopUpAction()
+        data class FillAccountOverdraft(val accountOverdraft: String) : AddAccountPopUpAction()
+    }
 }

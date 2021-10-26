@@ -6,12 +6,19 @@ import javax.inject.Inject
 
 class AccountRepository @Inject constructor(private val accountDaoImpl: AccountDaoImpl){
 
-    fun getAllAccounts(): Flow<List<AccountDTO>> {
+    fun getAllAccountsAsFlow(): Flow<List<AccountDTO>> {
+        return accountDaoImpl.getAllAccountsAsFlow()
+    }
+    suspend fun getAllAccounts(): List<AccountDTO> {
         return accountDaoImpl.getAllAccounts()
     }
 
      suspend fun getAccountForId(id:Long):AccountDTO{
         return accountDaoImpl.getAccountForId(id)
+    }
+
+     fun getAccountForIdFlow(id: Long): Flow<AccountDTO> {
+        return accountDaoImpl.getAccountForIdFlow(id)
     }
 
     suspend fun addNewAccount(accountDTO: AccountDTO){
@@ -20,6 +27,10 @@ class AccountRepository @Inject constructor(private val accountDaoImpl: AccountD
 
     suspend fun deleteAccount(accountDTO: AccountDTO) {
         accountDaoImpl.deleteAccount(accountDTO)
+    }
+
+    suspend fun updateAccountBalance(accountId: Long, accountBalance: Double) {
+        accountDaoImpl.updateAccountBalance(accountId, accountBalance)
     }
 
 }

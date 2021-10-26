@@ -28,4 +28,5 @@
     <string name="overdraftTitle">Overdraft</string>
     <string name="overdraftErrorMessage">If you don\'t fill overdraft, it will be set to 0.0</string>
     <string name="addAccountPopUpTitle">Add new Account</string>
+    <string name="amount">Amount</string>
 </resources>

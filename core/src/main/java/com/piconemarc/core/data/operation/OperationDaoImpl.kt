@@ -17,11 +17,23 @@ class OperationDaoImpl @Inject constructor( pamDatabase: PAMDatabase) : Operatio
        return operationDao.getAllOperationsForAccountId(accountId)
     }
 
-    override suspend fun addNewOperation(operationDTO: OperationDTO){
-        operationDao.addNewOperation(operationDTO)
+    override suspend fun getOperationForId(operationId: Long) :OperationDTO {
+        return operationDao.getOperationForId(operationId)
+    }
+
+    override suspend fun addNewOperation(operationDTO: OperationDTO): Long {
+        return operationDao.addNewOperation(operationDTO)
     }
 
     override suspend fun deleteOperation(operationDTO: OperationDTO){
         operationDao.deleteOperation(operationDTO)
+    }
+
+    override suspend fun updateOperationPaymentId(paymentId: Long, operationId: Long) {
+        operationDao.updateOperationPaymentId(paymentId, operationId)
+    }
+
+    override suspend fun updateOperationTransferId(transferId: Long, operationId: Long) {
+        operationDao.updateOperationTransferId(transferId, operationId)
     }
 }
