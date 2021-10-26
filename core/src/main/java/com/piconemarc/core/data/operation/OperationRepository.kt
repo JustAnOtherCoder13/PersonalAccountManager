@@ -2,9 +2,23 @@ package com.piconemarc.core.data.operation
 
 import com.piconemarc.core.domain.entityDTO.OperationDTO
 import kotlinx.coroutines.flow.Flow
+import java.util.*
 import javax.inject.Inject
 
 class OperationRepository @Inject constructor(private val operationDaoImpl: OperationDaoImpl) {
+
+    suspend fun addOperation(operationDTO: OperationDTO) {
+        operationDaoImpl.addOperation(operationDTO)
+    }
+
+    suspend fun addPaymentOperation(operation: OperationDTO, endDate: Date?) {
+        operationDaoImpl.addPaymentOperation(operation, endDate)
+    }
+
+    suspend fun addTransferOperation(operation: OperationDTO, beneficiaryAccountId: Long) {
+        operationDaoImpl.addTransferOperation(operation, beneficiaryAccountId)
+    }
+
 
     fun getAllOperations(): Flow<List<OperationDTO>> {
         return operationDaoImpl.getAllOperations()

@@ -67,23 +67,13 @@ class ActionDispatcherModule {
         globalStore: DefaultStore<GlobalVmState>,
         addNewOperationInteractor: AddNewOperationInteractor,
         getAllAccountsInteractor: GetAllAccountsInteractor,
-        getAllCategoriesInteractor: GetAllCategoriesInteractor,
-        updateAccountBalanceInteractor: UpdateAccountBalanceInteractor,
-        addNewPaymentInteractor: AddNewPaymentInteractor,
-        updateOperationPaymentIdInteractor: UpdateOperationPaymentIdInteractor,
-        addNewTransferInteractor: AddNewTransferInteractor,
-        updateOperationTransferIdInteractor: UpdateOperationTransferIdInteractor
+        getAllCategoriesInteractor: GetAllCategoriesInteractor
     ):AddOperationPopUpActionDispatcher{
         return AddOperationPopUpActionDispatcher(
             store = globalStore,
             addNewOperationInteractor = addNewOperationInteractor,
             getAllAccountsInteractor = getAllAccountsInteractor,
-            getAllCategoriesInteractor = getAllCategoriesInteractor,
-            updateAccountBalanceInteractor = updateAccountBalanceInteractor,
-            addNewPaymentInteractor = addNewPaymentInteractor,
-            updateOperationPaymentIdInteractor = updateOperationPaymentIdInteractor,
-            addNewTransferInteractor = addNewTransferInteractor,
-            updateOperationTransferIdInteractor = updateOperationTransferIdInteractor
+            getAllCategoriesInteractor = getAllCategoriesInteractor
         )
     }
 
