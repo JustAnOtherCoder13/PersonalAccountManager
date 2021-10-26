@@ -34,8 +34,8 @@ import java.util.*
     )
 data class OperationDTO(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
-    val name: String = "",
+    override val id: Long = 0,
+    override val name: String = "",
     val amount: Double = 0.0,
     @ColumnInfo(index = true)
     val accountId: Long = 0,
@@ -46,23 +46,22 @@ data class OperationDTO(
     val paymentId : Long? = null,
     @ColumnInfo(index = true)
     val transferId : Long? = null,
-) {
-    @Ignore
-    fun fromOperationModel(operationUiModel: OperationUiModel): OperationDTO {
+) : DTO<OperationUiModel,OperationDTO> {
+
+    override fun fromUiModel(model: OperationUiModel): OperationDTO {
         return this.copy(
-            id = operationUiModel.id,
-            name = operationUiModel.name,
-            amount = operationUiModel.amount,
-            accountId = operationUiModel.accountId,
-            categoryId = operationUiModel.categoryId,
-            emitDate = operationUiModel.emitDate,
-            paymentId = operationUiModel.paymentId,
-            transferId = operationUiModel.transferId
+            id = model.id,
+            name = model.name,
+            amount = model.amount,
+            accountId = model.accountId,
+            categoryId = model.categoryId,
+            emitDate = model.emitDate,
+            paymentId = model.paymentId,
+            transferId = model.transferId
         )
     }
 
-    @Ignore
-    fun toOperationUiModel(): OperationUiModel {
+    override fun toUiModel(): OperationUiModel {
         return OperationUiModel(
             id = id,
             accountId = accountId,
@@ -72,6 +71,6 @@ data class OperationDTO(
             emitDate = emitDate ?: Date(),
             paymentId = paymentId,
             transferId = transferId
-            )
+        )
     }
 }

@@ -1,12 +1,10 @@
 package com.piconemarc.viewmodel.viewModel.actionDispatcher.popup
 
-import android.util.Log
 import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
 import com.piconemarc.core.domain.interactor.account.UpdateAccountBalanceInteractor
 import com.piconemarc.core.domain.interactor.operation.DeleteOperationInteractor
 import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteractor
 import com.piconemarc.core.domain.interactor.payment.DeletePaymentInteractor
-import com.piconemarc.core.domain.interactor.payment.GetAllPaymentForAccountIdInteractor
 import com.piconemarc.core.domain.interactor.payment.GetPaymentForIdInteractor
 import com.piconemarc.core.domain.interactor.transfer.DeleteTransferInteractor
 import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
@@ -16,14 +14,13 @@ import com.piconemarc.model.entity.TransferUiModel
 import com.piconemarc.viewmodel.ActionDispatcher
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.UiAction
+import com.piconemarc.viewmodel.launchCatchingError
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.deleteOperationPopUpUiState
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.myAccountDetailScreenUiState
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import java.lang.Exception
 import javax.inject.Inject
 
 class DeleteOperationPopUpActionDispatcher @Inject constructor(
@@ -46,121 +43,124 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
         updateState(GlobalAction.UpdateDeleteOperationPopUpState(action))
         when (action) {
             is AppActions.DeleteOperationPopUpAction.InitPopUp -> {
+                // get operation to delete from account detail
                 updateState(
                     GlobalAction.UpdateDeleteOperationPopUpState(
                         AppActions.DeleteOperationPopUpAction.UpdateOperationToDelete(action.operationToDelete)
                     )
                 )
+                //if operation have transfer id get related account to inform
+                // user that operation will deleted on distant account
                 if (action.operationToDelete.transferId != null)
-                    scope.launch {
-                        transfer = getTransferForIdInteractor.getTransferForId(action.operationToDelete.transferId!!)
-                        transferRelatedOperation = getOperationForIdInteractor.getOperationForId(
-                            if (action.operationToDelete.id == transfer.senderOperationId) {
-                                transfer.beneficiaryOperationId
-                            } else {
-                                transfer.senderOperationId
-                            }
-                        )
-                        updateState(
-                            GlobalAction.UpdateDeleteOperationPopUpState(
-                                AppActions.DeleteOperationPopUpAction.UpdateTransferRelatedAccount(
-                                    getAccountForIdInteractor.getAccountForId(transferRelatedOperation.accountId)
+                    scope.launchCatchingError(
+                        block = {
+                            transfer = getTransferForIdInteractor.getTransferForId(action.operationToDelete.transferId!!)
+                            transferRelatedOperation = getTransferRelatedOperation(action, transfer)
+                            updateState(
+                                GlobalAction.UpdateDeleteOperationPopUpState(
+                                    AppActions.DeleteOperationPopUpAction.UpdateTransferRelatedAccount(
+                                        getAccountForIdInteractor.getAccountForId(transferRelatedOperation.accountId)
+                                    )
                                 )
                             )
-                        )
-                    }
-
+                        }
+                    )
             }
             is AppActions.DeleteOperationPopUpAction.DeleteOperation -> {
-                if (action.operationToDelete.paymentId != null && deleteOperationPopUpUiState.isDeletedPermanently) {
-                    scope.launch {
-                        payment = getPaymentForIdInteractor.getPaymentForId(action.operationToDelete.paymentId!!)
-                        deletePaymentInteractor.deletePayment(payment)
-                        try {
+                // if payment id exist and user want to delete operation and payment
+                if (action.operationToDelete.paymentId != null
+                    && deleteOperationPopUpUiState.isDeletedPermanently) {
+                    scope.launchCatchingError(
+                        block = {
+                            payment = getPaymentForIdInteractor.getPaymentForId(action.operationToDelete.paymentId!!)
+                            deletePaymentInteractor.deletePayment(payment)
                             deleteOperationInteractor.deleteOperation(action.operationToDelete)
                             updateAccountBalanceInteractor.updateAccountBalance(
                                 myAccountDetailScreenUiState.selectedAccount.updateAccountBalance(
                                     action.operationToDelete.deleteOperation()
                                 )
                             )
-                            ClosePopUp()
-                        } catch (e: Exception) {
-                            Log.e("TAG", "dispatchAction: ", e)
-                        }
-                    }
-                } else if (action.operationToDelete.transferId != null) {
-                    scope.launch {
-                        transfer = getTransferForIdInteractor.getTransferForId(action.operationToDelete.transferId!!)
-                        transferRelatedOperation = getOperationForIdInteractor.getOperationForId(
-                            if (action.operationToDelete.id == transfer.senderOperationId) {
-                                transfer.beneficiaryOperationId
-                            } else {
-                                transfer.senderOperationId
-                            }
-                        )
-                        val transferRelatedAccount = getAccountForIdInteractor.getAccountForId(transferRelatedOperation.accountId)
+                        },
+                        doOnSuccess = { closePopUp() }
+                    )
+                }
+                // if transferId exist delete operations with cascade
+                // and update sender and beneficiary account
+                else if (action.operationToDelete.transferId != null) {
 
-                        if (transfer.paymentId != null &&  deleteOperationPopUpUiState.isDeletedPermanently) {
-                            payment = getPaymentForIdInteractor.getPaymentForId(transfer.paymentId!!)
-                            deletePaymentInteractor.deletePayment(payment)
-                        } else {
-                            deleteTransferInteractor.deleteTransfer(transfer)
-                            updateAccountBalanceInteractor.updateAccountBalance(
-                                myAccountDetailScreenUiState.selectedAccount.updateAccountBalance(
-                                    action.operationToDelete.deleteOperation()
-                                ),
-                                transferRelatedAccount.updateAccountBalance(
-                                    transferRelatedOperation.deleteOperation()
+                    scope.launchCatchingError(
+                        block = {
+                            transfer = getTransferForIdInteractor.getTransferForId(action.operationToDelete.transferId!!)
+
+                            transferRelatedOperation = getTransferRelatedOperation(action, transfer)
+                            val transferRelatedAccount = getAccountForIdInteractor.getAccountForId(transferRelatedOperation.accountId)
+
+                            // if payment id exist and user want to delete operation and payment
+                            if (transfer.paymentId != null &&  deleteOperationPopUpUiState.isDeletedPermanently) {
+                                payment = getPaymentForIdInteractor.getPaymentForId(transfer.paymentId!!)
+                                deletePaymentInteractor.deletePayment(payment)
+                            } else {
+                                deleteTransferInteractor.deleteTransfer(transfer)
+                                updateAccountBalanceInteractor.updateAccountBalance(
+                                    myAccountDetailScreenUiState.selectedAccount.updateAccountBalance(
+                                        action.operationToDelete.deleteOperation()
+                                    ),
+                                    transferRelatedAccount.updateAccountBalance(
+                                        transferRelatedOperation.deleteOperation()
+                                    )
                                 )
-                            )
-                        }
-                        ClosePopUp()
-                    }
+                            }
+                        },
+                        doOnSuccess = { closePopUp() }
+                    )
 
                 } else {
-                    scope.launch {
-                        try {
-                            deleteOperationInteractor.deleteOperation(action.operationToDelete)
+                    //else delete base operation and update account
+                    scope.launchCatchingError(
+                        block = { deleteOperationInteractor.deleteOperation(action.operationToDelete) }
+                    )
+                    scope.launchCatchingError(
+                        block = {
                             updateAccountBalanceInteractor.updateAccountBalance(
                                 myAccountDetailScreenUiState.selectedAccount.updateAccountBalance(
                                     action.operationToDelete.deleteOperation()
                                 )
                             )
-                            ClosePopUp()
-                        } catch (e: Exception) {
-                            Log.e("TAG", "dispatchAction: ", e)
-                        }
-
-                    }
-
-
-                    /* if (action.operationToDelete.beneficiaryAccountId != null) {
-                         deleteOperationInteractor.deleteOperation(
-                             getOperationForIdInteractor.getOperationForId(
-                                 operationId = action.operationToDelete.distantOperationIdRef!!,
-                                 accountId = action.operationToDelete.beneficiaryAccountId!!,
-                             )
-                         )
-                         updateAccountBalanceInteractor.updateAccountBalanceOnDeleteOperation(
-                             accountId = action.operationToDelete.beneficiaryAccountId!!,
-                             deletedOperationAMount = action.operationToDelete.updatedAmount * -1,
-                             oldAccountBalance = getAccountForIdInteractor.getAccountForId(
-                                 action.operationToDelete.beneficiaryAccountId!!
-                             ).accountBalance,
-                         )
-                     }
-                     deleteOperationInteractor.deleteOperation(action.operationToDelete)
-                     updateAccountBalanceInteractor.updateAccountBalanceOnDeleteOperation(
-                         accountId = action.operationToDelete.accountId,
-                         deletedOperationAMount = action.operationToDelete.updatedAmount,
-                         oldAccountBalance = AppSubscriber.AppUiState.myAccountDetailScreenUiState.selectedAccountUi.accountBalance,
-                     )*/
+                        },
+                        doOnSuccess = { closePopUp() }
+                    )
                 }
             }
         }
     }
 
-    private fun ClosePopUp() {
+    private suspend fun getTransferRelatedOperation(
+        action: AppActions.DeleteOperationPopUpAction.DeleteOperation,
+        transfer: TransferUiModel
+    ) = getOperationForIdInteractor.getOperationForId(
+        //if operation id is equal to senderOperationId
+        // that means that distant operation is beneficiary one, else is sender one
+        if (action.operationToDelete.id == transfer.senderOperationId) {
+            transfer.beneficiaryOperationId
+        } else {
+            transfer.senderOperationId
+        }
+    )
+
+    private suspend fun getTransferRelatedOperation(
+        action: AppActions.DeleteOperationPopUpAction.InitPopUp,
+        transfer: TransferUiModel
+    ) = getOperationForIdInteractor.getOperationForId(
+        //if operation id is equal to senderOperationId
+        // that means that distant operation is beneficiary one, else is sender one
+        if (action.operationToDelete.id == transfer.senderOperationId) {
+            transfer.beneficiaryOperationId
+        } else {
+            transfer.senderOperationId
+        }
+    )
+
+    private fun closePopUp() {
         updateState(
             GlobalAction.UpdateDeleteOperationPopUpState(
                 AppActions.DeleteOperationPopUpAction.ClosePopUp

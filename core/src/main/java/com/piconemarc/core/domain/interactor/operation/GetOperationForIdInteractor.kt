@@ -12,6 +12,6 @@ class GetOperationForIdInteractor @Inject constructor(private val operationRepos
     }
 
     private fun mapOperationDtoToOperationModel(operationDTO: OperationDTO): OperationUiModel {
-        return operationDTO.toOperationUiModel()
+        return operationDTO.toUiModel()
     }
 }

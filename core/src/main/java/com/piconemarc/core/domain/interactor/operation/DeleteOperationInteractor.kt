@@ -9,7 +9,7 @@ class DeleteOperationInteractor @Inject constructor(private val operationReposit
 
     suspend fun deleteOperation(operationModel: OperationUiModel) {
         operationRepository.deleteOperation(
-            OperationDTO().fromOperationModel(operationModel)
+            OperationDTO().fromUiModel(operationModel)
         )
     }
 }

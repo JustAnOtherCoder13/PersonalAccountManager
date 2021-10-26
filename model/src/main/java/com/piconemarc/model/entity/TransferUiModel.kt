@@ -6,6 +6,4 @@ data class TransferUiModel(
     val senderOperationId: Long=0,
     val beneficiaryOperationId: Long=0,
     val paymentId : Long? = null
-) : BaseUiModel() {
-
-}
+) : BaseUiModel()

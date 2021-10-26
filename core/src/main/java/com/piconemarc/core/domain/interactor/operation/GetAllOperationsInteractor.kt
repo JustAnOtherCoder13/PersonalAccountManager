@@ -18,7 +18,7 @@ class GetAllOperationsInteractor @Inject constructor(private val operationReposi
         operationsDtoList: List<OperationDTO>
     ): List<OperationUiModel> {
         return operationsDtoList.map {
-            it.toOperationUiModel()
+            it.toUiModel()
               }
     }
 }

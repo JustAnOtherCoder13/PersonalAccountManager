@@ -9,7 +9,7 @@ class AddNewOperationInteractor @Inject constructor(private val operationReposit
 
     suspend fun addNewOperation(operationModel: OperationUiModel) : Long {
         return operationRepository.addNewOperation(
-            OperationDTO().fromOperationModel(operationModel)
+            OperationDTO().fromUiModel(operationModel)
         )
     }
 

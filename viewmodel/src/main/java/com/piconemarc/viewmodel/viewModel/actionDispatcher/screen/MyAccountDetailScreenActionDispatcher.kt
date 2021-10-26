@@ -5,12 +5,12 @@ import com.piconemarc.core.domain.interactor.operation.GetAllOperationsForAccoun
 import com.piconemarc.viewmodel.ActionDispatcher
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.UiAction
+import com.piconemarc.viewmodel.launchCatchingError
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
@@ -35,31 +35,39 @@ class MyAccountDetailScreenActionDispatcher @Inject constructor(
                         )
                     )
                 )
-                scope.launch {
-                    getAllOperationsForAccountIdInteractor.getAllOperationsForAccountId(
-                        action.selectedAccount.id
-                    ).collect { accountOperations ->
-                        updateState(
-                            GlobalAction.UpdateMyAccountDetailScreenState(
-                                AppActions.MyAccountDetailScreenAction.UpdateAccountMonthlyOperations(
-                                    accountOperations.filter { it.emitDate.month.compareTo(Calendar.getInstance().time.month) == 0 }
-                                )
-                            ),
-                        )
-                    }
-                }
-                scope.launch {
-                    getAccountForIdInteractor.getAccountForIdFlow(action.selectedAccount.id)
-                        .collect {
+                scope.launchCatchingError(
+                    block = {
+                        getAllOperationsForAccountIdInteractor.getAllOperationsForAccountId(
+                            action.selectedAccount.id
+                        ).collect { accountOperations ->
                             updateState(
                                 GlobalAction.UpdateMyAccountDetailScreenState(
-                                    AppActions.MyAccountDetailScreenAction.UpdateSelectedAccount(
-                                        it
+                                    AppActions.MyAccountDetailScreenAction.UpdateAccountMonthlyOperations(
+                                        accountOperations.filter {
+                                            it.emitDate.month.compareTo(
+                                                Calendar.getInstance().get(Calendar.MONTH)
+                                            ) == 0
+                                        }
                                     )
-                                )
+                                ),
                             )
                         }
-                }
+                    }
+                )
+                scope.launchCatchingError(
+                    block = {
+                        getAccountForIdInteractor.getAccountForIdFlow(action.selectedAccount.id)
+                            .collect {
+                                updateState(
+                                    GlobalAction.UpdateMyAccountDetailScreenState(
+                                        AppActions.MyAccountDetailScreenAction.UpdateSelectedAccount(
+                                            it
+                                        )
+                                    )
+                                )
+                            }
+                    }
+                )
             }
         }
     }

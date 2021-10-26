@@ -23,7 +23,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 
-
 @InstallIn(SingletonComponent::class)
 @Module
 class ActionDispatcherModule {
@@ -91,12 +90,10 @@ class ActionDispatcherModule {
     @Provides
     fun provideDeleteAccountPopUpActionDispatcher(
         globalStore: DefaultStore<GlobalVmState>,
-        getAccountForIdInteractor: GetAccountForIdInteractor,
         deleteAccountInteractor: DeleteAccountInteractor
     ):DeleteAccountPopUpActionDispatcher{
         return DeleteAccountPopUpActionDispatcher(
             store = globalStore,
-            getAccountForIdInteractor = getAccountForIdInteractor,
             deleteAccountInteractor = deleteAccountInteractor,
         )
     }
@@ -137,5 +134,4 @@ class ActionDispatcherModule {
             deleteTransferInteractor = deleteTransferInteractor
         )
     }
-
 }

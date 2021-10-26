@@ -20,7 +20,7 @@ class GetAllOperationsForAccountIdInteractor @Inject constructor(private val ope
         allOperationsDtoForAccountId: List<OperationDTO>
     ): List<OperationUiModel> {
         return allOperationsDtoForAccountId.map {
-            it.toOperationUiModel()
+            it.toUiModel()
         }
     }
 }

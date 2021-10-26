@@ -12,6 +12,6 @@ class AddNewPaymentInteractor @Inject constructor(private val paymentRepository:
     }
 
     private fun mapPaymentUiModelToPaymentDto(payment : PaymentUiModel):PaymentDTO{
-        return PaymentDTO().fromPaymentModel(payment)
+        return PaymentDTO().fromUiModel(payment)
     }
 }

@@ -3,11 +3,10 @@ package com.piconemarc.viewmodel.viewModel.reducer.popUp
 import com.piconemarc.core.domain.Constants
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.AccountUiModel
-import com.piconemarc.model.entity.CategoryModel
+import com.piconemarc.model.entity.CategoryUiModel
 import com.piconemarc.viewmodel.Reducer
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.ViewModelInnerStates
-import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.addOperationPopUpUiState
 
 internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperationPopUpVMState> =
@@ -17,14 +16,13 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
             is AppActions.AddOperationPopUpAction.InitPopUp -> {
                 old.copy(
                     isPopUpExpanded = true,
-                    selectedCategory = CategoryModel(),
+                    selectedCategory = CategoryUiModel(),
                     addPopUpTitle = Constants.OPERATION_MODEL,
                     operationName = "",
                     operationAmount = "",
                     isAddOperation = true,
                     addPopUpOptionSelectedIcon = PAMIconButtons.Operation,
                     isAddOrMinusEnable = true,
-                    isSenderAccountError = false,
                     isBeneficiaryAccountError = false,
                     isOperationNameError = false,
                     isOperationAmountError = false
@@ -50,7 +48,6 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
                 isTransferExpanded = false,
                 addPopUpTitle = Constants.PAYMENT_MODEL,
                 isAddOrMinusEnable = true,
-                isSenderAccountError = false,
                 isBeneficiaryAccountError = false,
             )
             is AppActions.AddOperationPopUpAction.CollapseOptions -> old.copy(
@@ -58,7 +55,6 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
                 isTransferExpanded = false,
                 addPopUpTitle = Constants.OPERATION_MODEL,
                 isAddOrMinusEnable = true,
-                isSenderAccountError = false,
                 isBeneficiaryAccountError = false,
             )
             is AppActions.AddOperationPopUpAction.ExpandRecurrentOption -> old.copy(
@@ -118,6 +114,5 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
                 isBeneficiaryAccountError = addOperationPopUpUiState.addPopUpOptionSelectedIcon == PAMIconButtons.Transfer
                         && addOperationPopUpUiState.beneficiaryAccount.name == "Beneficiary account" ,
             )
-
         }
     }
