@@ -8,6 +8,6 @@ import javax.inject.Inject
 class DeletePaymentInteractor @Inject constructor(private val paymentRepository: PaymentRepository) {
 
     suspend fun deletePayment(payment: PaymentUiModel){
-        paymentRepository.deletePayment(PaymentDTO().fromPaymentModel(payment))
+        paymentRepository.deletePayment(PaymentDTO().fromUiModel(payment))
     }
 }

@@ -30,6 +30,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    //todo use alarm manager to update payment the first of each month
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

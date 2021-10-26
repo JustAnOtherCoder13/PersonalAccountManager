@@ -5,9 +5,8 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
 import androidx.room.PrimaryKey
-import com.piconemarc.core.domain.Constants.TRANSFER_TABLE
+import com.piconemarc.core.domain.utils.Constants.TRANSFER_TABLE
 import com.piconemarc.model.entity.TransferUiModel
-
 
 @Entity(
     foreignKeys = [
@@ -27,25 +26,26 @@ import com.piconemarc.model.entity.TransferUiModel
 )
 data class TransferDTO(
     @PrimaryKey(autoGenerate = true)
-    val id: Long=0,
-    val name: String="",
+    override val id: Long=0,
+    override val name: String="",
     @ColumnInfo(index = true)
     val senderOperationId: Long=0,
     @ColumnInfo(index = true)
     val beneficiaryOperationId: Long=0,
     @ColumnInfo(index = true)
     val paymentId : Long? = null
-){
-    fun fromUiModel(transferUiModel: TransferUiModel) : TransferDTO{
+) : DTO<TransferUiModel,TransferDTO>{
+
+    override fun fromUiModel(model: TransferUiModel) : TransferDTO{
         return this.copy(
-            id = transferUiModel.id,
-            name = transferUiModel.name,
-            senderOperationId = transferUiModel.senderOperationId,
-            beneficiaryOperationId = transferUiModel.beneficiaryOperationId,
-            paymentId = transferUiModel.paymentId
+            id = model.id,
+            name = model.name,
+            senderOperationId = model.senderOperationId,
+            beneficiaryOperationId = model.beneficiaryOperationId,
+            paymentId = model.paymentId
         )
     }
-    fun toUiModel() : TransferUiModel{
+    override fun toUiModel() : TransferUiModel{
         return TransferUiModel(
             id = this.id,
             name = this.name,

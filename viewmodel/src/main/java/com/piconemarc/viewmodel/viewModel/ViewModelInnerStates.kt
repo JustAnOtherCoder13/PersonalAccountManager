@@ -1,9 +1,9 @@
 package com.piconemarc.viewmodel.viewModel
 
-import com.piconemarc.core.domain.Constants
+import com.piconemarc.core.domain.utils.Constants
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.AccountUiModel
-import com.piconemarc.model.entity.CategoryModel
+import com.piconemarc.model.entity.CategoryUiModel
 import com.piconemarc.model.entity.OperationUiModel
 import com.piconemarc.viewmodel.VMState
 
@@ -18,7 +18,7 @@ object ViewModelInnerStates {
     ) : VMState
 
     data class MyAccountScreenVMState(
-        val allAccountUis: List<AccountUiModel> = listOf(),
+        val allAccounts: List<AccountUiModel> = listOf(),
         val isVisible: Boolean = true
     ) : VMState
 
@@ -36,11 +36,11 @@ object ViewModelInnerStates {
         val isTransferExpanded: Boolean = false,
         val isAddOperation: Boolean = true,
         val isAddOrMinusEnable : Boolean = true,
-        val allCategories: List<CategoryModel> = listOf(),
+        val allCategories: List<CategoryUiModel> = listOf(),
         val allAccounts: List<AccountUiModel> = listOf(),
         val selectableEndDateYears: List<String> = listOf(),
         val selectableEndDateMonths: List<String> = listOf(),
-        val selectedCategory: CategoryModel = CategoryModel(),
+        val selectedCategory: CategoryUiModel = CategoryUiModel(),
         val operationName: String = "",
         val operationAmount: String = "",
         val enDateSelectedMonth: String = "",
@@ -51,9 +51,7 @@ object ViewModelInnerStates {
         val isOperationNameError : Boolean=false,
         val isOperationAmountError : Boolean=false,
         val isRecurrentEndDateError : Boolean = true,
-        val isSenderAccountError : Boolean = false,
         val isBeneficiaryAccountError : Boolean = false,
-
         ) : VMState
 
     data class DeleteOperationPopUpVMState(

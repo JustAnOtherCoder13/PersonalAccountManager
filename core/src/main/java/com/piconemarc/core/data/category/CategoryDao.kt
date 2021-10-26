@@ -3,8 +3,8 @@ package com.piconemarc.core.data.category
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.piconemarc.core.domain.Constants.CATEGORY_TABLE
 import com.piconemarc.core.domain.entityDTO.CategoryDTO
+import com.piconemarc.core.domain.utils.Constants.CATEGORY_TABLE
 import kotlinx.coroutines.flow.Flow
 
 @Dao

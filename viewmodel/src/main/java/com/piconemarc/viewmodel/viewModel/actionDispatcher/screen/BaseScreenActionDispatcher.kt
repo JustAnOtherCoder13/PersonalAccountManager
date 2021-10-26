@@ -4,13 +4,13 @@ import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.viewmodel.ActionDispatcher
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.UiAction
+import com.piconemarc.viewmodel.launchCatchingError
 import com.piconemarc.viewmodel.viewModel.AppActions.BaseAppScreenAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class BaseScreenActionDispatcher @Inject constructor(
@@ -24,32 +24,30 @@ class BaseScreenActionDispatcher @Inject constructor(
         updateState(GlobalAction.UpdateBaseAppScreenVmState(action))
         when (action) {
             is BaseAppScreenAction.InitScreen -> {
-                //todo check date, if on first of month for each payment add operation if end date not passed or null
-                // else delete payment
-                // finds a way to actualize only one time
-                getAllAccountsJob = scope.launch {
-                    getAllAccountsInteractor.getAllAccountsAsFlow().collect { allAccounts ->
-                        updateState(
-                            GlobalAction.UpdateBaseAppScreenVmState(
-                                BaseAppScreenAction.UpdateFooterBalance(
-                                    allAccounts
-                                )
-                            ),
-                            GlobalAction.UpdateBaseAppScreenVmState(
-                                BaseAppScreenAction.UpdateFooterRest(
-                                    allAccounts
-                                )
-                            ),
-                            GlobalAction.UpdateBaseAppScreenVmState(
-                                BaseAppScreenAction.UpdateAccounts(
-                                    allAccounts
+                getAllAccountsJob = scope.launchCatchingError(
+                    block = {
+                        getAllAccountsInteractor.getAllAccountsAsFlow().collect { allAccounts ->
+                            updateState(
+                                GlobalAction.UpdateBaseAppScreenVmState(
+                                    BaseAppScreenAction.UpdateFooterBalance(
+                                        allAccounts
+                                    )
+                                ),
+                                GlobalAction.UpdateBaseAppScreenVmState(
+                                    BaseAppScreenAction.UpdateFooterRest(
+                                        allAccounts
+                                    )
+                                ),
+                                GlobalAction.UpdateBaseAppScreenVmState(
+                                    BaseAppScreenAction.UpdateAccounts(
+                                        allAccounts
+                                    )
                                 )
                             )
-                        )
+                        }
                     }
-                }
+                )
             }
         }
     }
 }
-

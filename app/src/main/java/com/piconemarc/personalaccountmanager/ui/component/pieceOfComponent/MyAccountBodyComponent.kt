@@ -1,6 +1,5 @@
 package com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -34,7 +33,7 @@ fun MyAccountBodyRecyclerView(viewModel: AppViewModel) {
         modifier = Modifier
             .padding(bottom = LittleMarge)
     ) {
-        items(AppSubscriber.AppUiState.myAccountScreenUiState.allAccountUis) { account ->
+        items(AppSubscriber.AppUiState.myAccountScreenUiState.allAccounts) { account ->
             AccountPostIt(
                 account = account,
                 onDeleteAccountButtonClicked = { accountToDelete ->

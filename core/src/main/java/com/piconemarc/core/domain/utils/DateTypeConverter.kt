@@ -1,4 +1,4 @@
-package com.piconemarc.core.domain
+package com.piconemarc.core.domain.utils
 
 import androidx.room.TypeConverter
 import java.util.*

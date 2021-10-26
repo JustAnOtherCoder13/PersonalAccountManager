@@ -13,6 +13,7 @@ data class OperationUiModel(
     val paymentId: Long? = null,
     val transferId: Long? = null
 ) : BaseUiModel() {
+
     fun deleteOperation(): OperationUiModel {
         return OperationUiModel(
             id = this.id,

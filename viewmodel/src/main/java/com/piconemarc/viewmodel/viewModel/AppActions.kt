@@ -16,7 +16,7 @@ object AppActions {
 
         data class UpdateInterlayerTiTle(val interlayerTitle: Int) : BaseAppScreenAction()
         data class UpdateAccounts(val allAccountUis: List<AccountUiModel>) : BaseAppScreenAction()
-        data class UpdateFooterBalance(val allAccountUis: List<AccountUiModel>) :
+        data class UpdateFooterBalance(val allAccounts: List<AccountUiModel>) :
             BaseAppScreenAction()
 
         data class UpdateFooterRest(val allAccountUis: List<AccountUiModel>) : BaseAppScreenAction()
@@ -26,7 +26,7 @@ object AppActions {
     sealed class MyAccountScreenAction : UiAction {
         object InitScreen : MyAccountScreenAction()
         object CloseScreen : MyAccountScreenAction()
-        data class UpdateAccountList(val accountUiList: List<AccountUiModel>) :
+        data class UpdateAccountList(val accountList: List<AccountUiModel>) :
             MyAccountScreenAction()
     }
 
@@ -50,10 +50,10 @@ object AppActions {
         object ExpandRecurrentOption : AddOperationPopUpAction()
         object CloseRecurrentOption : AddOperationPopUpAction()
         object ClosePopUp : AddOperationPopUpAction()
-        data class SelectCategory(val category: CategoryModel) : AddOperationPopUpAction()
+        data class SelectCategory(val category: CategoryUiModel) : AddOperationPopUpAction()
         data class FillOperationName(val operation: String) : AddOperationPopUpAction()
         data class FillOperationAmount(val amount: String) : AddOperationPopUpAction()
-        data class UpdateCategoriesList(val allCategories: List<CategoryModel>) :
+        data class UpdateCategoriesList(val allCategories: List<CategoryUiModel>) :
             AddOperationPopUpAction()
 
         data class UpdateAccountList(val accountList: List<AccountUiModel>) :
@@ -88,7 +88,7 @@ object AppActions {
         data class InitPopUp(val accountUiToDelete: AccountUiModel) : DeleteAccountAction()
         object ClosePopUp : DeleteAccountAction()
         data class DeleteAccount(val accountUiToDelete: AccountUiModel) : DeleteAccountAction()
-        data class UpdateAccountToDelete(val accountUiToDelete: AccountUiModel) :
+        data class UpdateAccountToDelete(val accountToDelete: AccountUiModel) :
             DeleteAccountAction()
     }
 
@@ -105,6 +105,4 @@ object AppActions {
         data class FillAccountBalance(val accountBalance: String) : AddAccountPopUpAction()
         data class FillAccountOverdraft(val accountOverdraft: String) : AddAccountPopUpAction()
     }
-
-
 }

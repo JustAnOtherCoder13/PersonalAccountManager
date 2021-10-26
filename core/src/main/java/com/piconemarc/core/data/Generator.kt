@@ -1,9 +1,9 @@
 package com.piconemarc.core.data
 
-import com.piconemarc.core.domain.Constants.TODAY
 import com.piconemarc.core.domain.entityDTO.AccountDTO
 import com.piconemarc.core.domain.entityDTO.CategoryDTO
 import com.piconemarc.core.domain.entityDTO.OperationDTO
+import com.piconemarc.core.domain.utils.Constants.TODAY
 
 object Generator {
 

@@ -9,12 +9,7 @@ class AddNewAccountInteractor @Inject constructor(private val accountRepository:
 
     suspend fun addNewAccount(accountUiModel: AccountUiModel) {
         accountRepository.addNewAccount(
-            AccountDTO(
-                name = accountUiModel.name,
-                accountBalance = accountUiModel.accountBalance,
-                accountOverdraft = accountUiModel.accountOverdraft
-            )
+            AccountDTO().fromUiModel(accountUiModel)
         )
     }
-
 }

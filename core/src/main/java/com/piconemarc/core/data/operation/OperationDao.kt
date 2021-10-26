@@ -4,8 +4,8 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import com.piconemarc.core.domain.Constants.OPERATION_TABLE
 import com.piconemarc.core.domain.entityDTO.OperationDTO
+import com.piconemarc.core.domain.utils.Constants.OPERATION_TABLE
 import kotlinx.coroutines.flow.Flow
 
 @Dao

@@ -1,7 +1,5 @@
 package com.piconemarc.viewmodel.viewModel.actionDispatcher.popup
 
-import android.util.Log
-import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.core.domain.interactor.account.UpdateAccountBalanceInteractor
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
@@ -16,6 +14,7 @@ import com.piconemarc.model.entity.TransferUiModel
 import com.piconemarc.viewmodel.ActionDispatcher
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.UiAction
+import com.piconemarc.viewmodel.launchCatchingError
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.addOperationPopUpUiState
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.myAccountDetailScreenUiState
@@ -23,7 +22,6 @@ import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -45,7 +43,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
         updateState(GlobalAction.UpdateAddOperationPopUpState(action))
         when (action) {
             is AppActions.AddOperationPopUpAction.SelectOptionIcon -> {
-                //option selector
+                //option selector on change redispatch action in same class to trigger interactors
                 when (action.selectedIcon) {
                     is PAMIconButtons.Payment -> {
                         this.dispatchAction(
@@ -82,30 +80,33 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                 }
             }
             is AppActions.AddOperationPopUpAction.InitPopUp ->
-                scope.launch {
-                    getAllCategoriesInteractor.getAllCategories().collect {
+                scope.launchCatchingError(
+                    block = {
+                        getAllCategoriesInteractor.getAllCategories().collect {
+                            updateState(
+                                GlobalAction.UpdateAddOperationPopUpState(
+                                    AppActions.AddOperationPopUpAction.UpdateCategoriesList(
+                                        it
+                                    )
+                                )
+                            )
+                        }
+                    }
+                )
+            is AppActions.AddOperationPopUpAction.ExpandTransferOption -> {
+                scope.launchCatchingError(
+                    block = {
                         updateState(
                             GlobalAction.UpdateAddOperationPopUpState(
-                                AppActions.AddOperationPopUpAction.UpdateCategoriesList(
-                                    it
+                                AppActions.AddOperationPopUpAction.UpdateAccountList(
+                                    getAllAccountsInteractor.getAllAccounts().filter {
+                                        it.id != myAccountDetailScreenUiState.selectedAccount.id
+                                    }
                                 )
                             )
                         )
                     }
-                }
-
-            is AppActions.AddOperationPopUpAction.ExpandTransferOption -> {
-                scope.launch {
-                    updateState(
-                        GlobalAction.UpdateAddOperationPopUpState(
-                            AppActions.AddOperationPopUpAction.UpdateAccountList(
-                                getAllAccountsInteractor.getAllAccounts().filter {
-                                    it.id != myAccountDetailScreenUiState.selectedAccount.id
-                                }
-                            )
-                        )
-                    )
-                }
+                )
             }
 
             is AppActions.AddOperationPopUpAction.AddNewOperation -> {
@@ -114,31 +115,32 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                 var beneficiaryOperationId: Long
                 var transferId: Long
 
-                //if no error on name and amount, push operation,
-                // update account balance and store operationId in var
+                //if no error on name and amount
                 if (!addOperationPopUpUiState.isOperationNameError
                     && !addOperationPopUpUiState.isOperationAmountError
                 ) {
-                    scope.launch {
-                        //Check selected icon for payment and transfer-------------------------------------------
-                        when (addOperationPopUpUiState.addPopUpOptionSelectedIcon) {
-                            is PAMIconButtons.Operation -> {
-                                try {
-                                    addNewOperationInteractor.addNewOperation(action.operation)
+                    //Check selected icon ------------------------------------------------------------
+                    when (addOperationPopUpUiState.addPopUpOptionSelectedIcon) {
+                        is PAMIconButtons.Operation -> {
+                            //create operation and push it, update account balance
+                            scope.launchCatchingError(
+                                block = { addNewOperationInteractor.addNewOperation(action.operation) }
+                            )
+                            scope.launchCatchingError(
+                                block = {
                                     updateAccountBalanceInteractor.updateAccountBalance(
                                         myAccountDetailScreenUiState.selectedAccount.updateAccountBalance(
                                             action.operation
                                         )
                                     )
-                                    closePopUp()
-                                } catch (e: Exception) {
-                                    Log.e("TAG", "dispatchAction: ", e)
-                                }
-
-                            }
-                            is PAMIconButtons.Payment -> {
-                                //create payment and push it, store payment id in var
-                                try {
+                                },
+                                doOnSuccess = { closePopUp() }
+                            )
+                        }
+                        is PAMIconButtons.Payment -> {
+                            scope.launchCatchingError(
+                                block = {
+                                    // create operation and push it
                                     operationId =
                                         addNewOperationInteractor.addNewOperation(action.operation)
                                     updateAccountBalanceInteractor.updateAccountBalance(
@@ -146,6 +148,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                                             action.operation
                                         )
                                     )
+                                    //create payment and push it with related operation id
                                     paymentId = addNewPaymentInteractor.addNewPayment(
                                         PaymentUiModel(
                                             name = action.operation.name + "Payment",
@@ -166,28 +169,28 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                                         operationId,
                                         paymentId
                                     )
-                                    closePopUp()
-                                } catch (e: Exception) {
-                                    Log.e("TAG", "dispatchAction: ", e)
-                                }
-                            }
-                            is PAMIconButtons.Transfer -> {
-                                if (!addOperationPopUpUiState.isSenderAccountError
-                                    && !addOperationPopUpUiState.isBeneficiaryAccountError
-                                ) {
-                                    val senderOperation =
-                                        action.operation.copy(amount = action.operation.senderAmount)
-                                    val beneficiaryOperation = action.operation.copy(
-                                        accountId = addOperationPopUpUiState.beneficiaryAccount.id,
-                                        amount = action.operation.beneficiaryAmount
-                                    )
-                                    try {
+                                },
+                                doOnSuccess = { closePopUp() }
+                            )
+                        }
+                        is PAMIconButtons.Transfer -> {
+                            if (!addOperationPopUpUiState.isBeneficiaryAccountError) {
+                                //if no error on beneficiary account
+                                // update operation with sender and beneficiary values
+                                val senderOperation = action.operation.copy(
+                                    amount = action.operation.senderAmount
+                                )
+                                val beneficiaryOperation = action.operation.copy(
+                                    accountId = addOperationPopUpUiState.beneficiaryAccount.id,
+                                    amount = action.operation.beneficiaryAmount
+                                )
+                                scope.launchCatchingError(
+                                    block = {
                                         //push sender and beneficiary operation, store id
                                         operationId = addNewOperationInteractor.addNewOperation(
                                             senderOperation
                                         )
-                                        beneficiaryOperationId =
-                                            addNewOperationInteractor.addNewOperation(
+                                        beneficiaryOperationId = addNewOperationInteractor.addNewOperation(
                                                 beneficiaryOperation
                                             )
                                         //update balance
@@ -199,31 +202,26 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                                                 beneficiaryOperation
                                             )
                                         )
-                                        //create transfer and push ,store id
-                                        transferId =
-                                            addNewTransferInteractor.addNewTransfer(
+                                        //create transfer and push it ,store id
+                                        transferId = addNewTransferInteractor.addNewTransfer(
                                                 TransferUiModel(
                                                     name = action.operation.name + "Transfer",
                                                     senderOperationId = operationId,
                                                     beneficiaryOperationId = beneficiaryOperationId
                                                 )
                                             )
-                                        //update operation with transferId
+                                        //update operations with transferId
                                         updateOperationTransferIdInteractor.updateOperationTransferId(
                                             transferId,
                                             operationId,
                                             beneficiaryOperationId
                                         )
-                                        closePopUp()
-                                    } catch (e: Exception) {
-                                        Log.e("TAG", "dispatchAction: ", e)
-                                    }
-                                }
-                            }
-                            else -> {
-                                closePopUp()
+                                    },
+                                    doOnSuccess = { closePopUp() }
+                                )
                             }
                         }
+                        else -> { closePopUp() }
                     }
                 }
             }
