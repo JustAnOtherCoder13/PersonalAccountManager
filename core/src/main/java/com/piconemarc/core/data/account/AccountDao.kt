@@ -4,8 +4,8 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import com.piconemarc.core.domain.Constants.ACCOUNT_TABLE
 import com.piconemarc.core.domain.entityDTO.AccountDTO
+import com.piconemarc.core.domain.utils.Constants.ACCOUNT_TABLE
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -13,7 +13,10 @@ interface AccountDao {
 
     //todo pass all with flow or better use shared flow and state flow
     @Query("SELECT*FROM $ACCOUNT_TABLE")
-    fun getAllAccounts() : Flow<List<AccountDTO>>
+    fun getAllAccountsAsFlow() : Flow<List<AccountDTO>>
+
+    @Query("SELECT*FROM $ACCOUNT_TABLE")
+    suspend fun getAllAccounts() : List<AccountDTO>
 
     @Query("SELECT*FROM $ACCOUNT_TABLE WHERE $ACCOUNT_TABLE.id = :id")
     suspend fun getAccountForId(id:Long) : AccountDTO
@@ -27,6 +30,6 @@ interface AccountDao {
     @Delete
     suspend fun deleteAccount(accountDTO: AccountDTO)
 
-    @Query("UPDATE account_table SET accountBalance = :accountBalance WHERE id = :accountId")
+    @Query("UPDATE $ACCOUNT_TABLE SET accountBalance = :accountBalance WHERE id = :accountId")
     suspend fun updateAccountBalance(accountId : Long, accountBalance : Double)
 }

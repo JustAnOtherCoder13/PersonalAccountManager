@@ -1,16 +1,16 @@
 package com.piconemarc.viewmodel.viewModel.actionDispatcher.popup
 
 import com.piconemarc.core.domain.interactor.account.AddNewAccountInteractor
-import com.piconemarc.model.entity.AccountModel
+import com.piconemarc.model.entity.AccountUiModel
 import com.piconemarc.viewmodel.ActionDispatcher
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.UiAction
+import com.piconemarc.viewmodel.launchCatchingError
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class AddAccountPopUpActionDispatcher @Inject constructor(
@@ -22,10 +22,10 @@ class AddAccountPopUpActionDispatcher @Inject constructor(
         when (action) {
             is AppActions.AddAccountPopUpAction.AddNewAccount -> {
                 if (!AppSubscriber.AppUiState.addAccountPopUpUiState.isNameError)
-                    scope.launch {
-                        try {
+                    scope.launchCatchingError(
+                        block = {
                             addNewAccountInteractor.addNewAccount(
-                                AccountModel(
+                                AccountUiModel(
                                     name = action.accountName,
                                     accountBalance = try {
                                         action.accountBalance.toDouble()
@@ -39,14 +39,14 @@ class AddAccountPopUpActionDispatcher @Inject constructor(
                                     }
                                 )
                             )
+                        },
+                        doOnSuccess = {
                             updateState(
                                 GlobalAction.UpdateAddAccountPopUpState(
-                                AppActions.AddAccountPopUpAction.ClosePopUp
-                            ))
-                        } catch (e: Exception) {
-                            //todo catch error
+                                    AppActions.AddAccountPopUpAction.ClosePopUp
+                                ))
                         }
-                    }
+                    )
             }
         }
     }

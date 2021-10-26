@@ -2,10 +2,13 @@ package com.piconemarc.viewmodel.di
 
 import com.piconemarc.core.domain.interactor.account.*
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
-import com.piconemarc.core.domain.interactor.operation.AddNewOperationInteractor
-import com.piconemarc.core.domain.interactor.operation.DeleteOperationInteractor
-import com.piconemarc.core.domain.interactor.operation.GetAllOperationsForAccountIdInteractor
-import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteractor
+import com.piconemarc.core.domain.interactor.operation.*
+import com.piconemarc.core.domain.interactor.payment.AddNewPaymentInteractor
+import com.piconemarc.core.domain.interactor.payment.DeletePaymentInteractor
+import com.piconemarc.core.domain.interactor.payment.GetPaymentForIdInteractor
+import com.piconemarc.core.domain.interactor.transfer.AddNewTransferInteractor
+import com.piconemarc.core.domain.interactor.transfer.DeleteTransferInteractor
+import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddAccountPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddOperationPopUpActionDispatcher
@@ -20,11 +23,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 
-
 @InstallIn(SingletonComponent::class)
 @Module
 class ActionDispatcherModule {
-
 
     @Provides
     fun providedBaseScreenActionDispatcher(
@@ -65,30 +66,34 @@ class ActionDispatcherModule {
     fun provideAddOperationPopUpActionDispatcher(
         globalStore: DefaultStore<GlobalVmState>,
         addNewOperationInteractor: AddNewOperationInteractor,
-        getAccountForIdInteractor: GetAccountForIdInteractor,
         getAllAccountsInteractor: GetAllAccountsInteractor,
         getAllCategoriesInteractor: GetAllCategoriesInteractor,
         updateAccountBalanceInteractor: UpdateAccountBalanceInteractor,
+        addNewPaymentInteractor: AddNewPaymentInteractor,
+        updateOperationPaymentIdInteractor: UpdateOperationPaymentIdInteractor,
+        addNewTransferInteractor: AddNewTransferInteractor,
+        updateOperationTransferIdInteractor: UpdateOperationTransferIdInteractor
     ):AddOperationPopUpActionDispatcher{
         return AddOperationPopUpActionDispatcher(
             store = globalStore,
             addNewOperationInteractor = addNewOperationInteractor,
-            getAccountForIdInteractor = getAccountForIdInteractor,
             getAllAccountsInteractor = getAllAccountsInteractor,
             getAllCategoriesInteractor = getAllCategoriesInteractor,
-            updateAccountBalanceInteractor = updateAccountBalanceInteractor
+            updateAccountBalanceInteractor = updateAccountBalanceInteractor,
+            addNewPaymentInteractor = addNewPaymentInteractor,
+            updateOperationPaymentIdInteractor = updateOperationPaymentIdInteractor,
+            addNewTransferInteractor = addNewTransferInteractor,
+            updateOperationTransferIdInteractor = updateOperationTransferIdInteractor
         )
     }
 
     @Provides
     fun provideDeleteAccountPopUpActionDispatcher(
         globalStore: DefaultStore<GlobalVmState>,
-        getAccountForIdInteractor: GetAccountForIdInteractor,
         deleteAccountInteractor: DeleteAccountInteractor
     ):DeleteAccountPopUpActionDispatcher{
         return DeleteAccountPopUpActionDispatcher(
             store = globalStore,
-            getAccountForIdInteractor = getAccountForIdInteractor,
             deleteAccountInteractor = deleteAccountInteractor,
         )
     }
@@ -111,15 +116,22 @@ class ActionDispatcherModule {
         deleteOperationInteractor: DeleteOperationInteractor,
         getAccountForIdInteractor: GetAccountForIdInteractor,
         getOperationForIdInteractor: GetOperationForIdInteractor,
-        updateAccountBalanceInteractor: UpdateAccountBalanceInteractor
+        updateAccountBalanceInteractor: UpdateAccountBalanceInteractor,
+        getTransferForIdInteractor: GetTransferForIdInteractor,
+        getPaymentForIdInteractor: GetPaymentForIdInteractor,
+        deletePaymentInteractor: DeletePaymentInteractor,
+        deleteTransferInteractor: DeleteTransferInteractor
     ): DeleteOperationPopUpActionDispatcher{
         return DeleteOperationPopUpActionDispatcher(
             store = globalStore,
             deleteOperationInteractor = deleteOperationInteractor,
             getAccountForIdInteractor = getAccountForIdInteractor,
             getOperationForIdInteractor = getOperationForIdInteractor,
-            updateAccountBalanceInteractor = updateAccountBalanceInteractor
+            updateAccountBalanceInteractor = updateAccountBalanceInteractor,
+            getTransferForIdInteractor = getTransferForIdInteractor,
+            getPaymentForIdInteractor = getPaymentForIdInteractor,
+            deletePaymentInteractor = deletePaymentInteractor,
+            deleteTransferInteractor = deleteTransferInteractor
         )
     }
-
 }

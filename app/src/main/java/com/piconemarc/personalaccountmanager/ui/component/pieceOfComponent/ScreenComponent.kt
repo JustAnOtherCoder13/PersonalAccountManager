@@ -20,8 +20,9 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.piconemarc.model.PAMIconButtons
-import com.piconemarc.model.entity.AccountModel
+import com.piconemarc.model.entity.AccountUiModel
 import com.piconemarc.personalaccountmanager.R
+import com.piconemarc.personalaccountmanager.toStringWithTwoDec
 import com.piconemarc.personalaccountmanager.ui.animation.PAMUiDataAnimations
 import com.piconemarc.personalaccountmanager.ui.animation.pAMInterlayerAnimation
 import com.piconemarc.personalaccountmanager.ui.theme.*
@@ -84,9 +85,9 @@ fun BaseScreen(
 
 @Composable
 fun AccountPostIt(
-    account: AccountModel,
-    onDeleteAccountButtonClicked: (account: AccountModel) -> Unit,
-    onAccountClicked: (account: AccountModel) -> Unit,
+    account: AccountUiModel,
+    onDeleteAccountButtonClicked: (accountUi: AccountUiModel) -> Unit,
+    onAccountClicked: (accountUi: AccountUiModel) -> Unit,
 ) {
     Box(modifier = Modifier
         .size(width = AccountPostItWidth, height = AccountPostItHeight)
@@ -111,11 +112,11 @@ fun AccountPostIt(
             ) {
                 AccountPostItValue(
                     valueTitle = stringResource(R.string.balanceTitle),
-                    value = account.accountBalance.toString()
+                    value = account.accountBalance.toStringWithTwoDec()
                 )
                 AccountPostItValue(
                     valueTitle = stringResource(R.string.restTitle),
-                    value = account.rest.toString()
+                    value = account.rest.toStringWithTwoDec()
                 )
             }
         }

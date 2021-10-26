@@ -4,12 +4,12 @@ import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.viewmodel.ActionDispatcher
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.UiAction
+import com.piconemarc.viewmodel.launchCatchingError
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MyAccountScreenActionDispatcher @Inject constructor(
@@ -28,15 +28,17 @@ class MyAccountScreenActionDispatcher @Inject constructor(
                         )
                     )
                 )
-                scope.launch {
-                    getAllAccountsInteractor.getAllAccounts().collect {
-                        updateState(
-                            GlobalAction.UpdateMyAccountScreenState(
-                                AppActions.MyAccountScreenAction.UpdateAccountList(it)
+                scope.launchCatchingError(
+                    block = {
+                        getAllAccountsInteractor.getAllAccountsAsFlow().collect {
+                            updateState(
+                                GlobalAction.UpdateMyAccountScreenState(
+                                    AppActions.MyAccountScreenAction.UpdateAccountList(it)
+                                )
                             )
-                        )
+                        }
                     }
-                }
+                )
             }
         }
     }

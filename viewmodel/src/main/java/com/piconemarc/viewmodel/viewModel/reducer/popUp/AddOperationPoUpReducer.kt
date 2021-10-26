@@ -1,13 +1,13 @@
 package com.piconemarc.viewmodel.viewModel.reducer.popUp
 
-import com.piconemarc.core.domain.Constants
+import com.piconemarc.core.domain.utils.Constants
 import com.piconemarc.model.PAMIconButtons
-import com.piconemarc.model.entity.AccountModel
-import com.piconemarc.model.entity.CategoryModel
+import com.piconemarc.model.entity.AccountUiModel
+import com.piconemarc.model.entity.CategoryUiModel
 import com.piconemarc.viewmodel.Reducer
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.ViewModelInnerStates
-import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber
+import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.addOperationPopUpUiState
 
 internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperationPopUpVMState> =
     { old, action ->
@@ -16,14 +16,13 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
             is AppActions.AddOperationPopUpAction.InitPopUp -> {
                 old.copy(
                     isPopUpExpanded = true,
-                    selectedCategory = CategoryModel(),
+                    selectedCategory = CategoryUiModel(),
                     addPopUpTitle = Constants.OPERATION_MODEL,
                     operationName = "",
                     operationAmount = "",
                     isAddOperation = true,
                     addPopUpOptionSelectedIcon = PAMIconButtons.Operation,
                     isAddOrMinusEnable = true,
-                    isSenderAccountError = false,
                     isBeneficiaryAccountError = false,
                     isOperationNameError = false,
                     isOperationAmountError = false
@@ -34,7 +33,6 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
                 isPaymentExpanded = false,
                 isRecurrentOptionExpanded = false,
                 isTransferExpanded = false,
-
                 )
             is AppActions.AddOperationPopUpAction.SelectCategory -> old.copy(
                 selectedCategory = action.category
@@ -50,16 +48,13 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
                 isTransferExpanded = false,
                 addPopUpTitle = Constants.PAYMENT_MODEL,
                 isAddOrMinusEnable = true,
-                isSenderAccountError = false,
                 isBeneficiaryAccountError = false,
             )
             is AppActions.AddOperationPopUpAction.CollapseOptions -> old.copy(
                 isPaymentExpanded = false,
-                isRecurrentOptionExpanded = false,
                 isTransferExpanded = false,
                 addPopUpTitle = Constants.OPERATION_MODEL,
                 isAddOrMinusEnable = true,
-                isSenderAccountError = false,
                 isBeneficiaryAccountError = false,
             )
             is AppActions.AddOperationPopUpAction.ExpandRecurrentOption -> old.copy(
@@ -77,48 +72,47 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
             is AppActions.AddOperationPopUpAction.ExpandTransferOption -> old.copy(
                 isPaymentExpanded = true,
                 isTransferExpanded = true,
-                isRecurrentOptionExpanded = false,
                 addPopUpTitle = Constants.TRANSFER_MODEL,
-                senderAccount = AccountModel(name = Constants.SENDER_ACCOUNT_MODEL),
-                beneficiaryAccount = AccountModel(name = Constants.BENEFICIARY_ACCOUNT_MODEL),
+                beneficiaryAccount = AccountUiModel(name = Constants.BENEFICIARY_ACCOUNT_MODEL),
                 isAddOrMinusEnable = false,
             )
-            is AppActions.AddOperationPopUpAction.UpdateAccountList -> old.copy(
-                allAccounts = action.accountList
-            )
+            is AppActions.AddOperationPopUpAction.UpdateAccountList -> {
+                old.copy(allAccounts = action.accountList)
+            }
             is AppActions.AddOperationPopUpAction.FillOperationAmount -> old.copy(
-                operationAmount = action.amount
+                operationAmount = action.amount,
+                isAddOperation = try {
+                    action.amount.toDouble() >= 0
+                }catch (e:NumberFormatException){
+                    action.amount != "-"
+                }
             )
             is AppActions.AddOperationPopUpAction.SelectEndDateYear -> {
                 old.copy(
                     endDateSelectedYear = action.selectedEndDateYear,
-                    isRecurrentEndDateError = AppSubscriber.AppUiState.addOperationPopUpUiState.enDateSelectedMonth == "Month"
+                    isRecurrentEndDateError = addOperationPopUpUiState.enDateSelectedMonth == "Month"
                 )
             }
             is AppActions.AddOperationPopUpAction.SelectEndDateMonth -> old.copy(
                 enDateSelectedMonth = action.selectedEndDateMonth,
-                isRecurrentEndDateError = AppSubscriber.AppUiState.addOperationPopUpUiState.endDateSelectedYear == "Year"
+                isRecurrentEndDateError = addOperationPopUpUiState.endDateSelectedYear == "Year"
             )
-            is AppActions.AddOperationPopUpAction.SelectSenderAccount -> old.copy(
-                senderAccount = action.senderAccount
-            )
+
             is AppActions.AddOperationPopUpAction.SelectBeneficiaryAccount -> old.copy(
-                beneficiaryAccount = action.beneficiaryAccount
+                beneficiaryAccount = action.beneficiaryAccountUi
             )
             is AppActions.AddOperationPopUpAction.SelectOptionIcon -> old.copy(
                 addPopUpOptionSelectedIcon = action.selectedIcon
             )
             is AppActions.AddOperationPopUpAction.SelectAddOrMinus -> old.copy(
-                isAddOperation = action.isAddOperation
+                isAddOperation = action.isAddOperation,
+                operationAmount =if (!action.isAddOperation) "-"+addOperationPopUpUiState.operationAmount else addOperationPopUpUiState.operationAmount
             )
             is AppActions.AddOperationPopUpAction.AddNewOperation -> old.copy(
                 isOperationNameError = action.operation.name.trim().isEmpty(),
-                isOperationAmountError = action.operation.updatedAmount == 0.0,
-                isSenderAccountError = AppSubscriber.AppUiState.addOperationPopUpUiState.addPopUpOptionSelectedIcon == PAMIconButtons.Transfer
-                        && AppSubscriber.AppUiState.addOperationPopUpUiState.senderAccount.name == "Sender account" ,
-                isBeneficiaryAccountError = AppSubscriber.AppUiState.addOperationPopUpUiState.addPopUpOptionSelectedIcon == PAMIconButtons.Transfer
-                        && AppSubscriber.AppUiState.addOperationPopUpUiState.beneficiaryAccount.name == "Beneficiary account" ,
+                isOperationAmountError = action.operation.amount == 0.0,
+                isBeneficiaryAccountError = addOperationPopUpUiState.addPopUpOptionSelectedIcon == PAMIconButtons.Transfer
+                        && addOperationPopUpUiState.beneficiaryAccount.name == "Beneficiary account" ,
             )
-
         }
     }

@@ -44,7 +44,7 @@ class AppViewModel @Inject constructor(
 
     fun dispatchAction(action: UiAction) {
         when (action) {
-
+            //launch job for each screen when action for this screen is dispatched, cancel job on close
             is AppActions.BaseAppScreenAction -> {
                 store.add(subscriber)
                 baseAppScreenJob = viewModelScope.launch {
@@ -110,6 +110,7 @@ class AppViewModel @Inject constructor(
         }
     }
 
+    //todo have to pass otherwise
     override fun onCleared() {
         super.onCleared()
         this.dispatchAction(

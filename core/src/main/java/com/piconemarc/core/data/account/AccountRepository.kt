@@ -6,7 +6,10 @@ import javax.inject.Inject
 
 class AccountRepository @Inject constructor(private val accountDaoImpl: AccountDaoImpl){
 
-    fun getAllAccounts(): Flow<List<AccountDTO>> {
+    fun getAllAccountsAsFlow(): Flow<List<AccountDTO>> {
+        return accountDaoImpl.getAllAccountsAsFlow()
+    }
+    suspend fun getAllAccounts(): List<AccountDTO> {
         return accountDaoImpl.getAllAccounts()
     }
 

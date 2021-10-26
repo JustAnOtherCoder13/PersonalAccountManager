@@ -1,9 +1,12 @@
 package com.piconemarc.viewmodel
 
+import android.database.sqlite.SQLiteException
+import android.util.Log
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import kotlinx.coroutines.CoroutineScope
-
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 interface UiDataAnimation
 
@@ -50,5 +53,20 @@ interface ActionDispatcher {
             store.dispatch(it)
         }
     }
+}
 
+fun CoroutineScope.launchCatchingError(
+    block : suspend CoroutineScope.() -> Unit,
+    doOnSuccess : ()-> Unit = {},
+    doOnError : ()-> Unit = {},
+) : Job {
+    return this.launch {
+        try {
+            block()
+        }catch (e : SQLiteException){
+            Log.e(this::class.java.simpleName, "dispatchEvent: ", e)
+            doOnError()
+        }
+        doOnSuccess()
+    }
 }

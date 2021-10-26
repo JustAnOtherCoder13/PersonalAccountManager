@@ -1,6 +1,6 @@
 package com.piconemarc.model.entity
 
-data class AccountModel(
+data class AccountUiModel(
     override val id: Long = 0,
     override val name: String = "",
     var accountBalance: Double = 0.0,
@@ -9,11 +9,7 @@ data class AccountModel(
 
     val rest: Double = accountOverdraft + accountBalance
 
-    fun minusOperation(operationAmount: Double) {
-        this.accountBalance -= operationAmount
-    }
-
-    fun addOperation(operationAmount: Double) {
-        this.accountBalance += operationAmount
+    fun updateAccountBalance(operation : OperationUiModel):AccountUiModel{
+        return this.copy(accountBalance = this.accountBalance+operation.amount)
     }
 }

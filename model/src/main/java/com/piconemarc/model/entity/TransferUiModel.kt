@@ -1,13 +1,9 @@
 package com.piconemarc.model.entity
 
 data class TransferUiModel(
-    override val id: Long,
-    override val name: String,
-    val senderAccount: AccountModel = AccountModel(),
-    val senderOperation: OperationModel = OperationModel(),
-    val beneficiaryAccount: AccountModel = AccountModel(),
-    val beneficiaryOperation: OperationModel = OperationModel(),
-    val isRecurrent: Boolean = false,
-    val endDate: EndDate = EndDate()
-) : BaseUiModel() {
-}
+    override val id: Long = 0,
+    override val name: String = "",
+    val senderOperationId: Long=0,
+    val beneficiaryOperationId: Long=0,
+    val paymentId : Long? = null
+) : BaseUiModel()

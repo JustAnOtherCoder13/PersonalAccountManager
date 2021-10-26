@@ -6,8 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.piconemarc.model.entity.EndDate
-import com.piconemarc.model.entity.OperationModel
+import com.piconemarc.model.entity.OperationUiModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.animation.pAMAddOperationPopUpBackgroundColor
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.*
@@ -15,6 +14,7 @@ import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.addOperationPopUpUiState
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.myAccountDetailScreenUiState
+import java.util.*
 
 @Composable
 fun PAMAddOperationPopUp(
@@ -26,25 +26,14 @@ fun PAMAddOperationPopUp(
         onAcceptButtonClicked = {
             viewModel.dispatchAction(
                 AppActions.AddOperationPopUpAction.AddNewOperation(
-                    OperationModel(
+                    OperationUiModel(
                         name = addOperationPopUpUiState.operationName,
-                        amount_ = try {
-                            addOperationPopUpUiState.operationAmount.toDouble()
-                        } catch (e: NumberFormatException) {
-                            0.0
-                        },
+                        amount = try { addOperationPopUpUiState.operationAmount.toDouble() }
+                        catch (e: NumberFormatException) { 0.0 },
                         accountId = myAccountDetailScreenUiState.selectedAccount.id,
                         categoryId = addOperationPopUpUiState.selectedCategory.id,
-                        isRecurrent = addOperationPopUpUiState.isRecurrentOptionExpanded,
-                        endDate = if (!addOperationPopUpUiState.isRecurrentEndDateError) EndDate(
-                            month = addOperationPopUpUiState.enDateSelectedMonth,
-                            year = addOperationPopUpUiState.endDateSelectedYear
-                        ) else null,
-                        senderAccountId = if(!addOperationPopUpUiState.isSenderAccountError)
-                            addOperationPopUpUiState.senderAccount.id else null,
-                        beneficiaryAccountId = if(!addOperationPopUpUiState.isBeneficiaryAccountError)
-                            addOperationPopUpUiState.beneficiaryAccount.id else null
-
+                        emitDate = Calendar.getInstance().time,
+                        isAddOperation = addOperationPopUpUiState.isAddOperation
                     )
                 )
             )
@@ -160,16 +149,10 @@ fun PAMAddOperationPopUp(
             //Transfer Operation option---------------------------
             PAMTransferOptionPanel(
                 isTransferOptionExpanded = addOperationPopUpUiState.isTransferExpanded,
-                senderAccountSelectedItem = addOperationPopUpUiState.senderAccount,
+                senderAccount = myAccountDetailScreenUiState.selectedAccount,
                 allAccountsList = addOperationPopUpUiState.allAccounts,
-                beneficiaryAccountSelectedItem = addOperationPopUpUiState.beneficiaryAccount,
-                onSenderAccountSelected = { senderAccount ->
-                    viewModel.dispatchAction(
-                        AppActions.AddOperationPopUpAction.SelectSenderAccount(
-                            senderAccount
-                        )
-                    )
-                },
+                beneficiaryAccountUiSelectedItem = addOperationPopUpUiState.beneficiaryAccount,
+
                 onBeneficiaryAccountSelected = { beneficiaryAccount ->
                     viewModel.dispatchAction(
                         AppActions.AddOperationPopUpAction.SelectBeneficiaryAccount(
@@ -177,7 +160,6 @@ fun PAMAddOperationPopUp(
                         )
                     )
                 },
-                isSenderAccountError = addOperationPopUpUiState.isSenderAccountError,
                 isBeneficiaryAccountError = addOperationPopUpUiState.isBeneficiaryAccountError
             )
         }

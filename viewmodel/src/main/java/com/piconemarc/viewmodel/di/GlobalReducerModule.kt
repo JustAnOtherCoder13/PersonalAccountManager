@@ -14,7 +14,6 @@ import javax.inject.Singleton
 @Module
 class GlobalReducerModule {
 
-
     @Singleton
     @Provides
     fun provideGlobalStore(state: GlobalVmState): DefaultStore<GlobalVmState> {

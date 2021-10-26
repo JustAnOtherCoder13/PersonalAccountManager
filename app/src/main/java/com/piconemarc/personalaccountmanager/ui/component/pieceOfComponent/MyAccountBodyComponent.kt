@@ -2,6 +2,7 @@ package com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,8 +17,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.piconemarc.model.PAMIconButtons
-import com.piconemarc.model.entity.OperationModel
+import com.piconemarc.model.entity.OperationUiModel
 import com.piconemarc.personalaccountmanager.R
+import com.piconemarc.personalaccountmanager.toStringWithTwoDec
 import com.piconemarc.personalaccountmanager.ui.theme.*
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.AppViewModel
@@ -36,7 +38,7 @@ fun MyAccountBodyRecyclerView(viewModel: AppViewModel) {
                 account = account,
                 onDeleteAccountButtonClicked = { accountToDelete ->
                     viewModel.dispatchAction(
-                        AppActions.DeleteAccountAction.InitPopUp(accountToDelete = accountToDelete)
+                        AppActions.DeleteAccountAction.InitPopUp(accountUiToDelete = accountToDelete)
                     )
                 },
                 onAccountClicked = { selectedAccount ->
@@ -54,18 +56,20 @@ fun MyAccountBodyRecyclerView(viewModel: AppViewModel) {
 
 @Composable
 fun AccountDetailSheetRecyclerView(
-    allOperations: List<OperationModel>,
-    onDeleteItemButtonCLick: (operation: OperationModel) -> Unit,
+    allOperations: List<OperationUiModel>,
+    onDeleteItemButtonCLick: (operation: OperationUiModel) -> Unit,
     accountRest: String,
-    accountBalance: String
+    accountBalance: String,
+    onOperationNameClick: (operation: OperationUiModel) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
 
         Box(modifier = Modifier.weight(1f)) {
             AccountDetailTitleAndDivider()
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = 40.dp)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 40.dp)
             ) {
                 Divider(
                     color = MaterialTheme.colors.onSecondary,
@@ -76,7 +80,8 @@ fun AccountDetailSheetRecyclerView(
                 )
                 OperationRecyclerView(
                     accountMonthlyOperations = allOperations,
-                    onDeleteItemButtonCLick = onDeleteItemButtonCLick
+                    onDeleteItemButtonCLick = onDeleteItemButtonCLick,
+                    onOperationNameClick = onOperationNameClick
                 )
             }
         }
@@ -119,8 +124,9 @@ private fun AccountDetailFooter(accountRest: String, accountBalance: String) {
 
 @Composable
 private fun OperationRecyclerView(
-    accountMonthlyOperations: List<OperationModel>,
-    onDeleteItemButtonCLick: (operation: OperationModel) -> Unit
+    accountMonthlyOperations: List<OperationUiModel>,
+    onDeleteItemButtonCLick: (operation: OperationUiModel) -> Unit,
+    onOperationNameClick: (operation: OperationUiModel) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -130,7 +136,8 @@ private fun OperationRecyclerView(
         items(accountMonthlyOperations) { operation ->
             OperationItem(
                 operation = operation,
-                onDeleteItemButtonCLick = onDeleteItemButtonCLick
+                onDeleteItemButtonCLick = onDeleteItemButtonCLick,
+                onOperationNameClick = onOperationNameClick
             )
         }
     }
@@ -138,8 +145,9 @@ private fun OperationRecyclerView(
 
 @Composable
 private fun OperationItem(
-    operation: OperationModel,
-    onDeleteItemButtonCLick: (operation: OperationModel) -> Unit
+    operation: OperationUiModel,
+    onDeleteItemButtonCLick: (operation: OperationUiModel) -> Unit,
+    onOperationNameClick: (operation: OperationUiModel) -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -149,16 +157,24 @@ private fun OperationItem(
             text = operation.name,
             modifier = Modifier
                 .padding(start = LittleMarge)
-                .weight(2f),
+                .weight(2f)
+                .clickable { onOperationNameClick(operation) },
             style = MaterialTheme.typography.body1
         )
         Text(
-            text = if (operation.updatedAmount > 0) "+${operation.updatedAmount}" else operation.updatedAmount.toString(),
+            text = if (operation.paymentId != null) "P" else if (operation.transferId != null) "T" else "",
+            modifier = Modifier
+                .padding(end = LittleMarge)
+                .weight(0.2f),
+            style = MaterialTheme.typography.caption
+        )
+        Text(
+            text = if (operation.amount > 0) "+${operation.amount.toStringWithTwoDec()}" else operation.amount.toStringWithTwoDec(),
             modifier = Modifier
                 .padding(start = LittleMarge)
-                .weight(0.9f),
+                .weight(1f),
             style = MaterialTheme.typography.body1,
-            color = if (operation.updatedAmount > 0) PositiveText else NegativeText
+            color = if (operation.amount > 0) PositiveText else NegativeText
         )
         Box(modifier = Modifier.size(35.dp)) {
             PAMIconButton(

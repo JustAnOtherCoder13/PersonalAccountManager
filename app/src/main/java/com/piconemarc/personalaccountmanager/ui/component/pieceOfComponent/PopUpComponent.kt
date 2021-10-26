@@ -2,6 +2,7 @@ package com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CornerSize
@@ -10,6 +11,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
@@ -22,7 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.piconemarc.model.PAMIconButtons
-import com.piconemarc.model.entity.AccountModel
+import com.piconemarc.model.entity.AccountUiModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.animation.*
 import com.piconemarc.personalaccountmanager.ui.theme.*
@@ -348,12 +350,10 @@ fun PAMRecurrentOptionPanel(
 @Composable
 fun PAMTransferOptionPanel(
     isTransferOptionExpanded : Boolean,
-    senderAccountSelectedItem : AccountModel,
-    allAccountsList : List<AccountModel>,
-    beneficiaryAccountSelectedItem : AccountModel,
-    onSenderAccountSelected : (senderAccount : AccountModel) -> Unit,
-    onBeneficiaryAccountSelected : ( beneficiaryAccount : AccountModel) -> Unit,
-    isSenderAccountError : Boolean,
+    senderAccount : AccountUiModel,
+    allAccountsList : List<AccountUiModel>,
+    beneficiaryAccountUiSelectedItem : AccountUiModel,
+    onBeneficiaryAccountSelected : (beneficiaryAccountUi : AccountUiModel) -> Unit,
     isBeneficiaryAccountError : Boolean
 ) {
     Column(
@@ -363,16 +363,37 @@ fun PAMTransferOptionPanel(
             ).value
         )
     ) {
-        PAMBaseDropDownMenuWithBackground(
-            selectedItem = senderAccountSelectedItem,
-            itemList = allAccountsList,
-            onItemSelected = onSenderAccountSelected,
-            isError = isSenderAccountError ,
-            errorMessage = "Please select Sender account for transfer"
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = RegularMarge, bottom = RegularMarge, end = RegularMarge)
+                .background(
+                    color = MaterialTheme.colors.primary,
+                    shape = PopUpFieldBackgroundShape
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(
+                modifier = Modifier
+                    .wrapContentSize()
+                    .padding(top = RegularMarge, bottom = RegularMarge)
+                    .border(
+                        width = ThinBorder,
+                        color = MaterialTheme.colors.onPrimary,
+                        shape = RoundedCornerShape(RegularMarge)
+                    )
+            ) {
+                Text(
+                    text = senderAccount.name,
+                    color = MaterialTheme.colors.onPrimary,
+                    modifier = Modifier.padding(start = RegularMarge, end = RegularMarge),
+                    style = MaterialTheme.typography.h3
+                )
+            }
+        }
 
         PAMBaseDropDownMenuWithBackground(
-            selectedItem = beneficiaryAccountSelectedItem ,
+            selectedItem = beneficiaryAccountUiSelectedItem ,
             itemList = allAccountsList,
             onItemSelected = onBeneficiaryAccountSelected,
             isError = isBeneficiaryAccountError,

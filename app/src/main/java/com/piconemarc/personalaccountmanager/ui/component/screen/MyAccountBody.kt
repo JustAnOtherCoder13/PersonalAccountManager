@@ -1,5 +1,6 @@
 package com.piconemarc.personalaccountmanager.ui.component.screen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
@@ -7,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.piconemarc.personalaccountmanager.toStringWithTwoDec
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.*
 import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
@@ -63,8 +65,15 @@ fun MyAccountDetailBody(
                         AppActions.DeleteOperationPopUpAction.InitPopUp(it)
                     )
                 },
-                accountBalance = myAccountDetailScreenUiState.accountBalance,
-                accountRest = myAccountDetailScreenUiState.accountRest,
+                accountBalance = myAccountDetailScreenUiState.selectedAccount.accountBalance.toStringWithTwoDec(),
+                accountRest = myAccountDetailScreenUiState.selectedAccount.rest.toStringWithTwoDec(),
+                onOperationNameClick = {
+                    //todo pop up detail if transfer or payment
+                    Log.i(
+                        "TAG",
+                        "OperationItem: ${it.paymentId} ${it.transferId}"
+                    )
+                }
             )
 
         },
@@ -91,3 +100,4 @@ fun MyAccountDetailBody(
             )
     )
 }
+
