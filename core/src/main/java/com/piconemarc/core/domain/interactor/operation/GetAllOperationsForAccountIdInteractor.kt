@@ -1,7 +1,6 @@
 package com.piconemarc.core.domain.interactor.operation
 
 import com.piconemarc.core.data.operation.OperationRepository
-import com.piconemarc.core.domain.entityDTO.OperationDTO
 import com.piconemarc.model.entity.OperationUiModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -13,14 +12,6 @@ class GetAllOperationsForAccountIdInteractor @Inject constructor(private val ope
         accountId: Long,
     ): Flow<List<OperationUiModel>> =
         operationRepository.getOperationsForAccountId(accountId).map {
-            mapAllOperationsDtoForAccountIdToOperationModel(it)
+                allOperationsDTO -> allOperationsDTO.map { it.toUiModel() }
         }
-
-    private fun mapAllOperationsDtoForAccountIdToOperationModel(
-        allOperationsDtoForAccountId: List<OperationDTO>
-    ): List<OperationUiModel> {
-        return allOperationsDtoForAccountId.map {
-            it.toUiModel()
-        }
-    }
 }

@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
 import androidx.room.PrimaryKey
-import com.piconemarc.core.domain.Constants.TRANSFER_TABLE
+import com.piconemarc.core.domain.utils.Constants.TRANSFER_TABLE
 import com.piconemarc.model.entity.TransferUiModel
 
 @Entity(

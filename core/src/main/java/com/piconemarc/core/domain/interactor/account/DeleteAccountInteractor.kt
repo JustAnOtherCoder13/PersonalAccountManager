@@ -6,14 +6,10 @@ import com.piconemarc.model.entity.AccountUiModel
 import javax.inject.Inject
 
 class DeleteAccountInteractor @Inject constructor(private val accountRepository: AccountRepository) {
+
     suspend fun deleteAccount(accountUiModel: AccountUiModel) {
         accountRepository.deleteAccount(
-            AccountDTO(
-                id = accountUiModel.id,
-                name = accountUiModel.name,
-                accountBalance = accountUiModel.accountBalance,
-                accountOverdraft = accountUiModel.accountOverdraft
-            )
+            AccountDTO().fromUiModel(accountUiModel)
         )
     }
 }

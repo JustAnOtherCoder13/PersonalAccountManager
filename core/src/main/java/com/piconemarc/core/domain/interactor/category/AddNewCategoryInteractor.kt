@@ -9,7 +9,7 @@ class AddNewCategoryInteractor @Inject constructor(private val categoryRepositor
 
     suspend fun addNewCategory(categoryModel: CategoryUiModel) {
         categoryRepository.addNewCategory(
-            CategoryDTO(name = categoryModel.name, color = categoryModel.color)
+            CategoryDTO().fromUiModel(categoryModel)
         )
     }
 }

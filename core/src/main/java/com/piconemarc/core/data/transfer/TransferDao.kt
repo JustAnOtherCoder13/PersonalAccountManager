@@ -4,8 +4,8 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import com.piconemarc.core.domain.Constants.TRANSFER_TABLE
 import com.piconemarc.core.domain.entityDTO.TransferDTO
+import com.piconemarc.core.domain.utils.Constants.TRANSFER_TABLE
 
 @Dao
 interface TransferDao {

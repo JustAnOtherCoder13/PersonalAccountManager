@@ -6,17 +6,6 @@ import javax.inject.Inject
 
 class UpdateAccountBalanceInteractor @Inject constructor(val accountRepository: AccountRepository) {
 
-    suspend fun updateAccountBalanceOnDeleteOperation(
-        accountId: Long,
-        oldAccountBalance: Double,
-        deletedOperationAMount: Double
-    ) {
-        accountRepository.updateAccountBalance(
-            accountId = accountId,
-            accountBalance = oldAccountBalance - (deletedOperationAMount)
-        )
-    }
-
     suspend fun updateAccountBalance(
         vararg updatedAccountUi: AccountUiModel
     ) {
@@ -26,6 +15,5 @@ class UpdateAccountBalanceInteractor @Inject constructor(val accountRepository: 
                 accountBalance = it.accountBalance
             )
         }
-
     }
 }

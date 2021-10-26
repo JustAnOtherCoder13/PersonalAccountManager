@@ -2,7 +2,7 @@ package com.piconemarc.core.domain.entityDTO
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.piconemarc.core.domain.Constants.ACCOUNT_TABLE
+import com.piconemarc.core.domain.utils.Constants.ACCOUNT_TABLE
 import com.piconemarc.model.entity.AccountUiModel
 
 @Entity(tableName = ACCOUNT_TABLE)

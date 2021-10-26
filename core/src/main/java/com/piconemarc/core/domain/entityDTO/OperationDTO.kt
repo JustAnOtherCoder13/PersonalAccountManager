@@ -1,8 +1,11 @@
 package com.piconemarc.core.domain.entityDTO
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
-import com.piconemarc.core.domain.Constants.OPERATION_TABLE
+import androidx.room.PrimaryKey
+import com.piconemarc.core.domain.utils.Constants.OPERATION_TABLE
 import com.piconemarc.model.entity.OperationUiModel
 import java.util.*
 

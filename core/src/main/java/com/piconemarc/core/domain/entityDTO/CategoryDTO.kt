@@ -3,7 +3,7 @@ package com.piconemarc.core.domain.entityDTO
 import android.graphics.Color
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.piconemarc.core.domain.Constants.CATEGORY_TABLE
+import com.piconemarc.core.domain.utils.Constants.CATEGORY_TABLE
 import com.piconemarc.model.entity.CategoryUiModel
 
 @Entity(tableName = CATEGORY_TABLE)

@@ -1,4 +1,4 @@
-package com.piconemarc.core.domain
+package com.piconemarc.core.domain.utils
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow

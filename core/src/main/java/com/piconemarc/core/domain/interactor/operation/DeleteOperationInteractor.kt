@@ -8,8 +8,6 @@ import javax.inject.Inject
 class DeleteOperationInteractor @Inject constructor(private val operationRepository: OperationRepository) {
 
     suspend fun deleteOperation(operationModel: OperationUiModel) {
-        operationRepository.deleteOperation(
-            OperationDTO().fromUiModel(operationModel)
-        )
+        operationRepository.deleteOperation(OperationDTO().fromUiModel(operationModel))
     }
 }

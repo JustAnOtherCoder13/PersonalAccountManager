@@ -1,6 +1,6 @@
 package com.piconemarc.viewmodel.viewModel
 
-import com.piconemarc.core.domain.Constants
+import com.piconemarc.core.domain.utils.Constants
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.AccountUiModel
 import com.piconemarc.model.entity.CategoryUiModel

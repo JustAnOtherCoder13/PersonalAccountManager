@@ -4,8 +4,8 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import com.piconemarc.core.domain.Constants.PAYMENT_TABLE
 import com.piconemarc.core.domain.entityDTO.PaymentDTO
+import com.piconemarc.core.domain.utils.Constants.PAYMENT_TABLE
 
 @Dao
 interface PaymentDao {
