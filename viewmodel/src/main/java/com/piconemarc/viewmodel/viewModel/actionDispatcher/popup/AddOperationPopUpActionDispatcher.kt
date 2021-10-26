@@ -35,7 +35,6 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
     private val getAllAccountsInteractor: GetAllAccountsInteractor,
     private val addNewOperationInteractor: AddNewOperationInteractor,
     private val updateAccountBalanceInteractor: UpdateAccountBalanceInteractor,
-    private val getAccountForIdInteractor: GetAccountForIdInteractor,
     private val addNewPaymentInteractor: AddNewPaymentInteractor,
     private val updateOperationPaymentIdInteractor: UpdateOperationPaymentIdInteractor,
     private val addNewTransferInteractor: AddNewTransferInteractor,
@@ -43,55 +42,45 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
 ) : ActionDispatcher {
 
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
-        Log.i("TAG", "dispatchAction: $action")
         updateState(GlobalAction.UpdateAddOperationPopUpState(action))
         when (action) {
             is AppActions.AddOperationPopUpAction.SelectOptionIcon -> {
                 //option selector
                 when (action.selectedIcon) {
-                    is PAMIconButtons.Payment -> updateState(
-                        GlobalAction.UpdateAddOperationPopUpState(
-                            AppActions.AddOperationPopUpAction.ExpandPaymentOption
-                        ),
-                        GlobalAction.UpdateAddOperationPopUpState(
-                            AppActions.AddOperationPopUpAction.ExpandRecurrentOption
+                    is PAMIconButtons.Payment -> {
+                        this.dispatchAction(
+                            AppActions.AddOperationPopUpAction.ExpandPaymentOption,
+                            scope
                         )
-                    )
-                    is PAMIconButtons.Transfer -> {
-                        scope.launch {
-                            getAllAccountsInteractor.getAllAccounts()
-                                .collect {
-                                    updateState(
-                                        GlobalAction.UpdateAddOperationPopUpState(
-                                            AppActions.AddOperationPopUpAction.UpdateAccountList(
-                                                it.filter {
-                                                    it.id != myAccountDetailScreenUiState.selectedAccount.id
-                                                }
-                                            )
-                                        )
-                                    )
-                                }
-                        }
-                        updateState(
-                            GlobalAction.UpdateAddOperationPopUpState(
-                                AppActions.AddOperationPopUpAction.ExpandTransferOption
-                            ),
-                            GlobalAction.UpdateAddOperationPopUpState(
-                                AppActions.AddOperationPopUpAction.CloseRecurrentOption
-                            )
+                        this.dispatchAction(
+                            AppActions.AddOperationPopUpAction.ExpandRecurrentOption,
+                            scope
                         )
                     }
-                    else -> updateState(
-                        GlobalAction.UpdateAddOperationPopUpState(
-                            AppActions.AddOperationPopUpAction.CollapseOptions
-                        ),
-                        GlobalAction.UpdateAddOperationPopUpState(
-                            AppActions.AddOperationPopUpAction.CloseRecurrentOption
+
+                    is PAMIconButtons.Transfer -> {
+                        this.dispatchAction(
+                            AppActions.AddOperationPopUpAction.ExpandTransferOption,
+                            scope
                         )
-                    )
+                        this.dispatchAction(
+                            AppActions.AddOperationPopUpAction.CloseRecurrentOption,
+                            scope
+                        )
+                    }
+                    else -> {
+                        this.dispatchAction(
+                            AppActions.AddOperationPopUpAction.CollapseOptions,
+                            scope
+                        )
+                        this.dispatchAction(
+                            AppActions.AddOperationPopUpAction.CloseRecurrentOption,
+                            scope
+                        )
+                    }
+
                 }
             }
-
             is AppActions.AddOperationPopUpAction.InitPopUp ->
                 scope.launch {
                     getAllCategoriesInteractor.getAllCategories().collect {
@@ -105,14 +94,28 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                     }
                 }
 
+            is AppActions.AddOperationPopUpAction.ExpandTransferOption -> {
+                scope.launch {
+                    updateState(
+                        GlobalAction.UpdateAddOperationPopUpState(
+                            AppActions.AddOperationPopUpAction.UpdateAccountList(
+                                getAllAccountsInteractor.getAllAccounts().filter {
+                                    it.id != myAccountDetailScreenUiState.selectedAccount.id
+                                }
+                            )
+                        )
+                    )
+                }
+            }
+
             is AppActions.AddOperationPopUpAction.AddNewOperation -> {
                 var operationId: Long
                 var paymentId: Long
                 var beneficiaryOperationId: Long
                 var transferId: Long
 
-
-                //if no error on name and amount, push operation, update account balance and store operationId in var
+                //if no error on name and amount, push operation,
+                // update account balance and store operationId in var
                 if (!addOperationPopUpUiState.isOperationNameError
                     && !addOperationPopUpUiState.isOperationAmountError
                 ) {

@@ -9,8 +9,12 @@ class AccountDaoImpl @Inject constructor(pamDatabase: PAMDatabase) :AccountDao {
 
     private val accountDao : AccountDao = pamDatabase.accountDao()
 
-    override fun getAllAccounts(): Flow<List<AccountDTO>> {
-         return accountDao.getAllAccounts()
+    override fun getAllAccountsAsFlow(): Flow<List<AccountDTO>> {
+         return accountDao.getAllAccountsAsFlow()
+    }
+
+    override suspend fun getAllAccounts(): List<AccountDTO> {
+        return accountDao.getAllAccounts()
     }
 
     override suspend fun addNewAccount(accountDTO: AccountDTO){

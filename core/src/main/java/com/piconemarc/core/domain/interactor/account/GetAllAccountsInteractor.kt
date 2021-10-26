@@ -11,8 +11,12 @@ import javax.inject.Inject
 class GetAllAccountsInteractor @Inject constructor(private val accountRepository: AccountRepository) :
 Constants.Interactor{
 
-    fun getAllAccounts(): Flow<List<AccountUiModel>> = accountRepository.getAllAccounts().map {
+    fun getAllAccountsAsFlow(): Flow<List<AccountUiModel>> = accountRepository.getAllAccountsAsFlow().map {
         mapAccountDtoToAccountModel(it)
+    }
+    suspend fun getAllAccounts(): List<AccountUiModel> {
+        return mapAccountDtoToAccountModel(accountRepository.getAllAccounts())
+
     }
     private fun mapAccountDtoToAccountModel(accountDtoList: List<AccountDTO>): List<AccountUiModel> {
         return accountDtoList.map {

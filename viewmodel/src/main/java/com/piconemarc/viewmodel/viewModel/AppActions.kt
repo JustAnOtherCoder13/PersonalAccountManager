@@ -1,9 +1,7 @@
 package com.piconemarc.viewmodel.viewModel
 
 import com.piconemarc.model.PAMIconButtons
-import com.piconemarc.model.entity.AccountUiModel
-import com.piconemarc.model.entity.CategoryModel
-import com.piconemarc.model.entity.OperationUiModel
+import com.piconemarc.model.entity.*
 import com.piconemarc.viewmodel.UiAction
 
 object AppActions {
@@ -80,6 +78,10 @@ object AppActions {
 
         data class DeleteOperation(val operationToDelete: OperationUiModel) :
             DeleteOperationPopUpAction()
+        data class DeletePayment(val paymentToDelete: PaymentUiModel) : DeleteOperationPopUpAction()
+        data class DeleteTransfer(val transferToDelete : TransferUiModel) :DeleteOperationPopUpAction()
+        data class UpdateTransferRelatedAccount(val transferRelatedAccount : AccountUiModel) : DeleteOperationPopUpAction()
+        data class UpdateIsDeletedPermanently(val isDeletedPermanently : Boolean) : DeleteOperationPopUpAction()
     }
 
     sealed class DeleteAccountAction : UiAction {

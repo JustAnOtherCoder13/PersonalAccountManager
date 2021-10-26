@@ -29,7 +29,7 @@ class MyAccountScreenActionDispatcher @Inject constructor(
                     )
                 )
                 scope.launch {
-                    getAllAccountsInteractor.getAllAccounts().collect {
+                    getAllAccountsInteractor.getAllAccountsAsFlow().collect {
                         updateState(
                             GlobalAction.UpdateMyAccountScreenState(
                                 AppActions.MyAccountScreenAction.UpdateAccountList(it)

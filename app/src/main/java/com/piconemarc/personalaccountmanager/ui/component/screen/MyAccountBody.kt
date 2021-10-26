@@ -1,5 +1,6 @@
 package com.piconemarc.personalaccountmanager.ui.component.screen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
@@ -66,6 +67,13 @@ fun MyAccountDetailBody(
                 },
                 accountBalance = myAccountDetailScreenUiState.selectedAccount.accountBalance.toStringWithTwoDec(),
                 accountRest = myAccountDetailScreenUiState.selectedAccount.rest.toStringWithTwoDec(),
+                onOperationNameClick = {
+                    //todo pop up detail if transfer or payment
+                    Log.i(
+                        "TAG",
+                        "OperationItem: ${it.paymentId} ${it.transferId}"
+                    )
+                }
             )
 
         },

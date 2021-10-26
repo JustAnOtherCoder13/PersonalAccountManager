@@ -28,7 +28,7 @@ class BaseScreenActionDispatcher @Inject constructor(
                 // else delete payment
                 // finds a way to actualize only one time
                 getAllAccountsJob = scope.launch {
-                    getAllAccountsInteractor.getAllAccounts().collect { allAccounts ->
+                    getAllAccountsInteractor.getAllAccountsAsFlow().collect { allAccounts ->
                         updateState(
                             GlobalAction.UpdateBaseAppScreenVmState(
                                 BaseAppScreenAction.UpdateFooterBalance(

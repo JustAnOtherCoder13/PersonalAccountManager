@@ -1,6 +1,5 @@
 package com.piconemarc.viewmodel.viewModel.reducer.popUp
 
-import android.util.Log
 import com.piconemarc.core.domain.Constants
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.AccountUiModel
@@ -9,7 +8,7 @@ import com.piconemarc.viewmodel.Reducer
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.ViewModelInnerStates
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber
-import java.lang.NumberFormatException
+import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.addOperationPopUpUiState
 
 internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperationPopUpVMState> =
     { old, action ->
@@ -82,9 +81,7 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
                 isAddOrMinusEnable = false,
             )
             is AppActions.AddOperationPopUpAction.UpdateAccountList -> {
-                old.copy(
-                    allAccounts = action.accountList
-                )
+                old.copy(allAccounts = action.accountList)
             }
             is AppActions.AddOperationPopUpAction.FillOperationAmount -> old.copy(
                 operationAmount = action.amount,
@@ -97,12 +94,12 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
             is AppActions.AddOperationPopUpAction.SelectEndDateYear -> {
                 old.copy(
                     endDateSelectedYear = action.selectedEndDateYear,
-                    isRecurrentEndDateError = AppSubscriber.AppUiState.addOperationPopUpUiState.enDateSelectedMonth == "Month"
+                    isRecurrentEndDateError = addOperationPopUpUiState.enDateSelectedMonth == "Month"
                 )
             }
             is AppActions.AddOperationPopUpAction.SelectEndDateMonth -> old.copy(
                 enDateSelectedMonth = action.selectedEndDateMonth,
-                isRecurrentEndDateError = AppSubscriber.AppUiState.addOperationPopUpUiState.endDateSelectedYear == "Year"
+                isRecurrentEndDateError = addOperationPopUpUiState.endDateSelectedYear == "Year"
             )
 
             is AppActions.AddOperationPopUpAction.SelectBeneficiaryAccount -> old.copy(
@@ -113,13 +110,13 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
             )
             is AppActions.AddOperationPopUpAction.SelectAddOrMinus -> old.copy(
                 isAddOperation = action.isAddOperation,
-                operationAmount =if (!action.isAddOperation) "-" else ""
+                operationAmount =if (!action.isAddOperation) "-"+addOperationPopUpUiState.operationAmount else addOperationPopUpUiState.operationAmount
             )
             is AppActions.AddOperationPopUpAction.AddNewOperation -> old.copy(
                 isOperationNameError = action.operation.name.trim().isEmpty(),
                 isOperationAmountError = action.operation.amount == 0.0,
-                isBeneficiaryAccountError = AppSubscriber.AppUiState.addOperationPopUpUiState.addPopUpOptionSelectedIcon == PAMIconButtons.Transfer
-                        && AppSubscriber.AppUiState.addOperationPopUpUiState.beneficiaryAccount.name == "Beneficiary account" ,
+                isBeneficiaryAccountError = addOperationPopUpUiState.addPopUpOptionSelectedIcon == PAMIconButtons.Transfer
+                        && addOperationPopUpUiState.beneficiaryAccount.name == "Beneficiary account" ,
             )
 
         }

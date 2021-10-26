@@ -7,8 +7,8 @@ import javax.inject.Inject
 
 class GetOperationForIdInteractor @Inject constructor(private val operationRepository: OperationRepository) {
 
-    suspend fun getOperationForId(operationId: Long, accountId : Long): OperationUiModel {
-        return mapOperationDtoToOperationModel(operationRepository.getOperationForAccountIdWithOperationId(operationId, accountId))
+    suspend fun getOperationForId(operationId: Long): OperationUiModel {
+        return mapOperationDtoToOperationModel(operationRepository.getOperationForId(operationId))
     }
 
     private fun mapOperationDtoToOperationModel(operationDTO: OperationDTO): OperationUiModel {

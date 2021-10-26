@@ -33,13 +33,21 @@ data class PaymentDTO(
     val accountId : Long = 0,
     val endDate: Date? = null
 ){
-    @Ignore
     fun fromPaymentModel(paymentUiModel: PaymentUiModel): PaymentDTO{
-        return PaymentDTO(
+        return this.copy(
             name = paymentUiModel.name,
             operationId = paymentUiModel.operationId,
             accountId = paymentUiModel.accountId,
             endDate = paymentUiModel.endDate
+        )
+    }
+    fun toUiModel() : PaymentUiModel{
+        return PaymentUiModel(
+            id = this.id,
+            name = this.name,
+            operationId = this.operationId,
+            accountId = this.accountId,
+            endDate = this.endDate
         )
     }
 }

@@ -1,7 +1,9 @@
 package com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -58,15 +60,17 @@ fun AccountDetailSheetRecyclerView(
     allOperations: List<OperationUiModel>,
     onDeleteItemButtonCLick: (operation: OperationUiModel) -> Unit,
     accountRest: String,
-    accountBalance: String
+    accountBalance: String,
+    onOperationNameClick: (operation: OperationUiModel) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
 
         Box(modifier = Modifier.weight(1f)) {
             AccountDetailTitleAndDivider()
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = 40.dp)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 40.dp)
             ) {
                 Divider(
                     color = MaterialTheme.colors.onSecondary,
@@ -77,7 +81,8 @@ fun AccountDetailSheetRecyclerView(
                 )
                 OperationRecyclerView(
                     accountMonthlyOperations = allOperations,
-                    onDeleteItemButtonCLick = onDeleteItemButtonCLick
+                    onDeleteItemButtonCLick = onDeleteItemButtonCLick,
+                    onOperationNameClick = onOperationNameClick
                 )
             }
         }
@@ -121,7 +126,8 @@ private fun AccountDetailFooter(accountRest: String, accountBalance: String) {
 @Composable
 private fun OperationRecyclerView(
     accountMonthlyOperations: List<OperationUiModel>,
-    onDeleteItemButtonCLick: (operation: OperationUiModel) -> Unit
+    onDeleteItemButtonCLick: (operation: OperationUiModel) -> Unit,
+    onOperationNameClick: (operation: OperationUiModel) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -131,7 +137,8 @@ private fun OperationRecyclerView(
         items(accountMonthlyOperations) { operation ->
             OperationItem(
                 operation = operation,
-                onDeleteItemButtonCLick = onDeleteItemButtonCLick
+                onDeleteItemButtonCLick = onDeleteItemButtonCLick,
+                onOperationNameClick = onOperationNameClick
             )
         }
     }
@@ -140,7 +147,8 @@ private fun OperationRecyclerView(
 @Composable
 private fun OperationItem(
     operation: OperationUiModel,
-    onDeleteItemButtonCLick: (operation: OperationUiModel) -> Unit
+    onDeleteItemButtonCLick: (operation: OperationUiModel) -> Unit,
+    onOperationNameClick: (operation: OperationUiModel) -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -150,14 +158,22 @@ private fun OperationItem(
             text = operation.name,
             modifier = Modifier
                 .padding(start = LittleMarge)
-                .weight(2f),
+                .weight(2f)
+                .clickable { onOperationNameClick(operation) },
             style = MaterialTheme.typography.body1
+        )
+        Text(
+            text = if (operation.paymentId != null) "P" else if (operation.transferId != null) "T" else "",
+            modifier = Modifier
+                .padding(end = LittleMarge)
+                .weight(0.2f),
+            style = MaterialTheme.typography.caption
         )
         Text(
             text = if (operation.amount > 0) "+${operation.amount.toStringWithTwoDec()}" else operation.amount.toStringWithTwoDec(),
             modifier = Modifier
                 .padding(start = LittleMarge)
-                .weight(0.9f),
+                .weight(1f),
             style = MaterialTheme.typography.body1,
             color = if (operation.amount > 0) PositiveText else NegativeText
         )

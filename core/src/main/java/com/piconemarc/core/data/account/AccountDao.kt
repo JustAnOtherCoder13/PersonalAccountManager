@@ -13,7 +13,10 @@ interface AccountDao {
 
     //todo pass all with flow or better use shared flow and state flow
     @Query("SELECT*FROM $ACCOUNT_TABLE")
-    fun getAllAccounts() : Flow<List<AccountDTO>>
+    fun getAllAccountsAsFlow() : Flow<List<AccountDTO>>
+
+    @Query("SELECT*FROM $ACCOUNT_TABLE")
+    suspend fun getAllAccounts() : List<AccountDTO>
 
     @Query("SELECT*FROM $ACCOUNT_TABLE WHERE $ACCOUNT_TABLE.id = :id")
     suspend fun getAccountForId(id:Long) : AccountDTO

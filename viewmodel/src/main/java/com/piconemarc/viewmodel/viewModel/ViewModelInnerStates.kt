@@ -58,7 +58,9 @@ object ViewModelInnerStates {
 
     data class DeleteOperationPopUpVMState(
         val isPopUpExpanded: Boolean=false,
-        val operationToDelete : OperationUiModel = OperationUiModel()
+        val operationToDelete : OperationUiModel = OperationUiModel(),
+        val isDeletedPermanently : Boolean = true,
+        val transferRelatedAccount : AccountUiModel = AccountUiModel(),
     ) : VMState
 
     data class DeleteAccountPopUpVMState(

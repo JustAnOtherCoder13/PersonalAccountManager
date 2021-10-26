@@ -4,7 +4,7 @@ import com.piconemarc.core.data.PAMDatabase
 import com.piconemarc.core.domain.entityDTO.PaymentDTO
 import javax.inject.Inject
 
-class PaymentDaoImpl@Inject constructor(private val pamDatabase: PAMDatabase) : PaymentDao {
+class PaymentDaoImpl@Inject constructor(pamDatabase: PAMDatabase) : PaymentDao {
 
     private val paymentDao = pamDatabase.paymentDao()
 
@@ -18,5 +18,9 @@ class PaymentDaoImpl@Inject constructor(private val pamDatabase: PAMDatabase) : 
 
     override suspend fun getAllPaymentForAccountId(accountId: Long): List<PaymentDTO> {
         return paymentDao.getAllPaymentForAccountId(accountId)
+    }
+
+    override suspend fun getPaymentForId(id: Long): PaymentDTO {
+        return paymentDao.getPaymentForId(id)
     }
 }

@@ -5,9 +5,9 @@ import com.piconemarc.core.domain.entityDTO.PaymentDTO
 import com.piconemarc.model.entity.PaymentUiModel
 import javax.inject.Inject
 
-class DeletePaymentInteractor @Inject constructor(private val paymentRepository: PaymentRepository) {
+class GetPaymentForIdInteractor @Inject constructor( private val paymentRepository: PaymentRepository) {
 
-    suspend fun deletePayment(payment: PaymentUiModel){
-        paymentRepository.deletePayment(PaymentDTO().fromPaymentModel(payment))
+    suspend fun getPaymentForId(id: Long): PaymentUiModel {
+        return paymentRepository.getPaymentForId(id).toUiModel()
     }
 }

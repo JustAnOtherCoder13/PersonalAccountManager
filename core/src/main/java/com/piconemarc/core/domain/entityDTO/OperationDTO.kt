@@ -63,6 +63,15 @@ data class OperationDTO(
 
     @Ignore
     fun toOperationUiModel(): OperationUiModel {
-        return OperationUiModel(id, accountId, name, amount, categoryId, emitDate ?: Date(), paymentId = paymentId)
+        return OperationUiModel(
+            id = id,
+            accountId = accountId,
+            name = name,
+            amount = amount,
+            categoryId = categoryId,
+            emitDate = emitDate ?: Date(),
+            paymentId = paymentId,
+            transferId = transferId
+            )
     }
 }

@@ -45,4 +45,13 @@ data class TransferDTO(
             paymentId = transferUiModel.paymentId
         )
     }
+    fun toUiModel() : TransferUiModel{
+        return TransferUiModel(
+            id = this.id,
+            name = this.name,
+            senderOperationId = this.senderOperationId,
+            beneficiaryOperationId = this.beneficiaryOperationId,
+            paymentId = this.paymentId
+        )
+    }
 }

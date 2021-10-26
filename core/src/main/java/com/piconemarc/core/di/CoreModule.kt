@@ -19,6 +19,7 @@ import com.piconemarc.core.domain.interactor.operation.*
 import com.piconemarc.core.domain.interactor.payment.AddNewPaymentInteractor
 import com.piconemarc.core.domain.interactor.payment.DeletePaymentInteractor
 import com.piconemarc.core.domain.interactor.payment.GetAllPaymentForAccountIdInteractor
+import com.piconemarc.core.domain.interactor.payment.GetPaymentForIdInteractor
 import com.piconemarc.core.domain.interactor.transfer.AddNewTransferInteractor
 import com.piconemarc.core.domain.interactor.transfer.DeleteTransferInteractor
 import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
@@ -188,6 +189,11 @@ class CoreModule {
     @Provides
     fun provideGetAllPaymentForAccountId(paymentRepository: PaymentRepository): GetAllPaymentForAccountIdInteractor{
         return GetAllPaymentForAccountIdInteractor(paymentRepository)
+    }
+
+    @Provides
+    fun provideGetPaymentForId(paymentRepository: PaymentRepository) : GetPaymentForIdInteractor{
+        return GetPaymentForIdInteractor(paymentRepository)
     }
 
     //TRANSFER
