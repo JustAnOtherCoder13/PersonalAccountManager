@@ -9,14 +9,9 @@ import javax.inject.Inject
 
 class DeleteOperationInteractor @Inject constructor(private val operationRepository: OperationRepository) {
 
-    suspend fun deleteOperation(operationModel: OperationUiModel) {
-        operationRepository.deleteOperation(OperationDTO().fromUiModel(operationModel))
+    suspend fun deleteOperation(operation: OperationUiModel) {
+        operationRepository.deleteOperation(OperationDTO().fromUiModel(operation))
     }
-
-    suspend fun deleteOperation_(operation: OperationUiModel) {
-        operationRepository.deleteOperation_(OperationDTO().fromUiModel(operation))
-    }
-
     suspend fun deletePayment(operation: OperationUiModel) {
         operationRepository.deletePayment(OperationDTO().fromUiModel(operation))
     }

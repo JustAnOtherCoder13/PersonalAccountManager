@@ -8,10 +8,8 @@ import javax.inject.Inject
 
 class GetAllOperationsForAccountIdInteractor @Inject constructor(private val operationRepository: OperationRepository) {
 
-    fun getAllOperationsForAccountId(
-        accountId: Long,
-    ): Flow<List<OperationUiModel>> =
-        operationRepository.getOperationsForAccountId(accountId).map {
+    fun getAllOperationsForAccountIdFlow(accountId: Long): Flow<List<OperationUiModel>> =
+        operationRepository.getOperationsForAccountIdFlow(accountId).map {
                 allOperationsDTO -> allOperationsDTO.map { it.toUiModel() }
         }
 }

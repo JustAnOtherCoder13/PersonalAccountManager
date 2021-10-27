@@ -28,9 +28,4 @@ class AccountRepository @Inject constructor(private val accountDaoImpl: AccountD
     suspend fun deleteAccount(accountDTO: AccountDTO) {
         accountDaoImpl.deleteAccount(accountDTO)
     }
-
-    suspend fun updateAccountBalance(accountId: Long, accountBalance: Double) {
-        accountDaoImpl.updateAccountBalance(accountId, accountBalance)
-    }
-
 }

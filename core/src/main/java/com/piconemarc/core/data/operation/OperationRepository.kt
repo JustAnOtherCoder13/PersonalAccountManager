@@ -20,20 +20,8 @@ class OperationRepository @Inject constructor(private val operationDaoImpl: Oper
         operationDaoImpl.addTransferOperation(operation, beneficiaryAccountId)
     }
 
-    fun getAllOperations(): Flow<List<OperationDTO>> {
-        return operationDaoImpl.getAllOperations()
-    }
-
-    fun getOperationsForAccountId(accountId: Long): Flow<List<OperationDTO>> {
-        return operationDaoImpl.getAllOperationsForAccountId(accountId)
-    }
-
     suspend fun deleteOperation(operationDTO: OperationDTO) {
         operationDaoImpl.deleteOperation(operationDTO)
-    }
-
-    suspend fun deleteOperation_(operationDTO: OperationDTO) {
-        operationDaoImpl.deleteOperation_(operationDTO)
     }
 
     suspend fun deletePayment(operationDTO: OperationDTO) {
@@ -44,15 +32,11 @@ class OperationRepository @Inject constructor(private val operationDaoImpl: Oper
         operationDaoImpl.deleteTransfer(operationDTO,transfer)
     }
 
+    fun getOperationsForAccountIdFlow(accountId: Long): Flow<List<OperationDTO>> {
+        return operationDaoImpl.getAllOperationsForAccountId(accountId)
+    }
+
     suspend fun getOperationForId(operationId: Long): OperationDTO {
         return operationDaoImpl.getOperationForId(operationId)
-    }
-
-    suspend fun updateOperationPaymentId(paymentId: Long, operationId: Long) {
-        operationDaoImpl.updateOperationPaymentId(paymentId, operationId)
-    }
-
-    suspend fun updateOperationTransferId(transferId: Long, operationId: Long) {
-        operationDaoImpl.updateOperationTransferId(transferId, operationId)
     }
 }

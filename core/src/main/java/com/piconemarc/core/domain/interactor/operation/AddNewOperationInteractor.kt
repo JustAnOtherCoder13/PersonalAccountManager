@@ -11,7 +11,6 @@ class AddNewOperationInteractor @Inject constructor(private val operationReposit
     suspend fun addOperation(operationModel: OperationUiModel) {
         return operationRepository.addOperation(OperationDTO().fromUiModel(operationModel))
     }
-
     suspend fun addPaymentOperation(operation: OperationUiModel, endDate: Date?) {
         operationRepository.addPaymentOperation(OperationDTO().fromUiModel(operation), endDate)
     }

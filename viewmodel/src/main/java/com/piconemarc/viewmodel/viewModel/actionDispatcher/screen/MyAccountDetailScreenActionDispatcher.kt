@@ -1,6 +1,5 @@
 package com.piconemarc.viewmodel.viewModel.actionDispatcher.screen
 
-import android.util.Log
 import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
 import com.piconemarc.core.domain.interactor.operation.GetAllOperationsForAccountIdInteractor
 import com.piconemarc.viewmodel.*
@@ -35,7 +34,7 @@ class MyAccountDetailScreenActionDispatcher @Inject constructor(
                 )
                 scope.launchOnIOCatchingError(
                     block = {
-                        getAllOperationsForAccountIdInteractor.getAllOperationsForAccountId(
+                        getAllOperationsForAccountIdInteractor.getAllOperationsForAccountIdFlow(
                             action.selectedAccount.id
                         ).collect { accountOperations ->
                             updateState(

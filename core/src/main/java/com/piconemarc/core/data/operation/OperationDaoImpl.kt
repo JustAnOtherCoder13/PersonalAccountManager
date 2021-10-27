@@ -13,6 +13,7 @@ class OperationDaoImpl @Inject constructor(pamDatabase: PAMDatabase) : Operation
 
     private val operationDao: OperationDao = pamDatabase.operationDao()
 
+    //transactions
     override suspend fun addOperation(operationDTO: OperationDTO): Long {
         return operationDao.addOperation(operationDTO)
     }
@@ -25,19 +26,19 @@ class OperationDaoImpl @Inject constructor(pamDatabase: PAMDatabase) : Operation
         super.addTransferOperation(operation, beneficiaryAccountId)
     }
 
-    override suspend fun deleteOperation_(operationDTO: OperationDTO) {
-        super.deleteOperation_(operationDTO)
+    override suspend fun deleteOperation(operationDTO: OperationDTO) {
+        super.deleteOperation(operationDTO)
     }
 
     override suspend fun deletePayment(operationDTO: OperationDTO) {
         super.deletePayment(operationDTO)
     }
 
-    override suspend fun deleteTransfer(operationDTO: OperationDTO,transfer : TransferDTO) {
+    override suspend fun deleteTransfer(operationDTO: OperationDTO, transfer : TransferDTO) {
         super.deleteTransfer(operationDTO,transfer)
     }
 
-
+    //CRUD----------------------------------------------------------------------------------
     override suspend fun deletePayment(paymentDTO: PaymentDTO) {
         operationDao.deletePayment(paymentDTO)
     }
@@ -86,8 +87,8 @@ class OperationDaoImpl @Inject constructor(pamDatabase: PAMDatabase) : Operation
         return operationDao.addNewOperation(operationDTO)
     }
 
-    override suspend fun deleteOperation(operationDTO: OperationDTO) {
-        operationDao.deleteOperation(operationDTO)
+    override suspend fun deleteOperation_(operationDTO: OperationDTO) {
+        operationDao.deleteOperation_(operationDTO)
     }
 
     override suspend fun updateOperationPaymentId(paymentId: Long, operationId: Long) {

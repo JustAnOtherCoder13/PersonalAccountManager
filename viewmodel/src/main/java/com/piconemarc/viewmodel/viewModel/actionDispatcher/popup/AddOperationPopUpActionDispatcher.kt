@@ -1,15 +1,9 @@
 package com.piconemarc.viewmodel.viewModel.actionDispatcher.popup
 
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
-import com.piconemarc.core.domain.interactor.account.UpdateAccountBalanceInteractor
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
 import com.piconemarc.core.domain.interactor.operation.AddNewOperationInteractor
-import com.piconemarc.core.domain.interactor.operation.UpdateOperationPaymentIdInteractor
-import com.piconemarc.core.domain.interactor.operation.UpdateOperationTransferIdInteractor
-import com.piconemarc.core.domain.interactor.payment.AddNewPaymentInteractor
-import com.piconemarc.core.domain.interactor.transfer.AddNewTransferInteractor
 import com.piconemarc.model.PAMIconButtons
-import com.piconemarc.model.entity.TransferUiModel
 import com.piconemarc.viewmodel.*
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.addOperationPopUpUiState

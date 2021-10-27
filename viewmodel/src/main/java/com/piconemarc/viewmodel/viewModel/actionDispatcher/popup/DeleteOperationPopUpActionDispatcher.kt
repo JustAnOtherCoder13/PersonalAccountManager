@@ -1,21 +1,14 @@
 package com.piconemarc.viewmodel.viewModel.actionDispatcher.popup
 
-import android.util.Log
 import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
-import com.piconemarc.core.domain.interactor.account.UpdateAccountBalanceInteractor
 import com.piconemarc.core.domain.interactor.operation.DeleteOperationInteractor
 import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteractor
-import com.piconemarc.core.domain.interactor.payment.DeletePaymentInteractor
-import com.piconemarc.core.domain.interactor.payment.GetPaymentForIdInteractor
-import com.piconemarc.core.domain.interactor.transfer.DeleteTransferInteractor
 import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
 import com.piconemarc.model.entity.OperationUiModel
-import com.piconemarc.model.entity.PaymentUiModel
 import com.piconemarc.model.entity.TransferUiModel
 import com.piconemarc.viewmodel.*
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.deleteOperationPopUpUiState
-import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.myAccountDetailScreenUiState
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import kotlinx.coroutines.CoroutineScope
@@ -83,7 +76,6 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
                 // if transferId exist delete operations with cascade
                 // and update sender and beneficiary account
                 else if (action.operationToDelete.transferId != null) {
-
                     scope.launchOnIOCatchingError(
                         block = {
                             transfer = getTransferForIdInteractor.getTransferForId(action.operationToDelete.transferId!!)
@@ -98,7 +90,7 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
                 } else {
                     //else delete base operation
                     scope.launchOnIOCatchingError(
-                        block = { deleteOperationInteractor.deleteOperation_(action.operationToDelete) },
+                        block = { deleteOperationInteractor.deleteOperation(action.operationToDelete) },
                         doOnSuccess = { closePopUp() }
                     )
                 }

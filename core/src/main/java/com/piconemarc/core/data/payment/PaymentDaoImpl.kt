@@ -8,10 +8,6 @@ class PaymentDaoImpl@Inject constructor(pamDatabase: PAMDatabase) : PaymentDao {
 
     private val paymentDao = pamDatabase.paymentDao()
 
-    override suspend fun addNewPayment(paymentDTO: PaymentDTO) : Long  {
-        return paymentDao.addNewPayment(paymentDTO)
-    }
-
     override suspend fun deletePayment(paymentDTO: PaymentDTO) {
         paymentDao.deletePayment(paymentDTO)
     }

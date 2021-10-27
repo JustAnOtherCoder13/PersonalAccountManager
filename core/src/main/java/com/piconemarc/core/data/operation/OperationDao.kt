@@ -7,7 +7,10 @@ import com.piconemarc.core.domain.entityDTO.OperationDTO
 import com.piconemarc.core.domain.entityDTO.PaymentDTO
 import com.piconemarc.core.domain.entityDTO.TransferDTO
 import com.piconemarc.core.domain.utils.Constants
+import com.piconemarc.core.domain.utils.Constants.ACCOUNT_TABLE
 import com.piconemarc.core.domain.utils.Constants.OPERATION_TABLE
+import com.piconemarc.core.domain.utils.Constants.PAYMENT_TABLE
+import com.piconemarc.core.domain.utils.Constants.TRANSFER_TABLE
 import kotlinx.coroutines.flow.Flow
 import java.util.*
 
@@ -34,7 +37,6 @@ interface OperationDao {
                 endDate = endDate
             )
         )
-        Log.i("TAG", "addPaymentOperation: $operationId  $paymentId")
         updateOperationPaymentId(paymentId, operationId)
     }
 
@@ -56,8 +58,8 @@ interface OperationDao {
     }
 
     @Transaction
-    suspend fun deleteOperation_(operationDTO: OperationDTO){
-        deleteOperation(operationDTO)
+    suspend fun deleteOperation(operationDTO: OperationDTO){
+        this.deleteOperation_(operationDTO)
         val account = getAccountForId(operationDTO.accountId).toUiModel()
             .updateAccountBalance(operationDTO.toUiModel().deleteOperation())
         updateAccountBalance(operationDTO.accountId,account.accountBalance)
@@ -67,11 +69,12 @@ interface OperationDao {
     suspend fun deletePayment(operationDTO: OperationDTO){
         val payment = getPaymentForId(operationDTO.paymentId!!)
         deletePayment(payment)
-        deleteOperation_(operationDTO)
+        this.deleteOperation_(operationDTO)
     }
 
     @Transaction
-    suspend fun deleteTransfer(operationDTO: OperationDTO,transfer : TransferDTO){
+    suspend fun deleteTransfer(operationDTO: OperationDTO, transfer : TransferDTO){
+        //when try to catch transfer here, create multiple call and crash the app.
         //val transfer = getTransferOperationForId(operationDTO.transferId!!)
         val distantOperation = getOperationForId(
             if (operationDTO.id == transfer.senderOperationId) {
@@ -91,13 +94,13 @@ interface OperationDao {
     @Delete
     suspend fun deleteTransferOperation(transferDTO: TransferDTO)
 
-    @Query("SELECT*FROM ${Constants.TRANSFER_TABLE} WHERE ${Constants.TRANSFER_TABLE}.id = :transferId")
+    @Query("SELECT*FROM $TRANSFER_TABLE WHERE $TRANSFER_TABLE.id = :transferId")
     suspend fun getTransferOperationForId(transferId : Long) : TransferDTO
 
     @Delete
     suspend fun deletePayment(paymentDTO: PaymentDTO)
 
-    @Query("SELECT*FROM ${Constants.PAYMENT_TABLE} WHERE ${Constants.PAYMENT_TABLE}.id = :id")
+    @Query("SELECT*FROM $PAYMENT_TABLE WHERE $PAYMENT_TABLE.id = :id")
     suspend fun getPaymentForId(id : Long) : PaymentDTO
 
     @Insert
@@ -109,13 +112,11 @@ interface OperationDao {
     @Insert
     suspend fun addNewOperation(operationDTO: OperationDTO) : Long
 
-    @Query("SELECT*FROM ${Constants.ACCOUNT_TABLE} WHERE ${Constants.ACCOUNT_TABLE}.id = :id")
+    @Query("SELECT*FROM $ACCOUNT_TABLE WHERE $ACCOUNT_TABLE.id = :id")
     suspend fun getAccountForId(id:Long) : AccountDTO
 
-    @Query("UPDATE ${Constants.ACCOUNT_TABLE} SET accountBalance = :accountBalance WHERE id = :accountId")
+    @Query("UPDATE $ACCOUNT_TABLE SET accountBalance = :accountBalance WHERE id = :accountId")
     suspend fun updateAccountBalance(accountId : Long, accountBalance : Double)
-
-
 
 
     @Query("SELECT*FROM $OPERATION_TABLE")
@@ -128,7 +129,7 @@ interface OperationDao {
     suspend fun getOperationForId(operationId : Long) : OperationDTO
 
     @Delete
-    suspend fun deleteOperation (operationDTO: OperationDTO)
+    suspend fun deleteOperation_ (operationDTO: OperationDTO)
 
     @Query("UPDATE $OPERATION_TABLE SET paymentId = :paymentId WHERE id = :operationId" )
     suspend fun updateOperationPaymentId(paymentId : Long, operationId : Long)

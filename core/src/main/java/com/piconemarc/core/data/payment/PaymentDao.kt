@@ -10,9 +10,6 @@ import com.piconemarc.core.domain.utils.Constants.PAYMENT_TABLE
 @Dao
 interface PaymentDao {
 
-    @Insert
-    suspend fun addNewPayment(paymentDTO: PaymentDTO) : Long
-
     @Delete
     suspend fun deletePayment(paymentDTO: PaymentDTO)
 

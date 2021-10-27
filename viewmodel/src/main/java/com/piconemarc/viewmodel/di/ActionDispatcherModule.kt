@@ -3,11 +3,6 @@ package com.piconemarc.viewmodel.di
 import com.piconemarc.core.domain.interactor.account.*
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
 import com.piconemarc.core.domain.interactor.operation.*
-import com.piconemarc.core.domain.interactor.payment.AddNewPaymentInteractor
-import com.piconemarc.core.domain.interactor.payment.DeletePaymentInteractor
-import com.piconemarc.core.domain.interactor.payment.GetPaymentForIdInteractor
-import com.piconemarc.core.domain.interactor.transfer.AddNewTransferInteractor
-import com.piconemarc.core.domain.interactor.transfer.DeleteTransferInteractor
 import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddAccountPopUpActionDispatcher
