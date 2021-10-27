@@ -65,16 +65,11 @@ class AppViewModel @Inject constructor(
 
             is AppActions.MyAccountDetailScreenAction -> {
                 store.dispatch(GlobalAction.UpdateMyAccountDetailScreenState(action))
-                when (action) {
-                    is AppActions.MyAccountDetailScreenAction.InitScreen -> {
-                        myAccountDetailScreenJob = viewModelScope.launch {
-                            myAccountDetailScreenActionDispatcher.dispatchAction(action, this)
-                        }
-                    }
-                    is AppActions.MyAccountDetailScreenAction.CloseScreen -> {
-                        myAccountScreenJob?.cancel()
-                    }
+                myAccountDetailScreenJob = viewModelScope.launch {
+                    myAccountDetailScreenActionDispatcher.dispatchAction(action, this)
 
+                    if (action is AppActions.MyAccountDetailScreenAction.CloseScreen)
+                        myAccountDetailScreenJob?.cancel()
                 }
             }
 

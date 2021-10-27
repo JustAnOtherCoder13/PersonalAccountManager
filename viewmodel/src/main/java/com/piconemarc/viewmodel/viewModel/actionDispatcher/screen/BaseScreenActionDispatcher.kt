@@ -26,7 +26,7 @@ class BaseScreenActionDispatcher @Inject constructor(
             is BaseAppScreenAction.InitScreen -> {
                 getAllAccountsJob = scope.launchCatchingError(
                     block = {
-                        getAllAccountsInteractor.getAllAccountsAsFlow().collect { allAccounts ->
+                        getAllAccountsInteractor.getAllAccountsAsFlow(scope).collect { allAccounts ->
                             updateState(
                                 GlobalAction.UpdateBaseAppScreenVmState(
                                     BaseAppScreenAction.UpdateFooterBalance(
