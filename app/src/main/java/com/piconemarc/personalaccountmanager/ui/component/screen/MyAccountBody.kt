@@ -19,7 +19,7 @@ import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.myAcc
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.myAccountScreenUiState
 
 @Composable
-fun MyAccountsSheet(
+fun MyAccountsScreen(
     viewModel: AppViewModel,
 ) {
     if (myAccountScreenUiState.isVisible) MyAccountBody(viewModel)

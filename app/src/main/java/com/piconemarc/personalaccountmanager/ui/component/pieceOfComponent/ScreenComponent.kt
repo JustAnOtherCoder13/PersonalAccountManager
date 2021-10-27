@@ -83,15 +83,35 @@ fun BaseScreen(
     )
 }
 
+@SuppressLint("ModifierParameter")
 @Composable
 fun AccountPostIt(
     account: AccountUiModel,
     onDeleteAccountButtonClicked: (accountUi: AccountUiModel) -> Unit,
     onAccountClicked: (accountUi: AccountUiModel) -> Unit,
+    postItModifier : Modifier = Modifier
+            .size(width = AccountPostItWidth, height = AccountPostItHeight)
+            .padding(bottom = BigMarge)
+    ,
+    accountBody : @Composable ()->Unit = {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = XlMarge, start = RegularMarge),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            AccountPostItValue(
+                valueTitle = stringResource(R.string.balanceTitle),
+                value = account.accountBalance.toStringWithTwoDec()
+            )
+            AccountPostItValue(
+                valueTitle = stringResource(R.string.restTitle),
+                value = account.rest.toStringWithTwoDec()
+            )
+        }
+    }
 ) {
-    Box(modifier = Modifier
-        .size(width = AccountPostItWidth, height = AccountPostItHeight)
-        .padding(bottom = BigMarge)
+    Box(modifier = postItModifier
         .clickable { onAccountClicked(account) }
     ) {
         AccountPostItBackground(this)
@@ -104,21 +124,7 @@ fun AccountPostIt(
                 account = account.name,
                 onDeleteAccountButtonClicked = { onDeleteAccountButtonClicked(account) }
             )
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(bottom = XlMarge, start = RegularMarge),
-                verticalArrangement = Arrangement.SpaceBetween
-            ) {
-                AccountPostItValue(
-                    valueTitle = stringResource(R.string.balanceTitle),
-                    value = account.accountBalance.toStringWithTwoDec()
-                )
-                AccountPostItValue(
-                    valueTitle = stringResource(R.string.restTitle),
-                    value = account.rest.toStringWithTwoDec()
-                )
-            }
+            accountBody()
         }
     }
 }
@@ -146,7 +152,7 @@ private fun AccountPostItValue(
 }
 
 @Composable
-private fun AccountPostItTitle(
+fun AccountPostItTitle(
     account: String,
     onDeleteAccountButtonClicked: () -> Unit
 ) {
@@ -183,7 +189,7 @@ private fun AccountPostItTitle(
 }
 
 @Composable
-private fun AccountPostItBackground(boxScope: BoxScope) {
+fun AccountPostItBackground(boxScope: BoxScope) {
     with(boxScope) {
         Box(
             modifier = Modifier

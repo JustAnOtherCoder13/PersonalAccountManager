@@ -30,10 +30,11 @@ fun PAMMainScreen(
                 body = {
                     when (baseAppScreenUiState.selectedInterlayerButton) {
                         is PAMIconButtons.Payment -> {
+                            PaymentScreen()
                         }
                         is PAMIconButtons.Chart -> {
                         }
-                        else -> { MyAccountsSheet(viewModel = viewModel) }
+                        else -> { MyAccountsScreen(viewModel = viewModel) }
                     }
                 }
             )
