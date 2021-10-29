@@ -1,10 +1,11 @@
 package com.piconemarc.viewmodel.viewModel
 
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import com.piconemarc.core.domain.entityDTO.AccountWithRelatedPayments
 import com.piconemarc.core.domain.utils.Constants
 import com.piconemarc.model.PAMIconButtons
-import com.piconemarc.model.entity.AccountUiModel
-import com.piconemarc.model.entity.CategoryUiModel
-import com.piconemarc.model.entity.OperationUiModel
+import com.piconemarc.model.entity.*
 import com.piconemarc.viewmodel.VMState
 
 object ViewModelInnerStates {
@@ -28,6 +29,14 @@ object ViewModelInnerStates {
         val actualMonth: String = "",
         val isVisible: Boolean = false
     ) : VMState
+
+    data class PaymentScreenVmState(
+        val allAccounts : List<AccountWithRelatedPaymentUiModel> = listOf(),
+        val boxHeight : Dp = 100.dp,
+        val paymentsForAccount : List<PaymentUiModel> = listOf(),
+        val totalAmountForAccount : Double = 0.0,
+        val isVisible: Boolean = false
+    )
 
     data class AddOperationPopUpVMState(
         val isPopUpExpanded: Boolean = false,

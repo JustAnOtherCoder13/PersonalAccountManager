@@ -120,9 +120,10 @@ fun AccountPostIt(
                 .wrapContentHeight()
                 .fillMaxWidth()
         ) {
-            AccountPostItTitle(
+            PostItTitle(
                 account = account.name,
-                onDeleteAccountButtonClicked = { onDeleteAccountButtonClicked(account) }
+                onAccountButtonClicked = { onDeleteAccountButtonClicked(account) },
+                iconButton = PAMIconButtons.Delete
             )
             accountBody()
         }
@@ -152,9 +153,10 @@ private fun AccountPostItValue(
 }
 
 @Composable
-fun AccountPostItTitle(
+fun PostItTitle(
     account: String,
-    onDeleteAccountButtonClicked: () -> Unit
+    onAccountButtonClicked: () -> Unit,
+    iconButton : PAMIconButtons
 ) {
     Row(
         modifier = Modifier
@@ -168,14 +170,13 @@ fun AccountPostItTitle(
             style = MaterialTheme.typography.h3
         )
         IconButton(
-            onClick = onDeleteAccountButtonClicked,
+            onClick = onAccountButtonClicked,
         ) {
             Icon(
-                imageVector =
-                ImageVector.vectorResource(id = PAMIconButtons.Delete.vectorIcon),
+                imageVector = ImageVector.vectorResource(id = iconButton.vectorIcon),
                 contentDescription =
                 stringResource(
-                    id = PAMIconButtons.Delete.iconContentDescription
+                    id = iconButton.iconContentDescription
                 )
             )
         }

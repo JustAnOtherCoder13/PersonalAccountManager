@@ -12,6 +12,7 @@ import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.DeleteOperation
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.screen.BaseScreenActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.screen.MyAccountDetailScreenActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.screen.MyAccountScreenActionDispatcher
+import com.piconemarc.viewmodel.viewModel.actionDispatcher.screen.PaymentScreenActionDispatcher
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import dagger.Module
 import dagger.Provides
@@ -109,6 +110,17 @@ class ActionDispatcherModule {
             getAccountForIdInteractor = getAccountForIdInteractor,
             getOperationForIdInteractor = getOperationForIdInteractor,
             getTransferForIdInteractor = getTransferForIdInteractor,
+        )
+    }
+
+    @Provides
+    fun providePaymentScreenActionDispatcher(
+        globalStore: DefaultStore<GlobalVmState>,
+        getAllAccountsInteractor: GetAllAccountsInteractor
+        ):PaymentScreenActionDispatcher{
+        return PaymentScreenActionDispatcher(
+            store = globalStore,
+            getAllAccountsInteractor = getAllAccountsInteractor,
         )
     }
 }

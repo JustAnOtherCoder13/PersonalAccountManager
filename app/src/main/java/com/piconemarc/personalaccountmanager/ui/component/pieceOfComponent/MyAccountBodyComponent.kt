@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.piconemarc.model.PAMIconButtons
+import com.piconemarc.model.entity.BaseUiModel
 import com.piconemarc.model.entity.OperationUiModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.toStringWithTwoDec
@@ -176,20 +177,28 @@ private fun OperationItem(
             style = MaterialTheme.typography.body1,
             color = if (operation.amount > 0) PositiveText else NegativeText
         )
-        Box(modifier = Modifier.size(35.dp)) {
-            PAMIconButton(
-                onIconButtonClicked = { onDeleteItemButtonCLick(operation) },
-                iconButton = PAMIconButtons.Delete,
-                iconColor = MaterialTheme.colors.onSecondary,
-                backgroundColor = Color.Transparent
-            )
-        }
+        RowDeleteIconButton(onDeleteItemButtonCLick, operation)
     }
     Divider(
         modifier = Modifier.fillMaxWidth(),
         color = MaterialTheme.colors.secondaryVariant.copy(alpha = 0.3f),
         thickness = ThinBorder
     )
+}
+
+@Composable
+fun <T:BaseUiModel>RowDeleteIconButton(
+    onDeleteItemButtonCLick: (operation: T) -> Unit,
+    uiModel: T
+) {
+    Box(modifier = Modifier.size(35.dp)) {
+        PAMIconButton(
+            onIconButtonClicked = { onDeleteItemButtonCLick(uiModel) },
+            iconButton = PAMIconButtons.Delete,
+            iconColor = MaterialTheme.colors.onSecondary,
+            backgroundColor = Color.Transparent
+        )
+    }
 }
 
 @Composable

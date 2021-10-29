@@ -30,7 +30,7 @@ data class PaymentDTO(
     override val id : Long = 0,
     override val name : String = "",
     @ColumnInfo(index = true)
-    val operationId : Long = 0,
+    var operationId : Long = 0,
     @ColumnInfo(index = true)
     val accountId : Long = 0,
     val endDate: Date? = null

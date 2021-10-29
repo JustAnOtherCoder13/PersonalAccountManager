@@ -1,5 +1,6 @@
 package com.piconemarc.viewmodel.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.piconemarc.viewmodel.DefaultStore
@@ -12,6 +13,7 @@ import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.DeleteOperation
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.screen.BaseScreenActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.screen.MyAccountDetailScreenActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.screen.MyAccountScreenActionDispatcher
+import com.piconemarc.viewmodel.viewModel.actionDispatcher.screen.PaymentScreenActionDispatcher
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
@@ -29,7 +31,8 @@ class AppViewModel @Inject constructor(
     private val addOperationPopUpActionDispatcher: AddOperationPopUpActionDispatcher,
     private val deleteAccountPopUpActionDispatcher: DeleteAccountPopUpActionDispatcher,
     private val addAccountPopUpActionDispatcher: AddAccountPopUpActionDispatcher,
-    private val deleteOperationPopUpActionDispatcher: DeleteOperationPopUpActionDispatcher
+    private val deleteOperationPopUpActionDispatcher: DeleteOperationPopUpActionDispatcher,
+    private val paymentScreenActionDispatcher: PaymentScreenActionDispatcher
 ) : ViewModel() {
 
     private val subscriber: StoreSubscriber<GlobalVmState> = AppSubscriber().appStoreSubscriber
@@ -41,8 +44,10 @@ class AppViewModel @Inject constructor(
     private var deleteAccountPopUpJob: Job? = null
     private var addAccountPopUpJob: Job? = null
     private var deleteOperationPopUpJob: Job? = null
+    private var paymentScreenJob : Job? = null
 
     fun dispatchAction(action: UiAction) {
+        Log.e("TAG", "dispatchAction: $action " )
         when (action) {
             //launch job for each screen when action for this screen is dispatched, cancel job on close
             is AppActions.BaseAppScreenAction -> {
@@ -71,6 +76,17 @@ class AppViewModel @Inject constructor(
                     if (action is AppActions.MyAccountDetailScreenAction.CloseScreen)
                         myAccountDetailScreenJob?.cancel()
                 }
+            }
+
+            is AppActions.PaymentScreenAction -> {
+
+                paymentScreenJob = viewModelScope.launch {
+                    paymentScreenActionDispatcher.dispatchAction(action, this)
+                }
+
+                if (action is AppActions.PaymentScreenAction.CloseScreen)
+                    paymentScreenJob?.cancel()
+
             }
 
             is AppActions.AddOperationPopUpAction -> {

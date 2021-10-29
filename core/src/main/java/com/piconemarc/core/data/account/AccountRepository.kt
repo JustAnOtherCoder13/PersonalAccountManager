@@ -1,6 +1,7 @@
 package com.piconemarc.core.data.account
 
 import com.piconemarc.core.domain.entityDTO.AccountDTO
+import com.piconemarc.core.domain.entityDTO.AccountWithRelatedPayments
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -9,6 +10,11 @@ class AccountRepository @Inject constructor(private val accountDaoImpl: AccountD
     fun getAllAccountsAsFlow(): Flow<List<AccountDTO>> {
         return accountDaoImpl.getAllAccountsAsFlow()
     }
+
+    fun getAllAccountsWithRelatedPaymentAsFlow(): Flow<List<AccountWithRelatedPayments>> {
+        return accountDaoImpl.getAllAccountsWithRelatedPaymentAsFlow()
+    }
+
     suspend fun getAllAccounts(): List<AccountDTO> {
         return accountDaoImpl.getAllAccounts()
     }

@@ -14,6 +14,7 @@ import com.piconemarc.personalaccountmanager.ui.component.popUp.PAMDeleteOperati
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.baseAppScreenUiState
+import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 
 @Composable
 fun PAMMainScreen(
@@ -30,11 +31,18 @@ fun PAMMainScreen(
                 body = {
                     when (baseAppScreenUiState.selectedInterlayerButton) {
                         is PAMIconButtons.Payment -> {
-                            PaymentScreen()
+                            //viewModel.dispatchAction(AppActions.MyAccountDetailScreenAction.CloseScreen)
+                            //viewModel.dispatchAction(AppActions.MyAccountScreenAction.CloseScreen)
+                            viewModel.dispatchAction(AppActions.PaymentScreenAction.InitScreen)
+                            PaymentScreen(viewModel = viewModel)
                         }
                         is PAMIconButtons.Chart -> {
                         }
-                        else -> { MyAccountsScreen(viewModel = viewModel) }
+                        else -> {
+                            MyAccountsScreen(viewModel = viewModel)
+                            //viewModel.dispatchAction(AppActions.PaymentScreenAction.CloseScreen)
+                            //viewModel.dispatchAction(AppActions.MyAccountScreenAction.InitScreen)
+                        }
                     }
                 }
             )
