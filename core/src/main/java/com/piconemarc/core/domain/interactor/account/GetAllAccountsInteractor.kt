@@ -5,6 +5,7 @@ import com.piconemarc.core.domain.entityDTO.AccountWithRelatedPayments
 import com.piconemarc.core.domain.utils.Constants
 import com.piconemarc.model.entity.AccountUiModel
 import com.piconemarc.model.entity.AccountWithRelatedPaymentUiModel
+import com.piconemarc.model.entity.PaymentUiModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -24,7 +25,7 @@ class GetAllAccountsInteractor @Inject constructor(private val accountRepository
         }
     }
 
-    private fun mapAllAccountsWithRelatedPaymentToUiModel(accountWithRelatedPayment : List<AccountWithRelatedPayments>) : List<AccountWithRelatedPaymentUiModel>{
+    private fun mapAllAccountsWithRelatedPaymentToUiModel(accountWithRelatedPayment: List<AccountWithRelatedPayments>): List<AccountWithRelatedPaymentUiModel> {
         return accountWithRelatedPayment.map {
             AccountWithRelatedPaymentUiModel(
                 accountUiModel = it.accountDTO.toUiModel(),

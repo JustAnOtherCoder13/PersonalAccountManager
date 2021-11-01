@@ -13,3 +13,5 @@ data class AccountWithRelatedPayments(
     )
     val allPaymentsForAccount: List<PaymentDTO>
 )
+
+

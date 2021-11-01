@@ -1,7 +1,5 @@
 package com.piconemarc.viewmodel.viewModel
 
-import androidx.compose.ui.unit.Dp
-import com.piconemarc.core.domain.entityDTO.AccountWithRelatedPayments
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.*
 import com.piconemarc.viewmodel.UiAction
@@ -46,9 +44,6 @@ object AppActions {
         object InitScreen : PaymentScreenAction()
         object CloseScreen : PaymentScreenAction()
         data class UpdateAllAccounts(val allAccounts : List<AccountWithRelatedPaymentUiModel>) : PaymentScreenAction()
-        data class UpdateBoxHeightForAccount(val allPaymentForAccountCount: Int) : PaymentScreenAction()
-        data class UpdatePaymentsForAccount(val accountId : Long) : PaymentScreenAction()
-
     }
 
 

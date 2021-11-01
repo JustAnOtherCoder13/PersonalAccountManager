@@ -29,8 +29,8 @@ object Generator {
     }
 
     private val PAYMENTS : List<PaymentDTO> = listOf(
-        PaymentDTO(id = 1,name = "edfPayment",operationId = 3,accountId = 1),
-        PaymentDTO(id = 2,name = "loyerPayment",operationId = 2,accountId = 1)
+        PaymentDTO(id = 1,name = "edfP",operationId = 3,accountId = 1, operationAmount = -40.00),
+        PaymentDTO(id = 2,name = "loyerP",operationId = 2,accountId = 1, operationAmount = -350.00)
     )
 
     fun generatePayments(): MutableList<PaymentDTO>{

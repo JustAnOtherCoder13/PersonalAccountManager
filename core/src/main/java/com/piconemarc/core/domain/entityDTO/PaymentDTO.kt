@@ -31,6 +31,7 @@ data class PaymentDTO(
     override val name : String = "",
     @ColumnInfo(index = true)
     var operationId : Long = 0,
+    val operationAmount : Double = 0.0,
     @ColumnInfo(index = true)
     val accountId : Long = 0,
     val endDate: Date? = null
@@ -41,7 +42,8 @@ data class PaymentDTO(
             name = model.name,
             operationId = model.operationId,
             accountId = model.accountId,
-            endDate = model.endDate
+            endDate = model.endDate,
+            operationAmount = model.operationAmount
         )
     }
     override fun toUiModel() : PaymentUiModel{
@@ -50,7 +52,8 @@ data class PaymentDTO(
             name = this.name,
             operationId = this.operationId,
             accountId = this.accountId,
-            endDate = this.endDate
+            endDate = this.endDate,
+            operationAmount = this.operationAmount
         )
     }
 }

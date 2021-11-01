@@ -2,7 +2,7 @@ package com.piconemarc.model.entity
 
 import java.util.*
 
-open class PaymentUiModel(
+data class PaymentUiModel(
     override val id: Long = 0,
     override val name: String = "",
     val operationId: Long = 0,

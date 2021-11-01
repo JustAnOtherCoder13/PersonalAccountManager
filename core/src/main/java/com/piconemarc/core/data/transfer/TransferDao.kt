@@ -1,8 +1,6 @@
 package com.piconemarc.core.data.transfer
 
 import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
 import androidx.room.Query
 import com.piconemarc.core.domain.entityDTO.TransferDTO
 import com.piconemarc.core.domain.utils.Constants.TRANSFER_TABLE

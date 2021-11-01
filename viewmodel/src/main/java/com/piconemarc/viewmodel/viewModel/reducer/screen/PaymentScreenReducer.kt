@@ -1,6 +1,5 @@
 package com.piconemarc.viewmodel.viewModel.reducer.screen
 
-import androidx.compose.ui.unit.dp
 import com.piconemarc.viewmodel.Reducer
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.ViewModelInnerStates
@@ -18,10 +17,6 @@ val paymentScreenReducer : Reducer<ViewModelInnerStates.PaymentScreenVmState> = 
         is AppActions.PaymentScreenAction.UpdateAllAccounts-> old.copy(
             allAccounts = action.allAccounts
         )
-        is AppActions.PaymentScreenAction.UpdateBoxHeightForAccount -> old.copy(
-            boxHeight = 100.dp + (action.allPaymentForAccountCount * 36).dp
-        )
-        is AppActions.PaymentScreenAction.UpdatePaymentsForAccount -> old
     }
 
 }

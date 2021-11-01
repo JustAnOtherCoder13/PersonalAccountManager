@@ -14,20 +14,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.piconemarc.model.PAMIconButtons
-import com.piconemarc.model.entity.PaymentUiModel
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.AccountPostItBackground
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PostItTitle
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.RowDeleteIconButton
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.VerticalDispositionSheet
 import com.piconemarc.personalaccountmanager.ui.theme.*
-import com.piconemarc.viewmodel.viewModel.AppActions
-import com.piconemarc.viewmodel.viewModel.AppViewModel
-import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.paymentScreenUiState
-import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 
 @Composable
-fun PaymentScreen(viewModel :AppViewModel) {
+fun PaymentScreen() {
     VerticalDispositionSheet(
         body = {
             LazyColumn(
@@ -38,18 +33,10 @@ fun PaymentScreen(viewModel :AppViewModel) {
             ) {
                 items(paymentScreenUiState.allAccounts)
                 {
-                    viewModel.dispatchAction(
-                        GlobalAction.UpdatePaymentScreenState(
-                            AppActions.PaymentScreenAction.UpdateBoxHeightForAccount(
-                                it.relatedPayment.count()
-                            )
-                        )
-                    )
-
                     Box(
                         modifier = Modifier
                             .width(250.dp)
-                            .height(200.dp)
+                            .height(100.dp +(it.relatedPayment.count() * 36).dp)
                             .padding(vertical = RegularMarge)
                     ) {
                         AccountPostItBackground(this)

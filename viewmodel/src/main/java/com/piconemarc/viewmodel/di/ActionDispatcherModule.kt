@@ -1,8 +1,14 @@
 package com.piconemarc.viewmodel.di
 
-import com.piconemarc.core.domain.interactor.account.*
+import com.piconemarc.core.domain.interactor.account.AddNewAccountInteractor
+import com.piconemarc.core.domain.interactor.account.DeleteAccountInteractor
+import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
+import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
-import com.piconemarc.core.domain.interactor.operation.*
+import com.piconemarc.core.domain.interactor.operation.AddNewOperationInteractor
+import com.piconemarc.core.domain.interactor.operation.DeleteOperationInteractor
+import com.piconemarc.core.domain.interactor.operation.GetAllOperationsForAccountIdInteractor
+import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteractor
 import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddAccountPopUpActionDispatcher

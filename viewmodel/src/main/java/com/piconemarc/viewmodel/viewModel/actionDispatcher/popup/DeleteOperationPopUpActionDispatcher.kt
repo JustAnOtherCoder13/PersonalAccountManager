@@ -6,7 +6,10 @@ import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteract
 import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
 import com.piconemarc.model.entity.OperationUiModel
 import com.piconemarc.model.entity.TransferUiModel
-import com.piconemarc.viewmodel.*
+import com.piconemarc.viewmodel.ActionDispatcher
+import com.piconemarc.viewmodel.DefaultStore
+import com.piconemarc.viewmodel.UiAction
+import com.piconemarc.viewmodel.launchOnIOCatchingError
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.deleteOperationPopUpUiState
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction

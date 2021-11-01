@@ -1,12 +1,10 @@
 package com.piconemarc.core.data.operation
 
-import android.util.Log
 import androidx.room.*
 import com.piconemarc.core.domain.entityDTO.AccountDTO
 import com.piconemarc.core.domain.entityDTO.OperationDTO
 import com.piconemarc.core.domain.entityDTO.PaymentDTO
 import com.piconemarc.core.domain.entityDTO.TransferDTO
-import com.piconemarc.core.domain.utils.Constants
 import com.piconemarc.core.domain.utils.Constants.ACCOUNT_TABLE
 import com.piconemarc.core.domain.utils.Constants.OPERATION_TABLE
 import com.piconemarc.core.domain.utils.Constants.PAYMENT_TABLE
@@ -31,10 +29,11 @@ interface OperationDao {
         val operationId = addOperation(operation)
         val paymentId = addNewPayment(
             PaymentDTO(
-                name = operation.name + "Payment",
+                name = operation.name + "P",
                 operationId = operationId,
                 accountId = operation.accountId,
-                endDate = endDate
+                endDate = endDate,
+                operationAmount = operation.amount
             )
         )
         updateOperationPaymentId(paymentId, operationId)
@@ -48,7 +47,7 @@ interface OperationDao {
         val beneficiaryOperationId = addOperation(beneficiaryOperation)
         val transferId = addNewTransferOperation(
             TransferDTO(
-                name = operation.name + "Transfer",
+                name = operation.name + "T",
                 senderOperationId = senderOperationId,
                 beneficiaryOperationId = beneficiaryOperationId
             )

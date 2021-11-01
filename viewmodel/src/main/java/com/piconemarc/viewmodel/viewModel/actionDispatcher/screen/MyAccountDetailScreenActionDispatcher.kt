@@ -2,7 +2,10 @@ package com.piconemarc.viewmodel.viewModel.actionDispatcher.screen
 
 import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
 import com.piconemarc.core.domain.interactor.operation.GetAllOperationsForAccountIdInteractor
-import com.piconemarc.viewmodel.*
+import com.piconemarc.viewmodel.ActionDispatcher
+import com.piconemarc.viewmodel.DefaultStore
+import com.piconemarc.viewmodel.UiAction
+import com.piconemarc.viewmodel.launchOnIOCatchingError
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
@@ -18,7 +21,6 @@ class MyAccountDetailScreenActionDispatcher @Inject constructor(
 ) : ActionDispatcher {
 
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
-        updateState(GlobalAction.UpdateMyAccountDetailScreenState(action))
         when (action) {
             is AppActions.MyAccountDetailScreenAction.InitScreen -> {
                 updateState(
@@ -66,6 +68,7 @@ class MyAccountDetailScreenActionDispatcher @Inject constructor(
                     }
                 )
             }
+            else ->  updateState(GlobalAction.UpdateMyAccountDetailScreenState(action))
         }
     }
 }

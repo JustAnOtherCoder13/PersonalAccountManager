@@ -1,6 +1,5 @@
 package com.piconemarc.viewmodel.viewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.piconemarc.viewmodel.DefaultStore
@@ -47,7 +46,6 @@ class AppViewModel @Inject constructor(
     private var paymentScreenJob : Job? = null
 
     fun dispatchAction(action: UiAction) {
-        Log.e("TAG", "dispatchAction: $action " )
         when (action) {
             //launch job for each screen when action for this screen is dispatched, cancel job on close
             is AppActions.BaseAppScreenAction -> {
