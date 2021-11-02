@@ -68,13 +68,19 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
             }
             is AppActions.DeleteOperationPopUpAction.DeleteOperation -> {
                 // if payment id exist and user want to delete operation and payment
-                if (action.operationToDelete.paymentId != null
-                    && deleteOperationPopUpUiState.isDeletedPermanently
-                ) {
-                    scope.launchOnIOCatchingError(
-                        block = { deleteOperationInteractor.deletePayment(action.operationToDelete) },
-                        doOnSuccess = { closePopUp() }
-                    )
+                if (action.operationToDelete.paymentId != null) {
+                    if (deleteOperationPopUpUiState.isDeletedPermanently) {
+                        scope.launchOnIOCatchingError(
+                            block = { deleteOperationInteractor.deletePayment(action.operationToDelete) },
+                            doOnSuccess = { closePopUp() }
+                        )
+                    }
+                    else {
+                        scope.launchOnIOCatchingError(
+                            block = { deleteOperationInteractor.deleteOperation(action.operationToDelete) },
+                            doOnSuccess = { closePopUp() }
+                        )
+                    }
                 }
                 // if transferId exist delete operations with cascade
                 // and update sender and beneficiary account

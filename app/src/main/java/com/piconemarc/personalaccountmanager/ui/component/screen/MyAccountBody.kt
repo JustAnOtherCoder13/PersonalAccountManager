@@ -22,6 +22,7 @@ import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.myAcc
 fun MyAccountsScreen(
     viewModel: AppViewModel,
 ) {
+    Log.d("TAG", "MyAccountsScreen: ${myAccountScreenUiState.isVisible}")
     if (myAccountScreenUiState.isVisible) MyAccountBody(viewModel)
     if (myAccountDetailScreenUiState.isVisible) MyAccountDetailBody(viewModel)
 }

@@ -1,5 +1,6 @@
 package com.piconemarc.viewmodel.viewModel.actionDispatcher.screen
 
+import android.util.Log
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.viewmodel.ActionDispatcher
 import com.piconemarc.viewmodel.DefaultStore
@@ -18,6 +19,7 @@ class MyAccountScreenActionDispatcher @Inject constructor(
 ) : ActionDispatcher {
 
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
+
         when (action) {
             is AppActions.MyAccountScreenAction.InitScreen -> {
                 updateState(
@@ -30,6 +32,7 @@ class MyAccountScreenActionDispatcher @Inject constructor(
                 scope.launchOnIOCatchingError(
                     block = {
                         getAllAccountsInteractor.getAllAccountsAsFlow(scope).collect {
+                            Log.i("TAG", "dispatchAction: $it ")
                             updateState(
                                 GlobalAction.UpdateMyAccountScreenState(
                                     AppActions.MyAccountScreenAction.UpdateAccountList(it)
@@ -38,6 +41,7 @@ class MyAccountScreenActionDispatcher @Inject constructor(
                         }
                     }
                 )
+
             }
             else -> updateState(GlobalAction.UpdateMyAccountScreenState(action))
         }

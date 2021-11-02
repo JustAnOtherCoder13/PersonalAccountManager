@@ -68,7 +68,7 @@ interface OperationDao {
     suspend fun deletePayment(operationDTO: OperationDTO){
         val payment = getPaymentForId(operationDTO.paymentId!!)
         deletePayment(payment)
-        this.deleteOperation_(operationDTO)
+        this.deleteOperation(operationDTO)
     }
 
     @Transaction

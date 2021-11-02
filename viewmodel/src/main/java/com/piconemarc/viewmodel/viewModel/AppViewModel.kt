@@ -1,5 +1,6 @@
 package com.piconemarc.viewmodel.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.piconemarc.viewmodel.DefaultStore
@@ -71,8 +72,13 @@ class AppViewModel @Inject constructor(
                 myAccountDetailScreenJob = viewModelScope.launch {
                     myAccountDetailScreenActionDispatcher.dispatchAction(action, this)
 
-                    if (action is AppActions.MyAccountDetailScreenAction.CloseScreen)
+                    if (action is AppActions.MyAccountDetailScreenAction.CloseScreen) {
+                        store.dispatch(
+                            GlobalAction.UpdateMyAccountScreenState(
+                                AppActions.MyAccountScreenAction.InitScreen
+                            ))
                         myAccountDetailScreenJob?.cancel()
+                    }
                 }
             }
 

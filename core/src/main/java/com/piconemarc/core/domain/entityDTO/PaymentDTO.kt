@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
+import androidx.room.ForeignKey.SET_NULL
 import androidx.room.PrimaryKey
 import com.piconemarc.core.domain.utils.Constants.PAYMENT_TABLE
 import com.piconemarc.model.entity.PaymentUiModel
@@ -14,7 +15,8 @@ import java.util.*
     ForeignKey(
         entity = OperationDTO::class,
         parentColumns = arrayOf("id"),
-        childColumns = arrayOf("operationId")
+        childColumns = arrayOf("operationId"),
+        onDelete = SET_NULL
     ),
     ForeignKey(
         entity = AccountDTO::class,
@@ -30,7 +32,7 @@ data class PaymentDTO(
     override val id : Long = 0,
     override val name : String = "",
     @ColumnInfo(index = true)
-    var operationId : Long = 0,
+    var operationId : Long? = 0,
     val operationAmount : Double = 0.0,
     @ColumnInfo(index = true)
     val accountId : Long = 0,

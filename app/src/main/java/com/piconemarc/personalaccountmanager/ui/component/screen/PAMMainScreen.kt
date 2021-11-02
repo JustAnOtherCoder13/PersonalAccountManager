@@ -39,8 +39,8 @@ fun PAMMainScreen(
                         }
                         else -> {
                             MyAccountsScreen(viewModel = viewModel)
-                            //viewModel.dispatchAction(AppActions.PaymentScreenAction.CloseScreen)
-                            //viewModel.dispatchAction(AppActions.MyAccountScreenAction.InitScreen)
+                            viewModel.dispatchAction(AppActions.PaymentScreenAction.CloseScreen)
+                            viewModel.dispatchAction(AppActions.MyAccountScreenAction.InitScreen)
                         }
                     }
                 }
