@@ -96,7 +96,6 @@ interface OperationDao {
         updateAccountBalance(distantAccount.id,distantAccount.accountBalance)
     }
 
-
     @Delete
     suspend fun deleteTransferOperation(transferDTO: TransferDTO)
 

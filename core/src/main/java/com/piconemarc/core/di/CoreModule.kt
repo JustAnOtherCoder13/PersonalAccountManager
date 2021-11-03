@@ -18,13 +18,10 @@ import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.core.domain.interactor.category.AddNewCategoryInteractor
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
-import com.piconemarc.core.domain.interactor.operation.AddNewOperationInteractor
-import com.piconemarc.core.domain.interactor.operation.DeleteOperationInteractor
-import com.piconemarc.core.domain.interactor.operation.GetAllOperationsForAccountIdInteractor
-import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteractor
-import com.piconemarc.core.domain.interactor.payment.DeletePaymentInteractor
-import com.piconemarc.core.domain.interactor.payment.GetAllPaymentForAccountIdInteractor
-import com.piconemarc.core.domain.interactor.payment.GetPaymentForIdInteractor
+import com.piconemarc.core.domain.interactor.operation.*
+import com.piconemarc.core.domain.interactor.payment.*
+import com.piconemarc.core.domain.interactor.transfer.AddNewTransferInteractor
+import com.piconemarc.core.domain.interactor.transfer.DeleteTransferInteractor
 import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
 import dagger.Module
 import dagger.Provides
@@ -157,6 +154,11 @@ class CoreModule {
     fun provideGetOperationForId(operationRepository: OperationRepository) :GetOperationForIdInteractor{
         return GetOperationForIdInteractor(operationRepository)
     }
+    @Provides
+    fun provideDeleteOperationAndPayment(operationRepository: OperationRepository) : DeleteOperationAndPaymentInteractor {
+        return DeleteOperationAndPaymentInteractor(operationRepository)
+    }
+
 
     //PAYMENT
     @Provides
@@ -174,10 +176,36 @@ class CoreModule {
         return GetPaymentForIdInteractor(paymentRepository)
     }
 
+    @Provides
+    fun provideAddNewPayment(operationRepository: OperationRepository) : AddNewPaymentInteractor{
+        return AddNewPaymentInteractor(operationRepository)
+    }
+
+    @Provides
+    fun provideAddNewPaymentAndRelatedOperation(operationRepository: OperationRepository) : AddPaymentAndOperationInteractor{
+        return AddPaymentAndOperationInteractor(operationRepository)
+    }
+
+    @Provides
+    fun provideDeletePaymentAndRelatedOperation(operationRepository: OperationRepository) : DeletePaymentAndRelatedOperationInteractor{
+        return DeletePaymentAndRelatedOperationInteractor(operationRepository)
+    }
+
+
     //TRANSFER
     @Provides
     fun provideGetTransferForId(transferRepository: TransferRepository): GetTransferForIdInteractor{
         return GetTransferForIdInteractor(transferRepository)
+    }
+
+    @Provides
+    fun provideAddNewTransfer(operationRepository: OperationRepository) : AddNewTransferInteractor{
+        return AddNewTransferInteractor(operationRepository)
+    }
+
+    @Provides
+    fun provideDeleteTransfer(operationRepository: OperationRepository) : DeleteTransferInteractor{
+        return DeleteTransferInteractor(operationRepository)
     }
 
 }

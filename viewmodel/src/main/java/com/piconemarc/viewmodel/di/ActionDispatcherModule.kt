@@ -5,11 +5,13 @@ import com.piconemarc.core.domain.interactor.account.DeleteAccountInteractor
 import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
-import com.piconemarc.core.domain.interactor.operation.AddNewOperationInteractor
-import com.piconemarc.core.domain.interactor.operation.DeleteOperationInteractor
-import com.piconemarc.core.domain.interactor.operation.GetAllOperationsForAccountIdInteractor
-import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteractor
+import com.piconemarc.core.domain.interactor.operation.*
+import com.piconemarc.core.domain.interactor.payment.AddNewPaymentInteractor
+import com.piconemarc.core.domain.interactor.payment.AddPaymentAndOperationInteractor
+import com.piconemarc.core.domain.interactor.payment.DeletePaymentAndRelatedOperationInteractor
 import com.piconemarc.core.domain.interactor.payment.DeletePaymentInteractor
+import com.piconemarc.core.domain.interactor.transfer.AddNewTransferInteractor
+import com.piconemarc.core.domain.interactor.transfer.DeleteTransferInteractor
 import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddAccountPopUpActionDispatcher
@@ -70,13 +72,19 @@ class ActionDispatcherModule {
         globalStore: DefaultStore<GlobalVmState>,
         addNewOperationInteractor: AddNewOperationInteractor,
         getAllAccountsInteractor: GetAllAccountsInteractor,
-        getAllCategoriesInteractor: GetAllCategoriesInteractor
+        getAllCategoriesInteractor: GetAllCategoriesInteractor,
+        addNewPaymentInteractor: AddNewPaymentInteractor,
+        addPaymentAndOperationInteractor: AddPaymentAndOperationInteractor,
+        addNewTransferInteractor: AddNewTransferInteractor
     ):AddOperationPopUpActionDispatcher{
         return AddOperationPopUpActionDispatcher(
             store = globalStore,
             addNewOperationInteractor = addNewOperationInteractor,
             getAllAccountsInteractor = getAllAccountsInteractor,
-            getAllCategoriesInteractor = getAllCategoriesInteractor
+            getAllCategoriesInteractor = getAllCategoriesInteractor,
+            addNewTransferInteractor = addNewTransferInteractor,
+            addNewPaymentInteractor = addNewPaymentInteractor,
+            addPaymentAndOperationInteractor = addPaymentAndOperationInteractor
         )
     }
 
@@ -110,7 +118,10 @@ class ActionDispatcherModule {
         getAccountForIdInteractor: GetAccountForIdInteractor,
         getOperationForIdInteractor: GetOperationForIdInteractor,
         getTransferForIdInteractor: GetTransferForIdInteractor,
-        deletePaymentInteractor: DeletePaymentInteractor
+        deletePaymentInteractor: DeletePaymentInteractor,
+        deleteTransferInteractor: DeleteTransferInteractor,
+        deleteOperationAndPaymentInteractor: DeleteOperationAndPaymentInteractor,
+        deletePaymentAndRelatedOperationInteractor: DeletePaymentAndRelatedOperationInteractor
     ): DeleteOperationPopUpActionDispatcher{
         return DeleteOperationPopUpActionDispatcher(
             store = globalStore,
@@ -118,7 +129,10 @@ class ActionDispatcherModule {
             getAccountForIdInteractor = getAccountForIdInteractor,
             getOperationForIdInteractor = getOperationForIdInteractor,
             getTransferForIdInteractor = getTransferForIdInteractor,
-            deletePaymentInteractor = deletePaymentInteractor
+            deletePaymentInteractor = deletePaymentInteractor,
+            deleteTransferInteractor = deleteTransferInteractor,
+            deleteOperationAndPaymentInteractor = deleteOperationAndPaymentInteractor,
+            deletePaymentAndRelatedOperationInteractor = deletePaymentAndRelatedOperationInteractor
         )
     }
 

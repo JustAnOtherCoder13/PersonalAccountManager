@@ -3,6 +3,9 @@ package com.piconemarc.viewmodel.viewModel.actionDispatcher.popup
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
 import com.piconemarc.core.domain.interactor.operation.AddNewOperationInteractor
+import com.piconemarc.core.domain.interactor.payment.AddNewPaymentInteractor
+import com.piconemarc.core.domain.interactor.payment.AddPaymentAndOperationInteractor
+import com.piconemarc.core.domain.interactor.transfer.AddNewTransferInteractor
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.OperationUiModel
 import com.piconemarc.model.entity.PaymentUiModel
@@ -24,6 +27,9 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
     private val getAllCategoriesInteractor: GetAllCategoriesInteractor,
     private val getAllAccountsInteractor: GetAllAccountsInteractor,
     private val addNewOperationInteractor: AddNewOperationInteractor,
+    private val addNewPaymentInteractor: AddNewPaymentInteractor,
+    private val addPaymentAndOperationInteractor: AddPaymentAndOperationInteractor,
+    private val addNewTransferInteractor: AddNewTransferInteractor
 
 ) : ActionDispatcher {
 
@@ -122,7 +128,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                             is PAMIconButtons.Payment -> {
                                 scope.launchOnIOCatchingError(
                                     block = {
-                                        addNewOperationInteractor.addPaymentAndOperation(
+                                        addPaymentAndOperationInteractor.addPaymentAndOperation(
                                             operation = action.operation,
                                             endDate = try {
                                                 SimpleDateFormat("MMMM/yyyy", Locale.FRANCE).parse(
@@ -141,7 +147,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                                 if (!addOperationPopUpUiState.isBeneficiaryAccountError) {
                                     scope.launchOnIOCatchingError(
                                         block = {
-                                            addNewOperationInteractor.addTransferOperation(
+                                            addNewTransferInteractor.addTransferOperation(
                                                 operation = action.operation,
                                                 beneficiaryAccountId = addOperationPopUpUiState.beneficiaryAccount.id
                                             )
@@ -160,7 +166,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                             //add payment and related operation
                                 scope.launchOnIOCatchingError(
                                     block = {
-                                        addNewOperationInteractor.addPaymentAndOperation(
+                                        addPaymentAndOperationInteractor.addPaymentAndOperation(
                                             OperationUiModel(
                                                 accountId = action.operation.accountId ,
                                                 name = action.operation.name,
@@ -185,7 +191,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                         else{
                             scope.launchOnIOCatchingError(
                                 block = {
-                                    addNewOperationInteractor.addNewPayment(
+                                    addNewPaymentInteractor.addNewPayment(
                                         action.operation
                                     )
                                 },

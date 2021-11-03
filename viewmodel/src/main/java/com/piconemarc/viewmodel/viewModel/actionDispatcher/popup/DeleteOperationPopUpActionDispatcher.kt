@@ -1,9 +1,12 @@
 package com.piconemarc.viewmodel.viewModel.actionDispatcher.popup
 
 import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
+import com.piconemarc.core.domain.interactor.operation.DeleteOperationAndPaymentInteractor
 import com.piconemarc.core.domain.interactor.operation.DeleteOperationInteractor
 import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteractor
+import com.piconemarc.core.domain.interactor.payment.DeletePaymentAndRelatedOperationInteractor
 import com.piconemarc.core.domain.interactor.payment.DeletePaymentInteractor
+import com.piconemarc.core.domain.interactor.transfer.DeleteTransferInteractor
 import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
 import com.piconemarc.model.entity.OperationUiModel
 import com.piconemarc.model.entity.PaymentUiModel
@@ -25,7 +28,10 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
     private val getOperationForIdInteractor: GetOperationForIdInteractor,
     private val getAccountForIdInteractor: GetAccountForIdInteractor,
     private val getTransferForIdInteractor: GetTransferForIdInteractor,
-    private val deletePaymentInteractor: DeletePaymentInteractor
+    private val deletePaymentInteractor: DeletePaymentInteractor,
+    private val deleteOperationAndPaymentInteractor: DeleteOperationAndPaymentInteractor,
+    private val deletePaymentAndRelatedOperationInteractor: DeletePaymentAndRelatedOperationInteractor,
+    private val deleteTransferInteractor: DeleteTransferInteractor
 
 ) : ActionDispatcher {
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
@@ -79,7 +85,7 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
                             // if payment id exist and user want to delete operation and payment
                             if (deleteOperationPopUpUiState.isRelatedOperationDeleted) {
                                 scope.launchOnIOCatchingError(
-                                    block = { deleteOperationInteractor.deleteOperationAndPayment(action.operationToDelete) },
+                                    block = { deleteOperationAndPaymentInteractor.deleteOperationAndPayment(action.operationToDelete) },
                                     doOnSuccess = { closePopUp() }
                                 )
                             }
@@ -97,7 +103,7 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
                                 block = {
                                     transfer =
                                         getTransferForIdInteractor.getTransferForId(action.operationToDelete.transferId!!)
-                                    deleteOperationInteractor.deleteTransfer(
+                                    deleteTransferInteractor.deleteTransfer(
                                         action.operationToDelete,
                                         transfer
                                     )
@@ -119,7 +125,7 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
                             && deleteOperationPopUpUiState.isRelatedOperationDeleted
                         ){
                             scope.launchOnIOCatchingError(
-                                block = { deleteOperationInteractor.deletePaymentAndRelatedOperation(action.operationToDelete) },
+                                block = { deletePaymentAndRelatedOperationInteractor.deletePaymentAndRelatedOperation(action.operationToDelete) },
                                 doOnSuccess = { closePopUp() }
                             )
                         }
