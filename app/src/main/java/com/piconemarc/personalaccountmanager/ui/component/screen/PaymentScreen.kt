@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.piconemarc.model.PAMIconButtons
-import com.piconemarc.model.entity.OperationUiModel
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.AccountPostItBackground
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PostItTitle
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.RowDeleteIconButton
@@ -49,7 +48,9 @@ fun PaymentScreen(viewModel: AppViewModel) {
                                     PostItTitle(
                                         account = it.accountUiModel.name,
                                         onAccountButtonClicked = {
-                                                                 //todo add new Payment
+                                            viewModel.dispatchAction(
+                                                AppActions.AddOperationPopUpAction.InitPopUp(true, selectedAccountId = it.accountUiModel.id )
+                                            )
                                         },
                                         iconButton = PAMIconButtons.Add
                                     )

@@ -7,6 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.piconemarc.model.entity.OperationUiModel
+import com.piconemarc.model.entity.PaymentUiModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.animation.pAMAddOperationPopUpBackgroundColor
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.*
@@ -26,15 +27,30 @@ fun PAMAddOperationPopUp(
         onAcceptButtonClicked = {
             viewModel.dispatchAction(
                 AppActions.AddOperationPopUpAction.AddNewOperation(
-                    OperationUiModel(
-                        name = addOperationPopUpUiState.operationName,
-                        amount = try { addOperationPopUpUiState.operationAmount.toDouble() }
-                        catch (e: NumberFormatException) { 0.0 },
-                        accountId = myAccountDetailScreenUiState.selectedAccount.id,
-                        categoryId = addOperationPopUpUiState.selectedCategory.id,
-                        emitDate = Calendar.getInstance().time,
-                        isAddOperation = addOperationPopUpUiState.isAddOperation
-                    )
+                    if (!addOperationPopUpUiState.isOnPaymentScreen)
+                        OperationUiModel(
+                            name = addOperationPopUpUiState.operationName,
+                            amount = try {
+                                addOperationPopUpUiState.operationAmount.toDouble()
+                            } catch (e: NumberFormatException) {
+                                0.0
+                            },
+                            accountId = addOperationPopUpUiState.selectedAccountId,
+                            categoryId = addOperationPopUpUiState.selectedCategory.id,
+                            emitDate = Calendar.getInstance().time,
+                            isAddOperation = addOperationPopUpUiState.isAddOperation
+                        )
+                    else {
+                        PaymentUiModel(
+                            name = addOperationPopUpUiState.operationName,
+                            amount = try {
+                                addOperationPopUpUiState.operationAmount.toDouble()
+                            } catch (e: NumberFormatException) {
+                                0.0
+                            },
+                            accountId = addOperationPopUpUiState.selectedAccountId,
+                        )
+                    }
                 )
             )
 
@@ -42,14 +58,15 @@ fun PAMAddOperationPopUp(
         onDismiss = { viewModel.dispatchAction(AppActions.AddOperationPopUpAction.ClosePopUp) },
         isExpanded = addOperationPopUpUiState.isPopUpExpanded,
         menuIconPanel = {
-            PAMAddOperationPopUpLeftSideMenuIconPanel(
-                onIconButtonClicked = {
-                    viewModel.dispatchAction(
-                        AppActions.AddOperationPopUpAction.SelectOptionIcon(it)
-                    )
-                },
-                selectedIcon = addOperationPopUpUiState.addPopUpOptionSelectedIcon
-            )
+            if (!addOperationPopUpUiState.isOnPaymentScreen)
+                PAMAddOperationPopUpLeftSideMenuIconPanel(
+                    onIconButtonClicked = {
+                        viewModel.dispatchAction(
+                            AppActions.AddOperationPopUpAction.SelectOptionIcon(it)
+                        )
+                    },
+                    selectedIcon = addOperationPopUpUiState.addPopUpOptionSelectedIcon
+                )
         },
         popUpBackgroundColor = pAMAddOperationPopUpBackgroundColor(
             isAddOperation = addOperationPopUpUiState.isAddOperation,
@@ -74,7 +91,7 @@ fun PAMAddOperationPopUp(
             )
             // operation name--------------------------
             PAMBrownBackgroundTextFieldItem(
-                title =  stringResource(R.string.operationName),
+                title = stringResource(R.string.operationName),
                 onTextChange = { operationName ->
                     viewModel.dispatchAction(
                         AppActions.AddOperationPopUpAction.FillOperationName(
@@ -89,7 +106,7 @@ fun PAMAddOperationPopUp(
             )
             // operation Amount--------------------------
             PAMBrownBackgroundAmountTextFieldItem(
-                title =  stringResource(R.string.operationAmount),
+                title = stringResource(R.string.operationAmount),
                 onTextChange = { operationAmount ->
                     viewModel.dispatchAction(
                         AppActions.AddOperationPopUpAction.FillOperationAmount(
@@ -162,6 +179,17 @@ fun PAMAddOperationPopUp(
                 },
                 isBeneficiaryAccountError = addOperationPopUpUiState.isBeneficiaryAccountError
             )
+            if (addOperationPopUpUiState.isOnPaymentScreen)
+                OptionCheckBox(
+                    onCheckedChange = {
+                        viewModel.dispatchAction(
+                            AppActions.AddOperationPopUpAction.UpdateIsPaymentStartThisMonth(
+                                it
+                            )
+                        )
+                    },
+                    isChecked = addOperationPopUpUiState.isPaymentStartThisMonth,
+                    optionText = "Does payment start this month?")
         }
     }
 }

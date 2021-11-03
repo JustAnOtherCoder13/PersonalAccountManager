@@ -80,7 +80,7 @@ fun MyAccountDetailBody(
         footer = {
             PAMAddButton(onAddButtonClicked = {
                 viewModel.dispatchAction(
-                    AppActions.AddOperationPopUpAction.InitPopUp
+                    AppActions.AddOperationPopUpAction.InitPopUp(selectedAccountId = myAccountDetailScreenUiState.selectedAccount.id)
                 )
             })
         },

@@ -25,11 +25,11 @@ interface OperationDao {
     }
 
     @Transaction
-    suspend fun addPaymentOperation(operation: OperationDTO, endDate: Date?){
+    suspend fun addPaymentAndOperation(operation: OperationDTO, endDate: Date?){
         val operationId = addOperation(operation)
         val paymentId = addNewPayment(
             PaymentDTO(
-                name = operation.name + "P",
+                name = operation.name,
                 operationId = operationId,
                 accountId = operation.accountId,
                 endDate = endDate,
@@ -47,7 +47,7 @@ interface OperationDao {
         val beneficiaryOperationId = addOperation(beneficiaryOperation)
         val transferId = addNewTransferOperation(
             TransferDTO(
-                name = operation.name + "T",
+                name = operation.name,
                 senderOperationId = senderOperationId,
                 beneficiaryOperationId = beneficiaryOperationId
             )

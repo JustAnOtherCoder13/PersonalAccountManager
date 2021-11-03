@@ -96,27 +96,40 @@ private fun DeleteOperationOptionCheckBox(viewModel: AppViewModel) {
         (deleteOperationPopUpUiState.operationToDelete as PaymentUiModel).operationId != null
 
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Checkbox(
-                modifier = Modifier
-                    .padding(end = RegularMarge)
-                    .border(
-                        width = ThinBorder,
-                        shape = RoundedCornerShape(LittleMarge),
-                        color = MaterialTheme.colors.onSecondary
-                    ),
-                checked = deleteOperationPopUpUiState.isDeletedPermanently,
-                onCheckedChange = {
-                    viewModel.dispatchAction(
-                        AppActions.DeleteOperationPopUpAction.UpdateIsDeletedPermanently(it)
-                    )
-                }
-            )
-            Text(
-                text = deleteOperationOptionText ,
-                modifier = Modifier.padding(vertical = RegularMarge),
-                style = MaterialTheme.typography.body2
-            )
-        }
+        OptionCheckBox(
+            onCheckedChange = {
+                viewModel.dispatchAction(
+                    AppActions.DeleteOperationPopUpAction.UpdateIsDeletedPermanently(it)
+                )
+            },
+            isChecked = deleteOperationPopUpUiState.isRelatedOperationDeleted,
+            optionText = deleteOperationOptionText
+        )
+    }
+}
+
+@Composable
+fun OptionCheckBox(
+    onCheckedChange : (isChecked : Boolean)-> Unit,
+    isChecked : Boolean,
+    optionText : String
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Checkbox(
+            modifier = Modifier
+                .padding(end = RegularMarge)
+                .border(
+                    width = ThinBorder,
+                    shape = RoundedCornerShape(LittleMarge),
+                    color = MaterialTheme.colors.onSecondary
+                ),
+            checked = isChecked,
+            onCheckedChange = onCheckedChange
+        )
+        Text(
+            text = optionText,
+            modifier = Modifier.padding(vertical = RegularMarge),
+            style = MaterialTheme.typography.body2
+        )
     }
 }

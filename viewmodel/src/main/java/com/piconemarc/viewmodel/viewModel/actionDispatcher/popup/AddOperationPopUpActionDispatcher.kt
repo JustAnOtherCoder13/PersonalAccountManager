@@ -4,6 +4,8 @@ import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
 import com.piconemarc.core.domain.interactor.operation.AddNewOperationInteractor
 import com.piconemarc.model.PAMIconButtons
+import com.piconemarc.model.entity.OperationUiModel
+import com.piconemarc.model.entity.PaymentUiModel
 import com.piconemarc.viewmodel.*
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.addOperationPopUpUiState
@@ -21,7 +23,8 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
     override val store: DefaultStore<GlobalVmState>,
     private val getAllCategoriesInteractor: GetAllCategoriesInteractor,
     private val getAllAccountsInteractor: GetAllAccountsInteractor,
-    private val addNewOperationInteractor: AddNewOperationInteractor
+    private val addNewOperationInteractor: AddNewOperationInteractor,
+
 ) : ActionDispatcher {
 
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
@@ -64,7 +67,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
 
                 }
             }
-            is AppActions.AddOperationPopUpAction.InitPopUp ->
+            is AppActions.AddOperationPopUpAction.InitPopUp -> {
                 scope.launchCatchingError(
                     block = {
                         getAllCategoriesInteractor.getAllCategories().collect {
@@ -78,6 +81,13 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                         }
                     }
                 )
+                if (addOperationPopUpUiState.isOnPaymentScreen){
+                    this.dispatchAction(
+                        AppActions.AddOperationPopUpAction.ExpandRecurrentOption,
+                        scope
+                    )
+                }
+            }
             is AppActions.AddOperationPopUpAction.ExpandTransferOption -> {
                 scope.launchCatchingError(
                     block = {
@@ -94,52 +104,94 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                 )
             }
 
-            is AppActions.AddOperationPopUpAction.AddNewOperation -> {
+            is AppActions.AddOperationPopUpAction.AddNewOperation<*> -> {
                 //if no error on name and amount
                 if (!addOperationPopUpUiState.isOperationNameError
                     && !addOperationPopUpUiState.isOperationAmountError
                 ) {
                     //Check selected icon ------------------------------------------------------------
-                    when (addOperationPopUpUiState.addPopUpOptionSelectedIcon) {
-                        is PAMIconButtons.Operation -> {
-                            scope.launchOnIOCatchingError(
-                                block = { addNewOperationInteractor.addOperation(action.operation) },
-                                doOnSuccess = { closePopUp() }
-                            )
-                        }
-                        is PAMIconButtons.Payment -> {
-                            scope.launchOnIOCatchingError(
-                                block = {
-                                    addNewOperationInteractor.addPaymentOperation(
-                                        operation = action.operation,
-                                        endDate = try {
-                                            SimpleDateFormat("MMMM/yyyy", Locale.FRANCE).parse(
-                                                addOperationPopUpUiState.enDateSelectedMonth
-                                                        + "/" + addOperationPopUpUiState.endDateSelectedYear,
-                                            )
-                                        } catch (e: ParseException) {
-                                            null
-                                        }
-                                    )
-                                },
-                                doOnSuccess = { closePopUp() }
-                            )
-                        }
-                        is PAMIconButtons.Transfer -> {
-                            if (!addOperationPopUpUiState.isBeneficiaryAccountError) {
+                    if (!addOperationPopUpUiState.isOnPaymentScreen) {
+                        action.operation as OperationUiModel
+                        when (addOperationPopUpUiState.addPopUpOptionSelectedIcon) {
+                            is PAMIconButtons.Operation -> {
+                                scope.launchOnIOCatchingError(
+                                    block = { addNewOperationInteractor.addOperation(action.operation) },
+                                    doOnSuccess = { closePopUp() }
+                                )
+                            }
+                            is PAMIconButtons.Payment -> {
                                 scope.launchOnIOCatchingError(
                                     block = {
-                                        addNewOperationInteractor.addTransferOperation(
+                                        addNewOperationInteractor.addPaymentAndOperation(
                                             operation = action.operation,
-                                            beneficiaryAccountId = addOperationPopUpUiState.beneficiaryAccount.id
+                                            endDate = try {
+                                                SimpleDateFormat("MMMM/yyyy", Locale.FRANCE).parse(
+                                                    addOperationPopUpUiState.enDateSelectedMonth
+                                                            + "/" + addOperationPopUpUiState.endDateSelectedYear,
+                                                )
+                                            } catch (e: ParseException) {
+                                                null
+                                            }
+                                        )
+                                    },
+                                    doOnSuccess = { closePopUp() }
+                                )
+                            }
+                            is PAMIconButtons.Transfer -> {
+                                if (!addOperationPopUpUiState.isBeneficiaryAccountError) {
+                                    scope.launchOnIOCatchingError(
+                                        block = {
+                                            addNewOperationInteractor.addTransferOperation(
+                                                operation = action.operation,
+                                                beneficiaryAccountId = addOperationPopUpUiState.beneficiaryAccount.id
                                             )
+                                        },
+                                        doOnSuccess = { closePopUp() }
+                                    )
+                                }
+                            }
+                            else -> {
+                                closePopUp()
+                            }
+                        }
+                    } else {
+                        action.operation as PaymentUiModel
+                        if (addOperationPopUpUiState.isPaymentStartThisMonth){
+                            //add payment and related operation
+                                scope.launchOnIOCatchingError(
+                                    block = {
+                                        addNewOperationInteractor.addPaymentAndOperation(
+                                            OperationUiModel(
+                                                accountId = action.operation.accountId ,
+                                                name = action.operation.name,
+                                                amount = action.operation.amount,
+                                                categoryId = addOperationPopUpUiState.selectedCategory.id ,
+                                                isAddOperation = addOperationPopUpUiState.isAddOperation,
+                                            ),
+                                            endDate = try {
+                                                SimpleDateFormat("MMMM/yyyy", Locale.FRANCE).parse(
+                                                    addOperationPopUpUiState.enDateSelectedMonth
+                                                            + "/" + addOperationPopUpUiState.endDateSelectedYear,
+                                                )
+                                            } catch (e: ParseException) {
+                                                null
+                                            }
+                                        )
                                     },
                                     doOnSuccess = {closePopUp()}
                                 )
-                            }
+
                         }
-                        else -> {
-                            closePopUp()
+                        else{
+                            scope.launchOnIOCatchingError(
+                                block = {
+                                    addNewOperationInteractor.addNewPayment(
+                                        action.operation
+                                    )
+                                },
+                                doOnSuccess = {closePopUp()}
+                            )
+
                         }
                     }
                 }

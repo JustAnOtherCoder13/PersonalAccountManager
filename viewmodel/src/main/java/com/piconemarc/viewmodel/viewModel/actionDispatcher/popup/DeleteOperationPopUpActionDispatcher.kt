@@ -77,7 +77,7 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
 
                         if (action.operationToDelete.paymentId != null) {
                             // if payment id exist and user want to delete operation and payment
-                            if (deleteOperationPopUpUiState.isDeletedPermanently) {
+                            if (deleteOperationPopUpUiState.isRelatedOperationDeleted) {
                                 scope.launchOnIOCatchingError(
                                     block = { deleteOperationInteractor.deleteOperationAndPayment(action.operationToDelete) },
                                     doOnSuccess = { closePopUp() }
@@ -116,7 +116,7 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
                     is PaymentUiModel -> {
                         //if user want to delete related operation
                         if (action.operationToDelete.operationId != null
-                            && deleteOperationPopUpUiState.isDeletedPermanently
+                            && deleteOperationPopUpUiState.isRelatedOperationDeleted
                         ){
                             scope.launchOnIOCatchingError(
                                 block = { deleteOperationInteractor.deletePaymentAndRelatedOperation(action.operationToDelete) },
@@ -128,7 +128,9 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
                             scope.launchOnIOCatchingError(
                                 block = {
                                     deletePaymentInteractor.deletePayment(action.operationToDelete)
-                                }
+                                },
+                                doOnSuccess = { closePopUp() }
+
                             )
                         }
                     }

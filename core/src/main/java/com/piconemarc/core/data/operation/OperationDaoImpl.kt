@@ -18,8 +18,8 @@ class OperationDaoImpl @Inject constructor(pamDatabase: PAMDatabase) : Operation
         return operationDao.addOperation(operationDTO)
     }
 
-    override suspend fun addPaymentOperation(operation: OperationDTO, endDate: Date?) {
-        super.addPaymentOperation(operation, endDate)
+    override suspend fun addPaymentAndOperation(operation: OperationDTO, endDate: Date?) {
+        super.addPaymentAndOperation(operation, endDate)
     }
 
     override suspend fun addTransferOperation(operation: OperationDTO, beneficiaryAccountId: Long) {

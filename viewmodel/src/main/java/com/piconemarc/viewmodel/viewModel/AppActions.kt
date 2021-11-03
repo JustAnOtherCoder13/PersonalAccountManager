@@ -49,7 +49,7 @@ object AppActions {
 
     //POP UP----------------------------------------------------------------------------------------
     sealed class AddOperationPopUpAction : UiAction {
-        object InitPopUp : AddOperationPopUpAction()
+        data class InitPopUp(val isOnPaymentScreen : Boolean = false, val selectedAccountId : Long) : AddOperationPopUpAction()
         object ExpandPaymentOption : AddOperationPopUpAction()
         object CollapseOptions : AddOperationPopUpAction()
         object ExpandTransferOption : AddOperationPopUpAction()
@@ -73,7 +73,8 @@ object AppActions {
 
         data class SelectOptionIcon(val selectedIcon: PAMIconButtons) : AddOperationPopUpAction()
         data class SelectAddOrMinus(val isAddOperation: Boolean) : AddOperationPopUpAction()
-        data class AddNewOperation(val operation: OperationUiModel) : AddOperationPopUpAction()
+        data class AddNewOperation<T : BaseOperation>(val operation: T) : AddOperationPopUpAction()
+        data class UpdateIsPaymentStartThisMonth( val isPaymentStartThisMonth: Boolean) : AddOperationPopUpAction()
     }
 
     sealed class DeleteOperationPopUpAction : UiAction {
@@ -87,7 +88,7 @@ object AppActions {
         data class DeletePayment(val paymentToDelete: PaymentUiModel) : DeleteOperationPopUpAction()
         data class DeleteTransfer(val transferToDelete : TransferUiModel) :DeleteOperationPopUpAction()
         data class UpdateTransferRelatedAccount(val transferRelatedAccount : AccountUiModel) : DeleteOperationPopUpAction()
-        data class UpdateIsDeletedPermanently(val isDeletedPermanently : Boolean) : DeleteOperationPopUpAction()
+        data class UpdateIsDeletedPermanently(val isRelatedOperationDeleted : Boolean) : DeleteOperationPopUpAction()
     }
 
     sealed class DeleteAccountAction : UiAction {

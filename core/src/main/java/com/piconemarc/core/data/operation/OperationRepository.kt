@@ -13,8 +13,8 @@ class OperationRepository @Inject constructor(private val operationDaoImpl: Oper
         operationDaoImpl.addOperation(operationDTO)
     }
 
-    suspend fun addPaymentOperation(operation: OperationDTO, endDate: Date?) {
-        operationDaoImpl.addPaymentOperation(operation, endDate)
+    suspend fun addPaymentAndOperation(operation: OperationDTO, endDate: Date?) {
+        operationDaoImpl.addPaymentAndOperation(operation, endDate)
     }
 
     suspend fun addTransferOperation(operation: OperationDTO, beneficiaryAccountId: Long) {
@@ -43,5 +43,9 @@ class OperationRepository @Inject constructor(private val operationDaoImpl: Oper
 
     suspend fun getOperationForId(operationId: Long): OperationDTO {
         return operationDaoImpl.getOperationForId(operationId)
+    }
+
+    suspend fun addNewPayment(paymentDTO: PaymentDTO): Long {
+        return operationDaoImpl.addNewPayment(paymentDTO)
     }
 }
