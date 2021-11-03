@@ -9,7 +9,11 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.piconemarc.personalaccountmanager.toStringWithTwoDec
-import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.*
+import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MyAccountBodyRecyclerView
+import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MyAccountDetailSheet
+import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MyAccountDetailTitle
+import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BrownBackgroundAddButton
+import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.VerticalDispositionSheet
 import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
 import com.piconemarc.personalaccountmanager.ui.theme.ThinBorder
@@ -26,14 +30,29 @@ fun MyAccountsScreen(
     if (myAccountDetailScreenUiState.isVisible) MyAccountDetailBody(viewModel)
 }
 
-
-
 @Composable
 private fun MyAccountBody(viewModel: AppViewModel) {
     VerticalDispositionSheet(
-        body = { MyAccountBodyRecyclerView(viewModel) },
+        body = {
+            MyAccountBodyRecyclerView(
+                onAccountClicked = { selectedAccount ->
+                    //todo pass with navigator
+                    viewModel.dispatchAction(
+                        AppActions.MyAccountScreenAction.CloseScreen
+                    )
+                    viewModel.dispatchAction(
+                        AppActions.MyAccountDetailScreenAction.InitScreen(selectedAccount = selectedAccount)
+                    )
+                },
+                onDeleteAccountButtonClicked = { accountToDelete ->
+                    viewModel.dispatchAction(
+                        AppActions.DeleteAccountAction.InitPopUp(accountUiToDelete = accountToDelete)
+                    )
+                }
+            )
+        },
         footer = {
-            PAMAddButton(onAddButtonClicked = {
+            BrownBackgroundAddButton(onAddButtonClicked = {
                 viewModel.dispatchAction(
                     AppActions.AddAccountPopUpAction.InitPopUp
                 )
@@ -49,8 +68,9 @@ fun MyAccountDetailBody(
 ) {
     VerticalDispositionSheet(
         header = {
-            AccountDetailTitle(
+            MyAccountDetailTitle(
                 onBackIconClick = {
+                    //todo pass with navigator
                     viewModel.dispatchAction(AppActions.MyAccountDetailScreenAction.CloseScreen)
                     viewModel.dispatchAction(AppActions.MyAccountScreenAction.InitScreen)
                 },
@@ -58,11 +78,11 @@ fun MyAccountDetailBody(
             )
         },
         body = {
-            AccountDetailSheetRecyclerView(
+            MyAccountDetailSheet(
                 allOperations = myAccountDetailScreenUiState.accountMonthlyOperations,
-                onDeleteItemButtonCLick = {
+                onDeleteItemButtonCLick = { operationToDelete ->
                     viewModel.dispatchAction(
-                        AppActions.DeleteOperationPopUpAction.InitPopUp(it)
+                        AppActions.DeleteOperationPopUpAction.InitPopUp(operationToDelete)
                     )
                 },
                 accountBalance = myAccountDetailScreenUiState.selectedAccount.accountBalance.toStringWithTwoDec(),
@@ -78,9 +98,11 @@ fun MyAccountDetailBody(
 
         },
         footer = {
-            PAMAddButton(onAddButtonClicked = {
+            BrownBackgroundAddButton(onAddButtonClicked = {
                 viewModel.dispatchAction(
-                    AppActions.AddOperationPopUpAction.InitPopUp(selectedAccountId = myAccountDetailScreenUiState.selectedAccount.id)
+                    AppActions.AddOperationPopUpAction.InitPopUp(
+                        selectedAccountId = myAccountDetailScreenUiState.selectedAccount.id
+                    )
                 )
             })
         },
@@ -100,4 +122,3 @@ fun MyAccountDetailBody(
             )
     )
 }
-

@@ -10,7 +10,10 @@ import com.piconemarc.model.entity.OperationUiModel
 import com.piconemarc.model.entity.PaymentUiModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.animation.pAMAddOperationPopUpBackgroundColor
-import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.*
+import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.AddOperationPopUpLeftSideMenuIconPanel
+import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.AddOperationPopUpPunctualOrRecurrentSwitchButton
+import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.AddOperationPopUpTransferOptionPanel
+import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.*
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.addOperationPopUpUiState
@@ -18,15 +21,16 @@ import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.myAcc
 import java.util.*
 
 @Composable
-fun PAMAddOperationPopUp(
+fun AddOperationPopUp(
     viewModel: AppViewModel
 ) {
     //Pop up Body --------------------------------------------
-    PAMBasePopUp(
+    BasePopUp(
         title = addOperationPopUpUiState.addPopUpTitle,
         onAcceptButtonClicked = {
             viewModel.dispatchAction(
                 AppActions.AddOperationPopUpAction.AddNewOperation(
+                    //if not on payment screen add operation
                     if (!addOperationPopUpUiState.isOnPaymentScreen)
                         OperationUiModel(
                             name = addOperationPopUpUiState.operationName,
@@ -41,6 +45,7 @@ fun PAMAddOperationPopUp(
                             isAddOperation = addOperationPopUpUiState.isAddOperation
                         )
                     else {
+                        //else add payment
                         PaymentUiModel(
                             name = addOperationPopUpUiState.operationName,
                             amount = try {
@@ -58,8 +63,9 @@ fun PAMAddOperationPopUp(
         onDismiss = { viewModel.dispatchAction(AppActions.AddOperationPopUpAction.ClosePopUp) },
         isExpanded = addOperationPopUpUiState.isPopUpExpanded,
         menuIconPanel = {
+            //if on payment screen no need to show left side icon panel, cause could only be payment
             if (!addOperationPopUpUiState.isOnPaymentScreen)
-                PAMAddOperationPopUpLeftSideMenuIconPanel(
+                AddOperationPopUpLeftSideMenuIconPanel(
                     onIconButtonClicked = {
                         viewModel.dispatchAction(
                             AppActions.AddOperationPopUpAction.SelectOptionIcon(it)
@@ -78,7 +84,7 @@ fun PAMAddOperationPopUp(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             //add or minus switch
-            AddOrMinusSwitchButton(
+            AddOperationPopUpAddOrMinusSwitchButton(
                 onAddOrMinusClicked = { isAddClicked ->
                     viewModel.dispatchAction(
                         AppActions.AddOperationPopUpAction.SelectAddOrMinus(
@@ -90,7 +96,7 @@ fun PAMAddOperationPopUp(
                 isEnable = addOperationPopUpUiState.isAddOrMinusEnable
             )
             // operation name--------------------------
-            PAMBrownBackgroundTextFieldItem(
+            BrownBackgroundTextFieldItem(
                 title = stringResource(R.string.operationName),
                 onTextChange = { operationName ->
                     viewModel.dispatchAction(
@@ -102,10 +108,10 @@ fun PAMAddOperationPopUp(
                 textValue = addOperationPopUpUiState.operationName,
                 isPopUpExpanded = addOperationPopUpUiState.isPopUpExpanded,
                 isError = addOperationPopUpUiState.isOperationNameError,
-                errorMsg = "Please, fill operation name"
+                errorMsg = stringResource(R.string.AddOperationPopUpOperationNameErrorMessage)
             )
             // operation Amount--------------------------
-            PAMBrownBackgroundAmountTextFieldItem(
+            BrownBackgroundAmountTextFieldItem(
                 title = stringResource(R.string.operationAmount),
                 onTextChange = { operationAmount ->
                     viewModel.dispatchAction(
@@ -117,7 +123,7 @@ fun PAMAddOperationPopUp(
                 amountValue = addOperationPopUpUiState.operationAmount,
                 isPopUpExpanded = addOperationPopUpUiState.isPopUpExpanded,
                 isError = addOperationPopUpUiState.isOperationAmountError,
-                errorMsg = "Please, fill an amount for this operation"
+                errorMsg = stringResource(R.string.AddOperationPopUpAmountErrorMessage)
             )
             //category drop down -----------------------------------
             PAMBaseDropDownMenuWithBackground(
@@ -132,7 +138,7 @@ fun PAMAddOperationPopUp(
                 }
             )
             //Payment Operation option--------------------------
-            PAMPunctualOrRecurrentSwitchButton(
+            AddOperationPopUpPunctualOrRecurrentSwitchButton(
                 isRecurrentOptionExpanded = addOperationPopUpUiState.isRecurrentOptionExpanded,
                 isPaymentOptionExpanded = addOperationPopUpUiState.isPaymentExpanded,
                 onPunctualButtonSelected = {
@@ -164,7 +170,7 @@ fun PAMAddOperationPopUp(
                 isRecurrentSwitchError = addOperationPopUpUiState.isRecurrentEndDateError
             )
             //Transfer Operation option---------------------------
-            PAMTransferOptionPanel(
+            AddOperationPopUpTransferOptionPanel(
                 isTransferOptionExpanded = addOperationPopUpUiState.isTransferExpanded,
                 senderAccount = myAccountDetailScreenUiState.selectedAccount,
                 allAccountsList = addOperationPopUpUiState.allAccounts,
@@ -189,7 +195,8 @@ fun PAMAddOperationPopUp(
                         )
                     },
                     isChecked = addOperationPopUpUiState.isPaymentStartThisMonth,
-                    optionText = "Does payment start this month?")
+                    optionText = stringResource(R.string.AddOperationPopUpAddPaymentOptionMessage)
+                )
         }
     }
 }

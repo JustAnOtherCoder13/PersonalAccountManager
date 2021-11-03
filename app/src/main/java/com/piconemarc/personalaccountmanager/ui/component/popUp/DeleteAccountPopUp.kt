@@ -6,20 +6,22 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMBaseDeletePopUp
+import androidx.compose.ui.res.stringResource
+import com.piconemarc.personalaccountmanager.R
+import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseDeletePopUp
 import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
+import com.piconemarc.personalaccountmanager.ui.theme.deleteAccountPopUpHeight
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.deleteAccountUiState
+import java.util.*
 
 @Composable
-fun PAMDeleteAccountPopUp(
+fun DeleteAccountPopUp(
     viewModel: AppViewModel
 ) {
-
-    PAMBaseDeletePopUp(
-        deletePopUpTitle = "Delete Account",
+    BaseDeletePopUp(
+        deletePopUpTitle = stringResource(R.string.deleteAccountPopUpTitle),
         onAcceptButtonClicked = { viewModel.dispatchAction(
             AppActions.DeleteAccountAction.DeleteAccount(deleteAccountUiState.accountUiToDelete)
         ) },
@@ -28,13 +30,12 @@ fun PAMDeleteAccountPopUp(
         ) },
         isExpanded = deleteAccountUiState.isPopUpExpanded
     ) {
-
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(100.dp)
+                .height(deleteAccountPopUpHeight)
         ) {
             Text(
                 text = deleteAccountUiState.accountUiToDelete.name,
@@ -42,12 +43,10 @@ fun PAMDeleteAccountPopUp(
                 modifier = Modifier.padding(vertical = LittleMarge)
             )
             Text(
-                text = deleteAccountUiState.accountUiToDelete.accountBalance.toString() +" €",
+                text = deleteAccountUiState.accountUiToDelete.accountBalance.toString() +Currency.getInstance(Locale.FRANCE),
                 style = MaterialTheme.typography.body1,
                 modifier = Modifier.padding(vertical = LittleMarge)
             )
         }
-
     }
-
 }

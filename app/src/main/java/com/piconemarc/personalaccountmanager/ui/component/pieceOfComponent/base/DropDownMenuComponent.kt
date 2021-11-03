@@ -1,4 +1,4 @@
-package com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent
+package com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -73,7 +73,7 @@ fun PAMBaseDropDownMenu(
 }
 
 @Composable
-fun <T:BaseUiModel>PAMBaseDropDownMenu(
+private fun <T:BaseUiModel>PAMBaseDropDownMenu(
     selectedItem: T,
     itemList: List<T>,
     onItemSelected: (item: T) -> Unit
