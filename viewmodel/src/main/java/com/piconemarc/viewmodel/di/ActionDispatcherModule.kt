@@ -9,6 +9,7 @@ import com.piconemarc.core.domain.interactor.operation.AddNewOperationInteractor
 import com.piconemarc.core.domain.interactor.operation.DeleteOperationInteractor
 import com.piconemarc.core.domain.interactor.operation.GetAllOperationsForAccountIdInteractor
 import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteractor
+import com.piconemarc.core.domain.interactor.payment.DeletePaymentInteractor
 import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddAccountPopUpActionDispatcher
@@ -109,6 +110,7 @@ class ActionDispatcherModule {
         getAccountForIdInteractor: GetAccountForIdInteractor,
         getOperationForIdInteractor: GetOperationForIdInteractor,
         getTransferForIdInteractor: GetTransferForIdInteractor,
+        deletePaymentInteractor: DeletePaymentInteractor
     ): DeleteOperationPopUpActionDispatcher{
         return DeleteOperationPopUpActionDispatcher(
             store = globalStore,
@@ -116,6 +118,7 @@ class ActionDispatcherModule {
             getAccountForIdInteractor = getAccountForIdInteractor,
             getOperationForIdInteractor = getOperationForIdInteractor,
             getTransferForIdInteractor = getTransferForIdInteractor,
+            deletePaymentInteractor = deletePaymentInteractor
         )
     }
 

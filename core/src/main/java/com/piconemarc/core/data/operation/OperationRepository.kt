@@ -1,6 +1,7 @@
 package com.piconemarc.core.data.operation
 
 import com.piconemarc.core.domain.entityDTO.OperationDTO
+import com.piconemarc.core.domain.entityDTO.PaymentDTO
 import com.piconemarc.core.domain.entityDTO.TransferDTO
 import kotlinx.coroutines.flow.Flow
 import java.util.*
@@ -24,8 +25,12 @@ class OperationRepository @Inject constructor(private val operationDaoImpl: Oper
         operationDaoImpl.deleteOperation(operationDTO)
     }
 
-    suspend fun deletePayment(operationDTO: OperationDTO) {
-        operationDaoImpl.deletePayment(operationDTO)
+    suspend fun deleteOperationAndPayment(operationDTO: OperationDTO) {
+        operationDaoImpl.deleteOperationAndPayment(operationDTO)
+    }
+
+    suspend fun deletePaymentAndRelatedOperation(paymentDTO: PaymentDTO) {
+        operationDaoImpl.deletePaymentAndRelatedOperation(paymentDTO)
     }
 
     suspend fun deleteTransfer(operationDTO: OperationDTO,transfer : TransferDTO) {

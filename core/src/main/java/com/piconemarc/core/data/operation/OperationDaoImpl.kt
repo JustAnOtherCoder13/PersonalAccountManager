@@ -30,8 +30,12 @@ class OperationDaoImpl @Inject constructor(pamDatabase: PAMDatabase) : Operation
         super.deleteOperation(operationDTO)
     }
 
-    override suspend fun deletePayment(operationDTO: OperationDTO) {
-        super.deletePayment(operationDTO)
+    override suspend fun deleteOperationAndPayment(operationDTO: OperationDTO) {
+        super.deleteOperationAndPayment(operationDTO)
+    }
+
+    override suspend fun deletePaymentAndRelatedOperation(paymentDTO: PaymentDTO) {
+        super.deletePaymentAndRelatedOperation(paymentDTO)
     }
 
     override suspend fun deleteTransfer(operationDTO: OperationDTO, transfer : TransferDTO) {
