@@ -6,13 +6,13 @@ data class OperationUiModel(
     override val id: Long = 0,
     val accountId: Long = 0,
     override val name: String = "",
-    var amount: Double = 0.0,
+    override val amount: Double = 0.0,
     val categoryId: Long = 1,
     val emitDate: Date = Calendar.getInstance().time,
     var isAddOperation: Boolean = true,
     val paymentId: Long? = null,
     val transferId: Long? = null
-) : BaseUiModel() {
+) : BaseOperation() {
 
     fun deleteOperation(): OperationUiModel {
         return OperationUiModel(

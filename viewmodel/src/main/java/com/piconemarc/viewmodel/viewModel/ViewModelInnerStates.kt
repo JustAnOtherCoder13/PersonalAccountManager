@@ -2,10 +2,7 @@ package com.piconemarc.viewmodel.viewModel
 
 import com.piconemarc.core.domain.utils.Constants
 import com.piconemarc.model.PAMIconButtons
-import com.piconemarc.model.entity.AccountUiModel
-import com.piconemarc.model.entity.AccountWithRelatedPaymentUiModel
-import com.piconemarc.model.entity.CategoryUiModel
-import com.piconemarc.model.entity.OperationUiModel
+import com.piconemarc.model.entity.*
 import com.piconemarc.viewmodel.VMState
 
 object ViewModelInnerStates {
@@ -62,7 +59,7 @@ object ViewModelInnerStates {
 
     data class DeleteOperationPopUpVMState(
         val isPopUpExpanded: Boolean=false,
-        val operationToDelete : OperationUiModel = OperationUiModel(),
+        val  operationToDelete  : BaseOperation = BaseOperation(),
         val isDeletedPermanently : Boolean = true,
         val transferRelatedAccount : AccountUiModel = AccountUiModel(),
     ) : VMState

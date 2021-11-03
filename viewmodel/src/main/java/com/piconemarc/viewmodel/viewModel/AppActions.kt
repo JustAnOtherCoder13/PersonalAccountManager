@@ -77,12 +77,12 @@ object AppActions {
     }
 
     sealed class DeleteOperationPopUpAction : UiAction {
-        data class InitPopUp(val operationToDelete: OperationUiModel) : DeleteOperationPopUpAction()
+        data class InitPopUp<T : BaseOperation>(val operationToDelete: T) : DeleteOperationPopUpAction()
         object ClosePopUp : DeleteOperationPopUpAction()
-        data class UpdateOperationToDelete(val operationToDelete: OperationUiModel) :
+        data class UpdateOperationToDelete<T : BaseOperation>(val operationToDelete: T) :
             DeleteOperationPopUpAction()
 
-        data class DeleteOperation(val operationToDelete: OperationUiModel) :
+        data class DeleteOperation<T : BaseOperation>(val operationToDelete: T) :
             DeleteOperationPopUpAction()
         data class DeletePayment(val paymentToDelete: PaymentUiModel) : DeleteOperationPopUpAction()
         data class DeleteTransfer(val transferToDelete : TransferUiModel) :DeleteOperationPopUpAction()

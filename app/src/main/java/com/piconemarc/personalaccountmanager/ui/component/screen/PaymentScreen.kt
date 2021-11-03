@@ -14,15 +14,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.piconemarc.model.PAMIconButtons
+import com.piconemarc.model.entity.OperationUiModel
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.AccountPostItBackground
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PostItTitle
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.RowDeleteIconButton
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.VerticalDispositionSheet
 import com.piconemarc.personalaccountmanager.ui.theme.*
+import com.piconemarc.viewmodel.viewModel.AppActions
+import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.paymentScreenUiState
 
 @Composable
-fun PaymentScreen() {
+fun PaymentScreen(viewModel: AppViewModel) {
     VerticalDispositionSheet(
         body = {
             LazyColumn(
@@ -70,14 +73,16 @@ fun PaymentScreen() {
                                                 style = MaterialTheme.typography.body1
                                             )
                                             Text(
-                                                text = payment.operationAmount.toString(),
+                                                text = payment.amount.toString(),
                                                 modifier = Modifier.weight(1f),
                                                 style = MaterialTheme.typography.body1,
-                                                color = if (payment.operationAmount < 0) NegativeText else PositiveText
+                                                color = if (payment.amount < 0) NegativeText else PositiveText
                                             )
                                             RowDeleteIconButton(
                                                 onDeleteItemButtonCLick = {
-                                                        //todo delete payment
+                                                    viewModel.dispatchAction(
+                                                        AppActions.DeleteOperationPopUpAction.InitPopUp(it)
+                                                    )
                                                 },
                                                 uiModel = payment
                                             )
@@ -95,7 +100,7 @@ fun PaymentScreen() {
                                             .padding(horizontal = LittleMarge)
                                     )
                                     var totalAmount  = 0.0
-                                    it.relatedPayment.map { it.operationAmount }.forEach { totalAmount+=it }
+                                    it.relatedPayment.map { it.amount }.forEach { totalAmount+=it }
                                     Text(
                                         text = "Total = $totalAmount",
                                         style = MaterialTheme.typography.body1

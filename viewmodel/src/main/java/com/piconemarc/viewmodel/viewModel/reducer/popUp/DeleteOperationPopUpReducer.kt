@@ -8,13 +8,13 @@ val deleteOperationPopUpReducer: Reducer<ViewModelInnerStates.DeleteOperationPop
     { old, action ->
         action as AppActions.DeleteOperationPopUpAction
         when (action) {
-            is AppActions.DeleteOperationPopUpAction.InitPopUp -> old.copy(
+            is AppActions.DeleteOperationPopUpAction.InitPopUp<*> -> old.copy(
                 isPopUpExpanded = true
             )
             is AppActions.DeleteOperationPopUpAction.ClosePopUp -> old.copy(
                 isPopUpExpanded = false
             )
-            is AppActions.DeleteOperationPopUpAction.UpdateOperationToDelete -> old.copy(
+            is AppActions.DeleteOperationPopUpAction.UpdateOperationToDelete<*> -> old.copy(
                 operationToDelete = action.operationToDelete
             )
             is AppActions.DeleteOperationPopUpAction.UpdateTransferRelatedAccount -> old.copy(
@@ -23,7 +23,7 @@ val deleteOperationPopUpReducer: Reducer<ViewModelInnerStates.DeleteOperationPop
             is AppActions.DeleteOperationPopUpAction.UpdateIsDeletedPermanently -> old.copy(
                 isDeletedPermanently = action.isDeletedPermanently
             )
-            is AppActions.DeleteOperationPopUpAction.DeleteOperation -> old
+            is AppActions.DeleteOperationPopUpAction.DeleteOperation<*> -> old
             is AppActions.DeleteOperationPopUpAction.DeletePayment -> old
             is AppActions.DeleteOperationPopUpAction.DeleteTransfer -> old
         }

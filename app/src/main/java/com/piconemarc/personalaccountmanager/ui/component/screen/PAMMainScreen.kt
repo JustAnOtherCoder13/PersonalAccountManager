@@ -33,7 +33,7 @@ fun PAMMainScreen(
                             //viewModel.dispatchAction(AppActions.MyAccountDetailScreenAction.CloseScreen)
                             //viewModel.dispatchAction(AppActions.MyAccountScreenAction.CloseScreen)
                             viewModel.dispatchAction(AppActions.PaymentScreenAction.InitScreen)
-                            PaymentScreen()
+                            PaymentScreen(viewModel = viewModel)
                         }
                         is PAMIconButtons.Chart -> {
                         }

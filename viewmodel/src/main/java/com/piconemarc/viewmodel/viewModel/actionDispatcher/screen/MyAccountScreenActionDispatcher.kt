@@ -32,7 +32,6 @@ class MyAccountScreenActionDispatcher @Inject constructor(
                 scope.launchOnIOCatchingError(
                     block = {
                         getAllAccountsInteractor.getAllAccountsAsFlow(scope).collect {
-                            Log.i("TAG", "dispatchAction: $it ")
                             updateState(
                                 GlobalAction.UpdateMyAccountScreenState(
                                     AppActions.MyAccountScreenAction.UpdateAccountList(it)

@@ -45,7 +45,7 @@ data class PaymentDTO(
             operationId = model.operationId,
             accountId = model.accountId,
             endDate = model.endDate,
-            operationAmount = model.operationAmount
+            operationAmount = model.amount
         )
     }
     override fun toUiModel() : PaymentUiModel{
@@ -55,7 +55,7 @@ data class PaymentDTO(
             operationId = this.operationId,
             accountId = this.accountId,
             endDate = this.endDate,
-            operationAmount = this.operationAmount
+            amount = this.operationAmount
         )
     }
 }

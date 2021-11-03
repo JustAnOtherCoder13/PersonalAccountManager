@@ -14,6 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import com.piconemarc.model.entity.OperationUiModel
+import com.piconemarc.model.entity.PaymentUiModel
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PAMBaseDeletePopUp
 import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
 import com.piconemarc.personalaccountmanager.ui.theme.NegativeText
@@ -55,41 +57,66 @@ fun PAMDeleteOperationPopUp(viewModel: AppViewModel) {
                     text = deleteOperationPopUpUiState.operationToDelete.amount.toString() + " €",
                     style = MaterialTheme.typography.body1
                 )
+                when (deleteOperationPopUpUiState.operationToDelete) {
+                    is OperationUiModel -> {
+                        DeleteOperationOptionCheckBox(viewModel)
 
-                if (deleteOperationPopUpUiState.operationToDelete.paymentId != null) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Checkbox(
-                            modifier = Modifier
-                                .padding(end = RegularMarge)
-                                .border(
-                                width = ThinBorder,
-                                shape = RoundedCornerShape(LittleMarge),
-                                color = MaterialTheme.colors.onSecondary
-                            ),
-                            checked = deleteOperationPopUpUiState.isDeletedPermanently,
-                            onCheckedChange = {
-                                viewModel.dispatchAction(
-                                    AppActions.DeleteOperationPopUpAction.UpdateIsDeletedPermanently(it)
-                                )
-                            }
-                        )
-                        Text(
-                            text = "Delete permanently?",
-                            modifier = Modifier.padding(vertical = RegularMarge),
-                            style = MaterialTheme.typography.body2
-                        )
+                        if ((deleteOperationPopUpUiState.operationToDelete as OperationUiModel).transferId != null) {
+                            Text(
+                                text = "This operation is a transfer, and will be deleted from ${deleteOperationPopUpUiState.transferRelatedAccount.name}",
+                                modifier = Modifier
+                                    .padding(RegularMarge)
+                                    .fillMaxWidth(),
+                                style = MaterialTheme.typography.caption,
+                                textAlign = TextAlign.Center,
+                                color = NegativeText
+                            )
+                        }
+                    }
+                    is PaymentUiModel -> {
+                        DeleteOperationOptionCheckBox(viewModel)
                     }
                 }
             }
-            if (deleteOperationPopUpUiState.operationToDelete.transferId != null) {
-                Text(
-                    text = "This operation is transfer, and will be deleted from ${deleteOperationPopUpUiState.transferRelatedAccount.name}",
-                    modifier = Modifier.padding(RegularMarge).fillMaxWidth(),
-                    style = MaterialTheme.typography.caption,
-                    textAlign = TextAlign.Center,
-                    color = NegativeText
-                )
-            }
+
         }
     )
+}
+
+@Composable
+private fun DeleteOperationOptionCheckBox(viewModel: AppViewModel) {
+    val deleteOperationOptionText =
+    if (deleteOperationPopUpUiState.operationToDelete is OperationUiModel)"Delete permanently?"
+    else "Delete associated Operation?"
+
+
+    if (deleteOperationPopUpUiState.operationToDelete is OperationUiModel &&
+        (deleteOperationPopUpUiState.operationToDelete as OperationUiModel).paymentId != null
+        || deleteOperationPopUpUiState.operationToDelete is PaymentUiModel &&
+        (deleteOperationPopUpUiState.operationToDelete as PaymentUiModel).operationId != null
+
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Checkbox(
+                modifier = Modifier
+                    .padding(end = RegularMarge)
+                    .border(
+                        width = ThinBorder,
+                        shape = RoundedCornerShape(LittleMarge),
+                        color = MaterialTheme.colors.onSecondary
+                    ),
+                checked = deleteOperationPopUpUiState.isDeletedPermanently,
+                onCheckedChange = {
+                    viewModel.dispatchAction(
+                        AppActions.DeleteOperationPopUpAction.UpdateIsDeletedPermanently(it)
+                    )
+                }
+            )
+            Text(
+                text = deleteOperationOptionText ,
+                modifier = Modifier.padding(vertical = RegularMarge),
+                style = MaterialTheme.typography.body2
+            )
+        }
+    }
 }
