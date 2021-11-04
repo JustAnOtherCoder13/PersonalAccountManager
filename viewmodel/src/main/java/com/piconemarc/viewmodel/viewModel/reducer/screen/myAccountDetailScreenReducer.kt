@@ -20,5 +20,9 @@ internal val myAccountDetailScreenReducer: Reducer<ViewModelInnerStates.MyAccoun
             is AppActions.MyAccountDetailScreenAction.UpdateSelectedAccount -> old.copy(
                 selectedAccount = action.account
             )
+            is AppActions.MyAccountDetailScreenAction.GetSelectedOperation -> old
+            is AppActions.MyAccountDetailScreenAction.UpdateOperationMessage -> old.copy(
+                operationDetailMessage = action.message
+            )
         }
     }

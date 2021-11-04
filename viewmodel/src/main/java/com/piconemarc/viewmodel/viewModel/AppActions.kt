@@ -37,6 +37,8 @@ object AppActions {
 
         data class UpdateSelectedAccount(val account: AccountUiModel) :
             MyAccountDetailScreenAction()
+        data class GetSelectedOperation(val operation: OperationUiModel) : MyAccountDetailScreenAction()
+        data class UpdateOperationMessage(val message : String) : MyAccountDetailScreenAction()
     }
 
     sealed class PaymentScreenAction : UiAction{

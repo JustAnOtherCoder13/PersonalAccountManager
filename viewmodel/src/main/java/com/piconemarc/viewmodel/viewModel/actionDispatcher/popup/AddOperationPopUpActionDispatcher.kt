@@ -75,7 +75,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
             }
             is AppActions.AddOperationPopUpAction.InitPopUp -> {
                 updateState(GlobalAction.UpdateAddOperationPopUpState(action))
-                scope.launchCatchingError(
+                scope.launchUnconfinedCatchingError(
                     block = {
                         getAllCategoriesInteractor.getAllCategories().collect {
                             updateState(
@@ -100,7 +100,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                 )
             }
             is AppActions.AddOperationPopUpAction.ExpandTransferOption -> {
-                scope.launchCatchingError(
+                scope.launchUnconfinedCatchingError(
                     block = {
                         updateState(
                             GlobalAction.UpdateAddOperationPopUpState(

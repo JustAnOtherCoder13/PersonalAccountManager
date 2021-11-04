@@ -6,10 +6,7 @@ import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
 import com.piconemarc.core.domain.interactor.operation.*
-import com.piconemarc.core.domain.interactor.payment.AddNewPaymentInteractor
-import com.piconemarc.core.domain.interactor.payment.AddPaymentAndOperationInteractor
-import com.piconemarc.core.domain.interactor.payment.DeletePaymentAndRelatedOperationInteractor
-import com.piconemarc.core.domain.interactor.payment.DeletePaymentInteractor
+import com.piconemarc.core.domain.interactor.payment.*
 import com.piconemarc.core.domain.interactor.transfer.AddNewTransferInteractor
 import com.piconemarc.core.domain.interactor.transfer.DeleteTransferInteractor
 import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
@@ -58,12 +55,18 @@ class ActionDispatcherModule {
     fun provideMyAccountDetailScreenActionDispatcher(
         globalStore: DefaultStore<GlobalVmState>,
         getAccountForIdInteractor: GetAccountForIdInteractor,
-        getAllOperationsForAccountIdInteractor: GetAllOperationsForAccountIdInteractor
+        getAllOperationsForAccountIdInteractor: GetAllOperationsForAccountIdInteractor,
+        getOperationForIdInteractor: GetOperationForIdInteractor,
+        getPaymentForIdInteractor: GetPaymentForIdInteractor,
+        getTransferForIdInteractor: GetTransferForIdInteractor
     ) : MyAccountDetailScreenActionDispatcher{
         return MyAccountDetailScreenActionDispatcher(
             store = globalStore,
             getAccountForIdInteractor = getAccountForIdInteractor,
             getAllOperationsForAccountIdInteractor = getAllOperationsForAccountIdInteractor,
+            getPaymentForIdInteractor = getPaymentForIdInteractor,
+            getTransferForIdInteractor = getTransferForIdInteractor,
+            getOperationForIdInteractor = getOperationForIdInteractor,
         )
     }
 

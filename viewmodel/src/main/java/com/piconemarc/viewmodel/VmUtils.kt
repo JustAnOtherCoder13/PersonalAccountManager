@@ -56,12 +56,12 @@ interface ActionDispatcher {
     }
 }
 
-fun CoroutineScope.launchCatchingError(
+fun CoroutineScope.launchUnconfinedCatchingError(
     block : suspend CoroutineScope.() -> Unit,
     doOnSuccess : ()-> Unit = {},
     doOnError : ()-> Unit = {},
 ) : Job {
-    return this.launch() {
+    return this.launch(Dispatchers.Unconfined) {
         try {
             block()
         }catch (e : SQLiteException){

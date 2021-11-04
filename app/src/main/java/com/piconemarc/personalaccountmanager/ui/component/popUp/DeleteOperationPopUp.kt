@@ -29,7 +29,6 @@ import com.piconemarc.personalaccountmanager.ui.theme.ThinBorder
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.deleteOperationPopUpUiState
-import java.util.*
 
 @Composable
 fun DeleteOperationPopUp(viewModel: AppViewModel) {

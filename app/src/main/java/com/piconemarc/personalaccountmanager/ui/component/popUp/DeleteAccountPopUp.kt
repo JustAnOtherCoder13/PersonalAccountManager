@@ -7,8 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.piconemarc.personalaccountmanager.*
 import com.piconemarc.personalaccountmanager.R
+import com.piconemarc.personalaccountmanager.currentLocale
+import com.piconemarc.personalaccountmanager.getCurrencySymbolForLocale
+import com.piconemarc.personalaccountmanager.toStringWithTwoDec
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseDeletePopUp
 import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
 import com.piconemarc.personalaccountmanager.ui.theme.deleteAccountPopUpHeight

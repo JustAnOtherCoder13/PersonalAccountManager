@@ -18,7 +18,9 @@ import com.piconemarc.personalaccountmanager.*
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseDeleteIconButton
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.PostItTitle
-import com.piconemarc.personalaccountmanager.ui.theme.*
+import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
+import com.piconemarc.personalaccountmanager.ui.theme.PastelYellowLight
+import com.piconemarc.personalaccountmanager.ui.theme.ThinBorder
 
 
 @Composable

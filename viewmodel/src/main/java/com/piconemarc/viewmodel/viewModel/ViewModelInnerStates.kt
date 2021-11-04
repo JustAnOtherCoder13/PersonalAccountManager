@@ -22,7 +22,8 @@ object ViewModelInnerStates {
     data class MyAccountDetailScreenVMState(
         val selectedAccount: AccountUiModel = AccountUiModel(),
         val accountMonthlyOperations: List<OperationUiModel> = listOf(),
-        val isVisible: Boolean = false
+        val isVisible: Boolean = false,
+        val operationDetailMessage : String = ""
     ) : VMState
 
     data class PaymentScreenVmState(
