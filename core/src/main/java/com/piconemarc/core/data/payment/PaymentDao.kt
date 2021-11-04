@@ -2,16 +2,12 @@ package com.piconemarc.core.data.payment
 
 import androidx.room.Dao
 import androidx.room.Delete
-import androidx.room.Insert
 import androidx.room.Query
 import com.piconemarc.core.domain.entityDTO.PaymentDTO
 import com.piconemarc.core.domain.utils.Constants.PAYMENT_TABLE
 
 @Dao
 interface PaymentDao {
-
-    @Insert
-    suspend fun addNewPayment(paymentDTO: PaymentDTO) : Long
 
     @Delete
     suspend fun deletePayment(paymentDTO: PaymentDTO)

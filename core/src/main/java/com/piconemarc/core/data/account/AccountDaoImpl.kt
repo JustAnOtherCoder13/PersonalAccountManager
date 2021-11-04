@@ -2,6 +2,7 @@ package com.piconemarc.core.data.account
 
 import com.piconemarc.core.data.PAMDatabase
 import com.piconemarc.core.domain.entityDTO.AccountDTO
+import com.piconemarc.core.domain.entityDTO.AccountWithRelatedPayments
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -11,6 +12,10 @@ class AccountDaoImpl @Inject constructor(pamDatabase: PAMDatabase) :AccountDao {
 
     override fun getAllAccountsAsFlow(): Flow<List<AccountDTO>> {
          return accountDao.getAllAccountsAsFlow()
+    }
+
+    override fun getAllAccountsWithRelatedPaymentAsFlow(): Flow<List<AccountWithRelatedPayments>> {
+        return accountDao.getAllAccountsWithRelatedPaymentAsFlow()
     }
 
     override suspend fun getAllAccounts(): List<AccountDTO> {
@@ -23,10 +28,6 @@ class AccountDaoImpl @Inject constructor(pamDatabase: PAMDatabase) :AccountDao {
 
     override suspend fun deleteAccount(accountDTO: AccountDTO) {
         accountDao.deleteAccount(accountDTO)
-    }
-
-    override suspend fun updateAccountBalance(accountId: Long, accountBalance: Double) {
-        accountDao.updateAccountBalance(accountId, accountBalance)
     }
 
     override suspend fun getAccountForId(id:Long) : AccountDTO{

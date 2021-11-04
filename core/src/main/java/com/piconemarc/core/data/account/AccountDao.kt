@@ -1,28 +1,29 @@
 package com.piconemarc.core.data.account
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import com.piconemarc.core.domain.entityDTO.AccountDTO
+import com.piconemarc.core.domain.entityDTO.AccountWithRelatedPayments
 import com.piconemarc.core.domain.utils.Constants.ACCOUNT_TABLE
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AccountDao {
 
-    //todo pass all with flow or better use shared flow and state flow
     @Query("SELECT*FROM $ACCOUNT_TABLE")
-    fun getAllAccountsAsFlow() : Flow<List<AccountDTO>>
+    fun getAllAccountsAsFlow(): Flow<List<AccountDTO>>
+
+    @Transaction
+    @Query("SELECT*FROM $ACCOUNT_TABLE")
+    fun getAllAccountsWithRelatedPaymentAsFlow(): Flow<List<AccountWithRelatedPayments>>
 
     @Query("SELECT*FROM $ACCOUNT_TABLE")
-    suspend fun getAllAccounts() : List<AccountDTO>
+    suspend fun getAllAccounts(): List<AccountDTO>
 
     @Query("SELECT*FROM $ACCOUNT_TABLE WHERE $ACCOUNT_TABLE.id = :id")
-    suspend fun getAccountForId(id:Long) : AccountDTO
+    suspend fun getAccountForId(id: Long): AccountDTO
 
     @Query("SELECT*FROM $ACCOUNT_TABLE WHERE $ACCOUNT_TABLE.id = :id")
-     fun getAccountForIdFlow(id:Long) : Flow<AccountDTO>
+    fun getAccountForIdFlow(id: Long): Flow<AccountDTO>
 
     @Insert
     suspend fun addNewAccount(accountDTO: AccountDTO)
@@ -30,6 +31,4 @@ interface AccountDao {
     @Delete
     suspend fun deleteAccount(accountDTO: AccountDTO)
 
-    @Query("UPDATE $ACCOUNT_TABLE SET accountBalance = :accountBalance WHERE id = :accountId")
-    suspend fun updateAccountBalance(accountId : Long, accountBalance : Double)
 }

@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
+import androidx.room.ForeignKey.SET_NULL
 import androidx.room.PrimaryKey
 import com.piconemarc.core.domain.utils.Constants.PAYMENT_TABLE
 import com.piconemarc.model.entity.PaymentUiModel
@@ -15,7 +16,7 @@ import java.util.*
         entity = OperationDTO::class,
         parentColumns = arrayOf("id"),
         childColumns = arrayOf("operationId"),
-        onDelete = CASCADE
+        onDelete = SET_NULL
     ),
     ForeignKey(
         entity = AccountDTO::class,
@@ -31,7 +32,8 @@ data class PaymentDTO(
     override val id : Long = 0,
     override val name : String = "",
     @ColumnInfo(index = true)
-    val operationId : Long = 0,
+    var operationId : Long? = null,
+    val operationAmount : Double = 0.0,
     @ColumnInfo(index = true)
     val accountId : Long = 0,
     val endDate: Date? = null
@@ -42,7 +44,8 @@ data class PaymentDTO(
             name = model.name,
             operationId = model.operationId,
             accountId = model.accountId,
-            endDate = model.endDate
+            endDate = model.endDate,
+            operationAmount = model.amount
         )
     }
     override fun toUiModel() : PaymentUiModel{
@@ -51,7 +54,8 @@ data class PaymentDTO(
             name = this.name,
             operationId = this.operationId,
             accountId = this.accountId,
-            endDate = this.endDate
+            endDate = this.endDate,
+            amount = this.operationAmount
         )
     }
 }

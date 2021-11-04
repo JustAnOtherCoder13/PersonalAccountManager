@@ -1,5 +1,7 @@
 package com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent
 
+import android.annotation.SuppressLint
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -7,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -15,57 +18,55 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.piconemarc.model.PAMIconButtons
+import com.piconemarc.model.entity.AccountUiModel
 import com.piconemarc.model.entity.OperationUiModel
+import com.piconemarc.personalaccountmanager.*
 import com.piconemarc.personalaccountmanager.R
-import com.piconemarc.personalaccountmanager.toStringWithTwoDec
+import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseDeleteIconButton
+import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseIconButton
+import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.PostItBackground
+import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.PostItTitle
 import com.piconemarc.personalaccountmanager.ui.theme.*
-import com.piconemarc.viewmodel.viewModel.AppActions
-import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber
+import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.myAccountDetailScreenUiState
 import java.text.DateFormatSymbols
 import java.util.*
 
 @Composable
-fun MyAccountBodyRecyclerView(viewModel: AppViewModel) {
+fun MyAccountBodyRecyclerView(
+    onDeleteAccountButtonClicked: (accountToDelete: AccountUiModel) -> Unit,
+    onAccountClicked: (selectedAccount: AccountUiModel) -> Unit
+) {
     LazyColumn(
         modifier = Modifier
             .padding(bottom = LittleMarge)
     ) {
         items(AppSubscriber.AppUiState.myAccountScreenUiState.allAccounts) { account ->
-            AccountPostIt(
+            MyAccountPostIt(
                 account = account,
-                onDeleteAccountButtonClicked = { accountToDelete ->
-                    viewModel.dispatchAction(
-                        AppActions.DeleteAccountAction.InitPopUp(accountUiToDelete = accountToDelete)
-                    )
-                },
-                onAccountClicked = { selectedAccount ->
-                    viewModel.dispatchAction(
-                        AppActions.MyAccountScreenAction.CloseScreen
-                    )
-                    viewModel.dispatchAction(
-                        AppActions.MyAccountDetailScreenAction.InitScreen(selectedAccount = selectedAccount)
-                    )
-                }
+                onDeleteAccountButtonClicked = onDeleteAccountButtonClicked,
+                onAccountClicked = onAccountClicked
             )
         }
     }
 }
 
 @Composable
-fun AccountDetailSheetRecyclerView(
+fun MyAccountDetailSheet(
     allOperations: List<OperationUiModel>,
     onDeleteItemButtonCLick: (operation: OperationUiModel) -> Unit,
-    accountRest: String,
-    accountBalance: String,
+    accountRest: Double,
+    accountBalance: Double,
     onOperationNameClick: (operation: OperationUiModel) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
 
         Box(modifier = Modifier.weight(1f)) {
-            AccountDetailTitleAndDivider()
+            MyAccountDetailSheetTitleAndDivider()
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -78,14 +79,14 @@ fun AccountDetailSheetRecyclerView(
                         .width(ThinBorder)
                         .offset(y = 30.dp)
                 )
-                OperationRecyclerView(
+                MyAccountDetailOperationRecyclerView(
                     accountMonthlyOperations = allOperations,
                     onDeleteItemButtonCLick = onDeleteItemButtonCLick,
                     onOperationNameClick = onOperationNameClick
                 )
             }
         }
-        AccountDetailFooter(
+        MyAccountDetailFooter(
             accountRest = accountRest,
             accountBalance = accountBalance
         )
@@ -93,7 +94,10 @@ fun AccountDetailSheetRecyclerView(
 }
 
 @Composable
-private fun AccountDetailFooter(accountRest: String, accountBalance: String) {
+private fun MyAccountDetailFooter(
+    accountRest: Double,
+    accountBalance: Double
+) {
     Row(
         Modifier
             .padding(horizontal = LittleMarge)
@@ -110,24 +114,40 @@ private fun AccountDetailFooter(accountRest: String, accountBalance: String) {
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
-            text = stringResource(R.string.restTitle) + accountRest,
-            style = MaterialTheme.typography.body1
-        )
-        Text(
-            text = stringResource(R.string.balanceTitle) + accountBalance,
-            style = MaterialTheme.typography.body1
-        )
+        Row {
+            Text(
+                text = stringResource(R.string.restTitle),
+                style = MaterialTheme.typography.body1,
+            )
+            Text(
+                text = " ${accountRest.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
+                style = MaterialTheme.typography.body1,
+                color = getBlackOrNegativeColor(amount = accountRest)
+            )
+        }
+        Row {
+            Text(
+                text = stringResource(R.string.balanceTitle),
+                style = MaterialTheme.typography.body1,
+            )
+            Text(
+                text = " ${accountBalance.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
+                style = MaterialTheme.typography.body1,
+                color = getBlackOrNegativeColor(amount = accountBalance)
+            )
+        }
     }
-
 }
 
 @Composable
-private fun OperationRecyclerView(
+private fun MyAccountDetailOperationRecyclerView(
     accountMonthlyOperations: List<OperationUiModel>,
     onDeleteItemButtonCLick: (operation: OperationUiModel) -> Unit,
     onOperationNameClick: (operation: OperationUiModel) -> Unit
 ) {
+    Box{
+
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -138,6 +158,24 @@ private fun OperationRecyclerView(
                 operation = operation,
                 onDeleteItemButtonCLick = onDeleteItemButtonCLick,
                 onOperationNameClick = onOperationNameClick
+            )
+        }
+    }
+        Card (modifier = Modifier
+            .wrapContentHeight()
+            .width(if (myAccountDetailScreenUiState.operationDetailMessage.trim().isEmpty())0.dp else 200.dp)
+            .align(Alignment.Center),
+            elevation = RegularMarge,
+            backgroundColor = White,
+            contentColor = Black,
+            shape = RoundedCornerShape(RegularMarge),
+            border = BorderStroke(width = ThinBorder,color = Black )
+        ){
+            Text(
+                text = myAccountDetailScreenUiState.operationDetailMessage,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.body1,
+                modifier = Modifier.padding(RegularMarge)
             )
         }
     }
@@ -157,33 +195,30 @@ private fun OperationItem(
             text = operation.name,
             modifier = Modifier
                 .padding(start = LittleMarge)
-                .weight(2f)
+                .weight(1.5f)
                 .clickable { onOperationNameClick(operation) },
             style = MaterialTheme.typography.body1
         )
         Text(
-            text = if (operation.paymentId != null) "P" else if (operation.transferId != null) "T" else "",
+            text = when {
+                operation.paymentId != null -> stringResource(R.string.myAccountDetailPaymentIndicator)
+                operation.transferId != null -> stringResource(R.string.myAccountDetailTransferIndicator)
+                else -> ""
+            },
             modifier = Modifier
                 .padding(end = LittleMarge)
                 .weight(0.2f),
             style = MaterialTheme.typography.caption
         )
         Text(
-            text = if (operation.amount > 0) "+${operation.amount.toStringWithTwoDec()}" else operation.amount.toStringWithTwoDec(),
+            text = getAddOrMinusFormattedValue(operation.amount),
             modifier = Modifier
                 .padding(start = LittleMarge)
                 .weight(1f),
             style = MaterialTheme.typography.body1,
-            color = if (operation.amount > 0) PositiveText else NegativeText
+            color = getPositiveOrNegativeColor(operation.amount)
         )
-        Box(modifier = Modifier.size(35.dp)) {
-            PAMIconButton(
-                onIconButtonClicked = { onDeleteItemButtonCLick(operation) },
-                iconButton = PAMIconButtons.Delete,
-                iconColor = MaterialTheme.colors.onSecondary,
-                backgroundColor = Color.Transparent
-            )
-        }
+        BaseDeleteIconButton(onDeleteItemButtonCLick, operation)
     }
     Divider(
         modifier = Modifier.fillMaxWidth(),
@@ -193,7 +228,7 @@ private fun OperationItem(
 }
 
 @Composable
-private fun AccountDetailTitleAndDivider() {
+private fun MyAccountDetailSheetTitleAndDivider() {
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
             modifier = Modifier
@@ -223,7 +258,7 @@ private fun AccountDetailTitleAndDivider() {
 }
 
 @Composable
-fun AccountDetailTitle(
+fun MyAccountDetailTitle(
     onBackIconClick: () -> Unit,
     accountName: String
 ) {
@@ -234,7 +269,7 @@ fun AccountDetailTitle(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            PAMIconButton(
+            BaseIconButton(
                 onIconButtonClicked = { onBackIconClick() },
                 iconButton = PAMIconButtons.Back,
                 iconColor = MaterialTheme.colors.primary,
@@ -250,9 +285,7 @@ fun AccountDetailTitle(
                     style = MaterialTheme.typography.h2
                 )
                 Text(
-                    text = DateFormatSymbols(Locale.FRENCH).months.get(
-                        Calendar.getInstance().time.month
-                    ),
+                    text = DateFormatSymbols(Locale.FRENCH).months[Calendar.getInstance().time.month],
                     style = MaterialTheme.typography.body1
                 )
             }
@@ -263,6 +296,79 @@ fun AccountDetailTitle(
                 .fillMaxWidth(),
             color = MaterialTheme.colors.onSecondary,
             thickness = ThinBorder
+        )
+    }
+}
+
+
+@SuppressLint("ModifierParameter")
+@Composable
+private fun MyAccountPostIt(
+    account: AccountUiModel,
+    onDeleteAccountButtonClicked: (accountUi: AccountUiModel) -> Unit,
+    onAccountClicked: (accountUi: AccountUiModel) -> Unit,
+    postItModifier: Modifier = Modifier
+        .size(width = AccountPostItWidth, height = AccountPostItHeight)
+        .padding(bottom = BigMarge),
+    accountBody: @Composable () -> Unit = {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = XlMarge, start = RegularMarge),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            MyAccountPostItValue(
+                valueTitle = stringResource(R.string.balanceTitle),
+                value = "${account.accountBalance.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
+                valueColor = getBlackOrNegativeColor(account.accountBalance)
+            )
+            MyAccountPostItValue(
+                valueTitle = stringResource(R.string.restTitle),
+                value = "${account.rest.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
+                valueColor = getBlackOrNegativeColor(account.rest)
+            )
+        }
+    }
+) {
+    Box(modifier = postItModifier
+        .clickable { onAccountClicked(account) }
+    ) {
+        PostItBackground(this)
+        Column(
+            modifier = Modifier
+                .wrapContentHeight()
+                .fillMaxWidth()
+        ) {
+            PostItTitle(
+                account = account.name,
+                onAccountButtonClicked = { onDeleteAccountButtonClicked(account) },
+                iconButton = PAMIconButtons.Delete
+            )
+            accountBody()
+        }
+    }
+}
+
+@Composable
+private fun MyAccountPostItValue(
+    valueTitle: String,
+    value: String,
+    valueColor : Color
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+    ) {
+        Text(
+            text = valueTitle,
+            style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.Bold)
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.body1,
+            modifier = Modifier.padding(start = LittleMarge),
+            color = valueColor
         )
     }
 }

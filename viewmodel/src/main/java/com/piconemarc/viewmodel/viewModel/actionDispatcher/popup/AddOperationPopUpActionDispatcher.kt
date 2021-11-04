@@ -1,20 +1,15 @@
 package com.piconemarc.viewmodel.viewModel.actionDispatcher.popup
 
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
-import com.piconemarc.core.domain.interactor.account.UpdateAccountBalanceInteractor
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
 import com.piconemarc.core.domain.interactor.operation.AddNewOperationInteractor
-import com.piconemarc.core.domain.interactor.operation.UpdateOperationPaymentIdInteractor
-import com.piconemarc.core.domain.interactor.operation.UpdateOperationTransferIdInteractor
 import com.piconemarc.core.domain.interactor.payment.AddNewPaymentInteractor
+import com.piconemarc.core.domain.interactor.payment.AddPaymentAndOperationInteractor
 import com.piconemarc.core.domain.interactor.transfer.AddNewTransferInteractor
 import com.piconemarc.model.PAMIconButtons
+import com.piconemarc.model.entity.OperationUiModel
 import com.piconemarc.model.entity.PaymentUiModel
-import com.piconemarc.model.entity.TransferUiModel
-import com.piconemarc.viewmodel.ActionDispatcher
-import com.piconemarc.viewmodel.DefaultStore
-import com.piconemarc.viewmodel.UiAction
-import com.piconemarc.viewmodel.launchCatchingError
+import com.piconemarc.viewmodel.*
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.addOperationPopUpUiState
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.myAccountDetailScreenUiState
@@ -32,11 +27,10 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
     private val getAllCategoriesInteractor: GetAllCategoriesInteractor,
     private val getAllAccountsInteractor: GetAllAccountsInteractor,
     private val addNewOperationInteractor: AddNewOperationInteractor,
-    private val updateAccountBalanceInteractor: UpdateAccountBalanceInteractor,
     private val addNewPaymentInteractor: AddNewPaymentInteractor,
-    private val updateOperationPaymentIdInteractor: UpdateOperationPaymentIdInteractor,
-    private val addNewTransferInteractor: AddNewTransferInteractor,
-    private val updateOperationTransferIdInteractor: UpdateOperationTransferIdInteractor
+    private val addPaymentAndOperationInteractor: AddPaymentAndOperationInteractor,
+    private val addNewTransferInteractor: AddNewTransferInteractor
+
 ) : ActionDispatcher {
 
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
@@ -79,8 +73,9 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
 
                 }
             }
-            is AppActions.AddOperationPopUpAction.InitPopUp ->
-                scope.launchCatchingError(
+            is AppActions.AddOperationPopUpAction.InitPopUp -> {
+                updateState(GlobalAction.UpdateAddOperationPopUpState(action))
+                scope.launchUnconfinedCatchingError(
                     block = {
                         getAllCategoriesInteractor.getAllCategories().collect {
                             updateState(
@@ -93,8 +88,19 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                         }
                     }
                 )
+                if (addOperationPopUpUiState.isOnPaymentScreen){
+                    this.dispatchAction(
+                        AppActions.AddOperationPopUpAction.ExpandRecurrentOption,
+                        scope
+                    )
+                }
+                this.dispatchAction(
+                    AppActions.AddOperationPopUpAction.SelectAddOrMinus(false),
+                    scope
+                )
+            }
             is AppActions.AddOperationPopUpAction.ExpandTransferOption -> {
-                scope.launchCatchingError(
+                scope.launchUnconfinedCatchingError(
                     block = {
                         updateState(
                             GlobalAction.UpdateAddOperationPopUpState(
@@ -109,123 +115,95 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                 )
             }
 
-            is AppActions.AddOperationPopUpAction.AddNewOperation -> {
-                var operationId: Long
-                var paymentId: Long
-                var beneficiaryOperationId: Long
-                var transferId: Long
-
+            is AppActions.AddOperationPopUpAction.AddNewOperation<*> -> {
                 //if no error on name and amount
                 if (!addOperationPopUpUiState.isOperationNameError
                     && !addOperationPopUpUiState.isOperationAmountError
                 ) {
-                    //Check selected icon ------------------------------------------------------------
-                    when (addOperationPopUpUiState.addPopUpOptionSelectedIcon) {
-                        is PAMIconButtons.Operation -> {
-                            //create operation and push it, update account balance
-                            scope.launchCatchingError(
-                                block = { addNewOperationInteractor.addNewOperation(action.operation) }
-                            )
-                            scope.launchCatchingError(
-                                block = {
-                                    updateAccountBalanceInteractor.updateAccountBalance(
-                                        myAccountDetailScreenUiState.selectedAccount.updateAccountBalance(
-                                            action.operation
-                                        )
-                                    )
-                                },
-                                doOnSuccess = { closePopUp() }
-                            )
-                        }
-                        is PAMIconButtons.Payment -> {
-                            scope.launchCatchingError(
-                                block = {
-                                    // create operation and push it
-                                    operationId =
-                                        addNewOperationInteractor.addNewOperation(action.operation)
-                                    updateAccountBalanceInteractor.updateAccountBalance(
-                                        myAccountDetailScreenUiState.selectedAccount.updateAccountBalance(
-                                            action.operation
-                                        )
-                                    )
-                                    //create payment and push it with related operation id
-                                    paymentId = addNewPaymentInteractor.addNewPayment(
-                                        PaymentUiModel(
-                                            name = action.operation.name + "Payment",
-                                            operationId = operationId,
-                                            accountId = myAccountDetailScreenUiState.selectedAccount.id,
-                                            endDate = try {
-                                                SimpleDateFormat("MMMM/yyyy", Locale.FRANCE).parse(
-                                                    addOperationPopUpUiState.enDateSelectedMonth
-                                                            + "/" + addOperationPopUpUiState.endDateSelectedYear,
-                                                )
-                                            } catch (e: ParseException) {
-                                                null
-                                            }
-                                        )
-                                    )
-                                    //update operation with paymentId and operationId
-                                    updateOperationPaymentIdInteractor.updateOperationPaymentId(
-                                        operationId,
-                                        paymentId
-                                    )
-                                },
-                                doOnSuccess = { closePopUp() }
-                            )
-                        }
-                        is PAMIconButtons.Transfer -> {
-                            if (!addOperationPopUpUiState.isBeneficiaryAccountError) {
-                                //if no error on beneficiary account
-                                // update operation with sender and beneficiary values
-                                val senderOperation = action.operation.copy(
-                                    amount = action.operation.senderAmount
+                    //if not on payment screen means that we are on account detail
+                    //so check selected icon and add required operation
+                    if (!addOperationPopUpUiState.isOnPaymentScreen) {
+                        action.operation as OperationUiModel
+                        when (addOperationPopUpUiState.addPopUpOptionSelectedIcon) {
+                            is PAMIconButtons.Operation -> {
+                                scope.launchOnIOCatchingError(
+                                    block = { addNewOperationInteractor.addOperation(action.operation) },
+                                    doOnSuccess = { closePopUp() }
                                 )
-                                val beneficiaryOperation = action.operation.copy(
-                                    accountId = addOperationPopUpUiState.beneficiaryAccount.id,
-                                    amount = action.operation.beneficiaryAmount
-                                )
-                                scope.launchCatchingError(
+                            }
+                            is PAMIconButtons.Payment -> {
+                                scope.launchOnIOCatchingError(
                                     block = {
-                                        //push sender and beneficiary operation, store id
-                                        operationId = addNewOperationInteractor.addNewOperation(
-                                            senderOperation
-                                        )
-                                        beneficiaryOperationId = addNewOperationInteractor.addNewOperation(
-                                                beneficiaryOperation
-                                            )
-                                        //update balance
-                                        updateAccountBalanceInteractor.updateAccountBalance(
-                                            myAccountDetailScreenUiState.selectedAccount.updateAccountBalance(
-                                                senderOperation
-                                            ),
-                                            addOperationPopUpUiState.beneficiaryAccount.updateAccountBalance(
-                                                beneficiaryOperation
-                                            )
-                                        )
-                                        //create transfer and push it ,store id
-                                        transferId = addNewTransferInteractor.addNewTransfer(
-                                                TransferUiModel(
-                                                    name = action.operation.name + "Transfer",
-                                                    senderOperationId = operationId,
-                                                    beneficiaryOperationId = beneficiaryOperationId
-                                                )
-                                            )
-                                        //update operations with transferId
-                                        updateOperationTransferIdInteractor.updateOperationTransferId(
-                                            transferId,
-                                            operationId,
-                                            beneficiaryOperationId
+                                        addPaymentAndOperationInteractor.addPaymentAndOperation(
+                                            operation = action.operation,
+                                            endDate = getFormattedEndDateOrNull()
                                         )
                                     },
                                     doOnSuccess = { closePopUp() }
                                 )
                             }
+                            is PAMIconButtons.Transfer -> {
+                                if (!addOperationPopUpUiState.isBeneficiaryAccountError) {
+                                    scope.launchOnIOCatchingError(
+                                        block = {
+                                            addNewTransferInteractor.addTransferOperation(
+                                                operation = action.operation,
+                                                beneficiaryAccountId = addOperationPopUpUiState.beneficiaryAccount.id
+                                            )
+                                        },
+                                        doOnSuccess = { closePopUp() }
+                                    )
+                                }
+                            }
+                            else -> { closePopUp() }
                         }
-                        else -> { closePopUp() }
+                    }
+                    // else we are on paymentScreen
+                    else {
+                        action.operation as PaymentUiModel
+                        //if payment start this month, add payment and related operation
+                        if (addOperationPopUpUiState.isPaymentStartThisMonth){
+                            //add payment and related operation
+                                scope.launchOnIOCatchingError(
+                                    block = {
+                                        addPaymentAndOperationInteractor.addPaymentAndOperation(
+                                            OperationUiModel(
+                                                accountId = action.operation.accountId ,
+                                                name = action.operation.name,
+                                                amount = action.operation.amount,
+                                                categoryId = addOperationPopUpUiState.selectedCategory.id ,
+                                                isAddOperation = addOperationPopUpUiState.isAddOperation,
+                                            ),
+                                            endDate = getFormattedEndDateOrNull()
+                                        )
+                                    },
+                                    doOnSuccess = {closePopUp()}
+                                )
+                        }
+                        //else only add payment
+                        else{
+                            scope.launchOnIOCatchingError(
+                                block = {
+                                    addNewPaymentInteractor.addNewPayment(
+                                        action.operation
+                                    )
+                                },
+                                doOnSuccess = {closePopUp()}
+                            )
+                        }
                     }
                 }
             }
         }
+    }
+
+    private fun getFormattedEndDateOrNull() = try {
+        SimpleDateFormat("MMMM/yyyy", Locale.FRANCE).parse(
+            addOperationPopUpUiState.enDateSelectedMonth
+                    + "/" + addOperationPopUpUiState.endDateSelectedYear,
+        )
+    } catch (e: ParseException) {
+        null
     }
 
     private fun closePopUp() {

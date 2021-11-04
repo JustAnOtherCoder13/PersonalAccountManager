@@ -29,4 +29,19 @@
     <string name="overdraftErrorMessage">If you don\'t fill overdraft, it will be set to 0.0</string>
     <string name="addAccountPopUpTitle">Add new Account</string>
     <string name="amount">Amount</string>
+    <string name="paymentPostItTotal">Total = </string>
+    <string name="myAccountDetailPaymentIndicator">P</string>
+    <string name="myAccountDetailTransferIndicator">T</string>
+    <string name="mainScreenFooterTitle">All Accounts</string>
+    <string name="addPopUpRecurenceErrorMessage">Please, choose end date or recurrence will be forever</string>
+    <string name="AddOperationPopUpBeneficiaryAccountErrorMessage">Please select Beneficiary account for transfer</string>
+    <string name="AddOperationPopUpOperationNameErrorMessage">Please, fill operation name</string>
+    <string name="AddOperationPopUpAmountErrorMessage">Please, fill an amount for this operation</string>
+    <string name="AddOperationPopUpAddPaymentOptionMessage">Does payment start this month?</string>
+    <string name="deleteAccountPopUpTitle">Delete Account</string>
+    <string name="deleteOperationPopUpTitle">Delete Operation</string>
+    <string name="deleteOperationPopUpTransferInformationMessage">This operation is a transfer, and will be deleted from</string>
+    <string name="deleteOperationPopUpDeleteOperationRelatedPaymentMessage">Delete permanently?</string>
+    <string name="deleteOperationPopUpDeletePaymentRelatedOperationMessage">Delete associated Operation?</string>
+    <string name="deletePaymentOperationTitle">DeletePayment</string>
 </resources>

@@ -4,7 +4,7 @@ import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.viewmodel.ActionDispatcher
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.UiAction
-import com.piconemarc.viewmodel.launchCatchingError
+import com.piconemarc.viewmodel.launchOnIOCatchingError
 import com.piconemarc.viewmodel.viewModel.AppActions.BaseAppScreenAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
@@ -21,12 +21,11 @@ class BaseScreenActionDispatcher @Inject constructor(
     private var getAllAccountsJob: Job? = null
 
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
-        updateState(GlobalAction.UpdateBaseAppScreenVmState(action))
         when (action) {
             is BaseAppScreenAction.InitScreen -> {
-                getAllAccountsJob = scope.launchCatchingError(
+                getAllAccountsJob = scope.launchOnIOCatchingError(
                     block = {
-                        getAllAccountsInteractor.getAllAccountsAsFlow().collect { allAccounts ->
+                        getAllAccountsInteractor.getAllAccountsAsFlow(scope).collect { allAccounts ->
                             updateState(
                                 GlobalAction.UpdateBaseAppScreenVmState(
                                     BaseAppScreenAction.UpdateFooterBalance(
@@ -48,6 +47,7 @@ class BaseScreenActionDispatcher @Inject constructor(
                     }
                 )
             }
+            else->updateState(GlobalAction.UpdateBaseAppScreenVmState(action))
         }
     }
 }

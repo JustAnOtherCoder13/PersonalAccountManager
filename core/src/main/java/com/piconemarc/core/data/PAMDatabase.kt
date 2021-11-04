@@ -13,6 +13,7 @@ import com.piconemarc.core.domain.entityDTO.*
 import com.piconemarc.core.domain.utils.Constants.ACCOUNT_TABLE
 import com.piconemarc.core.domain.utils.Constants.CATEGORY_TABLE
 import com.piconemarc.core.domain.utils.Constants.OPERATION_TABLE
+import com.piconemarc.core.domain.utils.Constants.PAYMENT_TABLE
 import com.piconemarc.core.domain.utils.DateTypeConverter
 
 @Database(
@@ -54,6 +55,7 @@ abstract class PAMDatabase : RoomDatabase() {
                 createAccounts(db)
                 createCategories(db)
                 createOperations(db)
+                createPayments(db)
             }
 
             private fun createCategories(db: SupportSQLiteDatabase){
@@ -91,9 +93,24 @@ abstract class PAMDatabase : RoomDatabase() {
                     contentValues.put("accountId", operation.accountId)
                     contentValues.put("categoryId",operation.categoryId)
                     contentValues.put("categoryId",operation.emitDate?.time)
+                    contentValues.put("paymentId",operation.paymentId)
 
 
                     db.insert(OPERATION_TABLE, OnConflictStrategy.IGNORE, contentValues)
+                }
+            }
+            private fun createPayments(db:SupportSQLiteDatabase){
+                val contentValues = ContentValues()
+
+                Generator.generatePayments().forEach{
+                    contentValues.put("id", it.id)
+                    contentValues.put("accountId", it.accountId)
+                    contentValues.put("operationId", it.operationId)
+                    contentValues.put("name", it.name)
+                    contentValues.put("operationAmount", it.operationAmount)
+
+
+                    db.insert(PAYMENT_TABLE, OnConflictStrategy.IGNORE, contentValues)
                 }
             }
 

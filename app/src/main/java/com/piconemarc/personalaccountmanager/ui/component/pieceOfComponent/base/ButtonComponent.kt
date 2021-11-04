@@ -1,4 +1,4 @@
-package com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent
+package com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -17,13 +17,13 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.piconemarc.model.PAMIconButtons
+import com.piconemarc.model.entity.BaseUiModel
 import com.piconemarc.personalaccountmanager.R
-import com.piconemarc.personalaccountmanager.ui.animation.PAMUiDataAnimations
 import com.piconemarc.personalaccountmanager.ui.animation.pAMAddPopUpAddOrMinusTransition
 import com.piconemarc.personalaccountmanager.ui.theme.*
 
 @Composable
-fun PAMCircleIcon(
+private fun BaseCircleIcon(
     iconButton: PAMIconButtons,
     iconColor: Color,
     backgroundColor: Color = Color.Transparent,
@@ -52,7 +52,7 @@ fun PAMCircleIcon(
 }
 
 @Composable
-fun PAMBaseButton(
+private fun BaseButton(
     text: String,
     onButtonClicked: () -> Unit
 ) {
@@ -74,7 +74,7 @@ fun PAMBaseButton(
 }
 
 @Composable
-fun PAMAcceptOrDismissButtons(
+fun AcceptOrDismissButtons(
     onAcceptButtonClicked: () -> Unit,
     onDismissButtonClicked: () -> Unit
 ) {
@@ -85,23 +85,21 @@ fun PAMAcceptOrDismissButtons(
             .padding(start = BigMarge, end = BigMarge, top = BigMarge),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        PAMBaseButton(text = stringResource(R.string.ok)) { onAcceptButtonClicked() }
-        PAMBaseButton(text = stringResource(R.string.cancel)) { onDismissButtonClicked() }
+        BaseButton(text = stringResource(R.string.ok)) { onAcceptButtonClicked() }
+        BaseButton(text = stringResource(R.string.cancel)) { onDismissButtonClicked() }
     }
 }
 
 @Composable
-fun PAMIconButton(
+fun BaseIconButton(
     onIconButtonClicked: (iconButton : PAMIconButtons) -> Unit,
     iconButton: PAMIconButtons,
     iconColor: Color = MaterialTheme.colors.onPrimary,
     backgroundColor: Color = MaterialTheme.colors.primaryVariant
 ) {
-    IconButton(
-        onClick = { onIconButtonClicked(iconButton) }
-    )
+    IconButton(onClick = { onIconButtonClicked(iconButton) })
     {
-        PAMCircleIcon(
+        BaseCircleIcon(
             iconButton = iconButton,
             iconColor = iconColor,
             backgroundColor = backgroundColor
@@ -111,7 +109,7 @@ fun PAMIconButton(
 }
 
 @Composable
-fun PAMAddButton(onAddButtonClicked: () -> Unit) {
+fun BrownBackgroundAddButton(onAddButtonClicked: () -> Unit) {
     Button(
         modifier = Modifier
             .border(
@@ -130,7 +128,7 @@ fun PAMAddButton(onAddButtonClicked: () -> Unit) {
         ),
         onClick = onAddButtonClicked
     ) {
-        PAMCircleIcon(
+        BaseCircleIcon(
             iconButton = PAMIconButtons.Add,
             iconColor = MaterialTheme.colors.onPrimary
         )
@@ -138,10 +136,10 @@ fun PAMAddButton(onAddButtonClicked: () -> Unit) {
 }
 
 @Composable
-fun PAMHomeButton(
+fun HomeButton(
     iconYOffset: Dp,
     onHomeButtonClicked: (iconButton : PAMIconButtons) -> Unit
-) = InterlayerIcon(
+) = BaseInterlayerIcon(
     backGroundColor = PastelGreen,
     iconButton = PAMIconButtons.Home,
     onInterlayerIconClicked = onHomeButtonClicked,
@@ -149,10 +147,10 @@ fun PAMHomeButton(
 )
 
 @Composable
-fun PAMPaymentButton(
+fun PaymentButton(
     iconYOffset: Dp,
     onPaymentButtonClicked: (iconButton : PAMIconButtons) -> Unit
-) = InterlayerIcon(
+) = BaseInterlayerIcon(
     backGroundColor = PastelBlue,
     iconButton = PAMIconButtons.Payment,
     onInterlayerIconClicked = onPaymentButtonClicked,
@@ -161,9 +159,9 @@ fun PAMPaymentButton(
 )
 
 @Composable
-fun PAMChartButton(
+fun ChartButton(
     onChartButtonClicked: (iconButton : PAMIconButtons) -> Unit
-) = InterlayerIcon(
+) = BaseInterlayerIcon(
     backGroundColor = PastelPurple,
     iconButton = PAMIconButtons.Chart,
     onInterlayerIconClicked = onChartButtonClicked,
@@ -171,7 +169,7 @@ fun PAMChartButton(
 )
 
 @Composable
-fun AddOrMinusSwitchButton(
+fun AddOperationPopUpAddOrMinusSwitchButton(
     onAddOrMinusClicked : (isAddClicked : Boolean)-> Unit,
     isAddOperation: Boolean,
     isEnable : Boolean
@@ -183,7 +181,7 @@ fun AddOrMinusSwitchButton(
             .padding(start = BigMarge, end = BigMarge, top = LittleMarge),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        PAMIconButton(
+        BaseIconButton(
             onIconButtonClicked = {
                 if (isEnable)
                 onAddOrMinusClicked(true)
@@ -192,7 +190,7 @@ fun AddOrMinusSwitchButton(
             iconColor = transition.addIconColor,
             backgroundColor = transition.addBackgroundColor
         )
-        PAMIconButton(
+        BaseIconButton(
             onIconButtonClicked = {
                 if (isEnable)
                 onAddOrMinusClicked(false)
@@ -205,18 +203,7 @@ fun AddOrMinusSwitchButton(
 }
 
 @Composable
-fun InterLayerIconsSelector(
-    topButton: @Composable () -> Unit,
-    middleButton: @Composable () -> Unit,
-    backgroundButton: @Composable () -> Unit
-) {
-    backgroundButton()
-    middleButton()
-    topButton()
-}
-
-@Composable
-fun InterlayerIcon(
+private fun BaseInterlayerIcon(
     backGroundColor: Color,
     iconButton: PAMIconButtons,
     onInterlayerIconClicked: (iconButton: PAMIconButtons) -> Unit,
@@ -237,7 +224,7 @@ fun InterlayerIcon(
             )
             .clickable { onInterlayerIconClicked(iconButton) },
     ) {
-        PAMCircleIcon(
+        BaseCircleIcon(
             iconButton = iconButton,
             iconColor = MaterialTheme.colors.onSecondary,
             yOffset = iconYOffset
@@ -246,96 +233,16 @@ fun InterlayerIcon(
 }
 
 @Composable
-fun InterlayerIconPanel(
-    transition: PAMUiDataAnimations.InterlayerAnimationData,
-    onInterlayerIconClicked: (iconButton: PAMIconButtons) -> Unit,
-    selectedInterlayerIconButton: PAMIconButtons
+fun <T: BaseUiModel>BaseDeleteIconButton(
+    onDeleteItemButtonCLick: (operation: T) -> Unit,
+    uiModel: T
 ) {
-    Box(
-        modifier = Modifier
-            .width(InterlayerIconPanelWidth)
-            .fillMaxHeight()
-    ) {
-        when (selectedInterlayerIconButton) {
-            is PAMIconButtons.Payment ->
-                PaymentInterlayerIconDisposition(
-                    onInterlayerIconClicked = onInterlayerIconClicked,
-                    transition = transition
-                )
-            is PAMIconButtons.Chart ->
-                ChartInterlayerIconDisposition(
-                    onInterlayerIconClicked = onInterlayerIconClicked,
-                    transition = transition
-                )
-            else -> HomeInterlayerIconDisposition(
-                onInterlayerIconClicked = onInterlayerIconClicked,
-                transition = transition
-            )
-        }
+    Box(modifier = Modifier.size(35.dp)) {
+        BaseIconButton(
+            onIconButtonClicked = { onDeleteItemButtonCLick(uiModel) },
+            iconButton = PAMIconButtons.Delete,
+            iconColor = MaterialTheme.colors.onSecondary,
+            backgroundColor = Color.Transparent
+        )
     }
 }
-
-
-@Composable
-fun HomeInterlayerIconDisposition(
-    onInterlayerIconClicked: (iconButton: PAMIconButtons) -> Unit,
-    transition: PAMUiDataAnimations.InterlayerAnimationData
-) {
-    InterLayerIconsSelector(
-        topButton = {
-            PAMHomeButton(
-                onHomeButtonClicked = onInterlayerIconClicked,
-                iconYOffset = transition.homeIconVerticalPosition
-            )
-        },
-        middleButton = {
-            PAMPaymentButton(
-                onPaymentButtonClicked = onInterlayerIconClicked,
-                iconYOffset = transition.paymentIconVerticalPosition
-            )
-        },
-        backgroundButton = { PAMChartButton(onChartButtonClicked = onInterlayerIconClicked) })
-}
-
-@Composable
-fun PaymentInterlayerIconDisposition(
-    onInterlayerIconClicked: (iconButton: PAMIconButtons) -> Unit,
-    transition: PAMUiDataAnimations.InterlayerAnimationData
-) {
-    InterLayerIconsSelector(
-        topButton = {
-            PAMPaymentButton(
-                onPaymentButtonClicked = onInterlayerIconClicked,
-                iconYOffset = transition.paymentIconVerticalPosition
-            )
-        },
-        middleButton = {
-            PAMHomeButton(
-                onHomeButtonClicked = onInterlayerIconClicked,
-                iconYOffset = transition.homeIconVerticalPosition
-            )
-        },
-        backgroundButton = { PAMChartButton(onChartButtonClicked = onInterlayerIconClicked) })
-}
-
-@Composable
-fun ChartInterlayerIconDisposition(
-    onInterlayerIconClicked: (iconButton: PAMIconButtons) -> Unit,
-    transition: PAMUiDataAnimations.InterlayerAnimationData
-) {
-    InterLayerIconsSelector(
-        topButton = { PAMChartButton(onChartButtonClicked = onInterlayerIconClicked) },
-        middleButton = {
-            PAMPaymentButton(
-                onPaymentButtonClicked = onInterlayerIconClicked,
-                iconYOffset = transition.paymentIconVerticalPosition
-            )
-        },
-        backgroundButton = {
-            PAMHomeButton(
-                onHomeButtonClicked = onInterlayerIconClicked,
-                iconYOffset = transition.homeIconVerticalPosition
-            )
-        })
-}
-

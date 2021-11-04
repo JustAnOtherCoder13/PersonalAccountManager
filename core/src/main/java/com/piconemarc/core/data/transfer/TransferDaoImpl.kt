@@ -8,17 +8,7 @@ class TransferDaoImpl @Inject constructor(pamDatabase: PAMDatabase) : TransferDa
 
     private val transferDao = pamDatabase.transferDao()
 
-    override suspend fun addNewTransferOperation(transferDTO: TransferDTO): Long {
-       return transferDao.addNewTransferOperation(transferDTO)
-    }
-
-    override suspend fun deleteTransferOperation(transferDTO: TransferDTO) {
-        transferDao.deleteTransferOperation(transferDTO)
-    }
-
     override suspend fun getTransferOperationForId(transferId: Long): TransferDTO {
         return transferDao.getTransferOperationForId(transferId)
     }
-
-
 }

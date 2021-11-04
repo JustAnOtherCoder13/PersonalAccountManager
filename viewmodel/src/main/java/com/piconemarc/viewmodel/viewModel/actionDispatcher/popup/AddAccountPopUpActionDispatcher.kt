@@ -5,7 +5,7 @@ import com.piconemarc.model.entity.AccountUiModel
 import com.piconemarc.viewmodel.ActionDispatcher
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.UiAction
-import com.piconemarc.viewmodel.launchCatchingError
+import com.piconemarc.viewmodel.launchOnIOCatchingError
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
@@ -18,11 +18,11 @@ class AddAccountPopUpActionDispatcher @Inject constructor(
     private val addNewAccountInteractor: AddNewAccountInteractor
 ) : ActionDispatcher {
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
-        updateState(GlobalAction.UpdateAddAccountPopUpState(action))
         when (action) {
             is AppActions.AddAccountPopUpAction.AddNewAccount -> {
+                updateState(GlobalAction.UpdateAddAccountPopUpState(action))
                 if (!AppSubscriber.AppUiState.addAccountPopUpUiState.isNameError)
-                    scope.launchCatchingError(
+                    scope.launchOnIOCatchingError(
                         block = {
                             addNewAccountInteractor.addNewAccount(
                                 AccountUiModel(
@@ -48,6 +48,7 @@ class AddAccountPopUpActionDispatcher @Inject constructor(
                         }
                     )
             }
+            else -> updateState(GlobalAction.UpdateAddAccountPopUpState(action))
         }
     }
 }

@@ -1,10 +1,11 @@
 package com.piconemarc.viewmodel.viewModel.actionDispatcher.screen
 
+import android.util.Log
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.viewmodel.ActionDispatcher
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.UiAction
-import com.piconemarc.viewmodel.launchCatchingError
+import com.piconemarc.viewmodel.launchOnIOCatchingError
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
@@ -18,9 +19,10 @@ class MyAccountScreenActionDispatcher @Inject constructor(
 ) : ActionDispatcher {
 
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
-        updateState(GlobalAction.UpdateMyAccountScreenState(action))
+
         when (action) {
             is AppActions.MyAccountScreenAction.InitScreen -> {
+                Log.i("TAG", "dispatchAction: $action")
                 updateState(
                     GlobalAction.UpdateBaseAppScreenVmState(
                         AppActions.BaseAppScreenAction.UpdateInterlayerTiTle(
@@ -28,9 +30,9 @@ class MyAccountScreenActionDispatcher @Inject constructor(
                         )
                     )
                 )
-                scope.launchCatchingError(
+                scope.launchOnIOCatchingError(
                     block = {
-                        getAllAccountsInteractor.getAllAccountsAsFlow().collect {
+                        getAllAccountsInteractor.getAllAccountsAsFlow(scope).collect {
                             updateState(
                                 GlobalAction.UpdateMyAccountScreenState(
                                     AppActions.MyAccountScreenAction.UpdateAccountList(it)
@@ -40,6 +42,7 @@ class MyAccountScreenActionDispatcher @Inject constructor(
                     }
                 )
             }
+            else -> updateState(GlobalAction.UpdateMyAccountScreenState(action))
         }
     }
 }
