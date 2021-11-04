@@ -74,6 +74,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                 }
             }
             is AppActions.AddOperationPopUpAction.InitPopUp -> {
+                updateState(GlobalAction.UpdateAddOperationPopUpState(action))
                 scope.launchCatchingError(
                     block = {
                         getAllCategoriesInteractor.getAllCategories().collect {
@@ -119,7 +120,8 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                 if (!addOperationPopUpUiState.isOperationNameError
                     && !addOperationPopUpUiState.isOperationAmountError
                 ) {
-                    //Check selected icon ------------------------------------------------------------
+                    //if not on payment screen means that we are on account detail
+                    //so check selected icon and add required operation
                     if (!addOperationPopUpUiState.isOnPaymentScreen) {
                         action.operation as OperationUiModel
                         when (addOperationPopUpUiState.addPopUpOptionSelectedIcon) {
@@ -134,14 +136,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                                     block = {
                                         addPaymentAndOperationInteractor.addPaymentAndOperation(
                                             operation = action.operation,
-                                            endDate = try {
-                                                SimpleDateFormat("MMMM/yyyy", Locale.FRANCE).parse(
-                                                    addOperationPopUpUiState.enDateSelectedMonth
-                                                            + "/" + addOperationPopUpUiState.endDateSelectedYear,
-                                                )
-                                            } catch (e: ParseException) {
-                                                null
-                                            }
+                                            endDate = getFormattedEndDateOrNull()
                                         )
                                     },
                                     doOnSuccess = { closePopUp() }
@@ -160,12 +155,13 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                                     )
                                 }
                             }
-                            else -> {
-                                closePopUp()
-                            }
+                            else -> { closePopUp() }
                         }
-                    } else {
+                    }
+                    // else we are on paymentScreen
+                    else {
                         action.operation as PaymentUiModel
+                        //if payment start this month, add payment and related operation
                         if (addOperationPopUpUiState.isPaymentStartThisMonth){
                             //add payment and related operation
                                 scope.launchOnIOCatchingError(
@@ -178,19 +174,13 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                                                 categoryId = addOperationPopUpUiState.selectedCategory.id ,
                                                 isAddOperation = addOperationPopUpUiState.isAddOperation,
                                             ),
-                                            endDate = try {
-                                                SimpleDateFormat("MMMM/yyyy", Locale.FRANCE).parse(
-                                                    addOperationPopUpUiState.enDateSelectedMonth
-                                                            + "/" + addOperationPopUpUiState.endDateSelectedYear,
-                                                )
-                                            } catch (e: ParseException) {
-                                                null
-                                            }
+                                            endDate = getFormattedEndDateOrNull()
                                         )
                                     },
                                     doOnSuccess = {closePopUp()}
                                 )
                         }
+                        //else only add payment
                         else{
                             scope.launchOnIOCatchingError(
                                 block = {
@@ -200,12 +190,20 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                                 },
                                 doOnSuccess = {closePopUp()}
                             )
-
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun getFormattedEndDateOrNull() = try {
+        SimpleDateFormat("MMMM/yyyy", Locale.FRANCE).parse(
+            addOperationPopUpUiState.enDateSelectedMonth
+                    + "/" + addOperationPopUpUiState.endDateSelectedYear,
+        )
+    } catch (e: ParseException) {
+        null
     }
 
     private fun closePopUp() {

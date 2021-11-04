@@ -22,6 +22,7 @@ class MyAccountScreenActionDispatcher @Inject constructor(
 
         when (action) {
             is AppActions.MyAccountScreenAction.InitScreen -> {
+                Log.i("TAG", "dispatchAction: $action")
                 updateState(
                     GlobalAction.UpdateBaseAppScreenVmState(
                         AppActions.BaseAppScreenAction.UpdateInterlayerTiTle(
@@ -40,7 +41,6 @@ class MyAccountScreenActionDispatcher @Inject constructor(
                         }
                     }
                 )
-
             }
             else -> updateState(GlobalAction.UpdateMyAccountScreenState(action))
         }

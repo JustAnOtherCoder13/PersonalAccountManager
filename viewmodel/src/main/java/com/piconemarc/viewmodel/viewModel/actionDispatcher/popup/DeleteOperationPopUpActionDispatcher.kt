@@ -47,14 +47,14 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
                         AppActions.DeleteOperationPopUpAction.UpdateOperationToDelete(action.operationToDelete)
                     )
                 )
+                //if operation to delete is not a payment
                 if (action.operationToDelete is OperationUiModel)
                 //if operation have transfer id, get related account
-                //to inform user that operation will deleted on distant account
+                //to inform user that operation will be deleted on distant account
                 if (action.operationToDelete.transferId != null)
                     scope.launchOnIOCatchingError(
                         block = {
-                            transfer =
-                                getTransferForIdInteractor.getTransferForId(action.operationToDelete.transferId!!)
+                            transfer = getTransferForIdInteractor.getTransferForId(action.operationToDelete.transferId!!)
                             transferRelatedOperation = getOperationForIdInteractor.getOperationForId(
                                 //if operation id is equal to senderOperationId
                                 // that means that distant operation is beneficiary one, else is sender one
@@ -80,7 +80,6 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
 
                 when (action.operationToDelete){
                     is OperationUiModel ->{
-
                         if (action.operationToDelete.paymentId != null) {
                             // if payment id exist and user want to delete operation and payment
                             if (deleteOperationPopUpUiState.isRelatedOperationDeleted) {
@@ -110,7 +109,6 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
                                 },
                                 doOnSuccess = { closePopUp() }
                             )
-
                         } else {
                             //else delete operation
                             scope.launchOnIOCatchingError(
@@ -136,7 +134,6 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
                                     deletePaymentInteractor.deletePayment(action.operationToDelete)
                                 },
                                 doOnSuccess = { closePopUp() }
-
                             )
                         }
                     }
@@ -144,7 +141,6 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
             }
         }
     }
-
 
     private fun closePopUp() {
         updateState(

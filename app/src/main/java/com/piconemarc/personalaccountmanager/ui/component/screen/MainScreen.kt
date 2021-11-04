@@ -39,8 +39,6 @@ fun PAMMainScreen(
                     //todo pass with navigator
                     when (baseAppScreenUiState.selectedInterlayerButton) {
                         is PAMIconButtons.Payment -> {
-                            //viewModel.dispatchAction(AppActions.MyAccountDetailScreenAction.CloseScreen)
-                            //viewModel.dispatchAction(AppActions.MyAccountScreenAction.CloseScreen)
                             viewModel.dispatchAction(AppActions.PaymentScreenAction.InitScreen)
                             PaymentScreen(viewModel = viewModel)
                         }
@@ -49,7 +47,6 @@ fun PAMMainScreen(
                         else -> {
                             MyAccountsScreen(viewModel = viewModel)
                             viewModel.dispatchAction(AppActions.PaymentScreenAction.CloseScreen)
-                            viewModel.dispatchAction(AppActions.MyAccountScreenAction.InitScreen)
                         }
                     }
                 }

@@ -18,9 +18,9 @@ class AddAccountPopUpActionDispatcher @Inject constructor(
     private val addNewAccountInteractor: AddNewAccountInteractor
 ) : ActionDispatcher {
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
-        updateState(GlobalAction.UpdateAddAccountPopUpState(action))
         when (action) {
             is AppActions.AddAccountPopUpAction.AddNewAccount -> {
+                updateState(GlobalAction.UpdateAddAccountPopUpState(action))
                 if (!AppSubscriber.AppUiState.addAccountPopUpUiState.isNameError)
                     scope.launchOnIOCatchingError(
                         block = {
@@ -48,6 +48,7 @@ class AddAccountPopUpActionDispatcher @Inject constructor(
                         }
                     )
             }
+            else -> updateState(GlobalAction.UpdateAddAccountPopUpState(action))
         }
     }
 }

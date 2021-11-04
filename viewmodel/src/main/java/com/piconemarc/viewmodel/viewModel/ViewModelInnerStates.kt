@@ -10,7 +10,6 @@ object ViewModelInnerStates {
         val selectedInterlayerButton: PAMIconButtons = PAMIconButtons.Home,
         val interLayerTitle: Int = com.piconemarc.model.R.string.myAccountsInterLayerTitle,
         val allAccountUis: List<AccountUiModel> = listOf(),
-        val footerTitle: String = "All Accounts",
         val footerBalance: Double = 0.0,
         val footerRest: Double = 0.0
     ) : VMState
@@ -23,7 +22,6 @@ object ViewModelInnerStates {
     data class MyAccountDetailScreenVMState(
         val selectedAccount: AccountUiModel = AccountUiModel(),
         val accountMonthlyOperations: List<OperationUiModel> = listOf(),
-        val actualMonth: String = "",
         val isVisible: Boolean = false
     ) : VMState
 
@@ -69,7 +67,7 @@ object ViewModelInnerStates {
 
     data class DeleteAccountPopUpVMState(
         val isPopUpExpanded: Boolean = false,
-        val accountUiToDelete: AccountUiModel = AccountUiModel()
+        val accountToDelete: AccountUiModel = AccountUiModel()
     ) : VMState
 
     data class AddAccountPopUpVMState(

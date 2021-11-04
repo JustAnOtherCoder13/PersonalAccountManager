@@ -20,7 +20,6 @@ object AppActions {
             BaseAppScreenAction()
 
         data class UpdateFooterRest(val allAccountUis: List<AccountUiModel>) : BaseAppScreenAction()
-        data class UpdateFooterTitle(val footerTitle: String) : BaseAppScreenAction()
     }
 
     sealed class MyAccountScreenAction : UiAction {
@@ -107,7 +106,6 @@ object AppActions {
             val accountBalance: String,
             val accountOverdraft: String
         ) : AddAccountPopUpAction()
-
         data class FillAccountName(val accountName: String) : AddAccountPopUpAction()
         data class FillAccountBalance(val accountBalance: String) : AddAccountPopUpAction()
         data class FillAccountOverdraft(val accountOverdraft: String) : AddAccountPopUpAction()

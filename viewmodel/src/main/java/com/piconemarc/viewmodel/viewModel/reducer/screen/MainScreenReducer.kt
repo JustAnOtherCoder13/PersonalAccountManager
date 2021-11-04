@@ -28,7 +28,6 @@ internal val appBaseScreenReducer: Reducer<ViewModelInnerStates.BaseAppScreenVmS
             action.allAccountUis.map { it.rest }.forEach { allAccountRest += it }
             old.copy(footerRest = allAccountRest)
         }
-        is AppActions.BaseAppScreenAction.UpdateFooterTitle -> old.copy(footerTitle = action.footerTitle)
         is AppActions.BaseAppScreenAction.UpdateInterlayerTiTle -> old.copy(interLayerTitle = action.interlayerTitle)
         is AppActions.BaseAppScreenAction.CloseApp -> old
 

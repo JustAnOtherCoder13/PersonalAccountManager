@@ -16,7 +16,6 @@ class DeleteAccountPopUpActionDispatcher @Inject constructor(
     private val deleteAccountInteractor: DeleteAccountInteractor
 ) : ActionDispatcher {
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
-
         updateState(GlobalAction.UpdateDeleteAccountPopUpState(action))
         when (action) {
             is AppActions.DeleteAccountAction.InitPopUp -> {

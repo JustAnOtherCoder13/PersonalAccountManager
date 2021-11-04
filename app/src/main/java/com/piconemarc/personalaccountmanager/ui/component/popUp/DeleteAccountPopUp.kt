@@ -15,7 +15,6 @@ import com.piconemarc.personalaccountmanager.ui.theme.deleteAccountPopUpHeight
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.deleteAccountUiState
-import java.util.*
 
 @Composable
 fun DeleteAccountPopUp(
@@ -24,7 +23,7 @@ fun DeleteAccountPopUp(
     BaseDeletePopUp(
         deletePopUpTitle = stringResource(R.string.deleteAccountPopUpTitle),
         onAcceptButtonClicked = { viewModel.dispatchAction(
-            AppActions.DeleteAccountAction.DeleteAccount(deleteAccountUiState.accountUiToDelete)
+            AppActions.DeleteAccountAction.DeleteAccount(deleteAccountUiState.accountToDelete)
         ) },
         onDismiss = { viewModel.dispatchAction(
             AppActions.DeleteAccountAction.ClosePopUp
@@ -39,12 +38,12 @@ fun DeleteAccountPopUp(
                 .height(deleteAccountPopUpHeight)
         ) {
             Text(
-                text = deleteAccountUiState.accountUiToDelete.name,
+                text = deleteAccountUiState.accountToDelete.name,
                 style = MaterialTheme.typography.h2,
                 modifier = Modifier.padding(vertical = LittleMarge)
             )
             Text(
-                text = "${deleteAccountUiState.accountUiToDelete.accountBalance.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
+                text = "${deleteAccountUiState.accountToDelete.accountBalance.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
                 style = MaterialTheme.typography.body1,
                 modifier = Modifier.padding(vertical = LittleMarge),
             )

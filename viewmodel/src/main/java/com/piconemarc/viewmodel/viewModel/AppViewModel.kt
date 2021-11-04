@@ -1,6 +1,5 @@
 package com.piconemarc.viewmodel.viewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.piconemarc.viewmodel.DefaultStore
@@ -50,6 +49,7 @@ class AppViewModel @Inject constructor(
         when (action) {
             //launch job for each screen when action for this screen is dispatched, cancel job on close
             is AppActions.BaseAppScreenAction -> {
+                // subscribe to store on init app and remove subscriber when close app
                 store.add(subscriber)
                 baseAppScreenJob = viewModelScope.launch {
                     baseScreenActionDispatcher.dispatchAction(action, this)
@@ -61,36 +61,35 @@ class AppViewModel @Inject constructor(
             }
 
             is AppActions.MyAccountScreenAction -> {
+                if (action is AppActions.MyAccountScreenAction.CloseScreen) myAccountScreenJob?.cancel()
+
                 myAccountScreenJob = viewModelScope.launch {
                     myAccountScreenActionDispatcher.dispatchAction(action, this)
                 }
-                if (action is AppActions.MyAccountScreenAction.CloseScreen) myAccountScreenJob?.cancel()
+
             }
 
             is AppActions.MyAccountDetailScreenAction -> {
-                store.dispatch(GlobalAction.UpdateMyAccountDetailScreenState(action))
                 myAccountDetailScreenJob = viewModelScope.launch {
                     myAccountDetailScreenActionDispatcher.dispatchAction(action, this)
-
-                    if (action is AppActions.MyAccountDetailScreenAction.CloseScreen) {
-                        store.dispatch(
-                            GlobalAction.UpdateMyAccountScreenState(
-                                AppActions.MyAccountScreenAction.InitScreen
-                            ))
-                        myAccountDetailScreenJob?.cancel()
-                    }
+                }
+                if (action is AppActions.MyAccountDetailScreenAction.CloseScreen) {
+                    //todo pass with navigator
+                    store.dispatch(
+                        GlobalAction.UpdateMyAccountScreenState(
+                            AppActions.MyAccountScreenAction.InitScreen
+                        ))
+                    myAccountDetailScreenJob?.cancel()
                 }
             }
 
             is AppActions.PaymentScreenAction -> {
-
                 paymentScreenJob = viewModelScope.launch {
                     paymentScreenActionDispatcher.dispatchAction(action, this)
                 }
 
                 if (action is AppActions.PaymentScreenAction.CloseScreen)
                     paymentScreenJob?.cancel()
-
             }
 
             is AppActions.AddOperationPopUpAction -> {

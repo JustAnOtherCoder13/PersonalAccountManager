@@ -1,5 +1,6 @@
 package com.piconemarc.viewmodel.viewModel.actionDispatcher.screen
 
+import android.util.Log
 import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
 import com.piconemarc.core.domain.interactor.operation.GetAllOperationsForAccountIdInteractor
 import com.piconemarc.viewmodel.ActionDispatcher
@@ -23,6 +24,7 @@ class MyAccountDetailScreenActionDispatcher @Inject constructor(
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
         when (action) {
             is AppActions.MyAccountDetailScreenAction.InitScreen -> {
+                updateState(GlobalAction.UpdateMyAccountDetailScreenState(action))
                 updateState(
                     GlobalAction.UpdateBaseAppScreenVmState(
                         AppActions.BaseAppScreenAction.UpdateInterlayerTiTle(com.piconemarc.model.R.string.detail)
