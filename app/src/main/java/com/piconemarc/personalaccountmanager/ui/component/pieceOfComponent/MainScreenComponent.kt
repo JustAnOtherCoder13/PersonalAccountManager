@@ -16,6 +16,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.personalaccountmanager.R
+import com.piconemarc.personalaccountmanager.currentLocale
+import com.piconemarc.personalaccountmanager.getCurrencySymbolForLocale
 import com.piconemarc.personalaccountmanager.ui.animation.PAMUiDataAnimations
 import com.piconemarc.personalaccountmanager.ui.animation.pAMInterlayerAnimation
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.ChartButton
@@ -92,8 +94,8 @@ fun MainScreenBody(
 @Composable
 fun MainScreenFooter(
     mainScreenFooterTitle: String,
-    footerAccountBalance: String,
-    footerAccountRest: String
+    footerAccountBalance: Pair<String,Color>,
+    footerAccountRest: Pair<String,Color>
 ) {
     Column(
         modifier = Modifier
@@ -139,8 +141,8 @@ private fun MainScreenFooterTitle(mainScreenFooterTitle: String) {
 
 @Composable
 private fun MainScreenFooterInformation(
-    footerAccountRest: String,
-    footerAccountBalance: String
+    footerAccountRest: Pair<String,Color>,
+    footerAccountBalance: Pair<String,Color>
 ) {
     Row(
         modifier = Modifier
@@ -157,14 +159,29 @@ private fun MainScreenFooterInformation(
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
-            text = stringResource(R.string.restTitle) + footerAccountRest,
-            style = MaterialTheme.typography.body1
-        )
-        Text(
-            text = stringResource(R.string.balanceTitle) + footerAccountBalance,
-            style = MaterialTheme.typography.body1
-        )
+        Row {
+            Text(
+                text = stringResource(R.string.restTitle),
+                style = MaterialTheme.typography.body1,
+            )
+            Text(
+                text = " ${footerAccountRest.first} ${getCurrencySymbolForLocale(currentLocale)}",
+                style = MaterialTheme.typography.body1,
+                color = footerAccountRest.second
+            )
+        }
+
+        Row {
+            Text(
+                text = stringResource(R.string.balanceTitle),
+                style = MaterialTheme.typography.body1,
+            )
+            Text(
+                text = " ${footerAccountBalance.first} ${getCurrencySymbolForLocale(currentLocale)}",
+                style = MaterialTheme.typography.body1,
+                color = footerAccountBalance.second
+            )
+        }
     }
 }
 

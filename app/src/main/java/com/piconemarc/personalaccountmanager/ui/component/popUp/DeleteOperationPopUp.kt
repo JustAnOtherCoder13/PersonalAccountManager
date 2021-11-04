@@ -18,6 +18,9 @@ import androidx.compose.ui.text.style.TextAlign
 import com.piconemarc.model.entity.OperationUiModel
 import com.piconemarc.model.entity.PaymentUiModel
 import com.piconemarc.personalaccountmanager.R
+import com.piconemarc.personalaccountmanager.currentLocale
+import com.piconemarc.personalaccountmanager.getCurrencySymbolForLocale
+import com.piconemarc.personalaccountmanager.toStringWithTwoDec
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseDeletePopUp
 import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
 import com.piconemarc.personalaccountmanager.ui.theme.NegativeText
@@ -58,7 +61,7 @@ fun DeleteOperationPopUp(viewModel: AppViewModel) {
                 )
                 Text(
                     modifier = Modifier.padding(vertical = LittleMarge),
-                    text = deleteOperationPopUpUiState.operationToDelete.amount.toString() + Currency.getInstance(Locale.FRANCE),
+                    text = "${deleteOperationPopUpUiState.operationToDelete.amount.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
                     style = MaterialTheme.typography.body1
                 )
                 when (deleteOperationPopUpUiState.operationToDelete) {
@@ -105,7 +108,6 @@ private fun DeleteOperationOptionCheckBox(
         (deleteOperationPopUpUiState.operationToDelete as OperationUiModel).paymentId != null
         || deleteOperationPopUpUiState.operationToDelete is PaymentUiModel &&
         (deleteOperationPopUpUiState.operationToDelete as PaymentUiModel).operationId != null
-
     ) {
         OptionCheckBox(
             onCheckedChange = onCheckedChange,

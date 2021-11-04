@@ -93,6 +93,10 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                         scope
                     )
                 }
+                this.dispatchAction(
+                    AppActions.AddOperationPopUpAction.SelectAddOrMinus(false),
+                    scope
+                )
             }
             is AppActions.AddOperationPopUpAction.ExpandTransferOption -> {
                 scope.launchCatchingError(
@@ -186,7 +190,6 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                                     },
                                     doOnSuccess = {closePopUp()}
                                 )
-
                         }
                         else{
                             scope.launchOnIOCatchingError(

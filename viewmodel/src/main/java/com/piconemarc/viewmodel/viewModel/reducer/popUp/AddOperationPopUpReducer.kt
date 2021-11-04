@@ -21,7 +21,6 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
                     addPopUpTitle = if (!action.isOnPaymentScreen)Constants.OPERATION_MODEL else Constants.PAYMENT_MODEL,
                     operationName = "",
                     operationAmount = "",
-                    isAddOperation = false,
                     addPopUpOptionSelectedIcon = PAMIconButtons.Operation,
                     isPaymentExpanded = action.isOnPaymentScreen,
                     isPaymentStartThisMonth = true,
@@ -114,7 +113,7 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
             )
             is AppActions.AddOperationPopUpAction.SelectAddOrMinus -> old.copy(
                 isAddOperation = action.isAddOperation,
-                operationAmount =if (!action.isAddOperation) "-"+addOperationPopUpUiState.operationAmount else addOperationPopUpUiState.operationAmount
+                operationAmount = getFormattedAmount(action.isAddOperation,addOperationPopUpUiState.operationAmount)
             )
             is AppActions.AddOperationPopUpAction.AddNewOperation<*> -> old.copy(
                 isOperationNameError = action.operation.name.trim().isEmpty(),
@@ -124,3 +123,8 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
             )
         }
     }
+
+private fun getFormattedAmount(isAddOperation : Boolean, amount : String) =
+    if (!isAddOperation) amount.prependIndent("-") else amount.drop(
+        1
+    )

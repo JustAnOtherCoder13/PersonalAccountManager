@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.piconemarc.personalaccountmanager.*
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseDeletePopUp
 import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
@@ -43,9 +44,9 @@ fun DeleteAccountPopUp(
                 modifier = Modifier.padding(vertical = LittleMarge)
             )
             Text(
-                text = deleteAccountUiState.accountUiToDelete.accountBalance.toString() +Currency.getInstance(Locale.FRANCE),
+                text = "${deleteAccountUiState.accountUiToDelete.accountBalance.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
                 style = MaterialTheme.typography.body1,
-                modifier = Modifier.padding(vertical = LittleMarge)
+                modifier = Modifier.padding(vertical = LittleMarge),
             )
         }
     }

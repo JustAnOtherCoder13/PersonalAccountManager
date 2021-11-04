@@ -10,9 +10,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.AccountWithRelatedPaymentUiModel
 import com.piconemarc.model.entity.PaymentUiModel
+import com.piconemarc.personalaccountmanager.*
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseDeleteIconButton
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.PostItTitle
@@ -54,10 +56,18 @@ fun PaymentPostItFooter(accountWithRelatedPayments: AccountWithRelatedPaymentUiM
         var totalAmount = 0.0
         accountWithRelatedPayments.relatedPayment.map { payment -> payment.amount }
             .forEach { paymentAmount -> totalAmount += paymentAmount }
-        Text(
-            text = "${stringResource(R.string.paymentPostItTotal)} $totalAmount",
-            style = MaterialTheme.typography.body1
-        )
+        Row(modifier = Modifier.padding(start = LittleMarge, top = LittleMarge,bottom = LittleMarge)) {
+            Text(
+                text = stringResource(R.string.paymentPostItTotal),
+                style = MaterialTheme.typography.body1,
+            )
+            Text(
+                text = " ${totalAmount.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
+                style = MaterialTheme.typography.body1,
+                color = getBlackOrNegativeColor(amount = totalAmount)
+            )
+        }
+
     }
 }
 
@@ -77,13 +87,15 @@ fun RelatedPaymentItem(
         Text(
             text = relatedPayment.name,
             modifier = Modifier.weight(1.5f),
-            style = MaterialTheme.typography.body1
+            style = MaterialTheme.typography.body1,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
         Text(
-            text = relatedPayment.amount.toString(),
+            text =" ${relatedPayment.amount.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
             modifier = Modifier.weight(1f),
             style = MaterialTheme.typography.body1,
-            color = if (relatedPayment.amount < 0) NegativeText else PositiveText
+            color = getPositiveOrNegativeColor(relatedPayment.amount)
         )
         BaseDeleteIconButton(
             onDeleteItemButtonCLick = { paymentToDelete ->

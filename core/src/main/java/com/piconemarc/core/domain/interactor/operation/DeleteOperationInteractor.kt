@@ -6,7 +6,6 @@ import com.piconemarc.model.entity.OperationUiModel
 import javax.inject.Inject
 
 class DeleteOperationInteractor @Inject constructor(private val operationRepository: OperationRepository) {
-
     suspend fun deleteOperation(operation: OperationUiModel) {
         operationRepository.deleteOperation(OperationDTO().fromUiModel(operation))
     }

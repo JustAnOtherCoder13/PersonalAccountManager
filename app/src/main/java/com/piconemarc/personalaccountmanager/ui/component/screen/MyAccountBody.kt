@@ -85,8 +85,8 @@ fun MyAccountDetailBody(
                         AppActions.DeleteOperationPopUpAction.InitPopUp(operationToDelete)
                     )
                 },
-                accountBalance = myAccountDetailScreenUiState.selectedAccount.accountBalance.toStringWithTwoDec(),
-                accountRest = myAccountDetailScreenUiState.selectedAccount.rest.toStringWithTwoDec(),
+                accountBalance = myAccountDetailScreenUiState.selectedAccount.accountBalance,
+                accountRest = myAccountDetailScreenUiState.selectedAccount.rest,
                 onOperationNameClick = {
                     //todo pop up detail if transfer or payment
                     Log.i(

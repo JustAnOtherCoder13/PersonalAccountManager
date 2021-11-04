@@ -41,10 +41,10 @@ val AddPopUpSelectorSize = 50.dp
 
 val sheetHoleColumnWidth = 30.dp
 val sheetHoleSize = 24.dp
-const val accountDetailOperationNameWeight = 1.8f
-const val accountDetailOperationAmountWeight = 1.2f
+const val accountDetailOperationNameWeight = 1.7f
+const val accountDetailOperationAmountWeight = 1.4f
 
-val paymentPostItInitialHeight = 100.dp
+val paymentPostItInitialHeight = 110.dp
 const val paymentPostItItemHeight = 36
 val paymentPostItWidth = 250.dp
 

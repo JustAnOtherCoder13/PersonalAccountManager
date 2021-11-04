@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.personalaccountmanager.R
+import com.piconemarc.personalaccountmanager.getBlackOrNegativeColor
 import com.piconemarc.personalaccountmanager.toStringWithTwoDec
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MainScreenBody
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MainScreenFooter
@@ -56,9 +57,11 @@ fun PAMMainScreen(
         },
         footer = {
             MainScreenFooter(
-                footerAccountBalance = baseAppScreenUiState.footerBalance.toStringWithTwoDec(),
+                footerAccountBalance = Pair(baseAppScreenUiState.footerBalance.toStringWithTwoDec(),
+                    getBlackOrNegativeColor(amount = baseAppScreenUiState.footerBalance)),
                 mainScreenFooterTitle = stringResource(R.string.mainScreenFooterTitle),
-                footerAccountRest = baseAppScreenUiState.footerRest.toStringWithTwoDec()
+                footerAccountRest = Pair(baseAppScreenUiState.footerRest.toStringWithTwoDec(),
+                    getBlackOrNegativeColor(amount = baseAppScreenUiState.footerRest))
             )
         }
     )

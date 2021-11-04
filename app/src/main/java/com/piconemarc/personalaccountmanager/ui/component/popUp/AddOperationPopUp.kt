@@ -58,7 +58,6 @@ fun AddOperationPopUp(
                     }
                 )
             )
-
         },
         onDismiss = { viewModel.dispatchAction(AppActions.AddOperationPopUpAction.ClosePopUp) },
         isExpanded = addOperationPopUpUiState.isPopUpExpanded,

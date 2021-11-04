@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.AccountUiModel
 import com.piconemarc.model.entity.OperationUiModel
+import com.piconemarc.personalaccountmanager.*
 import com.piconemarc.personalaccountmanager.R
-import com.piconemarc.personalaccountmanager.toStringWithTwoDec
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseDeleteIconButton
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseIconButton
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.PostItBackground
@@ -55,8 +55,8 @@ fun MyAccountBodyRecyclerView(
 fun MyAccountDetailSheet(
     allOperations: List<OperationUiModel>,
     onDeleteItemButtonCLick: (operation: OperationUiModel) -> Unit,
-    accountRest: String,
-    accountBalance: String,
+    accountRest: Double,
+    accountBalance: Double,
     onOperationNameClick: (operation: OperationUiModel) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
@@ -91,8 +91,8 @@ fun MyAccountDetailSheet(
 
 @Composable
 private fun MyAccountDetailFooter(
-    accountRest: String,
-    accountBalance: String
+    accountRest: Double,
+    accountBalance: Double
 ) {
     Row(
         Modifier
@@ -110,14 +110,28 @@ private fun MyAccountDetailFooter(
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
-            text = stringResource(R.string.restTitle) + accountRest,
-            style = MaterialTheme.typography.body1
-        )
-        Text(
-            text = stringResource(R.string.balanceTitle) + accountBalance,
-            style = MaterialTheme.typography.body1
-        )
+        Row {
+            Text(
+                text = stringResource(R.string.restTitle),
+                style = MaterialTheme.typography.body1,
+            )
+            Text(
+                text = " ${accountRest.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
+                style = MaterialTheme.typography.body1,
+                color = getBlackOrNegativeColor(amount = accountRest)
+            )
+        }
+        Row {
+            Text(
+                text = stringResource(R.string.balanceTitle),
+                style = MaterialTheme.typography.body1,
+            )
+            Text(
+                text = " ${accountBalance.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
+                style = MaterialTheme.typography.body1,
+                color = getBlackOrNegativeColor(amount = accountBalance)
+            )
+        }
     }
 }
 
@@ -156,7 +170,7 @@ private fun OperationItem(
             text = operation.name,
             modifier = Modifier
                 .padding(start = LittleMarge)
-                .weight(2f)
+                .weight(1.5f)
                 .clickable { onOperationNameClick(operation) },
             style = MaterialTheme.typography.body1
         )
@@ -172,12 +186,12 @@ private fun OperationItem(
             style = MaterialTheme.typography.caption
         )
         Text(
-            text = if (operation.amount > 0) "+${operation.amount.toStringWithTwoDec()}" else operation.amount.toStringWithTwoDec(),
+            text = getAddOrMinusFormattedValue(operation.amount),
             modifier = Modifier
                 .padding(start = LittleMarge)
                 .weight(1f),
             style = MaterialTheme.typography.body1,
-            color = if (operation.amount > 0) PositiveText else NegativeText
+            color = getPositiveOrNegativeColor(operation.amount)
         )
         BaseDeleteIconButton(onDeleteItemButtonCLick, operation)
     }
@@ -280,11 +294,13 @@ private fun MyAccountPostIt(
         ) {
             MyAccountPostItValue(
                 valueTitle = stringResource(R.string.balanceTitle),
-                value = account.accountBalance.toStringWithTwoDec()
+                value = "${account.accountBalance.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
+                valueColor = getBlackOrNegativeColor(account.accountBalance)
             )
             MyAccountPostItValue(
                 valueTitle = stringResource(R.string.restTitle),
-                value = account.rest.toStringWithTwoDec()
+                value = "${account.rest.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
+                valueColor = getBlackOrNegativeColor(account.rest)
             )
         }
     }
@@ -311,7 +327,8 @@ private fun MyAccountPostIt(
 @Composable
 private fun MyAccountPostItValue(
     valueTitle: String,
-    value: String
+    value: String,
+    valueColor : Color
 ) {
     Row(
         modifier = Modifier
@@ -325,7 +342,8 @@ private fun MyAccountPostItValue(
         Text(
             text = value,
             style = MaterialTheme.typography.body1,
-            modifier = Modifier.padding(start = LittleMarge)
+            modifier = Modifier.padding(start = LittleMarge),
+            color = valueColor
         )
     }
 }
