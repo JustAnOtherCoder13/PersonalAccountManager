@@ -1,6 +1,5 @@
 package com.piconemarc.personalaccountmanager.ui.component.screen
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -19,7 +18,6 @@ import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
 import com.piconemarc.personalaccountmanager.ui.theme.ThinBorder
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.AppViewModel
-import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.myAccountDetailScreenUiState
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.myAccountScreenUiState
 
@@ -35,7 +33,6 @@ fun MyAccountsScreen(
 private fun MyAccountBody(viewModel: AppViewModel) {
     VerticalDispositionSheet(
         body = {
-            Log.i("TAG", "MyAccountBody: ${myAccountScreenUiState.allAccounts}")
             MyAccountBodyRecyclerView(
                 onAccountClicked = { selectedAccount ->
                     //todo pass with navigator

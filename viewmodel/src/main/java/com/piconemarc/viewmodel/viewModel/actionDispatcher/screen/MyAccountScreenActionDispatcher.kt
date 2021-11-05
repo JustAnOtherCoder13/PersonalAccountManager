@@ -1,6 +1,5 @@
 package com.piconemarc.viewmodel.viewModel.actionDispatcher.screen
 
-import android.util.Log
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.viewmodel.ActionDispatcher
 import com.piconemarc.viewmodel.DefaultStore
@@ -22,7 +21,6 @@ class MyAccountScreenActionDispatcher @Inject constructor(
         updateState(GlobalAction.UpdateMyAccountScreenState(action))
         when (action) {
             is AppActions.MyAccountScreenAction.InitScreen -> {
-                Log.i("TAG", "dispatchAction account screen: $action")
                 updateState(
                     GlobalAction.UpdateBaseAppScreenVmState(
                         AppActions.BaseAppScreenAction.UpdateInterlayerTiTle(
@@ -33,7 +31,6 @@ class MyAccountScreenActionDispatcher @Inject constructor(
                 scope.launchOnIOCatchingError(
                     block = {
                         getAllAccountsInteractor.getAllAccountsAsFlow(scope).collect {
-                            Log.e("TAG", "dispatchAction: $it", )
                             updateState(
                                 GlobalAction.UpdateMyAccountScreenState(
                                     AppActions.MyAccountScreenAction.UpdateAccountList(it)

@@ -30,6 +30,10 @@ class MyAccountDetailScreenActionDispatcher @Inject constructor(
     private val getOperationForIdInteractor: GetOperationForIdInteractor
 ) : ActionDispatcher {
 
+    //todo got trouble only when select different account change account id when add or delete transfer
+    //seems that if click on account go back and select another account,
+    // remember all accounts and don't know witch to choose perhaps due to add and delete.
+    //todo have to simplify add and delete
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
         updateState(GlobalAction.UpdateMyAccountDetailScreenState(action))
         Log.i("TAG", "dispatchAction account detail screen:  $action")
@@ -42,9 +46,12 @@ class MyAccountDetailScreenActionDispatcher @Inject constructor(
                 )
                 scope.launchOnIOCatchingError(
                     block = {
+                        Log.e("TAG", "dispatchAction before:  ${action.selectedAccount.id}")
                         getAllOperationsForAccountIdInteractor.getAllOperationsForAccountIdFlow(
                             action.selectedAccount.id
                         ).collect { accountOperations ->
+                            Log.e("TAG", "dispatchAction operations:  ${action.selectedAccount.id}")
+
                             updateState(
                                 GlobalAction.UpdateMyAccountDetailScreenState(
                                     AppActions.MyAccountDetailScreenAction.UpdateAccountMonthlyOperations(
@@ -57,8 +64,15 @@ class MyAccountDetailScreenActionDispatcher @Inject constructor(
                                 ),
                             )
                         }
+
+                    }
+                )
+                scope.launchOnIOCatchingError(
+                    block = {
+                        Log.i("TAG", "dispatchAction before account:  ${action.selectedAccount.id}")
                         getAccountForIdInteractor.getAccountForIdFlow(action.selectedAccount.id)
                             .collect {
+                                Log.i("TAG", "dispatchAction account:  ${action.selectedAccount.id}")
                                 updateState(
                                     GlobalAction.UpdateMyAccountDetailScreenState(
                                         AppActions.MyAccountDetailScreenAction.UpdateSelectedAccount(
