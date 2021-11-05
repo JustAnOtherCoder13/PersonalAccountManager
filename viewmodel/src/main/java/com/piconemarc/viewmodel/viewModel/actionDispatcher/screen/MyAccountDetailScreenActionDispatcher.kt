@@ -1,5 +1,6 @@
 package com.piconemarc.viewmodel.viewModel.actionDispatcher.screen
 
+import android.util.Log
 import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
 import com.piconemarc.core.domain.interactor.operation.GetAllOperationsForAccountIdInteractor
 import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteractor
@@ -10,6 +11,7 @@ import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.UiAction
 import com.piconemarc.viewmodel.launchOnIOCatchingError
 import com.piconemarc.viewmodel.viewModel.AppActions
+import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.myAccountDetailScreenUiState
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import kotlinx.coroutines.CoroutineScope
@@ -30,17 +32,12 @@ class MyAccountDetailScreenActionDispatcher @Inject constructor(
 
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
         updateState(GlobalAction.UpdateMyAccountDetailScreenState(action))
+        Log.i("TAG", "dispatchAction account detail screen:  $action")
         when (action) {
             is AppActions.MyAccountDetailScreenAction.InitScreen -> {
                 updateState(
                     GlobalAction.UpdateBaseAppScreenVmState(
                         AppActions.BaseAppScreenAction.UpdateInterlayerTiTle(com.piconemarc.model.R.string.detail)
-                    ),
-                    //init selectedAccount
-                    GlobalAction.UpdateMyAccountDetailScreenState(
-                        AppActions.MyAccountDetailScreenAction.UpdateSelectedAccount(
-                            action.selectedAccount
-                        )
                     )
                 )
                 scope.launchOnIOCatchingError(
@@ -60,10 +57,6 @@ class MyAccountDetailScreenActionDispatcher @Inject constructor(
                                 ),
                             )
                         }
-                    }
-                )
-                scope.launchOnIOCatchingError(
-                    block = {
                         getAccountForIdInteractor.getAccountForIdFlow(action.selectedAccount.id)
                             .collect {
                                 updateState(

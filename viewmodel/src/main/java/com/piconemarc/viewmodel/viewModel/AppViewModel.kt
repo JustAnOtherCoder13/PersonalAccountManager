@@ -76,7 +76,7 @@ class AppViewModel @Inject constructor(
                 if (action is AppActions.MyAccountDetailScreenAction.CloseScreen) {
                     //todo pass with navigator
                     store.dispatch(
-                        GlobalAction.UpdateMyAccountScreenState(
+                        GlobalAction.UpdateMyAccountDetailScreenState(
                             AppActions.MyAccountScreenAction.InitScreen
                         ))
                     myAccountDetailScreenJob?.cancel()
