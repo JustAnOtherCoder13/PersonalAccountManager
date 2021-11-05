@@ -19,7 +19,7 @@ class MyAccountScreenActionDispatcher @Inject constructor(
 ) : ActionDispatcher {
 
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
-
+        updateState(GlobalAction.UpdateMyAccountScreenState(action))
         when (action) {
             is AppActions.MyAccountScreenAction.InitScreen -> {
                 Log.i("TAG", "dispatchAction account screen: $action")
@@ -33,6 +33,7 @@ class MyAccountScreenActionDispatcher @Inject constructor(
                 scope.launchOnIOCatchingError(
                     block = {
                         getAllAccountsInteractor.getAllAccountsAsFlow(scope).collect {
+                            Log.e("TAG", "dispatchAction: $it", )
                             updateState(
                                 GlobalAction.UpdateMyAccountScreenState(
                                     AppActions.MyAccountScreenAction.UpdateAccountList(it)
@@ -42,7 +43,6 @@ class MyAccountScreenActionDispatcher @Inject constructor(
                     }
                 )
             }
-            else -> updateState(GlobalAction.UpdateMyAccountScreenState(action))
         }
     }
 }

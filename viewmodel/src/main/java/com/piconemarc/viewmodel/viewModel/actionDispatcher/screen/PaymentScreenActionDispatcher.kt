@@ -19,6 +19,7 @@ class PaymentScreenActionDispatcher @Inject constructor(
     ) : ActionDispatcher {
 
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
+        updateState(GlobalAction.UpdatePaymentScreenState(action))
         when (action) {
             is AppActions.PaymentScreenAction.InitScreen -> {
                 scope.launchOnIOCatchingError(
@@ -33,7 +34,6 @@ class PaymentScreenActionDispatcher @Inject constructor(
                     }
                 )
             }
-            else -> updateState(GlobalAction.UpdatePaymentScreenState(action))
         }
     }
 }

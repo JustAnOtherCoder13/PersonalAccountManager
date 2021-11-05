@@ -21,6 +21,7 @@ class BaseScreenActionDispatcher @Inject constructor(
     private var getAllAccountsJob: Job? = null
 
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
+        updateState(GlobalAction.UpdateBaseAppScreenVmState(action))
         when (action) {
             is BaseAppScreenAction.InitScreen -> {
                 getAllAccountsJob = scope.launchOnIOCatchingError(
@@ -47,7 +48,6 @@ class BaseScreenActionDispatcher @Inject constructor(
                     }
                 )
             }
-            else->updateState(GlobalAction.UpdateBaseAppScreenVmState(action))
         }
     }
 }

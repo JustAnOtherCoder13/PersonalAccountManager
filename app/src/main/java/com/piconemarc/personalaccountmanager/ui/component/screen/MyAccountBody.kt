@@ -1,5 +1,6 @@
 package com.piconemarc.personalaccountmanager.ui.component.screen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -34,15 +35,12 @@ fun MyAccountsScreen(
 private fun MyAccountBody(viewModel: AppViewModel) {
     VerticalDispositionSheet(
         body = {
+            Log.i("TAG", "MyAccountBody: ${myAccountScreenUiState.allAccounts}")
             MyAccountBodyRecyclerView(
                 onAccountClicked = { selectedAccount ->
                     //todo pass with navigator
-                    viewModel.dispatchAction(
-                        AppActions.MyAccountScreenAction.CloseScreen
-                    )
-                    viewModel.dispatchAction(
-                        AppActions.MyAccountDetailScreenAction.InitScreen(selectedAccount = selectedAccount)
-                    )
+                    viewModel.dispatchAction(AppActions.MyAccountScreenAction.CloseScreen)
+                    viewModel.dispatchAction(AppActions.MyAccountDetailScreenAction.InitScreen(selectedAccount = selectedAccount))
                 },
                 onDeleteAccountButtonClicked = { accountToDelete ->
                     viewModel.dispatchAction(
