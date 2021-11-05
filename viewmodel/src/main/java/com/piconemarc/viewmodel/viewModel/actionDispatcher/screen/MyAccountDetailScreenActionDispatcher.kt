@@ -32,7 +32,6 @@ class MyAccountDetailScreenActionDispatcher @Inject constructor(
         updateState(GlobalAction.UpdateMyAccountDetailScreenState(action))
         when (action) {
             is AppActions.MyAccountDetailScreenAction.InitScreen -> {
-                updateState(GlobalAction.UpdateMyAccountDetailScreenState(action))
                 updateState(
                     GlobalAction.UpdateBaseAppScreenVmState(
                         AppActions.BaseAppScreenAction.UpdateInterlayerTiTle(com.piconemarc.model.R.string.detail)

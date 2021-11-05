@@ -39,13 +39,14 @@ import java.util.*
 @Composable
 fun MyAccountBodyRecyclerView(
     onDeleteAccountButtonClicked: (accountToDelete: AccountUiModel) -> Unit,
-    onAccountClicked: (selectedAccount: AccountUiModel) -> Unit
+    onAccountClicked: (selectedAccount: AccountUiModel) -> Unit,
+    allAccounts : List<AccountUiModel>
 ) {
     LazyColumn(
         modifier = Modifier
             .padding(bottom = LittleMarge)
     ) {
-        items(AppSubscriber.AppUiState.myAccountScreenUiState.allAccounts) { account ->
+        items(allAccounts) { account ->
             MyAccountPostIt(
                 account = account,
                 onDeleteAccountButtonClicked = onDeleteAccountButtonClicked,
