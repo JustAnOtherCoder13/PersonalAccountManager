@@ -19,9 +19,7 @@ import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.
 import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
 import com.piconemarc.personalaccountmanager.ui.theme.ThinBorder
-import com.piconemarc.viewmodel.UiState
 import com.piconemarc.viewmodel.viewModel.*
-import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber
 
 @Composable
 fun MyAccountsScreen(

@@ -5,8 +5,14 @@ import com.piconemarc.core.domain.interactor.account.DeleteAccountInteractor
 import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
-import com.piconemarc.core.domain.interactor.operation.*
-import com.piconemarc.core.domain.interactor.payment.*
+import com.piconemarc.core.domain.interactor.operation.AddNewOperationInteractor
+import com.piconemarc.core.domain.interactor.operation.DeleteOperationAndPaymentInteractor
+import com.piconemarc.core.domain.interactor.operation.DeleteOperationInteractor
+import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteractor
+import com.piconemarc.core.domain.interactor.payment.AddNewPaymentInteractor
+import com.piconemarc.core.domain.interactor.payment.AddPaymentAndOperationInteractor
+import com.piconemarc.core.domain.interactor.payment.DeletePaymentAndRelatedOperationInteractor
+import com.piconemarc.core.domain.interactor.payment.DeletePaymentInteractor
 import com.piconemarc.core.domain.interactor.transfer.AddNewTransferInteractor
 import com.piconemarc.core.domain.interactor.transfer.DeleteTransferInteractor
 import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor

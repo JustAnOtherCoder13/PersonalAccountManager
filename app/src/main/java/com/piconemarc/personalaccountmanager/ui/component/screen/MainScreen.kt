@@ -15,26 +15,18 @@ import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MainS
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MainScreenFooter
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MainScreenHeader
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseScreen
-import com.piconemarc.personalaccountmanager.ui.component.popUp.AddAccountPopUp
-import com.piconemarc.personalaccountmanager.ui.component.popUp.AddOperationPopUp
-import com.piconemarc.personalaccountmanager.ui.component.popUp.DeleteAccountPopUp
-import com.piconemarc.personalaccountmanager.ui.component.popUp.DeleteOperationPopUp
 import com.piconemarc.viewmodel.viewModel.*
 
 @Composable
-fun PAMMainScreen(
-    appViewModel: AppViewModel,
-    myAccountViewModel: MyAccountViewModel,
-    myAccountDetailViewModel: MyAccountDetailViewModel,
-    myPaymentViewModel: MyPaymentViewModel,
-) {
-    //todo pass with navigator
+fun PAMMainScreen(appViewModel: AppViewModel) {
+
     val state by appViewModel.uiState
+
     BaseScreen(
         header = { MainScreenHeader() },
         body = {
             MainScreenBody(
-                onInterLayerButtonClick = {selectedIconButton->
+                onInterLayerButtonClick = { selectedIconButton ->
                     appViewModel.dispatchAction(
                         AppActions.BaseAppScreenAction.SelectInterlayer(selectedIconButton)
                     )
@@ -42,16 +34,17 @@ fun PAMMainScreen(
                 body = {
                     val navController = rememberNavController()
 
-                    NavHost(navController = navController, startDestination = "myAccount"){
-                        composable("myAccount"){
+                    NavHost(navController = navController, startDestination = "myAccount") {
+                        composable("myAccount") {
                             val myAccountVM = hiltViewModel<MyAccountViewModel>()
                             MyAccountBody(
                                 myAccountVM,
                                 appViewModel,
                                 myAccountUiStateValue = myAccountVM.uiState.value,
                                 navController = navController
-                            )}
-                        composable("myAccountDetail/{selectedAccountId}"){
+                            )
+                        }
+                        composable("myAccountDetail/{selectedAccountId}") {
                             val myAccountDetailVM = hiltViewModel<MyAccountDetailViewModel>()
                             MyAccountDetailBody(
                                 myAccountDetailVM,
@@ -60,39 +53,43 @@ fun PAMMainScreen(
                                 it.arguments?.getString("selectedAccountId")
                             )
                         }
-                        composable("myPayments"){
+                        composable("myPayments") {
                             val myPaymentVM = hiltViewModel<MyPaymentViewModel>()
                             MyPaymentScreen(
-                                myPaymentViewModel = myPaymentVM ,
-                                appViewModel =appViewModel
+                                myPaymentViewModel = myPaymentVM,
+                                appViewModel = appViewModel
                             )
                         }
                     }
 
 
-                   when (state.selectedInterlayerButton) {
+                    when (state.selectedInterlayerButton) {
                         is PAMIconButtons.Payment -> {
                             navController.navigate("myPayments")
                         }
                         is PAMIconButtons.Chart -> {
                         }
                         else -> {
-                            //navController.navigate("myAccount")
-
+                            if (state.interLayerTitle != com.piconemarc.model.R.string.detail)
+                                navController.navigate("myAccount")
                         }
                     }
                 },
                 selectedInterLayerButton = state.selectedInterlayerButton,
-                interlayerTitle =  state.interLayerTitle
+                interlayerTitle = state.interLayerTitle
             )
         },
         footer = {
             MainScreenFooter(
-                footerAccountBalance = Pair(state.footerBalance.toStringWithTwoDec(),
-                    getBlackOrNegativeColor(amount = state.footerBalance)),
+                footerAccountBalance = Pair(
+                    state.footerBalance.toStringWithTwoDec(),
+                    getBlackOrNegativeColor(amount = state.footerBalance)
+                ),
                 mainScreenFooterTitle = stringResource(R.string.mainScreenFooterTitle),
-                footerAccountRest = Pair(state.footerRest.toStringWithTwoDec(),
-                    getBlackOrNegativeColor(amount = state.footerRest))
+                footerAccountRest = Pair(
+                    state.footerRest.toStringWithTwoDec(),
+                    getBlackOrNegativeColor(amount = state.footerRest)
+                )
             )
         }
     )

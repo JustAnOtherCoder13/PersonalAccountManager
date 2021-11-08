@@ -3,15 +3,12 @@ package com.piconemarc.viewmodel.viewModel
 import androidx.lifecycle.viewModelScope
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.viewmodel.DefaultStore
-import com.piconemarc.viewmodel.StoreSubscriber
 import com.piconemarc.viewmodel.UiAction
 import com.piconemarc.viewmodel.launchOnIOCatchingError
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddAccountPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddOperationPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.DeleteAccountPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.DeleteOperationPopUpActionDispatcher
-import com.piconemarc.viewmodel.viewModel.actionDispatcher.screen.BaseScreenActionDispatcher
-import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import com.piconemarc.viewmodel.viewModel.reducer.baseAppScreenVmState_
@@ -72,7 +69,7 @@ class AppViewModel @Inject constructor(
                             }
                         }
                     )
-                    else -> GlobalAction.UpdateBaseAppScreenVmState(action)
+                    else -> { updateState(GlobalAction.UpdateBaseAppScreenVmState(action)) }
                 }
 
             }
