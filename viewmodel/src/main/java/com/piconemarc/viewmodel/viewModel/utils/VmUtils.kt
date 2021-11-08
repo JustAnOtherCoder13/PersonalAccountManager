@@ -1,4 +1,4 @@
-package com.piconemarc.viewmodel
+package com.piconemarc.viewmodel.viewModel.utils
 
 import android.database.sqlite.SQLiteException
 import android.util.Log

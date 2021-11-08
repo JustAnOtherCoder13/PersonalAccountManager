@@ -20,6 +20,8 @@ import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
 import com.piconemarc.personalaccountmanager.ui.theme.ThinBorder
 import com.piconemarc.viewmodel.viewModel.*
+import com.piconemarc.viewmodel.viewModel.utils.AppActions
+import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
 
 @Composable
 fun MyAccountsScreen(
@@ -80,20 +82,13 @@ fun MyAccountDetailBody(
     navController: NavController,
     selectedAccountId : String?
 ) {
-
     val state by myAccountDetailViewModel.uiState
-    Log.i("TAG", "MyAccountDetailBody: $selectedAccountId")
     myAccountDetailViewModel.dispatchAction(AppActions.MyAccountDetailScreenAction.InitScreen(selectedAccountId?:""))
     Column {
         VerticalDispositionSheet(
             header = {
                 MyAccountDetailTitle(
-                    onBackIconClick = {
-                        //todo pass with navigator
-                                      navController.navigate("myAccount")
-                        /*myAccountDetailViewModel.dispatchAction(AppActions.MyAccountDetailScreenAction.CloseScreen)
-                        myAccountViewModel.dispatchAction(AppActions.MyAccountScreenAction.InitScreen)
-                    */},
+                    onBackIconClick = { navController.navigate("myAccount") },
                     accountName = myAccountDetailViewModel.uiState.value.selectedAccount.name
                 )
             },

@@ -2,11 +2,11 @@ package com.piconemarc.viewmodel.viewModel.actionDispatcher.popup
 
 import com.piconemarc.core.domain.interactor.account.AddNewAccountInteractor
 import com.piconemarc.model.entity.AccountUiModel
-import com.piconemarc.viewmodel.ActionDispatcher
-import com.piconemarc.viewmodel.DefaultStore
-import com.piconemarc.viewmodel.UiAction
-import com.piconemarc.viewmodel.launchOnIOCatchingError
-import com.piconemarc.viewmodel.viewModel.AppActions
+import com.piconemarc.viewmodel.viewModel.utils.ActionDispatcher
+import com.piconemarc.viewmodel.viewModel.utils.DefaultStore
+import com.piconemarc.viewmodel.viewModel.utils.UiAction
+import com.piconemarc.viewmodel.viewModel.utils.launchOnIOCatchingError
+import com.piconemarc.viewmodel.viewModel.utils.AppActions
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
@@ -21,7 +21,7 @@ class AddAccountPopUpActionDispatcher @Inject constructor(
         when (action) {
             is AppActions.AddAccountPopUpAction.AddNewAccount -> {
                 updateState(GlobalAction.UpdateAddAccountPopUpState(action))
-                if (!AppSubscriber.AppUiState.addAccountPopUpUiState.isNameError)
+                if (!AppSubscriber.AppUiState.addAccountPopUpUiState.value.isNameError)
                     scope.launchOnIOCatchingError(
                         block = {
                             addNewAccountInteractor.addNewAccount(

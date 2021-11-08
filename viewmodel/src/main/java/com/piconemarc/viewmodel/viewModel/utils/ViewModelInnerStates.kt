@@ -1,9 +1,8 @@
-package com.piconemarc.viewmodel.viewModel
+package com.piconemarc.viewmodel.viewModel.utils
 
 import com.piconemarc.core.domain.utils.Constants
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.*
-import com.piconemarc.viewmodel.VMState
 
 object ViewModelInnerStates {
     data class BaseAppScreenVmState(

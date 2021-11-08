@@ -3,8 +3,6 @@ package com.piconemarc.viewmodel.viewModel.reducer
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import com.piconemarc.viewmodel.*
-import com.piconemarc.viewmodel.viewModel.ViewModelInnerStates
 import com.piconemarc.viewmodel.viewModel.reducer.popUp.addAccountPopUpReducer
 import com.piconemarc.viewmodel.viewModel.reducer.popUp.addOperationPopUpReducer
 import com.piconemarc.viewmodel.viewModel.reducer.popUp.deleteAccountPopUpReducer
@@ -13,6 +11,7 @@ import com.piconemarc.viewmodel.viewModel.reducer.screen.appBaseScreenReducer
 import com.piconemarc.viewmodel.viewModel.reducer.screen.myAccountDetailScreenReducer
 import com.piconemarc.viewmodel.viewModel.reducer.screen.myAccountScreenReducer
 import com.piconemarc.viewmodel.viewModel.reducer.screen.paymentScreenReducer
+import com.piconemarc.viewmodel.viewModel.utils.*
 import kotlinx.coroutines.flow.MutableStateFlow
 
 //Encapsulate each component or screen state in Mutable state-------------------------------------
@@ -39,23 +38,23 @@ internal val paymentScreenVMState_ : MutableStateFlow<ViewModelInnerStates.Payme
 
 //POP UP________________________________________________________________________________________
 
-private val addOperationPopUpVMState_: MutableState<ViewModelInnerStates.AddOperationPopUpVMState> =
-    mutableStateOf(
+internal val addOperationPopUpVMState_: MutableStateFlow<ViewModelInnerStates.AddOperationPopUpVMState> =
+    MutableStateFlow(
         ViewModelInnerStates.AddOperationPopUpVMState()
     )
 
-private val deleteOperationPopUpVMState_: MutableState<ViewModelInnerStates.DeleteOperationPopUpVMState> =
-    mutableStateOf(
+private val deleteOperationPopUpVMState_: MutableStateFlow<ViewModelInnerStates.DeleteOperationPopUpVMState> =
+    MutableStateFlow(
         ViewModelInnerStates.DeleteOperationPopUpVMState()
     )
 
-private val deleteAccountVmState_: MutableState<ViewModelInnerStates.DeleteAccountPopUpVMState> =
-    mutableStateOf(
+private val deleteAccountVmState_: MutableStateFlow<ViewModelInnerStates.DeleteAccountPopUpVMState> =
+    MutableStateFlow(
         ViewModelInnerStates.DeleteAccountPopUpVMState()
     )
 
-private val addAccountPoUpVmState_: MutableState<ViewModelInnerStates.AddAccountPopUpVMState> =
-    mutableStateOf(
+private val addAccountPoUpVmState_: MutableStateFlow<ViewModelInnerStates.AddAccountPopUpVMState> =
+    MutableStateFlow(
         ViewModelInnerStates.AddAccountPopUpVMState()
     )
 
@@ -166,7 +165,7 @@ class AppSubscriber {
     internal val appStoreSubscriber: StoreSubscriber<GlobalVmState> =
         { globalVmState ->
             baseAppScreenVmState_.value = globalVmState.baseAppScreenVmState
-            //addOperationPopUpVMState_.value = globalVmState.addOperationPopUpVMState
+            addOperationPopUpVMState_.value = globalVmState.addOperationPopUpVMState
            // deleteAccountVmState_.value = globalVmState.deleteAccountPopUpVMState
             //addAccountPoUpVmState_.value = globalVmState.addAccountPopUpVMState
             myAccountDetailScreenVMState_.value = globalVmState.myAccountDetailScreenVMState
@@ -177,9 +176,9 @@ class AppSubscriber {
 
     //Expose state to view with delegate mutable state
     object AppUiState : UiState {
-        val addOperationPopUpUiState by addOperationPopUpVMState_
-        val deleteAccountUiState by deleteAccountVmState_
-        val addAccountPopUpUiState by addAccountPoUpVmState_
-        val deleteOperationPopUpUiState by deleteOperationPopUpVMState_
+        val addOperationPopUpUiState = addOperationPopUpVMState_
+        val deleteAccountUiState = deleteAccountVmState_
+        val addAccountPopUpUiState = addAccountPoUpVmState_
+        val deleteOperationPopUpUiState = deleteOperationPopUpVMState_
     }
 }

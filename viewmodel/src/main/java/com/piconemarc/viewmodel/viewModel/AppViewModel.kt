@@ -2,9 +2,9 @@ package com.piconemarc.viewmodel.viewModel
 
 import androidx.lifecycle.viewModelScope
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
-import com.piconemarc.viewmodel.DefaultStore
-import com.piconemarc.viewmodel.UiAction
-import com.piconemarc.viewmodel.launchOnIOCatchingError
+import com.piconemarc.viewmodel.viewModel.utils.DefaultStore
+import com.piconemarc.viewmodel.viewModel.utils.UiAction
+import com.piconemarc.viewmodel.viewModel.utils.launchOnIOCatchingError
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddAccountPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddOperationPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.DeleteAccountPopUpActionDispatcher
@@ -12,6 +12,9 @@ import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.DeleteOperation
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import com.piconemarc.viewmodel.viewModel.reducer.baseAppScreenVmState_
+import com.piconemarc.viewmodel.viewModel.utils.AppActions
+import com.piconemarc.viewmodel.viewModel.utils.BaseViewModel
+import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
@@ -21,7 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AppViewModel @Inject constructor(
-    private val store: DefaultStore<GlobalVmState>,
+    store: DefaultStore<GlobalVmState>,
     private val addOperationPopUpActionDispatcher: AddOperationPopUpActionDispatcher,
     private val deleteAccountPopUpActionDispatcher: DeleteAccountPopUpActionDispatcher,
     private val addAccountPopUpActionDispatcher: AddAccountPopUpActionDispatcher,
@@ -29,8 +32,6 @@ class AppViewModel @Inject constructor(
     private val getAllAccountsInteractor: GetAllAccountsInteractor
 ) : BaseViewModel<UiAction, ViewModelInnerStates.BaseAppScreenVmState>(store,baseAppScreenVmState_) {
 
-
-    private var baseAppScreenJob: Job? = null
     private var addOperationPopUpJob: Job? = null
     private var deleteAccountPopUpJob: Job? = null
     private var addAccountPopUpJob: Job? = null

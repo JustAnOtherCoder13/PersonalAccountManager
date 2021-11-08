@@ -11,11 +11,11 @@ import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
 import com.piconemarc.model.entity.OperationUiModel
 import com.piconemarc.model.entity.PaymentUiModel
 import com.piconemarc.model.entity.TransferUiModel
-import com.piconemarc.viewmodel.ActionDispatcher
-import com.piconemarc.viewmodel.DefaultStore
-import com.piconemarc.viewmodel.UiAction
-import com.piconemarc.viewmodel.launchOnIOCatchingError
-import com.piconemarc.viewmodel.viewModel.AppActions
+import com.piconemarc.viewmodel.viewModel.utils.ActionDispatcher
+import com.piconemarc.viewmodel.viewModel.utils.DefaultStore
+import com.piconemarc.viewmodel.viewModel.utils.UiAction
+import com.piconemarc.viewmodel.viewModel.utils.launchOnIOCatchingError
+import com.piconemarc.viewmodel.viewModel.utils.AppActions
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.deleteOperationPopUpUiState
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
@@ -82,7 +82,7 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
                     is OperationUiModel ->{
                         if (action.operationToDelete.paymentId != null) {
                             // if payment id exist and user want to delete operation and payment
-                            if (deleteOperationPopUpUiState.isRelatedOperationDeleted) {
+                            if (deleteOperationPopUpUiState.value.isRelatedOperationDeleted) {
                                 scope.launchOnIOCatchingError(
                                     block = { deleteOperationAndPaymentInteractor.deleteOperationAndPayment(action.operationToDelete) },
                                     doOnSuccess = { closePopUp() }
@@ -120,7 +120,7 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
                     is PaymentUiModel -> {
                         //if user want to delete related operation
                         if (action.operationToDelete.operationId != null
-                            && deleteOperationPopUpUiState.isRelatedOperationDeleted
+                            && deleteOperationPopUpUiState.value.isRelatedOperationDeleted
                         ){
                             scope.launchOnIOCatchingError(
                                 block = { deletePaymentAndRelatedOperationInteractor.deletePaymentAndRelatedOperation(action.operationToDelete) },

@@ -1,12 +1,8 @@
-package com.piconemarc.viewmodel.viewModel
+package com.piconemarc.viewmodel.viewModel.utils
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.piconemarc.viewmodel.DefaultStore
-import com.piconemarc.viewmodel.StoreSubscriber
-import com.piconemarc.viewmodel.UiAction
-import com.piconemarc.viewmodel.VMState
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState

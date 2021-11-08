@@ -16,12 +16,11 @@ import com.piconemarc.core.domain.interactor.payment.DeletePaymentInteractor
 import com.piconemarc.core.domain.interactor.transfer.AddNewTransferInteractor
 import com.piconemarc.core.domain.interactor.transfer.DeleteTransferInteractor
 import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
-import com.piconemarc.viewmodel.DefaultStore
+import com.piconemarc.viewmodel.viewModel.utils.DefaultStore
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddAccountPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddOperationPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.DeleteAccountPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.DeleteOperationPopUpActionDispatcher
-import com.piconemarc.viewmodel.viewModel.actionDispatcher.screen.BaseScreenActionDispatcher
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import dagger.Module
 import dagger.Provides
@@ -31,18 +30,6 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 @Module
 class ActionDispatcherModule {
-
-    @Provides
-    fun providedBaseScreenActionDispatcher(
-        getAllAccountsInteractor: GetAllAccountsInteractor,
-        globalStore: DefaultStore<GlobalVmState>
-    ): BaseScreenActionDispatcher {
-        return BaseScreenActionDispatcher(
-            getAllAccountsInteractor = getAllAccountsInteractor,
-            store = globalStore
-        )
-    }
-
 
     @Provides
     fun provideAddOperationPopUpActionDispatcher(

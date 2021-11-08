@@ -15,7 +15,9 @@ import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MainS
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MainScreenFooter
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MainScreenHeader
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseScreen
+import com.piconemarc.personalaccountmanager.ui.component.popUp.AddOperationPopUp
 import com.piconemarc.viewmodel.viewModel.*
+import com.piconemarc.viewmodel.viewModel.utils.AppActions
 
 @Composable
 fun PAMMainScreen(appViewModel: AppViewModel) {
@@ -93,8 +95,8 @@ fun PAMMainScreen(appViewModel: AppViewModel) {
             )
         }
     )
-    /*AddOperationPopUp(viewModel = appViewModel)
-    DeleteAccountPopUp(viewModel = appViewModel)
+    AddOperationPopUp(viewModel = appViewModel)
+   /* DeleteAccountPopUp(viewModel = appViewModel)
     AddAccountPopUp(viewModel = appViewModel)
     DeleteOperationPopUp(viewModel = appViewModel)*/
 }

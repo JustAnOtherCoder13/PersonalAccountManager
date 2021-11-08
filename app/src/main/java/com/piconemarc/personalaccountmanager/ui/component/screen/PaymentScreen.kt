@@ -16,7 +16,7 @@ import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
 import com.piconemarc.personalaccountmanager.ui.theme.paymentPostItInitialHeight
 import com.piconemarc.personalaccountmanager.ui.theme.paymentPostItItemHeight
 import com.piconemarc.personalaccountmanager.ui.theme.paymentPostItWidth
-import com.piconemarc.viewmodel.viewModel.AppActions
+import com.piconemarc.viewmodel.viewModel.utils.AppActions
 import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.MyPaymentViewModel
 

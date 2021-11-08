@@ -26,19 +26,19 @@ import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
 import com.piconemarc.personalaccountmanager.ui.theme.NegativeText
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
 import com.piconemarc.personalaccountmanager.ui.theme.ThinBorder
-import com.piconemarc.viewmodel.viewModel.AppActions
+import com.piconemarc.viewmodel.viewModel.utils.AppActions
 import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.deleteOperationPopUpUiState
 
 @Composable
 fun DeleteOperationPopUp(viewModel: AppViewModel) {
     BaseDeletePopUp(
-        deletePopUpTitle = if (deleteOperationPopUpUiState.operationToDelete is OperationUiModel)stringResource(R.string.deleteOperationPopUpTitle)
+        deletePopUpTitle = if (deleteOperationPopUpUiState.value.operationToDelete is OperationUiModel)stringResource(R.string.deleteOperationPopUpTitle)
         else stringResource(R.string.deletePaymentOperationTitle),
         onAcceptButtonClicked = {
             viewModel.dispatchAction(
                 AppActions.DeleteOperationPopUpAction.DeleteOperation(
-                    deleteOperationPopUpUiState.operationToDelete
+                    deleteOperationPopUpUiState.value.operationToDelete
                 )
             )
         },
@@ -47,32 +47,32 @@ fun DeleteOperationPopUp(viewModel: AppViewModel) {
                 AppActions.DeleteOperationPopUpAction.ClosePopUp
             )
         },
-        isExpanded = deleteOperationPopUpUiState.isPopUpExpanded,
+        isExpanded = deleteOperationPopUpUiState.value.isPopUpExpanded,
         body = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = deleteOperationPopUpUiState.operationToDelete.name,
+                    text = deleteOperationPopUpUiState.value.operationToDelete.name,
                     modifier = Modifier.padding(vertical = LittleMarge),
                     style = MaterialTheme.typography.h3
                 )
                 Text(
                     modifier = Modifier.padding(vertical = LittleMarge),
-                    text = "${deleteOperationPopUpUiState.operationToDelete.amount.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
+                    text = "${deleteOperationPopUpUiState.value.operationToDelete.amount.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
                     style = MaterialTheme.typography.body1
                 )
-                when (deleteOperationPopUpUiState.operationToDelete) {
+                when (deleteOperationPopUpUiState.value.operationToDelete) {
                     is OperationUiModel -> {
                         DeleteOperationOptionCheckBox(onCheckedChange = {isChecked ->
                             viewModel.dispatchAction(
                                 AppActions.DeleteOperationPopUpAction.UpdateIsDeletedPermanently(isChecked)
                             )
                         })
-                        if ((deleteOperationPopUpUiState.operationToDelete as OperationUiModel).transferId != null) {
+                        if ((deleteOperationPopUpUiState.value.operationToDelete as OperationUiModel).transferId != null) {
                             Text(
-                                text = "${stringResource(R.string.deleteOperationPopUpTransferInformationMessage)} ${deleteOperationPopUpUiState.transferRelatedAccount.name}",
+                                text = "${stringResource(R.string.deleteOperationPopUpTransferInformationMessage)} ${deleteOperationPopUpUiState.value.transferRelatedAccount.name}",
                                 modifier = Modifier
                                     .padding(RegularMarge)
                                     .fillMaxWidth(),
@@ -100,17 +100,17 @@ private fun DeleteOperationOptionCheckBox(
     onCheckedChange: (isChecked: Boolean) -> Unit
 ) {
     val deleteOperationOptionText =
-    if (deleteOperationPopUpUiState.operationToDelete is OperationUiModel) stringResource(R.string.deleteOperationPopUpDeleteOperationRelatedPaymentMessage)
+    if (deleteOperationPopUpUiState.value.operationToDelete is OperationUiModel) stringResource(R.string.deleteOperationPopUpDeleteOperationRelatedPaymentMessage)
     else stringResource(R.string.deleteOperationPopUpDeletePaymentRelatedOperationMessage)
 
-    if (deleteOperationPopUpUiState.operationToDelete is OperationUiModel &&
-        (deleteOperationPopUpUiState.operationToDelete as OperationUiModel).paymentId != null
-        || deleteOperationPopUpUiState.operationToDelete is PaymentUiModel &&
-        (deleteOperationPopUpUiState.operationToDelete as PaymentUiModel).operationId != null
+    if (deleteOperationPopUpUiState.value.operationToDelete is OperationUiModel &&
+        (deleteOperationPopUpUiState.value.operationToDelete as OperationUiModel).paymentId != null
+        || deleteOperationPopUpUiState.value.operationToDelete is PaymentUiModel &&
+        (deleteOperationPopUpUiState.value.operationToDelete as PaymentUiModel).operationId != null
     ) {
         OptionCheckBox(
             onCheckedChange = onCheckedChange,
-            isChecked = deleteOperationPopUpUiState.isRelatedOperationDeleted,
+            isChecked = deleteOperationPopUpUiState.value.isRelatedOperationDeleted,
             optionText = deleteOperationOptionText
         )
     }

@@ -5,7 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
-import com.piconemarc.viewmodel.UiDataAnimation
+import com.piconemarc.viewmodel.viewModel.utils.UiDataAnimation
 
 object PAMUiDataAnimations : UiDataAnimation {
 

@@ -7,11 +7,14 @@ import com.piconemarc.core.domain.interactor.operation.GetAllOperationsForAccoun
 import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteractor
 import com.piconemarc.core.domain.interactor.payment.GetPaymentForIdInteractor
 import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
-import com.piconemarc.viewmodel.DefaultStore
-import com.piconemarc.viewmodel.launchOnIOCatchingError
+import com.piconemarc.viewmodel.viewModel.utils.DefaultStore
+import com.piconemarc.viewmodel.viewModel.utils.launchOnIOCatchingError
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import com.piconemarc.viewmodel.viewModel.reducer.myAccountDetailScreenVMState_
+import com.piconemarc.viewmodel.viewModel.utils.AppActions
+import com.piconemarc.viewmodel.viewModel.utils.BaseViewModel
+import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect

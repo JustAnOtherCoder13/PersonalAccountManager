@@ -4,9 +4,9 @@ import com.piconemarc.core.domain.utils.Constants
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.AccountUiModel
 import com.piconemarc.model.entity.CategoryUiModel
-import com.piconemarc.viewmodel.Reducer
-import com.piconemarc.viewmodel.viewModel.AppActions
-import com.piconemarc.viewmodel.viewModel.ViewModelInnerStates
+import com.piconemarc.viewmodel.viewModel.utils.Reducer
+import com.piconemarc.viewmodel.viewModel.utils.AppActions
+import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.addOperationPopUpUiState
 
 internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperationPopUpVMState> =
@@ -97,12 +97,12 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
             is AppActions.AddOperationPopUpAction.SelectEndDateYear -> {
                 old.copy(
                     endDateSelectedYear = action.selectedEndDateYear,
-                    isRecurrentEndDateError = addOperationPopUpUiState.enDateSelectedMonth == "Month"
+                    isRecurrentEndDateError = addOperationPopUpUiState.value.enDateSelectedMonth == "Month"
                 )
             }
             is AppActions.AddOperationPopUpAction.SelectEndDateMonth -> old.copy(
                 enDateSelectedMonth = action.selectedEndDateMonth,
-                isRecurrentEndDateError = addOperationPopUpUiState.endDateSelectedYear == "Year"
+                isRecurrentEndDateError = addOperationPopUpUiState.value.endDateSelectedYear == "Year"
             )
 
             is AppActions.AddOperationPopUpAction.SelectBeneficiaryAccount -> old.copy(
@@ -113,13 +113,13 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
             )
             is AppActions.AddOperationPopUpAction.SelectAddOrMinus -> old.copy(
                 isAddOperation = action.isAddOperation,
-                operationAmount = getFormattedAmount(action.isAddOperation,addOperationPopUpUiState.operationAmount)
+                operationAmount = getFormattedAmount(action.isAddOperation,addOperationPopUpUiState.value.operationAmount)
             )
             is AppActions.AddOperationPopUpAction.AddNewOperation<*> -> old.copy(
                 isOperationNameError = action.operation.name.trim().isEmpty(),
                 isOperationAmountError = action.operation.amount == 0.0,
-                isBeneficiaryAccountError = addOperationPopUpUiState.addPopUpOptionSelectedIcon == PAMIconButtons.Transfer
-                        && addOperationPopUpUiState.beneficiaryAccount.name == "Beneficiary account" ,
+                isBeneficiaryAccountError = addOperationPopUpUiState.value.addPopUpOptionSelectedIcon == PAMIconButtons.Transfer
+                        && addOperationPopUpUiState.value.beneficiaryAccount.name == "Beneficiary account" ,
             )
         }
     }
