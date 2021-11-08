@@ -1,5 +1,6 @@
 package com.piconemarc.personalaccountmanager.ui.component.screen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -7,7 +8,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MyAccountBodyRecyclerView
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MyAccountDetailSheet
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MyAccountDetailTitle
@@ -18,6 +21,7 @@ import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
 import com.piconemarc.personalaccountmanager.ui.theme.ThinBorder
 import com.piconemarc.viewmodel.UiState
 import com.piconemarc.viewmodel.viewModel.*
+import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber
 
 @Composable
 fun MyAccountsScreen(
@@ -25,7 +29,7 @@ fun MyAccountsScreen(
     myAccountDetailViewModel: MyAccountDetailViewModel,
     appViewModel: AppViewModel
 ) {
-    if (myAccountViewModel.uiState.value.isVisible) MyAccountBody(
+    /*if (myAccountViewModel.uiState.value.isVisible) MyAccountBody(
         myAccountViewModel,
         myAccountDetailViewModel,
         appViewModel,
@@ -33,14 +37,14 @@ fun MyAccountsScreen(
     )
 
     if (myAccountDetailViewModel.uiState.value.isVisible) MyAccountDetailBody(myAccountDetailViewModel, myAccountViewModel, appViewModel)
-}
+*/}
 
 @Composable
-private fun MyAccountBody(
+fun MyAccountBody(
     myAccountViewModel: MyAccountViewModel,
-    myAccountDetailViewModel: MyAccountDetailViewModel,
     appViewModel: AppViewModel,
-    myAccountUiStateValue : ViewModelInnerStates.MyAccountScreenVMState
+    myAccountUiStateValue : ViewModelInnerStates.MyAccountScreenVMState,
+    navController: NavController
 
 ) {
     VerticalDispositionSheet(
@@ -48,15 +52,16 @@ private fun MyAccountBody(
             MyAccountBodyRecyclerView(
                 onAccountClicked = { selectedAccount ->
                     //todo pass with navigator
-                    myAccountViewModel.dispatchAction(AppActions.MyAccountScreenAction.CloseScreen)
+                    navController.navigate("myAccountDetail/${selectedAccount.id}")
+                    /*myAccountViewModel.dispatchAction(AppActions.MyAccountScreenAction.CloseScreen)
                     myAccountDetailViewModel.dispatchAction(AppActions.MyAccountDetailScreenAction.InitScreen(selectedAccount = selectedAccount))
-                },
+                */},
                 onDeleteAccountButtonClicked = { accountToDelete ->
                     appViewModel.dispatchAction(
                         AppActions.DeleteAccountAction.InitPopUp(accountUiToDelete = accountToDelete)
                     )
                 },
-                allAccounts = myAccountViewModel.uiState.value.allAccounts
+                allAccounts = myAccountUiStateValue.allAccounts
             )
         },
         footer = {
@@ -73,19 +78,24 @@ private fun MyAccountBody(
 @Composable
 fun MyAccountDetailBody(
     myAccountDetailViewModel: MyAccountDetailViewModel,
-    myAccountViewModel: MyAccountViewModel,
-    appViewModel: AppViewModel
+    appViewModel: AppViewModel,
+    navController: NavController,
+    selectedAccountId : String?
 ) {
-    Column {
 
+    val state by myAccountDetailViewModel.uiState
+    Log.i("TAG", "MyAccountDetailBody: $selectedAccountId")
+    myAccountDetailViewModel.dispatchAction(AppActions.MyAccountDetailScreenAction.InitScreen(selectedAccountId?:""))
+    Column {
         VerticalDispositionSheet(
             header = {
                 MyAccountDetailTitle(
                     onBackIconClick = {
                         //todo pass with navigator
-                        myAccountDetailViewModel.dispatchAction(AppActions.MyAccountDetailScreenAction.CloseScreen)
+                                      navController.navigate("myAccount")
+                        /*myAccountDetailViewModel.dispatchAction(AppActions.MyAccountDetailScreenAction.CloseScreen)
                         myAccountViewModel.dispatchAction(AppActions.MyAccountScreenAction.InitScreen)
-                    },
+                    */},
                     accountName = myAccountDetailViewModel.uiState.value.selectedAccount.name
                 )
             },
@@ -103,7 +113,8 @@ fun MyAccountDetailBody(
                         myAccountDetailViewModel.dispatchAction(
                             AppActions.MyAccountDetailScreenAction.GetSelectedOperation(it)
                         )
-                    }
+                    },
+                    operationDetailMessage = state.operationDetailMessage
                 )
             },
             footer = {

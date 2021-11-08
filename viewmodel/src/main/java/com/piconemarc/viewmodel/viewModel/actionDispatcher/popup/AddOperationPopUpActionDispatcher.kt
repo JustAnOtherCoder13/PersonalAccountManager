@@ -12,7 +12,6 @@ import com.piconemarc.model.entity.PaymentUiModel
 import com.piconemarc.viewmodel.*
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.addOperationPopUpUiState
-import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.myAccountDetailScreenUiState
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import kotlinx.coroutines.CoroutineScope
@@ -34,7 +33,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
 ) : ActionDispatcher {
 
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
-        updateState(GlobalAction.UpdateAddOperationPopUpState(action))
+        //updateState(GlobalAction.UpdateAddOperationPopUpState(action))
         when (action) {
             is AppActions.AddOperationPopUpAction.SelectOptionIcon -> {
                 //option selector on change redispatch action in same class to trigger interactors
@@ -74,7 +73,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                 }
             }
             is AppActions.AddOperationPopUpAction.InitPopUp -> {
-                updateState(GlobalAction.UpdateAddOperationPopUpState(action))
+               // updateState(GlobalAction.UpdateAddOperationPopUpState(action))
                 scope.launchUnconfinedCatchingError(
                     block = {
                         getAllCategoriesInteractor.getAllCategories().collect {
@@ -105,9 +104,9 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                         updateState(
                             GlobalAction.UpdateAddOperationPopUpState(
                                 AppActions.AddOperationPopUpAction.UpdateAccountList(
-                                    getAllAccountsInteractor.getAllAccounts().filter {
+                                    getAllAccountsInteractor.getAllAccounts()/*.filter {
                                         it.id != myAccountDetailScreenUiState.value.selectedAccount.id
-                                    }
+                                    }*/
                                 )
                             )
                         )

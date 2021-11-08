@@ -1,12 +1,8 @@
 package com.piconemarc.viewmodel.viewModel
 
-import android.util.Log
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewModelScope
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.viewmodel.DefaultStore
-import com.piconemarc.viewmodel.UiAction
 import com.piconemarc.viewmodel.launchOnIOCatchingError
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
@@ -23,31 +19,31 @@ class MyAccountViewModel @Inject constructor(
     private val getAllAccountsInteractor: GetAllAccountsInteractor,
 ) : BaseViewModel<AppActions.MyAccountScreenAction, ViewModelInnerStates.MyAccountScreenVMState>(store,myAccountScreenVMState_) {
 
-    override fun dispatchAction(action: AppActions.MyAccountScreenAction) {
-        //updateState(GlobalAction.UpdateMyAccountScreenState(action))
-        Log.e("TAG", "dispatchAction: $action")
+    init {
+        //init state
         viewModelScope.launch(block = { state.collect {
             uiState.value = it } })
-        when (action) {
-            is AppActions.MyAccountScreenAction.InitScreen -> {
-                updateState(
-                    GlobalAction.UpdateBaseAppScreenVmState(
-                        AppActions.BaseAppScreenAction.UpdateInterlayerTiTle(
-                            com.piconemarc.model.R.string.myAccountsInterLayerTitle
-                        )
+        //update interlayer title
+        updateState(
+            GlobalAction.UpdateBaseAppScreenVmState(
+                AppActions.BaseAppScreenAction.UpdateInterlayerTiTle(
+                    com.piconemarc.model.R.string.myAccountsInterLayerTitle
+                )
+            )
+        )
+        //updateAccountList
+        viewModelScope.launchOnIOCatchingError(
+            block = {
+                getAllAccountsInteractor.getAllAccountsAsFlow(viewModelScope).collect {
+                    dispatchAction(
+                        AppActions.MyAccountScreenAction.UpdateAccountList(it)
                     )
-                )
-                viewModelScope.launchOnIOCatchingError(
-                    block = {
-                        getAllAccountsInteractor.getAllAccountsAsFlow(viewModelScope).collect {
-                            dispatchAction(
-                                    AppActions.MyAccountScreenAction.UpdateAccountList(it)
-                                )
-                        }
-                    }
-                )
+                }
             }
-            else -> { updateState(GlobalAction.UpdateMyAccountScreenState(action))}
-        }
+        )
+    }
+
+    override fun dispatchAction(action: AppActions.MyAccountScreenAction) {
+             updateState(GlobalAction.UpdateMyAccountScreenState(action))
     }
 }

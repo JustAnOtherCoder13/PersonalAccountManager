@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.piconemarc.model.entity.AccountUiModel
 import com.piconemarc.model.entity.OperationUiModel
 import com.piconemarc.model.entity.PaymentUiModel
 import com.piconemarc.personalaccountmanager.R
@@ -17,7 +18,6 @@ import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.addOperationPopUpUiState
-import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.myAccountDetailScreenUiState
 import java.util.*
 
 @Composable
@@ -171,7 +171,8 @@ fun AddOperationPopUp(
             //Transfer Operation option---------------------------
             AddOperationPopUpTransferOptionPanel(
                 isTransferOptionExpanded = addOperationPopUpUiState.isTransferExpanded,
-                senderAccount = myAccountDetailScreenUiState.value.selectedAccount,
+                //todo pass with state
+                senderAccount = AccountUiModel(),
                 allAccountsList = addOperationPopUpUiState.allAccounts,
                 beneficiaryAccountUiSelectedItem = addOperationPopUpUiState.beneficiaryAccount,
 

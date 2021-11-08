@@ -30,7 +30,7 @@ object AppActions {
     }
 
     sealed class MyAccountDetailScreenAction : UiAction {
-        data class InitScreen(val selectedAccount: AccountUiModel) : MyAccountDetailScreenAction()
+        data class InitScreen(val selectedAccountId: String) : MyAccountDetailScreenAction()
         object CloseScreen : MyAccountDetailScreenAction()
         data class UpdateAccountMonthlyOperations(val accountMonthlyOperations: List<OperationUiModel>) :
             MyAccountDetailScreenAction()

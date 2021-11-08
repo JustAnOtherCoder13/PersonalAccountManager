@@ -1,7 +1,6 @@
 package com.piconemarc.viewmodel.viewModel
 
 import android.util.Log
-import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewModelScope
 import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
 import com.piconemarc.core.domain.interactor.operation.GetAllOperationsForAccountIdInteractor
@@ -9,8 +8,6 @@ import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteract
 import com.piconemarc.core.domain.interactor.payment.GetPaymentForIdInteractor
 import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
 import com.piconemarc.viewmodel.DefaultStore
-import com.piconemarc.viewmodel.UiAction
-import com.piconemarc.viewmodel.VMState
 import com.piconemarc.viewmodel.launchOnIOCatchingError
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
@@ -20,12 +17,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
-class MyAccountDetailViewModel@Inject constructor(
+class MyAccountDetailViewModel @Inject constructor(
     store: DefaultStore<GlobalVmState>,
     private val getAccountForIdInteractor: GetAccountForIdInteractor,
     private val getAllOperationsForAccountIdInteractor: GetAllOperationsForAccountIdInteractor,
@@ -33,36 +31,51 @@ class MyAccountDetailViewModel@Inject constructor(
     private val getTransferForIdInteractor: GetTransferForIdInteractor,
     private val getOperationForIdInteractor: GetOperationForIdInteractor
 
-) : BaseViewModel<AppActions.MyAccountDetailScreenAction,ViewModelInnerStates.MyAccountDetailScreenVMState>(
+) : BaseViewModel<AppActions.MyAccountDetailScreenAction, ViewModelInnerStates.MyAccountDetailScreenVMState>(
     store,
     myAccountDetailScreenVMState_
 ) {
-    override fun dispatchAction(action: AppActions.MyAccountDetailScreenAction) {
-        Log.i("TAG", "dispatchAction: $action")
+
+    init {
+        //init state
         viewModelScope.launch(block = { state.collectLatest { uiState.value = it } })
+        //update interlayer title
+        updateState(
+            GlobalAction.UpdateBaseAppScreenVmState(
+                AppActions.BaseAppScreenAction.UpdateInterlayerTiTle(com.piconemarc.model.R.string.detail)
+            )
+        )
+        // update selected account and related operation
+
+
+    }
+
+    override fun dispatchAction(action: AppActions.MyAccountDetailScreenAction) {
         updateState(GlobalAction.UpdateMyAccountDetailScreenState(action))
         when (action) {
             is AppActions.MyAccountDetailScreenAction.InitScreen -> {
-                updateState(
-                    GlobalAction.UpdateBaseAppScreenVmState(
-                        AppActions.BaseAppScreenAction.UpdateInterlayerTiTle(com.piconemarc.model.R.string.detail)
-                    )
-                )
+
+                val id = try {
+                    action.selectedAccountId.toLong()
+                } catch (e: ParseException) {
+                    Log.e("TAG", "dispatchAction: ", e)
+                    0
+                }
+
                 viewModelScope.launchOnIOCatchingError(
                     block = {
                         getAllOperationsForAccountIdInteractor.getAllOperationsForAccountIdFlow(
-                            action.selectedAccount.id
+                            id
+
                         ).collect { accountOperations ->
-                            updateState(
-                                GlobalAction.UpdateMyAccountDetailScreenState(
-                                    AppActions.MyAccountDetailScreenAction.UpdateAccountMonthlyOperations(
-                                        accountOperations.filter {
-                                            it.emitDate.month.compareTo(
-                                                Calendar.getInstance().get(Calendar.MONTH)
-                                            ) == 0
-                                        }
-                                    )
-                                ),
+                            dispatchAction(
+                                AppActions.MyAccountDetailScreenAction.UpdateAccountMonthlyOperations(
+                                    accountOperations.filter {
+                                        it.emitDate.month.compareTo(
+                                            Calendar.getInstance().get(Calendar.MONTH)
+                                        ) == 0
+                                    }
+                                )
                             )
                         }
 
@@ -70,7 +83,7 @@ class MyAccountDetailViewModel@Inject constructor(
                 )
                 viewModelScope.launchOnIOCatchingError(
                     block = {
-                        getAccountForIdInteractor.getAccountForIdFlow(action.selectedAccount.id)
+                        getAccountForIdInteractor.getAccountForIdFlow(id)
                             .collect {
                                 updateState(
                                     GlobalAction.UpdateMyAccountDetailScreenState(
@@ -85,16 +98,20 @@ class MyAccountDetailViewModel@Inject constructor(
             }
             is AppActions.MyAccountDetailScreenAction.GetSelectedOperation -> {
                 //todo delay cause trouble on multiple click
-                if (action.operation.paymentId != null){
+                if (action.operation.paymentId != null) {
                     viewModelScope.launchOnIOCatchingError(
                         block = {
-                            val relatedPayment = getPaymentForIdInteractor.getPaymentForId(action.operation.paymentId!!)
+                            val relatedPayment =
+                                getPaymentForIdInteractor.getPaymentForId(action.operation.paymentId!!)
                             updateState(
                                 GlobalAction.UpdateMyAccountDetailScreenState(
                                     AppActions.MyAccountDetailScreenAction.UpdateOperationMessage(
                                         if (relatedPayment.endDate != null) "This Payment will end on : ${
-                                            SimpleDateFormat("MMMM/yy",
-                                            Locale.FRANCE).format(relatedPayment.endDate!!)}"
+                                            SimpleDateFormat(
+                                                "MMMM/yy",
+                                                Locale.FRANCE
+                                            ).format(relatedPayment.endDate!!)
+                                        }"
                                         else "This payment don't have end date"
                                     )
                                 )
@@ -110,13 +127,17 @@ class MyAccountDetailViewModel@Inject constructor(
                         }
                     )
                 }
-                if (action.operation.transferId != null){
+                if (action.operation.transferId != null) {
                     viewModelScope.launchOnIOCatchingError(
                         block = {
-                            val relatedTransfer = getTransferForIdInteractor.getTransferForId(action.operation.transferId!!)
-                            val relatedOperationId = if(action.operation.id == relatedTransfer.beneficiaryOperationId) relatedTransfer.senderOperationId else relatedTransfer.beneficiaryOperationId
-                            val relatedOperation = getOperationForIdInteractor.getOperationForId(relatedOperationId)
-                            val relatedAccountName = getAccountForIdInteractor.getAccountForId(relatedOperation.accountId).name
+                            val relatedTransfer =
+                                getTransferForIdInteractor.getTransferForId(action.operation.transferId!!)
+                            val relatedOperationId =
+                                if (action.operation.id == relatedTransfer.beneficiaryOperationId) relatedTransfer.senderOperationId else relatedTransfer.beneficiaryOperationId
+                            val relatedOperation =
+                                getOperationForIdInteractor.getOperationForId(relatedOperationId)
+                            val relatedAccountName =
+                                getAccountForIdInteractor.getAccountForId(relatedOperation.accountId).name
                             updateState(
                                 GlobalAction.UpdateMyAccountDetailScreenState(
                                     AppActions.MyAccountDetailScreenAction.UpdateOperationMessage(
@@ -136,7 +157,8 @@ class MyAccountDetailViewModel@Inject constructor(
                     )
                 }
             }
-            else -> {}
+            else -> {
+            }
         }
     }
 

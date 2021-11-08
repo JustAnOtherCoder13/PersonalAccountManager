@@ -1,9 +1,11 @@
 package com.piconemarc.viewmodel.viewModel
 
 import androidx.lifecycle.viewModelScope
+import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.StoreSubscriber
 import com.piconemarc.viewmodel.UiAction
+import com.piconemarc.viewmodel.launchOnIOCatchingError
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddAccountPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddOperationPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.DeleteAccountPopUpActionDispatcher
@@ -15,20 +17,21 @@ import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import com.piconemarc.viewmodel.viewModel.reducer.baseAppScreenVmState_
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AppViewModel @Inject constructor(
     private val store: DefaultStore<GlobalVmState>,
-    private val baseScreenActionDispatcher: BaseScreenActionDispatcher,
     private val addOperationPopUpActionDispatcher: AddOperationPopUpActionDispatcher,
     private val deleteAccountPopUpActionDispatcher: DeleteAccountPopUpActionDispatcher,
     private val addAccountPopUpActionDispatcher: AddAccountPopUpActionDispatcher,
     private val deleteOperationPopUpActionDispatcher: DeleteOperationPopUpActionDispatcher,
+    private val getAllAccountsInteractor: GetAllAccountsInteractor
 ) : BaseViewModel<UiAction, ViewModelInnerStates.BaseAppScreenVmState>(store,baseAppScreenVmState_) {
 
-    private val subscriber: StoreSubscriber<GlobalVmState> = AppSubscriber().appStoreSubscriber
 
     private var baseAppScreenJob: Job? = null
     private var addOperationPopUpJob: Job? = null
@@ -36,19 +39,42 @@ class AppViewModel @Inject constructor(
     private var addAccountPopUpJob: Job? = null
     private var deleteOperationPopUpJob: Job? = null
 
+    init {
+        //init state
+        viewModelScope.launch(block = { state.collectLatest { uiState.value = it } })
+        dispatchAction(AppActions.BaseAppScreenAction.InitScreen)
+    }
+
     override fun dispatchAction(action: UiAction) {
         when (action) {
             //launch job for each screen when action for this screen is dispatched, cancel job on close
             is AppActions.BaseAppScreenAction -> {
-                // subscribe to store on init app and remove subscriber when close app
-                store.add(subscriber)
-                baseAppScreenJob = viewModelScope.launch {
-                    baseScreenActionDispatcher.dispatchAction(action, this)
+                when(action){
+                    is AppActions.BaseAppScreenAction.InitScreen -> viewModelScope.launchOnIOCatchingError(
+                        block = {
+                            getAllAccountsInteractor.getAllAccountsAsFlow(this).collect { allAccounts ->
+                                dispatchAction(
+                                        AppActions.BaseAppScreenAction.UpdateFooterBalance(
+                                            allAccounts
+                                        )
+                                    )
+                                dispatchAction(
+                                        AppActions.BaseAppScreenAction.UpdateFooterRest(
+                                            allAccounts
+                                        )
+                                    )
+                                dispatchAction(
+                                        AppActions.BaseAppScreenAction.UpdateAccounts(
+                                            allAccounts
+                                        )
+                                    )
+
+                            }
+                        }
+                    )
+                    else -> GlobalAction.UpdateBaseAppScreenVmState(action)
                 }
-                if (action is AppActions.BaseAppScreenAction.CloseApp) {
-                    baseAppScreenJob?.cancel()
-                    store.remove(subscriber)
-                }
+
             }
 
             is AppActions.AddOperationPopUpAction -> {

@@ -167,24 +167,20 @@ class AppSubscriber {
     internal val appStoreSubscriber: StoreSubscriber<GlobalVmState> =
         { globalVmState ->
             baseAppScreenVmState_.value = globalVmState.baseAppScreenVmState
-            addOperationPopUpVMState_.value = globalVmState.addOperationPopUpVMState
-            deleteAccountVmState_.value = globalVmState.deleteAccountPopUpVMState
-            addAccountPoUpVmState_.value = globalVmState.addAccountPopUpVMState
+            //addOperationPopUpVMState_.value = globalVmState.addOperationPopUpVMState
+           // deleteAccountVmState_.value = globalVmState.deleteAccountPopUpVMState
+            //addAccountPoUpVmState_.value = globalVmState.addAccountPopUpVMState
             myAccountDetailScreenVMState_.value = globalVmState.myAccountDetailScreenVMState
             myAccountScreenVMState_.value = globalVmState.myAccountScreenVmState
-            deleteOperationPopUpVMState_.value = globalVmState.deleteOperationPopUpVmState
+            //deleteOperationPopUpVMState_.value = globalVmState.deleteOperationPopUpVmState
             paymentScreenVMState_.value = globalVmState.paymentScreenVmState
         }
 
     //Expose state to view with delegate mutable state
     object AppUiState : UiState {
-        val baseAppScreenUiState = baseAppScreenVmState_
         val addOperationPopUpUiState by addOperationPopUpVMState_
         val deleteAccountUiState by deleteAccountVmState_
         val addAccountPopUpUiState by addAccountPoUpVmState_
-       // val myAccountScreenUiState by myAccountScreenVMState_
-        val myAccountDetailScreenUiState = myAccountDetailScreenVMState_
         val deleteOperationPopUpUiState by deleteOperationPopUpVMState_
-        //val paymentScreenUiState by paymentScreenVMState_
     }
 }

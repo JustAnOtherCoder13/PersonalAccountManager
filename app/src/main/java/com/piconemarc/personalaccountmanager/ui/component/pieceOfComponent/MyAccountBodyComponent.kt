@@ -31,8 +31,6 @@ import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.PostItBackground
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.PostItTitle
 import com.piconemarc.personalaccountmanager.ui.theme.*
-import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber
-import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.myAccountDetailScreenUiState
 import java.text.DateFormatSymbols
 import java.util.*
 
@@ -62,7 +60,8 @@ fun MyAccountDetailSheet(
     onDeleteItemButtonCLick: (operation: OperationUiModel) -> Unit,
     accountRest: Double,
     accountBalance: Double,
-    onOperationNameClick: (operation: OperationUiModel) -> Unit
+    onOperationNameClick: (operation: OperationUiModel) -> Unit,
+    operationDetailMessage: String
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
 
@@ -83,7 +82,8 @@ fun MyAccountDetailSheet(
                 MyAccountDetailOperationRecyclerView(
                     accountMonthlyOperations = allOperations,
                     onDeleteItemButtonCLick = onDeleteItemButtonCLick,
-                    onOperationNameClick = onOperationNameClick
+                    onOperationNameClick = onOperationNameClick,
+                    operationDetailMessage = operationDetailMessage
                 )
             }
         }
@@ -145,6 +145,7 @@ private fun MyAccountDetailOperationRecyclerView(
     accountMonthlyOperations: List<OperationUiModel>,
     onDeleteItemButtonCLick: (operation: OperationUiModel) -> Unit,
     onOperationNameClick: (operation: OperationUiModel) -> Unit,
+    operationDetailMessage : String,
 ) {
     Box{
 
@@ -165,7 +166,7 @@ private fun MyAccountDetailOperationRecyclerView(
         //todo flow up state
         Card (modifier = Modifier
             .wrapContentHeight()
-            .width(if (myAccountDetailScreenUiState.value.operationDetailMessage.trim().isEmpty())0.dp else 200.dp)
+            .width(if (operationDetailMessage.trim().isEmpty())0.dp else 200.dp)
             .align(Alignment.Center),
             elevation = RegularMarge,
             backgroundColor = White,
@@ -174,7 +175,7 @@ private fun MyAccountDetailOperationRecyclerView(
             border = BorderStroke(width = ThinBorder,color = Black )
         ){
             Text(
-                text = myAccountDetailScreenUiState.value.operationDetailMessage,
+                text = operationDetailMessage,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.body1,
                 modifier = Modifier.padding(RegularMarge)

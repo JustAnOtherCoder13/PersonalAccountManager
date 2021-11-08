@@ -21,7 +21,7 @@ import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.MyPaymentViewModel
 
 @Composable
-fun PaymentScreen(myPaymentViewModel: MyPaymentViewModel, appViewModel: AppViewModel) {
+fun MyPaymentScreen(myPaymentViewModel: MyPaymentViewModel, appViewModel: AppViewModel) {
     VerticalDispositionSheet(
         body = {
             LazyColumn(
