@@ -16,15 +16,19 @@ import com.piconemarc.personalaccountmanager.ui.component.popUp.DeleteAccountPop
 import com.piconemarc.personalaccountmanager.ui.component.popUp.DeleteOperationPopUp
 import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.AppViewModel
+import com.piconemarc.viewmodel.viewModel.MyAccountDetailViewModel
+import com.piconemarc.viewmodel.viewModel.MyAccountViewModel
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.baseAppScreenUiState
 
 @Composable
 fun PAMMainScreen(
     viewModel: AppViewModel,
+    myAccountViewModel: MyAccountViewModel,
+    myAccountDetailViewModel: MyAccountDetailViewModel
 ) {
     //todo pass with navigator
     viewModel.dispatchAction(AppActions.BaseAppScreenAction.InitScreen)
-    viewModel.dispatchAction(AppActions.MyAccountScreenAction.InitScreen)
+    myAccountViewModel.dispatchAction(AppActions.MyAccountScreenAction.InitScreen)
 
     BaseScreen(
         header = { MainScreenHeader() },
@@ -45,7 +49,7 @@ fun PAMMainScreen(
                         is PAMIconButtons.Chart -> {
                         }
                         else -> {
-                            MyAccountsScreen(viewModel = viewModel)
+                            MyAccountsScreen( myAccountViewModel,myAccountDetailViewModel)
                             viewModel.dispatchAction(AppActions.PaymentScreenAction.CloseScreen)
                         }
                     }

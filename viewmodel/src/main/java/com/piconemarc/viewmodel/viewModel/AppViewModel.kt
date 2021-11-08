@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.StoreSubscriber
 import com.piconemarc.viewmodel.UiAction
+import com.piconemarc.viewmodel.VMState
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddAccountPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddOperationPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.DeleteAccountPopUpActionDispatcher
@@ -32,7 +33,7 @@ class AppViewModel @Inject constructor(
     private val addAccountPopUpActionDispatcher: AddAccountPopUpActionDispatcher,
     private val deleteOperationPopUpActionDispatcher: DeleteOperationPopUpActionDispatcher,
     private val paymentScreenActionDispatcher: PaymentScreenActionDispatcher
-) : ViewModel() {
+) : BaseViewModel(store) {
 
     private val subscriber: StoreSubscriber<GlobalVmState> = AppSubscriber().appStoreSubscriber
 
@@ -45,7 +46,7 @@ class AppViewModel @Inject constructor(
     private var deleteOperationPopUpJob: Job? = null
     private var paymentScreenJob : Job? = null
 
-    fun dispatchAction(action: UiAction) {
+    override fun dispatchAction(action: UiAction) {
         when (action) {
             //launch job for each screen when action for this screen is dispatched, cancel job on close
             is AppActions.BaseAppScreenAction -> {
@@ -60,7 +61,7 @@ class AppViewModel @Inject constructor(
                 }
             }
 
-            is AppActions.MyAccountScreenAction -> {
+            /*is AppActions.MyAccountScreenAction -> {
                 if (action is AppActions.MyAccountScreenAction.CloseScreen) myAccountScreenJob?.cancel()
 
                 myAccountScreenJob = viewModelScope.launch {
@@ -76,7 +77,7 @@ class AppViewModel @Inject constructor(
                 if (action is AppActions.MyAccountDetailScreenAction.CloseScreen) {
                     myAccountDetailScreenJob?.cancel()
                 }
-            }
+            }*/
 
             is AppActions.PaymentScreenAction -> {
                 paymentScreenJob = viewModelScope.launch {
@@ -128,4 +129,9 @@ class AppViewModel @Inject constructor(
             )
         )
     }
+
+
+
+    override val uiState: VMState
+        get() = TODO("Not yet implemented")
 }

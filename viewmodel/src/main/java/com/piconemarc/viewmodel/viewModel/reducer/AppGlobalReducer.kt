@@ -21,12 +21,12 @@ private val baseAppScreenVmState_: MutableState<ViewModelInnerStates.BaseAppScre
     mutableStateOf(
         ViewModelInnerStates.BaseAppScreenVmState()
     )
-private val myAccountScreenVMState_: MutableState<ViewModelInnerStates.MyAccountScreenVMState> =
+internal val myAccountScreenVMState_: MutableState<ViewModelInnerStates.MyAccountScreenVMState> =
     mutableStateOf(
         ViewModelInnerStates.MyAccountScreenVMState()
     )
 
-private val myAccountDetailScreenVMState_: MutableState<ViewModelInnerStates.MyAccountDetailScreenVMState> =
+internal val myAccountDetailScreenVMState_: MutableState<ViewModelInnerStates.MyAccountDetailScreenVMState> =
     mutableStateOf(
         ViewModelInnerStates.MyAccountDetailScreenVMState()
     )
