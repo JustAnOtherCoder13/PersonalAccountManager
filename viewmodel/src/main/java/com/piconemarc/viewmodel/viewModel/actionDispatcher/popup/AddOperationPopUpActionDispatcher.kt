@@ -106,7 +106,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                             GlobalAction.UpdateAddOperationPopUpState(
                                 AppActions.AddOperationPopUpAction.UpdateAccountList(
                                     getAllAccountsInteractor.getAllAccounts().filter {
-                                        it.id != myAccountDetailScreenUiState.selectedAccount.id
+                                        it.id != myAccountDetailScreenUiState.value.selectedAccount.id
                                     }
                                 )
                             )

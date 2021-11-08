@@ -18,6 +18,8 @@ import com.piconemarc.viewmodel.viewModel.reducer.myAccountDetailScreenVMState_
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -31,14 +33,14 @@ class MyAccountDetailViewModel@Inject constructor(
     private val getTransferForIdInteractor: GetTransferForIdInteractor,
     private val getOperationForIdInteractor: GetOperationForIdInteractor
 
-) : BaseViewModel(
-    store
+) : BaseViewModel<AppActions.MyAccountDetailScreenAction,ViewModelInnerStates.MyAccountDetailScreenVMState>(
+    store,
+    myAccountDetailScreenVMState_
 ) {
-    override val uiState by myAccountDetailScreenVMState_
-
-    override fun dispatchAction(action: UiAction) {
+    override fun dispatchAction(action: AppActions.MyAccountDetailScreenAction) {
+        Log.i("TAG", "dispatchAction: $action")
+        viewModelScope.launch(block = { state.collectLatest { uiState.value = it } })
         updateState(GlobalAction.UpdateMyAccountDetailScreenState(action))
-        Log.i("TAG", "dispatchAction account detail screen:  $action")
         when (action) {
             is AppActions.MyAccountDetailScreenAction.InitScreen -> {
                 updateState(
@@ -48,12 +50,9 @@ class MyAccountDetailViewModel@Inject constructor(
                 )
                 viewModelScope.launchOnIOCatchingError(
                     block = {
-                        Log.e("TAG", "dispatchAction before:  ${action.selectedAccount.id}")
                         getAllOperationsForAccountIdInteractor.getAllOperationsForAccountIdFlow(
                             action.selectedAccount.id
                         ).collect { accountOperations ->
-                            Log.e("TAG", "dispatchAction operations:  ${action.selectedAccount.id}")
-
                             updateState(
                                 GlobalAction.UpdateMyAccountDetailScreenState(
                                     AppActions.MyAccountDetailScreenAction.UpdateAccountMonthlyOperations(
@@ -71,10 +70,8 @@ class MyAccountDetailViewModel@Inject constructor(
                 )
                 viewModelScope.launchOnIOCatchingError(
                     block = {
-                        Log.i("TAG", "dispatchAction before account:  ${action.selectedAccount.id}")
                         getAccountForIdInteractor.getAccountForIdFlow(action.selectedAccount.id)
                             .collect {
-                                Log.i("TAG", "dispatchAction account:  ${action.selectedAccount.id}")
                                 updateState(
                                     GlobalAction.UpdateMyAccountDetailScreenState(
                                         AppActions.MyAccountDetailScreenAction.UpdateSelectedAccount(
@@ -139,6 +136,9 @@ class MyAccountDetailViewModel@Inject constructor(
                     )
                 }
             }
+            else -> {}
         }
     }
+
+
 }

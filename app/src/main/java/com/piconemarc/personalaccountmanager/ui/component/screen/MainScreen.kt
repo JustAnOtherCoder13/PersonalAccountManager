@@ -14,20 +14,18 @@ import com.piconemarc.personalaccountmanager.ui.component.popUp.AddAccountPopUp
 import com.piconemarc.personalaccountmanager.ui.component.popUp.AddOperationPopUp
 import com.piconemarc.personalaccountmanager.ui.component.popUp.DeleteAccountPopUp
 import com.piconemarc.personalaccountmanager.ui.component.popUp.DeleteOperationPopUp
-import com.piconemarc.viewmodel.viewModel.AppActions
-import com.piconemarc.viewmodel.viewModel.AppViewModel
-import com.piconemarc.viewmodel.viewModel.MyAccountDetailViewModel
-import com.piconemarc.viewmodel.viewModel.MyAccountViewModel
+import com.piconemarc.viewmodel.viewModel.*
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.baseAppScreenUiState
 
 @Composable
 fun PAMMainScreen(
-    viewModel: AppViewModel,
+    appViewModel: AppViewModel,
     myAccountViewModel: MyAccountViewModel,
-    myAccountDetailViewModel: MyAccountDetailViewModel
+    myAccountDetailViewModel: MyAccountDetailViewModel,
+    myPaymentViewModel: MyPaymentViewModel,
 ) {
     //todo pass with navigator
-    viewModel.dispatchAction(AppActions.BaseAppScreenAction.InitScreen)
+    appViewModel.dispatchAction(AppActions.BaseAppScreenAction.InitScreen)
     myAccountViewModel.dispatchAction(AppActions.MyAccountScreenAction.InitScreen)
 
     BaseScreen(
@@ -35,22 +33,22 @@ fun PAMMainScreen(
         body = {
             MainScreenBody(
                 onInterLayerButtonClick = {selectedIconButton->
-                    viewModel.dispatchAction(
+                    appViewModel.dispatchAction(
                         AppActions.BaseAppScreenAction.SelectInterlayer(selectedIconButton)
                     )
                 },
                 body = {
                     //todo pass with navigator
-                    when (baseAppScreenUiState.selectedInterlayerButton) {
+                    when (baseAppScreenUiState.value.selectedInterlayerButton) {
                         is PAMIconButtons.Payment -> {
-                            viewModel.dispatchAction(AppActions.PaymentScreenAction.InitScreen)
-                            PaymentScreen(viewModel = viewModel)
+                            myPaymentViewModel.dispatchAction(AppActions.PaymentScreenAction.InitScreen)
+                            PaymentScreen(myPaymentViewModel, appViewModel)
                         }
                         is PAMIconButtons.Chart -> {
                         }
                         else -> {
-                            MyAccountsScreen( myAccountViewModel,myAccountDetailViewModel)
-                            viewModel.dispatchAction(AppActions.PaymentScreenAction.CloseScreen)
+                            MyAccountsScreen( myAccountViewModel,myAccountDetailViewModel, appViewModel)
+                            appViewModel.dispatchAction(AppActions.PaymentScreenAction.CloseScreen)
                         }
                     }
                 }
@@ -58,16 +56,16 @@ fun PAMMainScreen(
         },
         footer = {
             MainScreenFooter(
-                footerAccountBalance = Pair(baseAppScreenUiState.footerBalance.toStringWithTwoDec(),
-                    getBlackOrNegativeColor(amount = baseAppScreenUiState.footerBalance)),
+                footerAccountBalance = Pair(baseAppScreenUiState.value.footerBalance.toStringWithTwoDec(),
+                    getBlackOrNegativeColor(amount = baseAppScreenUiState.value.footerBalance)),
                 mainScreenFooterTitle = stringResource(R.string.mainScreenFooterTitle),
-                footerAccountRest = Pair(baseAppScreenUiState.footerRest.toStringWithTwoDec(),
-                    getBlackOrNegativeColor(amount = baseAppScreenUiState.footerRest))
+                footerAccountRest = Pair(baseAppScreenUiState.value.footerRest.toStringWithTwoDec(),
+                    getBlackOrNegativeColor(amount = baseAppScreenUiState.value.footerRest))
             )
         }
     )
-    AddOperationPopUp(viewModel = viewModel)
-    DeleteAccountPopUp(viewModel = viewModel)
-    AddAccountPopUp(viewModel = viewModel)
-    DeleteOperationPopUp(viewModel = viewModel)
+    AddOperationPopUp(viewModel = appViewModel)
+    DeleteAccountPopUp(viewModel = appViewModel)
+    AddAccountPopUp(viewModel = appViewModel)
+    DeleteOperationPopUp(viewModel = appViewModel)
 }

@@ -171,7 +171,7 @@ fun AddOperationPopUp(
             //Transfer Operation option---------------------------
             AddOperationPopUpTransferOptionPanel(
                 isTransferOptionExpanded = addOperationPopUpUiState.isTransferExpanded,
-                senderAccount = myAccountDetailScreenUiState.selectedAccount,
+                senderAccount = myAccountDetailScreenUiState.value.selectedAccount,
                 allAccountsList = addOperationPopUpUiState.allAccounts,
                 beneficiaryAccountUiSelectedItem = addOperationPopUpUiState.beneficiaryAccount,
 

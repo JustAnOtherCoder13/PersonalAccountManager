@@ -16,7 +16,9 @@ import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.addAc
 
 
 @Composable
-fun AddAccountPopUp(viewModel: AppViewModel) {
+fun AddAccountPopUp(
+    viewModel: AppViewModel,
+) {
     BasePopUp(
         title = stringResource(R.string.addAccountPopUpTitle),
         onAcceptButtonClicked = {
@@ -26,9 +28,7 @@ fun AddAccountPopUp(viewModel: AppViewModel) {
                 accountOverdraft = addAccountPopUpUiState.accountOverdraft
             ))
         },
-        onDismiss = {
-                    viewModel.dispatchAction(AppActions.AddAccountPopUpAction.ClosePopUp)
-                    },
+        onDismiss = { viewModel.dispatchAction(AppActions.AddAccountPopUpAction.ClosePopUp) },
         isExpanded = addAccountPopUpUiState.isPopUpExpanded
     ) {
         Column(modifier = Modifier.padding(vertical = RegularMarge)) {

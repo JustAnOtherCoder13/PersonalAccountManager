@@ -16,9 +16,6 @@ import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddOperationPop
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.DeleteAccountPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.DeleteOperationPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.screen.BaseScreenActionDispatcher
-import com.piconemarc.viewmodel.viewModel.actionDispatcher.screen.MyAccountDetailScreenActionDispatcher
-import com.piconemarc.viewmodel.viewModel.actionDispatcher.screen.MyAccountScreenActionDispatcher
-import com.piconemarc.viewmodel.viewModel.actionDispatcher.screen.PaymentScreenActionDispatcher
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import dagger.Module
 import dagger.Provides
@@ -40,35 +37,6 @@ class ActionDispatcherModule {
         )
     }
 
-    @Provides
-    fun provideMyAccountScreenActionDispatcher(
-        globalStore: DefaultStore<GlobalVmState>,
-        getAllAccountsInteractor: GetAllAccountsInteractor
-    ): MyAccountScreenActionDispatcher {
-        return MyAccountScreenActionDispatcher(
-            getAllAccountsInteractor = getAllAccountsInteractor,
-            store = globalStore
-        )
-    }
-
-    @Provides
-    fun provideMyAccountDetailScreenActionDispatcher(
-        globalStore: DefaultStore<GlobalVmState>,
-        getAccountForIdInteractor: GetAccountForIdInteractor,
-        getAllOperationsForAccountIdInteractor: GetAllOperationsForAccountIdInteractor,
-        getOperationForIdInteractor: GetOperationForIdInteractor,
-        getPaymentForIdInteractor: GetPaymentForIdInteractor,
-        getTransferForIdInteractor: GetTransferForIdInteractor
-    ) : MyAccountDetailScreenActionDispatcher{
-        return MyAccountDetailScreenActionDispatcher(
-            store = globalStore,
-            getAccountForIdInteractor = getAccountForIdInteractor,
-            getAllOperationsForAccountIdInteractor = getAllOperationsForAccountIdInteractor,
-            getPaymentForIdInteractor = getPaymentForIdInteractor,
-            getTransferForIdInteractor = getTransferForIdInteractor,
-            getOperationForIdInteractor = getOperationForIdInteractor,
-        )
-    }
 
     @Provides
     fun provideAddOperationPopUpActionDispatcher(
@@ -136,17 +104,6 @@ class ActionDispatcherModule {
             deleteTransferInteractor = deleteTransferInteractor,
             deleteOperationAndPaymentInteractor = deleteOperationAndPaymentInteractor,
             deletePaymentAndRelatedOperationInteractor = deletePaymentAndRelatedOperationInteractor
-        )
-    }
-
-    @Provides
-    fun providePaymentScreenActionDispatcher(
-        globalStore: DefaultStore<GlobalVmState>,
-        getAllAccountsInteractor: GetAllAccountsInteractor
-        ):PaymentScreenActionDispatcher{
-        return PaymentScreenActionDispatcher(
-            store = globalStore,
-            getAllAccountsInteractor = getAllAccountsInteractor,
         )
     }
 }

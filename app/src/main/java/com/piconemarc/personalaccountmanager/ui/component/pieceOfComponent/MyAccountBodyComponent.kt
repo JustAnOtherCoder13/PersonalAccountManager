@@ -144,7 +144,7 @@ private fun MyAccountDetailFooter(
 private fun MyAccountDetailOperationRecyclerView(
     accountMonthlyOperations: List<OperationUiModel>,
     onDeleteItemButtonCLick: (operation: OperationUiModel) -> Unit,
-    onOperationNameClick: (operation: OperationUiModel) -> Unit
+    onOperationNameClick: (operation: OperationUiModel) -> Unit,
 ) {
     Box{
 
@@ -162,9 +162,10 @@ private fun MyAccountDetailOperationRecyclerView(
             )
         }
     }
+        //todo flow up state
         Card (modifier = Modifier
             .wrapContentHeight()
-            .width(if (myAccountDetailScreenUiState.operationDetailMessage.trim().isEmpty())0.dp else 200.dp)
+            .width(if (myAccountDetailScreenUiState.value.operationDetailMessage.trim().isEmpty())0.dp else 200.dp)
             .align(Alignment.Center),
             elevation = RegularMarge,
             backgroundColor = White,
@@ -173,7 +174,7 @@ private fun MyAccountDetailOperationRecyclerView(
             border = BorderStroke(width = ThinBorder,color = Black )
         ){
             Text(
-                text = myAccountDetailScreenUiState.operationDetailMessage,
+                text = myAccountDetailScreenUiState.value.operationDetailMessage,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.body1,
                 modifier = Modifier.padding(RegularMarge)

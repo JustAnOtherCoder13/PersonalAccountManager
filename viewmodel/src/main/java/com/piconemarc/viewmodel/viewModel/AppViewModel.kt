@@ -1,22 +1,18 @@
 package com.piconemarc.viewmodel.viewModel
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.piconemarc.viewmodel.DefaultStore
 import com.piconemarc.viewmodel.StoreSubscriber
 import com.piconemarc.viewmodel.UiAction
-import com.piconemarc.viewmodel.VMState
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddAccountPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddOperationPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.DeleteAccountPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.DeleteOperationPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.screen.BaseScreenActionDispatcher
-import com.piconemarc.viewmodel.viewModel.actionDispatcher.screen.MyAccountDetailScreenActionDispatcher
-import com.piconemarc.viewmodel.viewModel.actionDispatcher.screen.MyAccountScreenActionDispatcher
-import com.piconemarc.viewmodel.viewModel.actionDispatcher.screen.PaymentScreenActionDispatcher
 import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
+import com.piconemarc.viewmodel.viewModel.reducer.baseAppScreenVmState_
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -26,25 +22,19 @@ import javax.inject.Inject
 class AppViewModel @Inject constructor(
     private val store: DefaultStore<GlobalVmState>,
     private val baseScreenActionDispatcher: BaseScreenActionDispatcher,
-    private val myAccountScreenActionDispatcher: MyAccountScreenActionDispatcher,
-    private val myAccountDetailScreenActionDispatcher: MyAccountDetailScreenActionDispatcher,
     private val addOperationPopUpActionDispatcher: AddOperationPopUpActionDispatcher,
     private val deleteAccountPopUpActionDispatcher: DeleteAccountPopUpActionDispatcher,
     private val addAccountPopUpActionDispatcher: AddAccountPopUpActionDispatcher,
     private val deleteOperationPopUpActionDispatcher: DeleteOperationPopUpActionDispatcher,
-    private val paymentScreenActionDispatcher: PaymentScreenActionDispatcher
-) : BaseViewModel(store) {
+) : BaseViewModel<UiAction, ViewModelInnerStates.BaseAppScreenVmState>(store,baseAppScreenVmState_) {
 
     private val subscriber: StoreSubscriber<GlobalVmState> = AppSubscriber().appStoreSubscriber
 
     private var baseAppScreenJob: Job? = null
-    private var myAccountScreenJob: Job? = null
-    private var myAccountDetailScreenJob: Job? = null
     private var addOperationPopUpJob: Job? = null
     private var deleteAccountPopUpJob: Job? = null
     private var addAccountPopUpJob: Job? = null
     private var deleteOperationPopUpJob: Job? = null
-    private var paymentScreenJob : Job? = null
 
     override fun dispatchAction(action: UiAction) {
         when (action) {
@@ -59,33 +49,6 @@ class AppViewModel @Inject constructor(
                     baseAppScreenJob?.cancel()
                     store.remove(subscriber)
                 }
-            }
-
-            /*is AppActions.MyAccountScreenAction -> {
-                if (action is AppActions.MyAccountScreenAction.CloseScreen) myAccountScreenJob?.cancel()
-
-                myAccountScreenJob = viewModelScope.launch {
-                    myAccountScreenActionDispatcher.dispatchAction(action, this)
-                }
-
-            }
-
-            is AppActions.MyAccountDetailScreenAction -> {
-                myAccountDetailScreenJob = viewModelScope.launch {
-                    myAccountDetailScreenActionDispatcher.dispatchAction(action, this)
-                }
-                if (action is AppActions.MyAccountDetailScreenAction.CloseScreen) {
-                    myAccountDetailScreenJob?.cancel()
-                }
-            }*/
-
-            is AppActions.PaymentScreenAction -> {
-                paymentScreenJob = viewModelScope.launch {
-                    paymentScreenActionDispatcher.dispatchAction(action, this)
-                }
-
-                if (action is AppActions.PaymentScreenAction.CloseScreen)
-                    paymentScreenJob?.cancel()
             }
 
             is AppActions.AddOperationPopUpAction -> {
@@ -108,7 +71,8 @@ class AppViewModel @Inject constructor(
                 addAccountPopUpJob = viewModelScope.launch {
                     addAccountPopUpActionDispatcher.dispatchAction(action, this)
                 }
-                if (action is AppActions.AddAccountPopUpAction.ClosePopUp) addAccountPopUpJob?.cancel()
+                if (action is AppActions.AddAccountPopUpAction.ClosePopUp)
+                    addAccountPopUpJob?.cancel()
             }
 
             is AppActions.DeleteOperationPopUpAction -> {
@@ -131,7 +95,4 @@ class AppViewModel @Inject constructor(
     }
 
 
-
-    override val uiState: VMState
-        get() = TODO("Not yet implemented")
 }

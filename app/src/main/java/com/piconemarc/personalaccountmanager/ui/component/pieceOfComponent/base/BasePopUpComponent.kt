@@ -17,6 +17,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
 import com.piconemarc.personalaccountmanager.ui.animation.pAMBasePopUpEnterExitAnimation
 import com.piconemarc.personalaccountmanager.ui.theme.*
 
@@ -30,6 +31,7 @@ fun BasePopUp(
     menuIconPanel: @Composable () -> Unit = {},
     body: @Composable () -> Unit
 ) {
+
     val transition = pAMBasePopUpEnterExitAnimation(isExpanded = isExpanded)
     if (transition.alpha > 0f)
         Column(
@@ -136,7 +138,9 @@ fun ErrorMessage(
             text = errorMsg,
             color = MaterialTheme.colors.error,
             style = MaterialTheme.typography.caption,
-            modifier = Modifier.padding(start = 16.dp).wrapContentHeight()
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .wrapContentHeight()
         )
     }
 }

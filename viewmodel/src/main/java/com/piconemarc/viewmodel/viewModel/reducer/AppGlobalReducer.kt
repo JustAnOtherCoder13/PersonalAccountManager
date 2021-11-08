@@ -1,5 +1,6 @@
 package com.piconemarc.viewmodel.viewModel.reducer
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,26 +14,27 @@ import com.piconemarc.viewmodel.viewModel.reducer.screen.appBaseScreenReducer
 import com.piconemarc.viewmodel.viewModel.reducer.screen.myAccountDetailScreenReducer
 import com.piconemarc.viewmodel.viewModel.reducer.screen.myAccountScreenReducer
 import com.piconemarc.viewmodel.viewModel.reducer.screen.paymentScreenReducer
+import kotlinx.coroutines.flow.MutableStateFlow
 
 //Encapsulate each component or screen state in Mutable state-------------------------------------
 
 //SCREEN_______________________________________________________________________________________
-private val baseAppScreenVmState_: MutableState<ViewModelInnerStates.BaseAppScreenVmState> =
-    mutableStateOf(
+internal val baseAppScreenVmState_: MutableStateFlow<ViewModelInnerStates.BaseAppScreenVmState> =
+    MutableStateFlow(
         ViewModelInnerStates.BaseAppScreenVmState()
     )
-internal val myAccountScreenVMState_: MutableState<ViewModelInnerStates.MyAccountScreenVMState> =
-    mutableStateOf(
+internal val myAccountScreenVMState_: MutableStateFlow<ViewModelInnerStates.MyAccountScreenVMState> =
+    MutableStateFlow(
         ViewModelInnerStates.MyAccountScreenVMState()
     )
 
-internal val myAccountDetailScreenVMState_: MutableState<ViewModelInnerStates.MyAccountDetailScreenVMState> =
-    mutableStateOf(
+internal val myAccountDetailScreenVMState_: MutableStateFlow<ViewModelInnerStates.MyAccountDetailScreenVMState> =
+    MutableStateFlow(
         ViewModelInnerStates.MyAccountDetailScreenVMState()
     )
 
-private val paymentScreenVMState_ : MutableState<ViewModelInnerStates.PaymentScreenVmState> =
-    mutableStateOf(
+internal val paymentScreenVMState_ : MutableStateFlow<ViewModelInnerStates.PaymentScreenVmState> =
+    MutableStateFlow(
         ViewModelInnerStates.PaymentScreenVmState()
     )
 
@@ -176,13 +178,13 @@ class AppSubscriber {
 
     //Expose state to view with delegate mutable state
     object AppUiState : UiState {
-        val baseAppScreenUiState by baseAppScreenVmState_
+        val baseAppScreenUiState = baseAppScreenVmState_
         val addOperationPopUpUiState by addOperationPopUpVMState_
         val deleteAccountUiState by deleteAccountVmState_
         val addAccountPopUpUiState by addAccountPoUpVmState_
-        val myAccountScreenUiState by myAccountScreenVMState_
-        val myAccountDetailScreenUiState by myAccountDetailScreenVMState_
+       // val myAccountScreenUiState by myAccountScreenVMState_
+        val myAccountDetailScreenUiState = myAccountDetailScreenVMState_
         val deleteOperationPopUpUiState by deleteOperationPopUpVMState_
-        val paymentScreenUiState by paymentScreenVMState_
+        //val paymentScreenUiState by paymentScreenVMState_
     }
 }
