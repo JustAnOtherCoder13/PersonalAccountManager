@@ -1,11 +1,9 @@
 package com.piconemarc.viewmodel.viewModel.actionDispatcher.popup
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.piconemarc.core.domain.interactor.account.AddNewAccountInteractor
 import com.piconemarc.model.entity.AccountUiModel
-import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import com.piconemarc.viewmodel.viewModel.reducer.addAccountPoUpVmState_
@@ -30,13 +28,11 @@ class AddAccountPopUpActionDispatcher @Inject constructor(
 
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
         updateState(GlobalAction.UpdateAddAccountPopUpState(action))
-        scope.launch { state.collectLatest {
-            Log.i("TAG", "dispatchAction: $action  $it")
-            uiState.value = it } }
+        scope.launch { state.collectLatest { uiState.value = it } }
 
         when (action) {
             is AppActions.AddAccountPopUpAction.AddNewAccount -> {
-                if (!uiState.value.isNameError)
+                if (action.accountName.trim().isNotEmpty())
                     scope.launchOnIOCatchingError(
                         block = {
                             addNewAccountInteractor.addNewAccount(

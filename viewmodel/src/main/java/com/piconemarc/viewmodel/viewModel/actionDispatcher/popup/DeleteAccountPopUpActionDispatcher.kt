@@ -24,6 +24,7 @@ class DeleteAccountPopUpActionDispatcher @Inject constructor(
         = mutableStateOf(state.value)
 
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
+
         updateState(GlobalAction.UpdateDeleteAccountPopUpState(action))
         scope.launch{state.collectLatest { uiState.value = it }}
 
@@ -51,6 +52,4 @@ class DeleteAccountPopUpActionDispatcher @Inject constructor(
             }
         }
     }
-
-
 }

@@ -41,52 +41,16 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
         state.value)
 
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
+
         updateState(GlobalAction.UpdateAddOperationPopUpState(action))
         scope.launch { state.collectLatest { uiState.value = it }}
 
         when (action) {
-            is AppActions.AddOperationPopUpAction.SelectOptionIcon -> {
-                //option selector on change redispatch action in same class to trigger interactors
-                when (action.selectedIcon) {
-                    is PAMIconButtons.Payment -> {
-                        this.dispatchAction(
-                            AppActions.AddOperationPopUpAction.ExpandPaymentOption,
-                            scope
-                        )
-                        this.dispatchAction(
-                            AppActions.AddOperationPopUpAction.ExpandRecurrentOption,
-                            scope
-                        )
-                    }
-
-                    is PAMIconButtons.Transfer -> {
-                        this.dispatchAction(
-                            AppActions.AddOperationPopUpAction.ExpandTransferOption,
-                            scope
-                        )
-                        this.dispatchAction(
-                            AppActions.AddOperationPopUpAction.CloseRecurrentOption,
-                            scope
-                        )
-                    }
-                    else -> {
-                        this.dispatchAction(
-                            AppActions.AddOperationPopUpAction.CollapseOptions,
-                            scope
-                        )
-                        this.dispatchAction(
-                            AppActions.AddOperationPopUpAction.CloseRecurrentOption,
-                            scope
-                        )
-                    }
-
-                }
-            }
+            is AppActions.AddOperationPopUpAction.SelectOptionIcon -> AddPopUpOptionNavigation(action, scope)
             is AppActions.AddOperationPopUpAction.InitPopUp -> {
-               // updateState(GlobalAction.UpdateAddOperationPopUpState(action))
-                scope.launchUnconfinedCatchingError(
+                scope.launchOnIOCatchingError(
                     block = {
-                        getAllCategoriesInteractor.getAllCategories().collect {
+                        getAllCategoriesInteractor.getAllCategoriesAsFlow(this).collectLatest {
                             updateState(
                                 GlobalAction.UpdateAddOperationPopUpState(
                                     AppActions.AddOperationPopUpAction.UpdateCategoriesList(
@@ -97,8 +61,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                         }
                     }
                 )
-
-                if (uiState.value.isOnPaymentScreen){
+                if (action.isOnPaymentScreen){
                     this.dispatchAction(
                         AppActions.AddOperationPopUpAction.ExpandRecurrentOption,
                         scope
@@ -110,7 +73,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                 )
             }
             is AppActions.AddOperationPopUpAction.ExpandTransferOption -> {
-                scope.launchUnconfinedCatchingError(
+                scope.launchOnIOCatchingError(
                     block = {
                         updateState(
                             GlobalAction.UpdateAddOperationPopUpState(
@@ -128,12 +91,12 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
 
             is AppActions.AddOperationPopUpAction.AddNewOperation<*> -> {
                 //if no error on name and amount
-                if (!uiState.value.isOperationNameError
-                    && !uiState.value.isOperationAmountError
+                if (action.operation.name.trim().isNotEmpty()
+                    && action.operation.amount != 0.0
                 ) {
                     //if not on payment screen means that we are on account detail
                     //so check selected icon and add required operation
-                    if (!uiState.value.isOnPaymentScreen) {
+                    if (!action.isOnPaymentScreen) {
                         action.operation as OperationUiModel
                         when (uiState.value.addPopUpOptionSelectedIcon) {
                             is PAMIconButtons.Operation -> {
@@ -205,6 +168,46 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                     }
                 }
             }
+        }
+    }
+
+    private fun AddPopUpOptionNavigation(
+        action: AppActions.AddOperationPopUpAction.SelectOptionIcon,
+        scope: CoroutineScope
+    ) {
+        when (action.selectedIcon) {
+            is PAMIconButtons.Payment -> {
+                this.dispatchAction(
+                    AppActions.AddOperationPopUpAction.ExpandPaymentOption,
+                    scope
+                )
+                this.dispatchAction(
+                    AppActions.AddOperationPopUpAction.ExpandRecurrentOption,
+                    scope
+                )
+            }
+
+            is PAMIconButtons.Transfer -> {
+                this.dispatchAction(
+                    AppActions.AddOperationPopUpAction.ExpandTransferOption,
+                    scope
+                )
+                this.dispatchAction(
+                    AppActions.AddOperationPopUpAction.CloseRecurrentOption,
+                    scope
+                )
+            }
+            else -> {
+                this.dispatchAction(
+                    AppActions.AddOperationPopUpAction.CollapseOptions,
+                    scope
+                )
+                this.dispatchAction(
+                    AppActions.AddOperationPopUpAction.CloseRecurrentOption,
+                    scope
+                )
+            }
+
         }
     }
 

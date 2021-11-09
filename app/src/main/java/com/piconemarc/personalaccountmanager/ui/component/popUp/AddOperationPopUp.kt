@@ -29,7 +29,9 @@ fun AddOperationPopUp(
         onAcceptButtonClicked = {
             viewModel.dispatchAction(
                 AppActions.AddOperationPopUpAction.AddNewOperation(
+                    isOnPaymentScreen = viewModel.addOperationPopUpState.isOnPaymentScreen,
                     //if not on payment screen add operation
+                    operation =
                     if (!viewModel.addOperationPopUpState.isOnPaymentScreen)
                         OperationUiModel(
                             name = viewModel.addOperationPopUpState.operationName,

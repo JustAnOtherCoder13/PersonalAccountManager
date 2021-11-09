@@ -67,7 +67,7 @@ object AppActions {
 
         data class SelectOptionIcon(val selectedIcon: PAMIconButtons) : AddOperationPopUpAction()
         data class SelectAddOrMinus(val isAddOperation: Boolean) : AddOperationPopUpAction()
-        data class AddNewOperation<T : BaseOperation>(val operation: T) : AddOperationPopUpAction()
+        data class AddNewOperation<T : BaseOperation>(val operation: T,val isOnPaymentScreen: Boolean = false) : AddOperationPopUpAction()
         data class UpdateIsPaymentStartThisMonth( val isPaymentStartThisMonth: Boolean) : AddOperationPopUpAction()
     }
 

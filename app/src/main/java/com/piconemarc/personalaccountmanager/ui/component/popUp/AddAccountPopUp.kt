@@ -23,10 +23,11 @@ fun AddAccountPopUp(
         onAcceptButtonClicked = {
             viewModel.dispatchAction(
                 AppActions.AddAccountPopUpAction.AddNewAccount(
-                accountName = viewModel.addAccountPopUpState.accountName,
-                accountBalance = viewModel.addAccountPopUpState.accountBalance,
-                accountOverdraft = viewModel.addAccountPopUpState.accountOverdraft
-            ))
+                    accountName = viewModel.addAccountPopUpState.accountName,
+                    accountBalance = viewModel.addAccountPopUpState.accountBalance,
+                    accountOverdraft = viewModel.addAccountPopUpState.accountOverdraft,
+                )
+            )
         },
         onDismiss = { viewModel.dispatchAction(AppActions.AddAccountPopUpAction.ClosePopUp) },
         isExpanded = viewModel.addAccountPopUpState.isPopUpExpanded
