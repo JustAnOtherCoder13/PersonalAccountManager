@@ -17,19 +17,17 @@ internal val appBaseScreenReducer: Reducer<ViewModelInnerStates.BaseAppScreenVmS
                 interLayerTitle = action.selectedInterlayerButton.iconName
             )
         }
-        is AppActions.BaseAppScreenAction.UpdateAccounts -> old.copy(allAccountUis = action.allAccountUis)
-        is AppActions.BaseAppScreenAction.UpdateFooterBalance -> {
+        is AppActions.BaseAppScreenAction.UpdateAccounts -> {
             var allAccountBalance = 0.0
             action.allAccounts.map { it.accountBalance }.forEach { allAccountBalance+=it}
-            old.copy(footerBalance = allAccountBalance)
-        }
-        is AppActions.BaseAppScreenAction.UpdateFooterRest -> {
             var allAccountRest = 0.0
-            action.allAccountUis.map { it.rest }.forEach { allAccountRest += it }
-            old.copy(footerRest = allAccountRest)
+            action.allAccounts.map { it.rest }.forEach { allAccountRest += it }
+            old.copy(
+                allAccountUis = action.allAccounts,
+                footerBalance = allAccountBalance,
+                footerRest = allAccountRest
+            )
         }
         is AppActions.BaseAppScreenAction.UpdateInterlayerTiTle -> old.copy(interLayerTitle = action.interlayerTitle)
-        is AppActions.BaseAppScreenAction.CloseApp -> old
-
     }
 }

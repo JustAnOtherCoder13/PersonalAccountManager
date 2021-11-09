@@ -12,16 +12,16 @@ import javax.inject.Inject
 class GetAllAccountsInteractor @Inject constructor(private val accountRepository: AccountRepository) :
     Constants.Interactor {
 
-    fun getAllAccountsAsFlow(scope: CoroutineScope): SharedFlow<List<AccountUiModel>> {
+    suspend fun getAllAccountsAsFlow(scope: CoroutineScope): StateFlow<List<AccountUiModel>> {
         return accountRepository.getAllAccountsAsFlow().map { allAccountDto ->
             allAccountDto.map { it.toUiModel() }
-        }.shareIn(scope, SharingStarted.WhileSubscribed())
+        }.stateIn(scope)
     }
 
-    fun getAllAccountsWithRelatedPaymentAsFlow(): Flow<List<AccountWithRelatedPaymentUiModel>> {
+    suspend fun getAllAccountsWithRelatedPaymentAsFlow(scope: CoroutineScope): StateFlow<List<AccountWithRelatedPaymentUiModel>> {
         return accountRepository.getAllAccountsWithRelatedPaymentAsFlow().map {
             mapAllAccountsWithRelatedPaymentToUiModel(it)
-        }
+        }.stateIn(scope)
     }
 
     private fun mapAllAccountsWithRelatedPaymentToUiModel(accountWithRelatedPayment: List<AccountWithRelatedPayments>): List<AccountWithRelatedPaymentUiModel> {

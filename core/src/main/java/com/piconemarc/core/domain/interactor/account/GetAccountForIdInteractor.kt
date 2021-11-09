@@ -2,8 +2,11 @@ package com.piconemarc.core.domain.interactor.account
 
 import com.piconemarc.core.data.account.AccountRepository
 import com.piconemarc.model.entity.AccountUiModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 class GetAccountForIdInteractor @Inject constructor(private val accountRepository: AccountRepository) {
@@ -12,7 +15,7 @@ class GetAccountForIdInteractor @Inject constructor(private val accountRepositor
        return accountRepository.getAccountForId(id).toUiModel()
     }
 
-    fun getAccountForIdFlow(id : Long) : Flow<AccountUiModel>{
-        return accountRepository.getAccountForIdFlow(id).map { it.toUiModel() }
+    suspend fun getAccountForIdFlow(id : Long, scope: CoroutineScope) : StateFlow<AccountUiModel> {
+        return accountRepository.getAccountForIdFlow(id).map { it.toUiModel() }.stateIn(scope)
     }
 }

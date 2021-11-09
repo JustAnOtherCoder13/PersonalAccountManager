@@ -26,24 +26,20 @@ class MyPaymentViewModel @Inject constructor(
     store,
     paymentScreenVMState_
 ) {
-
     init {
         viewModelScope.launch(block = { state.collectLatest { uiState.value = it } })
-
         viewModelScope.launchOnIOCatchingError(
             block = {
-                getAllAccountsInteractor.getAllAccountsWithRelatedPaymentAsFlow().collect {
+                getAllAccountsInteractor.getAllAccountsWithRelatedPaymentAsFlow(this).collect {
                     dispatchAction(
                         AppActions.PaymentScreenAction.UpdateAllAccounts(it)
                     )
                 }
             }
         )
-
     }
 
     override fun dispatchAction(action: AppActions.PaymentScreenAction) {
         updateState(GlobalAction.UpdatePaymentScreenState(action))
     }
-
 }

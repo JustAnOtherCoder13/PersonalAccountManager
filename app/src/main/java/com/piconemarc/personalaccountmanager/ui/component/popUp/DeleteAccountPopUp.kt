@@ -16,20 +16,24 @@ import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
 import com.piconemarc.personalaccountmanager.ui.theme.deleteAccountPopUpHeight
 import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.utils.AppActions
+import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
 
 @Composable
 fun DeleteAccountPopUp(
-    viewModel: AppViewModel
+    onDeleteAccountPopUpEvent : (action : AppActions.DeleteAccountAction)-> Unit,
+    deleteAccountPopUpState : ViewModelInnerStates.DeleteAccountPopUpVMState
 ) {
     BaseDeletePopUp(
         deletePopUpTitle = stringResource(R.string.deleteAccountPopUpTitle),
-        onAcceptButtonClicked = { viewModel.dispatchAction(
-            AppActions.DeleteAccountAction.DeleteAccount(viewModel.deleteAccountPopUpState.accountToDelete)
-        ) },
-        onDismiss = { viewModel.dispatchAction(
-            AppActions.DeleteAccountAction.ClosePopUp
-        ) },
-        isExpanded = viewModel.deleteAccountPopUpState.isPopUpExpanded
+        onAcceptButtonClicked = {
+            onDeleteAccountPopUpEvent(
+                AppActions.DeleteAccountAction.DeleteAccount(
+                    deleteAccountPopUpState.accountToDelete
+                )
+            )
+            },
+        onDismiss = { onDeleteAccountPopUpEvent(AppActions.DeleteAccountAction.ClosePopUp) },
+        isExpanded = deleteAccountPopUpState.isPopUpExpanded
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -39,12 +43,12 @@ fun DeleteAccountPopUp(
                 .height(deleteAccountPopUpHeight)
         ) {
             Text(
-                text = viewModel.deleteAccountPopUpState.accountToDelete.name,
+                text = deleteAccountPopUpState.accountToDelete.name,
                 style = MaterialTheme.typography.h2,
                 modifier = Modifier.padding(vertical = LittleMarge)
             )
             Text(
-                text = "${viewModel.deleteAccountPopUpState.accountToDelete.accountBalance.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
+                text = "${deleteAccountPopUpState.accountToDelete.accountBalance.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
                 style = MaterialTheme.typography.body1,
                 modifier = Modifier.padding(vertical = LittleMarge),
             )

@@ -9,17 +9,11 @@ object AppActions {
 
     sealed class BaseAppScreenAction : UiAction {
         object InitScreen : BaseAppScreenAction()
-        object CloseApp : BaseAppScreenAction()
         data class SelectInterlayer(val selectedInterlayerButton: PAMIconButtons) :
             BaseAppScreenAction()
-
         data class UpdateInterlayerTiTle(val interlayerTitle: Int) : BaseAppScreenAction()
-        data class UpdateAccounts(val allAccountUis: List<AccountUiModel>) : BaseAppScreenAction()
-        data class UpdateFooterBalance(val allAccounts: List<AccountUiModel>) :
-            BaseAppScreenAction()
-
-        data class UpdateFooterRest(val allAccountUis: List<AccountUiModel>) : BaseAppScreenAction()
-    }
+        data class UpdateAccounts(val allAccounts: List<AccountUiModel>) : BaseAppScreenAction()
+        }
 
     sealed class MyAccountScreenAction : UiAction {
         object InitScreen : MyAccountScreenAction()

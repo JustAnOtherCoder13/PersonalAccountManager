@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @HiltViewModel
 class MyAccountViewModel @Inject constructor(
     store: DefaultStore<GlobalVmState>,
@@ -37,7 +36,7 @@ class MyAccountViewModel @Inject constructor(
         //updateAccountList
         viewModelScope.launchOnIOCatchingError(
             block = {
-                getAllAccountsInteractor.getAllAccountsAsFlow(viewModelScope).collect {
+                getAllAccountsInteractor.getAllAccountsAsFlow(this).collect {
                     dispatchAction(
                         AppActions.MyAccountScreenAction.UpdateAccountList(it)
                     )

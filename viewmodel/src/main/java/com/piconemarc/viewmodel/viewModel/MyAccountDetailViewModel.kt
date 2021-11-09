@@ -38,7 +38,6 @@ class MyAccountDetailViewModel @Inject constructor(
     store,
     myAccountDetailScreenVMState_
 ) {
-
     init {
         //init state
         viewModelScope.launch(block = { state.collectLatest { uiState.value = it } })
@@ -48,16 +47,12 @@ class MyAccountDetailViewModel @Inject constructor(
                 AppActions.BaseAppScreenAction.UpdateInterlayerTiTle(com.piconemarc.model.R.string.detail)
             )
         )
-        // update selected account and related operation
-
-
     }
 
     override fun dispatchAction(action: AppActions.MyAccountDetailScreenAction) {
         updateState(GlobalAction.UpdateMyAccountDetailScreenState(action))
         when (action) {
             is AppActions.MyAccountDetailScreenAction.InitScreen -> {
-
                 val id = try {
                     action.selectedAccountId.toLong()
                 } catch (e: ParseException) {
@@ -68,9 +63,9 @@ class MyAccountDetailViewModel @Inject constructor(
                 viewModelScope.launchOnIOCatchingError(
                     block = {
                         getAllOperationsForAccountIdInteractor.getAllOperationsForAccountIdFlow(
-                            id
-
-                        ).collect { accountOperations ->
+                            id,
+                            this
+                        ).collectLatest { accountOperations ->
                             dispatchAction(
                                 AppActions.MyAccountDetailScreenAction.UpdateAccountMonthlyOperations(
                                     accountOperations.filter {
@@ -86,8 +81,8 @@ class MyAccountDetailViewModel @Inject constructor(
                 )
                 viewModelScope.launchOnIOCatchingError(
                     block = {
-                        getAccountForIdInteractor.getAccountForIdFlow(id)
-                            .collect {
+                        getAccountForIdInteractor.getAccountForIdFlow(id, this)
+                            .collectLatest {
                                 updateState(
                                     GlobalAction.UpdateMyAccountDetailScreenState(
                                         AppActions.MyAccountDetailScreenAction.UpdateSelectedAccount(
@@ -100,7 +95,7 @@ class MyAccountDetailViewModel @Inject constructor(
                 )
             }
             is AppActions.MyAccountDetailScreenAction.GetSelectedOperation -> {
-                //todo delay cause trouble on multiple click
+                //todo delay cause trouble on multiple click, simplify
                 if (action.operation.paymentId != null) {
                     viewModelScope.launchOnIOCatchingError(
                         block = {
@@ -164,6 +159,4 @@ class MyAccountDetailViewModel @Inject constructor(
             }
         }
     }
-
-
 }
