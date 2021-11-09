@@ -10,9 +10,8 @@ import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BrownBackgroundAmountTextFieldItem
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BrownBackgroundTextFieldItem
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
-import com.piconemarc.viewmodel.viewModel.utils.AppActions
 import com.piconemarc.viewmodel.viewModel.AppViewModel
-import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.addAccountPopUpUiState
+import com.piconemarc.viewmodel.viewModel.utils.AppActions
 
 
 @Composable
@@ -24,13 +23,13 @@ fun AddAccountPopUp(
         onAcceptButtonClicked = {
             viewModel.dispatchAction(
                 AppActions.AddAccountPopUpAction.AddNewAccount(
-                accountName = addAccountPopUpUiState.value.accountName,
-                accountBalance = addAccountPopUpUiState.value.accountBalance,
-                accountOverdraft = addAccountPopUpUiState.value.accountOverdraft
+                accountName = viewModel.addAccountPopUpState.accountName,
+                accountBalance = viewModel.addAccountPopUpState.accountBalance,
+                accountOverdraft = viewModel.addAccountPopUpState.accountOverdraft
             ))
         },
         onDismiss = { viewModel.dispatchAction(AppActions.AddAccountPopUpAction.ClosePopUp) },
-        isExpanded = addAccountPopUpUiState.value.isPopUpExpanded
+        isExpanded = viewModel.addAccountPopUpState.isPopUpExpanded
     ) {
         Column(modifier = Modifier.padding(vertical = RegularMarge)) {
             BrownBackgroundTextFieldItem(
@@ -40,9 +39,9 @@ fun AddAccountPopUp(
                         AppActions.AddAccountPopUpAction.FillAccountName(accountName = accountName)
                     )
                 },
-                textValue = addAccountPopUpUiState.value.accountName,
-                isPopUpExpanded = addAccountPopUpUiState.value.isPopUpExpanded,
-                isError = addAccountPopUpUiState.value.isNameError,
+                textValue = viewModel.addAccountPopUpState.accountName,
+                isPopUpExpanded = viewModel.addAccountPopUpState.isPopUpExpanded,
+                isError = viewModel.addAccountPopUpState.isNameError,
                 errorMsg = stringResource(R.string.nameErrorMessage)
             )
             BrownBackgroundAmountTextFieldItem(
@@ -52,9 +51,9 @@ fun AddAccountPopUp(
                         AppActions.AddAccountPopUpAction.FillAccountBalance(accountBalance = accountBalance)
                     )
                 },
-                amountValue = addAccountPopUpUiState.value.accountBalance,
-                isPopUpExpanded = addAccountPopUpUiState.value.isPopUpExpanded,
-                isError = addAccountPopUpUiState.value.isBalanceError,
+                amountValue = viewModel.addAccountPopUpState.accountBalance,
+                isPopUpExpanded = viewModel.addAccountPopUpState.isPopUpExpanded,
+                isError = viewModel.addAccountPopUpState.isBalanceError,
                 errorMsg = stringResource(R.string.balanceErrorMessage)
             )
             BrownBackgroundAmountTextFieldItem(
@@ -64,9 +63,9 @@ fun AddAccountPopUp(
                         AppActions.AddAccountPopUpAction.FillAccountOverdraft(accountOverdraft = accountOverdraft)
                     )
                 },
-                amountValue = addAccountPopUpUiState.value.accountOverdraft,
-                isPopUpExpanded = addAccountPopUpUiState.value.isPopUpExpanded,
-                isError = addAccountPopUpUiState.value.isOverdraftError,
+                amountValue = viewModel.addAccountPopUpState.accountOverdraft,
+                isPopUpExpanded = viewModel.addAccountPopUpState.isPopUpExpanded,
+                isError = viewModel.addAccountPopUpState.isOverdraftError,
                 errorMsg = stringResource(R.string.overdraftErrorMessage)
             )
         }

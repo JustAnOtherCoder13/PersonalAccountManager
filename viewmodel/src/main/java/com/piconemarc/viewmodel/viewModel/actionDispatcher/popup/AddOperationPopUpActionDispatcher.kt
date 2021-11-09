@@ -11,7 +11,6 @@ import com.piconemarc.core.domain.interactor.transfer.AddNewTransferInteractor
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.OperationUiModel
 import com.piconemarc.model.entity.PaymentUiModel
-import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.addOperationPopUpUiState
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import com.piconemarc.viewmodel.viewModel.reducer.addOperationPopUpVMState_
@@ -35,19 +34,15 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
     private val addPaymentAndOperationInteractor: AddPaymentAndOperationInteractor,
     private val addNewTransferInteractor: AddNewTransferInteractor
 
-) : ActionDispatcher {
+) : ActionDispatcher<ViewModelInnerStates.AddOperationPopUpVMState> {
 
-    //todo state as to be in global scope
+    override val state : MutableStateFlow<ViewModelInnerStates.AddOperationPopUpVMState> = addOperationPopUpVMState_
+    override val uiState : MutableState<ViewModelInnerStates.AddOperationPopUpVMState> = mutableStateOf(
+        state.value)
+
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
-        //updateState(GlobalAction.UpdateAddOperationPopUpState(action))
-        val state : MutableStateFlow<ViewModelInnerStates.AddOperationPopUpVMState> = addOperationPopUpVMState_
-        val uiState : MutableState<ViewModelInnerStates.AddOperationPopUpVMState> = mutableStateOf(
-            state.value)
-        scope.launch {
-            state.collectLatest {
-                uiState.value = it
-            }
-        }
+        updateState(GlobalAction.UpdateAddOperationPopUpState(action))
+        scope.launch { state.collectLatest { uiState.value = it }}
 
         when (action) {
             is AppActions.AddOperationPopUpAction.SelectOptionIcon -> {
@@ -121,6 +116,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                             GlobalAction.UpdateAddOperationPopUpState(
                                 AppActions.AddOperationPopUpAction.UpdateAccountList(
                                     getAllAccountsInteractor.getAllAccounts()/*.filter {
+                                    //todo pass with own state
                                         it.id != myAccountDetailScreenUiState.value.selectedAccount.id
                                     }*/
                                 )
@@ -132,14 +128,14 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
 
             is AppActions.AddOperationPopUpAction.AddNewOperation<*> -> {
                 //if no error on name and amount
-                if (!addOperationPopUpUiState.value.isOperationNameError
-                    && !addOperationPopUpUiState.value.isOperationAmountError
+                if (!uiState.value.isOperationNameError
+                    && !uiState.value.isOperationAmountError
                 ) {
                     //if not on payment screen means that we are on account detail
                     //so check selected icon and add required operation
-                    if (!addOperationPopUpUiState.value.isOnPaymentScreen) {
+                    if (!uiState.value.isOnPaymentScreen) {
                         action.operation as OperationUiModel
-                        when (addOperationPopUpUiState.value.addPopUpOptionSelectedIcon) {
+                        when (uiState.value.addPopUpOptionSelectedIcon) {
                             is PAMIconButtons.Operation -> {
                                 scope.launchOnIOCatchingError(
                                     block = { addNewOperationInteractor.addOperation(action.operation) },
@@ -158,12 +154,12 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                                 )
                             }
                             is PAMIconButtons.Transfer -> {
-                                if (!addOperationPopUpUiState.value.isBeneficiaryAccountError) {
+                                if (!uiState.value.isBeneficiaryAccountError) {
                                     scope.launchOnIOCatchingError(
                                         block = {
                                             addNewTransferInteractor.addTransferOperation(
                                                 operation = action.operation,
-                                                beneficiaryAccountId = addOperationPopUpUiState.value.beneficiaryAccount.id
+                                                beneficiaryAccountId = uiState.value.beneficiaryAccount.id
                                             )
                                         },
                                         doOnSuccess = { closePopUp() }
@@ -177,7 +173,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                     else {
                         action.operation as PaymentUiModel
                         //if payment start this month, add payment and related operation
-                        if (addOperationPopUpUiState.value.isPaymentStartThisMonth){
+                        if (uiState.value.isPaymentStartThisMonth){
                             //add payment and related operation
                                 scope.launchOnIOCatchingError(
                                     block = {
@@ -186,8 +182,8 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                                                 accountId = action.operation.accountId ,
                                                 name = action.operation.name,
                                                 amount = action.operation.amount,
-                                                categoryId = addOperationPopUpUiState.value.selectedCategory.id ,
-                                                isAddOperation = addOperationPopUpUiState.value.isAddOperation,
+                                                categoryId = uiState.value.selectedCategory.id ,
+                                                isAddOperation = uiState.value.isAddOperation,
                                             ),
                                             endDate = getFormattedEndDateOrNull()
                                         )
@@ -214,8 +210,8 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
 
     private fun getFormattedEndDateOrNull() = try {
         SimpleDateFormat("MMMM/yyyy", Locale.FRANCE).parse(
-            addOperationPopUpUiState.value.enDateSelectedMonth
-                    + "/" + addOperationPopUpUiState.value.endDateSelectedYear,
+            uiState.value.enDateSelectedMonth
+                    + "/" + uiState.value.endDateSelectedYear,
         )
     } catch (e: ParseException) {
         null

@@ -31,5 +31,6 @@ abstract class BaseViewModel<A : UiAction, S : VMState>(
     }
 
     abstract fun dispatchAction(action: A)
+
     val uiState : MutableState<S> = mutableStateOf(state.value)
 }

@@ -31,7 +31,7 @@ internal val myAccountDetailScreenVMState_: MutableStateFlow<ViewModelInnerState
         ViewModelInnerStates.MyAccountDetailScreenVMState()
     )
 
-internal val paymentScreenVMState_ : MutableStateFlow<ViewModelInnerStates.PaymentScreenVmState> =
+internal val paymentScreenVMState_: MutableStateFlow<ViewModelInnerStates.PaymentScreenVmState> =
     MutableStateFlow(
         ViewModelInnerStates.PaymentScreenVmState()
     )
@@ -43,17 +43,17 @@ internal val addOperationPopUpVMState_: MutableStateFlow<ViewModelInnerStates.Ad
         ViewModelInnerStates.AddOperationPopUpVMState()
     )
 
-private val deleteOperationPopUpVMState_: MutableStateFlow<ViewModelInnerStates.DeleteOperationPopUpVMState> =
+internal val deleteOperationPopUpVMState_: MutableStateFlow<ViewModelInnerStates.DeleteOperationPopUpVMState> =
     MutableStateFlow(
         ViewModelInnerStates.DeleteOperationPopUpVMState()
     )
 
-private val deleteAccountVmState_: MutableStateFlow<ViewModelInnerStates.DeleteAccountPopUpVMState> =
+internal val deleteAccountVmState_: MutableStateFlow<ViewModelInnerStates.DeleteAccountPopUpVMState> =
     MutableStateFlow(
         ViewModelInnerStates.DeleteAccountPopUpVMState()
     )
 
-private val addAccountPoUpVmState_: MutableStateFlow<ViewModelInnerStates.AddAccountPopUpVMState> =
+internal val addAccountPoUpVmState_: MutableStateFlow<ViewModelInnerStates.AddAccountPopUpVMState> =
     MutableStateFlow(
         ViewModelInnerStates.AddAccountPopUpVMState()
     )
@@ -69,7 +69,7 @@ data class GlobalVmState(
     var myAccountScreenVmState: ViewModelInnerStates.MyAccountScreenVMState,
     var myAccountDetailScreenVMState: ViewModelInnerStates.MyAccountDetailScreenVMState,
     var deleteOperationPopUpVmState: ViewModelInnerStates.DeleteOperationPopUpVMState,
-    var paymentScreenVmState : ViewModelInnerStates.PaymentScreenVmState
+    var paymentScreenVmState: ViewModelInnerStates.PaymentScreenVmState
 ) : VMState
 
 
@@ -166,19 +166,12 @@ class AppSubscriber {
         { globalVmState ->
             baseAppScreenVmState_.value = globalVmState.baseAppScreenVmState
             addOperationPopUpVMState_.value = globalVmState.addOperationPopUpVMState
-           // deleteAccountVmState_.value = globalVmState.deleteAccountPopUpVMState
-            //addAccountPoUpVmState_.value = globalVmState.addAccountPopUpVMState
+            deleteAccountVmState_.value = globalVmState.deleteAccountPopUpVMState
+            addAccountPoUpVmState_.value = globalVmState.addAccountPopUpVMState
             myAccountDetailScreenVMState_.value = globalVmState.myAccountDetailScreenVMState
             myAccountScreenVMState_.value = globalVmState.myAccountScreenVmState
-            //deleteOperationPopUpVMState_.value = globalVmState.deleteOperationPopUpVmState
+            deleteOperationPopUpVMState_.value = globalVmState.deleteOperationPopUpVmState
             paymentScreenVMState_.value = globalVmState.paymentScreenVmState
         }
 
-    //Expose state to view with delegate mutable state
-    object AppUiState : UiState {
-        val addOperationPopUpUiState = addOperationPopUpVMState_
-        val deleteAccountUiState = deleteAccountVmState_
-        val addAccountPopUpUiState = addAccountPoUpVmState_
-        val deleteOperationPopUpUiState = deleteOperationPopUpVMState_
-    }
 }

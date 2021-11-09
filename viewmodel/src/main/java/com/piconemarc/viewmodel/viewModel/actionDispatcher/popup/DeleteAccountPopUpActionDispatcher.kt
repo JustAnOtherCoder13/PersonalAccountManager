@@ -1,22 +1,32 @@
 package com.piconemarc.viewmodel.viewModel.actionDispatcher.popup
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import com.piconemarc.core.domain.interactor.account.DeleteAccountInteractor
-import com.piconemarc.viewmodel.viewModel.utils.ActionDispatcher
-import com.piconemarc.viewmodel.viewModel.utils.DefaultStore
-import com.piconemarc.viewmodel.viewModel.utils.UiAction
-import com.piconemarc.viewmodel.viewModel.utils.launchOnIOCatchingError
-import com.piconemarc.viewmodel.viewModel.utils.AppActions
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
+import com.piconemarc.viewmodel.viewModel.reducer.deleteAccountVmState_
+import com.piconemarc.viewmodel.viewModel.utils.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class DeleteAccountPopUpActionDispatcher @Inject constructor(
     override val store: DefaultStore<GlobalVmState>,
     private val deleteAccountInteractor: DeleteAccountInteractor
-) : ActionDispatcher {
+) : ActionDispatcher<ViewModelInnerStates.DeleteAccountPopUpVMState> {
+
+    override val state: MutableStateFlow<ViewModelInnerStates.DeleteAccountPopUpVMState>
+        = deleteAccountVmState_
+    override val uiState: MutableState<ViewModelInnerStates.DeleteAccountPopUpVMState>
+        = mutableStateOf(state.value)
+
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
         updateState(GlobalAction.UpdateDeleteAccountPopUpState(action))
+        scope.launch{state.collectLatest { uiState.value = it }}
+
         when (action) {
             is AppActions.DeleteAccountAction.InitPopUp -> {
                 updateState(
@@ -41,4 +51,6 @@ class DeleteAccountPopUpActionDispatcher @Inject constructor(
             }
         }
     }
+
+
 }

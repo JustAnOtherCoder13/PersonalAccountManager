@@ -1,5 +1,7 @@
 package com.piconemarc.viewmodel.viewModel.actionDispatcher.popup
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
 import com.piconemarc.core.domain.interactor.operation.DeleteOperationAndPaymentInteractor
 import com.piconemarc.core.domain.interactor.operation.DeleteOperationInteractor
@@ -11,15 +13,14 @@ import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
 import com.piconemarc.model.entity.OperationUiModel
 import com.piconemarc.model.entity.PaymentUiModel
 import com.piconemarc.model.entity.TransferUiModel
-import com.piconemarc.viewmodel.viewModel.utils.ActionDispatcher
-import com.piconemarc.viewmodel.viewModel.utils.DefaultStore
-import com.piconemarc.viewmodel.viewModel.utils.UiAction
-import com.piconemarc.viewmodel.viewModel.utils.launchOnIOCatchingError
-import com.piconemarc.viewmodel.viewModel.utils.AppActions
-import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.deleteOperationPopUpUiState
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
+import com.piconemarc.viewmodel.viewModel.reducer.deleteOperationPopUpVMState_
+import com.piconemarc.viewmodel.viewModel.utils.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class DeleteOperationPopUpActionDispatcher @Inject constructor(
@@ -33,12 +34,20 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
     private val deletePaymentAndRelatedOperationInteractor: DeletePaymentAndRelatedOperationInteractor,
     private val deleteTransferInteractor: DeleteTransferInteractor
 
-) : ActionDispatcher {
+) : ActionDispatcher<ViewModelInnerStates.DeleteOperationPopUpVMState> {
+
+    override val state: MutableStateFlow<ViewModelInnerStates.DeleteOperationPopUpVMState>
+        = deleteOperationPopUpVMState_
+    override val uiState: MutableState<ViewModelInnerStates.DeleteOperationPopUpVMState>
+        = mutableStateOf(state.value)
+
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
         var transfer: TransferUiModel
         var transferRelatedOperation: OperationUiModel
 
+
         updateState(GlobalAction.UpdateDeleteOperationPopUpState(action))
+        scope.launch{state.collectLatest { uiState.value = it }}
         when (action) {
             is AppActions.DeleteOperationPopUpAction.InitPopUp<*> -> {
                 // get operation to delete from account detail
@@ -82,7 +91,7 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
                     is OperationUiModel ->{
                         if (action.operationToDelete.paymentId != null) {
                             // if payment id exist and user want to delete operation and payment
-                            if (deleteOperationPopUpUiState.value.isRelatedOperationDeleted) {
+                            if (uiState.value.isRelatedOperationDeleted) {
                                 scope.launchOnIOCatchingError(
                                     block = { deleteOperationAndPaymentInteractor.deleteOperationAndPayment(action.operationToDelete) },
                                     doOnSuccess = { closePopUp() }
@@ -120,7 +129,7 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
                     is PaymentUiModel -> {
                         //if user want to delete related operation
                         if (action.operationToDelete.operationId != null
-                            && deleteOperationPopUpUiState.value.isRelatedOperationDeleted
+                            && uiState.value.isRelatedOperationDeleted
                         ){
                             scope.launchOnIOCatchingError(
                                 block = { deletePaymentAndRelatedOperationInteractor.deletePaymentAndRelatedOperation(action.operationToDelete) },

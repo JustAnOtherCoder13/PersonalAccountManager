@@ -1,5 +1,9 @@
 package com.piconemarc.viewmodel.viewModel
 
+import android.util.Log
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.viewmodel.viewModel.utils.DefaultStore
@@ -11,6 +15,7 @@ import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.DeleteAccountPo
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.DeleteOperationPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
+import com.piconemarc.viewmodel.viewModel.reducer.addOperationPopUpVMState_
 import com.piconemarc.viewmodel.viewModel.reducer.baseAppScreenVmState_
 import com.piconemarc.viewmodel.viewModel.utils.AppActions
 import com.piconemarc.viewmodel.viewModel.utils.BaseViewModel
@@ -36,6 +41,12 @@ class AppViewModel @Inject constructor(
     private var deleteAccountPopUpJob: Job? = null
     private var addAccountPopUpJob: Job? = null
     private var deleteOperationPopUpJob: Job? = null
+
+    val addOperationPopUpState by addOperationPopUpActionDispatcher.uiState
+    val deleteOperationPopUpState by deleteOperationPopUpActionDispatcher.uiState
+    val addAccountPopUpState by addAccountPopUpActionDispatcher.uiState
+    val deleteAccountPopUpState by deleteAccountPopUpActionDispatcher.uiState
+
 
     init {
         //init state
@@ -79,6 +90,7 @@ class AppViewModel @Inject constructor(
                 addOperationPopUpJob = viewModelScope.launch {
                     addOperationPopUpActionDispatcher.dispatchAction(action, this)
                 }
+
                 if (action is AppActions.AddOperationPopUpAction.ClosePopUp) {
                     addOperationPopUpJob?.cancel()
                 }
