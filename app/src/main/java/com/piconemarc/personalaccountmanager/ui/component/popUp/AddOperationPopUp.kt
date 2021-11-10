@@ -1,6 +1,5 @@
 package com.piconemarc.personalaccountmanager.ui.component.popUp
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
@@ -17,7 +16,6 @@ import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.AddOp
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.*
 import com.piconemarc.viewmodel.viewModel.utils.AppActions
 import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
-import java.lang.Exception
 
 @Composable
 fun AddOperationPopUp(
@@ -49,7 +47,8 @@ fun AddOperationPopUp(
                             isOnPaymentScreen = addOperationPopUpState.isOnPaymentScreen,
                             newOperation = newOperation,
                             isOperationError = checkOperationNameAndAmountError(addOperationPopUpState),
-                            paymentEndDate = Pair(addOperationPopUpState.enDateSelectedMonth, addOperationPopUpState.endDateSelectedYear)
+                            paymentEndDate = Pair(addOperationPopUpState.enDateSelectedMonth, addOperationPopUpState.endDateSelectedYear),
+                            isPaymentStartThisMonth = addOperationPopUpState.isPaymentStartThisMonth
                         )
                     }
                     else -> {
@@ -57,39 +56,6 @@ fun AddOperationPopUp(
 
                     }
                 }
-
-                //todo
-                /*AppActions.AddOperationPopUpAction.AddNewOperation(
-                    isOnPaymentScreen = state.isOnPaymentScreen,
-                    isBeneficiaryAccountError = state.isBeneficiaryAccountError,
-                    //if not on payment screen add operation
-                    operation =
-                    if (!state.isOnPaymentScreen)
-                        OperationUiModel(
-                            name = state.operationName,
-                            amount = try {
-                                state.operationAmount.toDouble()
-                            } catch (e: NumberFormatException) {
-                                0.0
-                            },
-                            accountId = state.selectedAccountId,
-                            categoryId = state.selectedCategory.id,
-                            emitDate = Calendar.getInstance().time,
-                            isAddOperation = state.isAddOperation
-                        )
-                    else {
-                        //else add payment
-                        PaymentUiModel(
-                            name = state.operationName,
-                            amount = try {
-                                state.operationAmount.toDouble()
-                            } catch (e: NumberFormatException) {
-                                0.0
-                            },
-                            accountId = state.selectedAccountId,
-                        )
-                    }
-                )*/
             )
         },
         onDismiss = { onAddOperationPopUpEvent(AppActions.AddOpePopupAction.ClosePopUp) },
@@ -251,11 +217,9 @@ fun AddOperationPopUp(
             if (addOperationPopUpState.isOnPaymentScreen)
                 OptionCheckBox(
                     onCheckedChange = {
-                        /*onAddOperationPopUpEvent(
-                            AppActions.AddOperationPopUpAction.UpdateIsPaymentStartThisMonth(
-                                it
-                            )
-                        )*/
+                        onAddOperationPopUpEvent(
+                            AppActions.AddOpePopupAction.OnIsPaymentStartThisMonthChecked(it)
+                        )
                     },
                     isChecked = addOperationPopUpState.isPaymentStartThisMonth,
                     optionText = stringResource(R.string.AddOperationPopUpAddPaymentOptionMessage)

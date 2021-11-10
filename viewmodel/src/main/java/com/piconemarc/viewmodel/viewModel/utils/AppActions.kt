@@ -84,7 +84,8 @@ object AppActions {
             val isOnPaymentScreen: Boolean,
             val newOperation : OperationUiModel,
             val isOperationError : Boolean,
-            val paymentEndDate : Pair<String,String>
+            val paymentEndDate : Pair<String,String>,
+            val isPaymentStartThisMonth : Boolean
         ) : AddOpePopupAction()
 
         object AddTransfer : AddOpePopupAction()
@@ -101,6 +102,8 @@ object AppActions {
             val isRecurrentEndDateError: Boolean = true,
             val isBeneficiaryAccountError: Boolean = false
         ):AddOpePopupAction()
+
+        data class OnIsPaymentStartThisMonthChecked(val isChecked : Boolean) : AddOpePopupAction()
     }
 
     sealed class DeleteOperationPopUpAction : UiAction {

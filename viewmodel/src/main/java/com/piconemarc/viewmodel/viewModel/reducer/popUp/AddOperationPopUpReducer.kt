@@ -17,12 +17,13 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
             is AppActions.AddOpePopupAction.InitPopUp -> {
                 old.copy(
                     isOnPaymentScreen = action.isOnPaymentScreen,
+                    isPaymentStartThisMonth = true,
                     isAddOperation = false,
                     isPopUpExpanded = true,
                     isAddOrMinusEnable = true,
                     isTransferExpanded = false,
                     isRecurrentOptionExpanded = action.isOnPaymentScreen,
-                    addPopUpOptionSelectedIcon = PAMIconButtons.Operation,
+                    addPopUpOptionSelectedIcon = if (action.isOnPaymentScreen)PAMIconButtons.Payment else PAMIconButtons.Operation,
                     isPaymentExpanded = action.isOnPaymentScreen,
                     addPopUpTitle = when (action.isOnPaymentScreen) {
                         true -> Constants.PAYMENT
@@ -154,12 +155,16 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
                 )
             }
             is AppActions.AddOpePopupAction.CheckError -> {
-                Log.e("TAG", "reduce: ${action.operationName} ${action.operationAmount}", )
                 old.copy(
                     isOperationNameError = action.operationName.trim().isEmpty(),
-                    isOperationAmountError = action.operationAmount.trim().isEmpty() || action.operationAmount.trim() == "-",
+                    isOperationAmountError = action.operationAmount.toDouble() == 0.0 ,
                     isRecurrentEndDateError = action.isRecurrentEndDateError,
                     isBeneficiaryAccountError = action.isBeneficiaryAccountError
+                )
+            }
+            is AppActions.AddOpePopupAction.OnIsPaymentStartThisMonthChecked ->{
+                old.copy(
+                    isPaymentStartThisMonth = action.isChecked
                 )
             }
 
