@@ -19,6 +19,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 class AddOperationPopUpActionDispatcher @Inject constructor(
@@ -62,7 +65,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                                         allAccounts = allAccounts.filter { account -> account.id != selectedAccount.id },
                                         selectedAccount = selectedAccount
                                     ),
-                                    scope
+                                    this
                                 )
                             }
                     }
@@ -71,29 +74,41 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
             is AppActions.AddOpePopupAction.AddOperation -> {
                 dispatchAction(
                     AppActions.AddOpePopupAction.CheckError(
-                        operationName = action.operationName,
-                        operationAmount = action.operationAmount
+                        operationName = action.newOperation.name,
+                        operationAmount = action.newOperation.amount.toString()
                     ), scope
                 )
                 if (!action.isOperationError) {
                     scope.launchOnIOCatchingError(
                         block = {
-                            addNewOperationInteractor.addOperation(
-                                OperationUiModel(
-                                    name = action.operationName,
-                                    amount = action.operationAmount.toDouble(),
-                                    categoryId = action.selectedCategory.id,
-                                    accountId = action.relatedAccountId
-                                )
-                            )
+                            addNewOperationInteractor.addOperation(action.newOperation)
                         },
-                        doOnSuccess = {
-                            dispatchAction(
-                                AppActions.AddOpePopupAction.ClosePopUp,
-                                scope
-                            )
-                        }
+                        doOnSuccess = { closePopUp() }
                     )
+                }
+            }
+            is AppActions.AddOpePopupAction.AddPayment -> {
+                dispatchAction(
+                    AppActions.AddOpePopupAction.CheckError(
+                        operationName = action.newOperation.name,
+                        operationAmount = action.newOperation.amount.toString()
+                    ), scope
+                )
+                when(action.isOnPaymentScreen){
+                    true ->{
+
+                    }
+                    else -> {
+                        scope.launchOnIOCatchingError(
+                            block = {
+                                addPaymentAndOperationInteractor.addPaymentAndOperation(
+                                    operation = action.newOperation,
+                                    endDate = getFormattedEndDateOrNull(action.paymentEndDate.first, action.paymentEndDate.second)
+                                )
+                            },
+                            doOnSuccess = { closePopUp() }
+                        )
+                    }
                 }
             }
 
@@ -274,11 +289,11 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
 
         }
     }
-
-    private fun getFormattedEndDateOrNull() = try {
+*/
+    private fun getFormattedEndDateOrNull(month : String, year : String) = try {
         SimpleDateFormat("MMMM/yyyy", Locale.FRANCE).parse(
-            uiState.value.enDateSelectedMonth
-                    + "/" + uiState.value.endDateSelectedYear,
+            month
+                    + "/" + year,
         )
     } catch (e: ParseException) {
         null
@@ -287,8 +302,8 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
     private fun closePopUp() {
         updateState(
             GlobalAction.UpdateAddOperationPopUpState(
-                AppActions.AddOperationPopUpAction.ClosePopUp
+                AppActions.AddOpePopupAction.ClosePopUp
             )
         )
-    }*/
+    }
 }

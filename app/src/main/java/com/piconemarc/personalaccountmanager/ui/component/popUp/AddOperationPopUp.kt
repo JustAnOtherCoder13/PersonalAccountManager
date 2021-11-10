@@ -8,6 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.piconemarc.model.PAMIconButtons
+import com.piconemarc.model.entity.OperationUiModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.animation.pAMAddOperationPopUpBackgroundColor
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.AddOperationPopUpLeftSideMenuIconPanel
@@ -16,6 +17,7 @@ import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.AddOp
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.*
 import com.piconemarc.viewmodel.viewModel.utils.AppActions
 import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
+import java.lang.Exception
 
 @Composable
 fun AddOperationPopUp(
@@ -26,23 +28,29 @@ fun AddOperationPopUp(
     BasePopUp(
         title = addOperationPopUpState.addPopUpTitle,
         onAcceptButtonClicked = {
+            val newOperation = OperationUiModel(
+                name =addOperationPopUpState.operationName,
+                amount = try {
+                    addOperationPopUpState.operationAmount.toDouble()
+                }catch (e:Exception){ 0.0 } ,
+                categoryId = addOperationPopUpState.selectedCategory.id,
+                accountId = addOperationPopUpState.selectedAccountId,
+            )
             onAddOperationPopUpEvent(
                 when (addOperationPopUpState.addPopUpOptionSelectedIcon) {
                     is PAMIconButtons.Operation -> {
                         AppActions.AddOpePopupAction.AddOperation(
-                            operationName = addOperationPopUpState.operationName,
-                            operationAmount = addOperationPopUpState.operationAmount,
-                            selectedCategory = addOperationPopUpState.selectedCategory,
-                            relatedAccountId = addOperationPopUpState.selectedAccountId,
-                            isOperationError =
-                            addOperationPopUpState.operationName.trim().isEmpty()
-                                    || (addOperationPopUpState.operationAmount.trim().isEmpty()
-                                    || addOperationPopUpState.operationAmount.trim() == "-")
+                            newOperation = newOperation,
+                            isOperationError = checkOperationNameAndAmountError(addOperationPopUpState)
                         )
                     }
                     is PAMIconButtons.Payment -> {
-                        AppActions.AddOpePopupAction.AddPayment
-
+                        AppActions.AddOpePopupAction.AddPayment(
+                            isOnPaymentScreen = addOperationPopUpState.isOnPaymentScreen,
+                            newOperation = newOperation,
+                            isOperationError = checkOperationNameAndAmountError(addOperationPopUpState),
+                            paymentEndDate = Pair(addOperationPopUpState.enDateSelectedMonth, addOperationPopUpState.endDateSelectedYear)
+                        )
                     }
                     else -> {
                         AppActions.AddOpePopupAction.AddTransfer
@@ -255,3 +263,9 @@ fun AddOperationPopUp(
         }
     }
 }
+
+
+private fun checkOperationNameAndAmountError(addOperationPopUpState: ViewModelInnerStates.AddOperationPopUpVMState) =
+    (addOperationPopUpState.operationName.trim().isEmpty()
+            || (addOperationPopUpState.operationAmount.trim().isEmpty()
+            || addOperationPopUpState.operationAmount.trim() == "-"))
