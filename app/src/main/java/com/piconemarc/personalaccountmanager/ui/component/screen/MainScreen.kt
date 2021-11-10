@@ -98,7 +98,10 @@ fun PAMMainScreen(appViewModel: AppViewModel) {
             )
         }
     )
-    AddOperationPopUp(viewModel = appViewModel)
+    AddOperationPopUp(
+        onAddOperationPopUpEvent = { appViewModel.dispatchAction(it) },
+        addOperationPopUpState = appViewModel.addOperationPopUpState
+    )
     DeleteAccountPopUp(
         onDeleteAccountPopUpEvent = {appViewModel.dispatchAction(it)},
         deleteAccountPopUpState = appViewModel.deleteAccountPopUpState

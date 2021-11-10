@@ -113,7 +113,7 @@ fun MyAccountDetailBody(
             footer = {
                 BrownBackgroundAddButton(onAddButtonClicked = {
                     appViewModel.dispatchAction(
-                        AppActions.AddOperationPopUpAction.InitPopUp(
+                        AppActions.AddOpePopupAction.InitPopUp(
                             selectedAccountId = myAccountDetailViewModel.uiState.value.selectedAccount.id
                         )
                     )

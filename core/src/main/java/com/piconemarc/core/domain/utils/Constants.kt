@@ -18,19 +18,19 @@ object Constants {
 
     val TODAY = Calendar.getInstance().time
 
-    val OPERATION_MODEL =  "Operation"
-    val PAYMENT_MODEL =  "Payment"
+    val OPERATION =  "Operation"
+    val PAYMENT =  "Payment"
     val TRANSFER_MODEL =  "Transfer"
 
     val CATEGORY_MODEL =  "Category"
 
     val SENDER_ACCOUNT_MODEL =  "Sender account"
-    val BENEFICIARY_ACCOUNT_MODEL =  "Beneficiary account"
+    val BENEFICIARY_ACCOUNT =  "Beneficiary account"
 
 
 
-    val YEAR_MODEL =  "Year"
-    val MONTH_MODEL =  "Month"
+    val YEAR =  "Year"
+    val MONTH =  "Month"
 
 
     val SELECTABLE_YEARS_LIST: List<String> =

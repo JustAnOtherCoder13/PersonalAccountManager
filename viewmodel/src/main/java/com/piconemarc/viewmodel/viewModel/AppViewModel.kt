@@ -1,5 +1,6 @@
 package com.piconemarc.viewmodel.viewModel
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewModelScope
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
@@ -60,11 +61,11 @@ class AppViewModel @Inject constructor(
             }
 
             //launch job for each pop up when action is dispatched, cancel job on close
-            is AppActions.AddOperationPopUpAction -> {
+            is AppActions.AddOpePopupAction -> {
                 addOperationPopUpJob = viewModelScope.launch {
                     addOperationPopUpActionDispatcher.dispatchAction(action, this)
                 }
-                if (action is AppActions.AddOperationPopUpAction.ClosePopUp) {
+                if (action is AppActions.AddOpePopupAction.ClosePopUp) {
                     addOperationPopUpJob?.cancel()
                 }
             }

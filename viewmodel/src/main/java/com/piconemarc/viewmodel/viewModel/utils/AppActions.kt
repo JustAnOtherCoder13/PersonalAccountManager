@@ -2,6 +2,7 @@ package com.piconemarc.viewmodel.viewModel.utils
 
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.*
+import java.util.*
 
 object AppActions {
 
@@ -11,9 +12,10 @@ object AppActions {
         object InitScreen : BaseAppScreenAction()
         data class SelectInterlayer(val selectedInterlayerButton: PAMIconButtons) :
             BaseAppScreenAction()
+
         data class UpdateInterlayerTiTle(val interlayerTitle: Int) : BaseAppScreenAction()
         data class UpdateAccounts(val allAccounts: List<AccountUiModel>) : BaseAppScreenAction()
-        }
+    }
 
     sealed class MyAccountScreenAction : UiAction {
         object InitScreen : MyAccountScreenAction()
@@ -30,23 +32,83 @@ object AppActions {
 
         data class UpdateSelectedAccount(val account: AccountUiModel) :
             MyAccountDetailScreenAction()
-        data class GetSelectedOperation(val operation: OperationUiModel) : MyAccountDetailScreenAction()
-        data class UpdateOperationMessage(val message : String) : MyAccountDetailScreenAction()
+
+        data class GetSelectedOperation(val operation: OperationUiModel) :
+            MyAccountDetailScreenAction()
+
+        data class UpdateOperationMessage(val message: String) : MyAccountDetailScreenAction()
     }
 
     sealed class PaymentScreenAction : UiAction {
         object InitScreen : PaymentScreenAction()
         object CloseScreen : PaymentScreenAction()
-        data class UpdateAllAccounts(val allAccounts : List<AccountWithRelatedPaymentUiModel>) : PaymentScreenAction()
+        data class UpdateAllAccounts(val allAccounts: List<AccountWithRelatedPaymentUiModel>) :
+            PaymentScreenAction()
     }
 
 
     //POP UP----------------------------------------------------------------------------------------
+    sealed class AddOpePopupAction : UiAction {
+        data class InitPopUp(val isOnPaymentScreen: Boolean = false, val selectedAccountId: Long) :
+            AddOpePopupAction()
+
+        object ClosePopUp : AddOpePopupAction()
+
+        data class OnOperationIconSelected(
+            val isAddOperation: Boolean,
+            val operationAmount: String
+        ) : AddOpePopupAction()
+
+        data class OnPaymentIconSelected(val isAddOperation: Boolean, val operationAmount: String) :
+            AddOpePopupAction()
+
+        data class OnTransferIconSelected(val operationAmount: String) : AddOpePopupAction()
+        data class OnRecurrentOptionSelected(val isRecurrent: Boolean) : AddOpePopupAction()
+
+        data class OnAddOrMinusSelected(val isAddOperation: Boolean, val operationAmount: String) :
+            AddOpePopupAction()
+
+        data class OnFillOperationName(val operationName: String) : AddOpePopupAction()
+        data class OnFillOperationAmount(val operationAmount: String) : AddOpePopupAction()
+        data class OnSelectCategory(val selectedCategory: CategoryUiModel) : AddOpePopupAction()
+        data class OnPaymentEndDateSelected(val selectedMonthOrYear: String) : AddOpePopupAction()
+        data class OnBeneficiaryAccountSelected(val beneficiaryAccount: AccountUiModel) :
+            AddOpePopupAction()
+
+        data class AddOperation(
+            val operationName: String,
+            val operationAmount: String,
+            val selectedCategory: CategoryUiModel,
+            val relatedAccountId : Long,
+            val isOperationError : Boolean
+        ) : AddOpePopupAction()
+
+        object AddPayment : AddOpePopupAction()
+        object AddTransfer : AddOpePopupAction()
+
+        data class LaunchIoThread(
+            val allCategories: List<CategoryUiModel>? = null,
+            val allAccounts: List<AccountUiModel>? = null,
+            val selectedAccount: AccountUiModel? = null
+        ) : AddOpePopupAction()
+
+        data class CheckError(
+            val operationName: String,
+            val operationAmount: String,
+            val isRecurrentEndDateError: Boolean = true,
+            val isBeneficiaryAccountError: Boolean = false
+        ):AddOpePopupAction()
+    }
+
     sealed class AddOperationPopUpAction : UiAction {
-        data class InitPopUp(val isOnPaymentScreen : Boolean = false, val selectedAccountId : Long) : AddOperationPopUpAction()
+        data class InitPopUp(val isOnPaymentScreen: Boolean = false, val selectedAccountId: Long) :
+            AddOperationPopUpAction()
+
         object ExpandPaymentOption : AddOperationPopUpAction()
         object CollapseOptions : AddOperationPopUpAction()
-        object ExpandTransferOption : AddOperationPopUpAction()
+        data class ExpandTransferOption(val selectedAccount: AccountUiModel) :
+            AddOperationPopUpAction()
+
         object ExpandRecurrentOption : AddOperationPopUpAction()
         object CloseRecurrentOption : AddOperationPopUpAction()
         object ClosePopUp : AddOperationPopUpAction()
@@ -65,25 +127,42 @@ object AppActions {
         data class SelectBeneficiaryAccount(val beneficiaryAccountUi: AccountUiModel) :
             AddOperationPopUpAction()
 
-        data class SelectOptionIcon(val selectedIcon: PAMIconButtons) : AddOperationPopUpAction()
-        data class SelectAddOrMinus(val isAddOperation: Boolean) : AddOperationPopUpAction()
-        data class AddNewOperation<T : BaseOperation>(val operation: T,val isOnPaymentScreen: Boolean = false) : AddOperationPopUpAction()
-        data class UpdateIsPaymentStartThisMonth( val isPaymentStartThisMonth: Boolean) : AddOperationPopUpAction()
+        data class SelectOptionIcon(val selectedIcon: PAMIconButtons, val selectedAccountId: Long) :
+            AddOperationPopUpAction()
+
+        data class SelectAddOrMinus(val isAddOperation: Boolean, val operationAmount: String) :
+            AddOperationPopUpAction()
+
+        data class AddNewOperation<T : BaseOperation>(
+            val operation: T,
+            val isOnPaymentScreen: Boolean = false,
+            val isBeneficiaryAccountError: Boolean = true
+        ) : AddOperationPopUpAction()
+
+        data class UpdateIsPaymentStartThisMonth(val isPaymentStartThisMonth: Boolean) :
+            AddOperationPopUpAction()
     }
 
     sealed class DeleteOperationPopUpAction : UiAction {
-        data class InitPopUp<T : BaseOperation>(val operationToDelete: T) : DeleteOperationPopUpAction()
+        data class InitPopUp<T : BaseOperation>(val operationToDelete: T) :
+            DeleteOperationPopUpAction()
+
         object ClosePopUp : DeleteOperationPopUpAction()
         data class UpdateOperationToDelete<T : BaseOperation>(val operationToDelete: T) :
             DeleteOperationPopUpAction()
 
         data class DeleteOperation<T : BaseOperation>(val operationToDelete: T) :
             DeleteOperationPopUpAction()
+
         data class DeletePayment(val paymentToDelete: PaymentUiModel) : DeleteOperationPopUpAction()
-        data class DeleteTransfer(val transferToDelete : TransferUiModel) :
+        data class DeleteTransfer(val transferToDelete: TransferUiModel) :
             DeleteOperationPopUpAction()
-        data class UpdateTransferRelatedAccount(val transferRelatedAccount : AccountUiModel) : DeleteOperationPopUpAction()
-        data class UpdateIsDeletedPermanently(val isRelatedOperationDeleted : Boolean) : DeleteOperationPopUpAction()
+
+        data class UpdateTransferRelatedAccount(val transferRelatedAccount: AccountUiModel) :
+            DeleteOperationPopUpAction()
+
+        data class UpdateIsDeletedPermanently(val isRelatedOperationDeleted: Boolean) :
+            DeleteOperationPopUpAction()
     }
 
     sealed class DeleteAccountAction : UiAction {
@@ -102,6 +181,7 @@ object AppActions {
             val accountBalance: String,
             val accountOverdraft: String
         ) : AddAccountPopUpAction()
+
         data class FillAccountName(val accountName: String) : AddAccountPopUpAction()
         data class FillAccountBalance(val accountBalance: String) : AddAccountPopUpAction()
         data class FillAccountOverdraft(val accountOverdraft: String) : AddAccountPopUpAction()

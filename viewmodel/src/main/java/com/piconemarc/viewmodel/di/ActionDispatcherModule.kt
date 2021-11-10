@@ -39,7 +39,8 @@ class ActionDispatcherModule {
         getAllCategoriesInteractor: GetAllCategoriesInteractor,
         addNewPaymentInteractor: AddNewPaymentInteractor,
         addPaymentAndOperationInteractor: AddPaymentAndOperationInteractor,
-        addNewTransferInteractor: AddNewTransferInteractor
+        addNewTransferInteractor: AddNewTransferInteractor,
+        getAccountForIdInteractor: GetAccountForIdInteractor
     ):AddOperationPopUpActionDispatcher{
         return AddOperationPopUpActionDispatcher(
             store = globalStore,
@@ -48,7 +49,8 @@ class ActionDispatcherModule {
             getAllCategoriesInteractor = getAllCategoriesInteractor,
             addNewTransferInteractor = addNewTransferInteractor,
             addNewPaymentInteractor = addNewPaymentInteractor,
-            addPaymentAndOperationInteractor = addPaymentAndOperationInteractor
+            addPaymentAndOperationInteractor = addPaymentAndOperationInteractor,
+            getAccountForIdInteractor = getAccountForIdInteractor
         )
     }
 
