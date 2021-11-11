@@ -43,7 +43,6 @@ fun PAMMainScreen(appViewModel: AppViewModel) {
                         composable("myAccount") {
                             val myAccountVM = hiltViewModel<MyAccountViewModel>()
                             MyAccountBody(
-                                myAccountVM,
                                 appViewModel,
                                 myAccountUiStateValue = myAccountVM.uiState.value,
                                 navController = navController
