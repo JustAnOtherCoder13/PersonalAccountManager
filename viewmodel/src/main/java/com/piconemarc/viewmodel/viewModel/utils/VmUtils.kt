@@ -3,10 +3,8 @@ package com.piconemarc.viewmodel.viewModel.utils
 import android.database.sqlite.SQLiteException
 import android.util.Log
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
-import com.piconemarc.viewmodel.viewModel.reducer.addOperationPopUpVMState_
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

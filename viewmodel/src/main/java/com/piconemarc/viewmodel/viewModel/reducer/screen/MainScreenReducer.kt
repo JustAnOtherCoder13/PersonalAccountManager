@@ -1,8 +1,8 @@
 package com.piconemarc.viewmodel.viewModel.reducer.screen
 
 import com.piconemarc.model.PAMIconButtons
-import com.piconemarc.viewmodel.viewModel.utils.Reducer
 import com.piconemarc.viewmodel.viewModel.utils.AppActions
+import com.piconemarc.viewmodel.viewModel.utils.Reducer
 import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
 
 internal val appBaseScreenReducer: Reducer<ViewModelInnerStates.BaseAppScreenVmState> = { old, action ->

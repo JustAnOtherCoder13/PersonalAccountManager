@@ -7,17 +7,12 @@ import com.piconemarc.core.domain.interactor.operation.GetAllOperationsForAccoun
 import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteractor
 import com.piconemarc.core.domain.interactor.payment.GetPaymentForIdInteractor
 import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
-import com.piconemarc.viewmodel.viewModel.utils.DefaultStore
-import com.piconemarc.viewmodel.viewModel.utils.launchOnIOCatchingError
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import com.piconemarc.viewmodel.viewModel.reducer.myAccountDetailScreenVMState_
-import com.piconemarc.viewmodel.viewModel.utils.AppActions
-import com.piconemarc.viewmodel.viewModel.utils.BaseViewModel
-import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
+import com.piconemarc.viewmodel.viewModel.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.ParseException
@@ -59,7 +54,9 @@ class MyAccountDetailViewModel @Inject constructor(
                     Log.e("TAG", "dispatchAction: ", e)
                     0
                 }
-
+                //todo cause trouble when popup is up and add or delete transfer.
+                // multiple account work make the flow in the background jumping from one account to another.
+                // have to pause vm?
                 viewModelScope.launchOnIOCatchingError(
                     block = {
                         getAllOperationsForAccountIdInteractor.getAllOperationsForAccountIdFlow(

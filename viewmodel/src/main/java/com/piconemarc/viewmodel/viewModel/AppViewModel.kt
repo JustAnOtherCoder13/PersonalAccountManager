@@ -1,6 +1,5 @@
 package com.piconemarc.viewmodel.viewModel
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewModelScope
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
@@ -27,7 +26,10 @@ class AppViewModel @Inject constructor(
     private val addAccountPopUpActionDispatcher: AddAccountPopUpActionDispatcher,
     private val deleteOperationPopUpActionDispatcher: DeleteOperationPopUpActionDispatcher,
     private val getAllAccountsInteractor: GetAllAccountsInteractor
-) : BaseViewModel<UiAction, ViewModelInnerStates.BaseAppScreenVmState>(store,baseAppScreenVmState_) {
+) : BaseViewModel<UiAction, ViewModelInnerStates.BaseAppScreenVmState>(
+    store,
+    baseAppScreenVmState_
+) {
 
     private var addOperationPopUpJob: Job? = null
     private var deleteAccountPopUpJob: Job? = null
@@ -48,24 +50,30 @@ class AppViewModel @Inject constructor(
     override fun dispatchAction(action: UiAction) {
         when (action) {
             is AppActions.BaseAppScreenAction -> {
-                when(action){
+                when (action) {
                     is AppActions.BaseAppScreenAction.InitScreen -> viewModelScope.launchOnIOCatchingError(
                         block = {
-                            getAllAccountsInteractor.getAllAccountsAsFlow(this).collect { allAccounts ->
-                                dispatchAction(AppActions.BaseAppScreenAction.UpdateAccounts(allAccounts))
-                            }
+                            getAllAccountsInteractor.getAllAccountsAsFlow(this)
+                                .collect { allAccounts ->
+                                    dispatchAction(
+                                        AppActions.BaseAppScreenAction.UpdateAccounts(
+                                            allAccounts
+                                        )
+                                    )
+                                }
                         }
                     )
-                    else -> { updateState(GlobalAction.UpdateBaseAppScreenVmState(action)) }
+                    else -> {
+                        updateState(GlobalAction.UpdateBaseAppScreenVmState(action))
+                    }
                 }
             }
-
             //launch job for each pop up when action is dispatched, cancel job on close
-            is AppActions.AddOpePopupAction -> {
+            is AppActions.AddOperationPopupAction -> {
                 addOperationPopUpJob = viewModelScope.launch {
                     addOperationPopUpActionDispatcher.dispatchAction(action, this)
                 }
-                if (action is AppActions.AddOpePopupAction.ClosePopUp) {
+                if (action is AppActions.AddOperationPopupAction.ClosePopUp) {
                     addOperationPopUpJob?.cancel()
                 }
             }

@@ -16,12 +16,12 @@ import com.piconemarc.core.domain.interactor.payment.DeletePaymentInteractor
 import com.piconemarc.core.domain.interactor.transfer.AddNewTransferInteractor
 import com.piconemarc.core.domain.interactor.transfer.DeleteTransferInteractor
 import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
-import com.piconemarc.viewmodel.viewModel.utils.DefaultStore
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddAccountPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddOperationPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.DeleteAccountPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.DeleteOperationPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
+import com.piconemarc.viewmodel.viewModel.utils.DefaultStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

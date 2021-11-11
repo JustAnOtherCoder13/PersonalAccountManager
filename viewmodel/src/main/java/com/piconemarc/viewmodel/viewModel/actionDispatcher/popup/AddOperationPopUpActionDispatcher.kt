@@ -1,6 +1,5 @@
 package com.piconemarc.viewmodel.viewModel.actionDispatcher.popup
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
@@ -10,7 +9,6 @@ import com.piconemarc.core.domain.interactor.operation.AddNewOperationInteractor
 import com.piconemarc.core.domain.interactor.payment.AddNewPaymentInteractor
 import com.piconemarc.core.domain.interactor.payment.AddPaymentAndOperationInteractor
 import com.piconemarc.core.domain.interactor.transfer.AddNewTransferInteractor
-import com.piconemarc.model.entity.OperationUiModel
 import com.piconemarc.model.entity.PaymentUiModel
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
@@ -50,7 +48,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
         scope.launch { state.collectLatest { uiState.value = it } }
 
         when (action) {
-            is AppActions.AddOpePopupAction.InitPopUp -> {
+            is AppActions.AddOperationPopupAction.InitPopUp -> {
                 scope.launchOnIOCatchingError(
                     block = {
 
@@ -61,7 +59,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                         getAllCategoriesInteractor.getAllCategoriesAsFlow(this)
                             .collectLatest { allCategories ->
                                 dispatchAction(
-                                    AppActions.AddOpePopupAction.LaunchIoThread(
+                                    AppActions.AddOperationPopupAction.LaunchIoThread(
                                         allCategories = allCategories,
                                         allAccounts = allAccounts.filter { account -> account.id != selectedAccount.id },
                                         selectedAccount = selectedAccount
@@ -73,11 +71,11 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                 )
             }
 
-            is AppActions.AddOpePopupAction.AddOperation -> {
+            is AppActions.AddOperationPopupAction.AddOperation -> {
                 dispatchAction(
-                    AppActions.AddOpePopupAction.CheckError(
+                    AppActions.AddOperationPopupAction.CheckError(
                         operationName = action.newOperation.name,
-                        operationAmount = action.newOperation.amount.toString()
+                        operationAmount = action.newOperation.amount.toString(),
                     ), scope
                 )
                 if (!action.isOperationError) {
@@ -90,11 +88,12 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                 }
             }
 
-            is AppActions.AddOpePopupAction.AddPayment -> {
+            is AppActions.AddOperationPopupAction.AddPayment -> {
                 dispatchAction(
-                    AppActions.AddOpePopupAction.CheckError(
+                    AppActions.AddOperationPopupAction.CheckError(
                         operationName = action.newOperation.name,
-                        operationAmount = action.newOperation.amount.toString()
+                        operationAmount = action.newOperation.amount.toString(),
+                        paymentEndDate = action.paymentEndDate
                     ), scope
                 )
                 if (!action.isOperationError)
@@ -115,9 +114,8 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                                     )
                                 )
                             },
-                            doOnSuccess = {closePopUp()}
+                            doOnSuccess = { closePopUp() }
                         )
-
                     } else {
                         // when on operation detail screen or payment start this month
                         scope.launchOnIOCatchingError(
@@ -133,188 +131,32 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                             doOnSuccess = { closePopUp() }
                         )
                     }
-
             }
-
-
-            /*is AppActions.AddOperationPopUpAction.SelectOptionIcon -> AddPopUpOptionNavigation(
-                action,
-                scope
-            )
-            is AppActions.AddOperationPopUpAction.InitPopUp -> {
-                scope.launchOnIOCatchingError(
-                    block = {
-                        getAllCategoriesInteractor.getAllCategoriesAsFlow(this).collectLatest {
-                            updateState(
-                                GlobalAction.UpdateAddOperationPopUpState(
-                                    AppActions.AddOperationPopUpAction.UpdateCategoriesList(
-                                        it
-                                    )
-                                )
-                            )
-                        }
-                    }
+            is AppActions.AddOperationPopupAction.AddTransfer -> {
+                //check error
+                dispatchAction(
+                    AppActions.AddOperationPopupAction.CheckError(
+                        operationName = action.newOperation.name,
+                        operationAmount = action.newOperation.amount.toString(),
+                        beneficiaryAccount = action.beneficiaryAccount
+                    ), scope
                 )
-                if (action.isOnPaymentScreen) {
-                    this.dispatchAction(
-                        AppActions.AddOperationPopUpAction.ExpandRecurrentOption,
-                        scope
+                if (!action.isOperationError) {
+                    scope.launchOnIOCatchingError(
+                        block = {
+                            addNewTransferInteractor.addTransferOperation(
+                                operation = action.newOperation,
+                                beneficiaryAccountId = action.beneficiaryAccount.id
+                            )
+                        },
+                        doOnSuccess = { closePopUp() }
                     )
                 }
-                this.dispatchAction(
-                    AppActions.AddOperationPopUpAction.SelectAddOrMinus(false, ""),
-                    scope
-                )
-            }
-            is AppActions.AddOperationPopUpAction.ExpandTransferOption -> {
-                scope.launchOnIOCatchingError(
-                    block = {
-                        updateState(
-                            GlobalAction.UpdateAddOperationPopUpState(
-                                AppActions.AddOperationPopUpAction.UpdateAccountList(
-                                    getAllAccountsInteractor.getAllAccounts()*//*.filter {
-                                    //todo pass with own state
-                                        it.id != myAccountDetailScreenUiState.value.selectedAccount.id
-                                    }*//*
-                                )
-                            )
-                        )
-                    }
-                )
             }
 
-            is AppActions.AddOperationPopUpAction.AddNewOperation<*> -> {
-                //if no error on name and amount
-                if (action.operation.name.trim().isNotEmpty()
-                    && action.operation.amount != 0.0
-                ) {
-                    //if not on payment screen means that we are on account detail
-                    //so check selected icon and add required operation
-                    if (!action.isOnPaymentScreen) {
-                        action.operation as OperationUiModel
-                        when (uiState.value.addPopUpOptionSelectedIcon) {
-                            is PAMIconButtons.Operation -> {
-                                scope.launchOnIOCatchingError(
-                                    block = { addNewOperationInteractor.addOperation(action.operation) },
-                                    doOnSuccess = { closePopUp() }
-                                )
-                            }
-                            is PAMIconButtons.Payment -> {
-                                scope.launchOnIOCatchingError(
-                                    block = {
-                                        addPaymentAndOperationInteractor.addPaymentAndOperation(
-                                            operation = action.operation,
-                                            endDate = getFormattedEndDateOrNull()
-                                        )
-                                    },
-                                    doOnSuccess = { closePopUp() }
-                                )
-                            }
-                            is PAMIconButtons.Transfer -> {
-                                if (!uiState.value.isBeneficiaryAccountError) {
-                                    scope.launchOnIOCatchingError(
-                                        block = {
-                                            addNewTransferInteractor.addTransferOperation(
-                                                operation = action.operation,
-                                                beneficiaryAccountId = uiState.value.beneficiaryAccount.id
-                                            )
-                                        },
-                                        doOnSuccess = { closePopUp() }
-                                    )
-                                }
-                            }
-                            else -> {
-                                closePopUp()
-                            }
-                        }
-                    }
-                    // else we are on paymentScreen
-                    else {
-                        action.operation as PaymentUiModel
-                        //if payment start this month, add payment and related operation
-                        if (uiState.value.isPaymentStartThisMonth) {
-                            //add payment and related operation
-                            scope.launchOnIOCatchingError(
-                                block = {
-                                    addPaymentAndOperationInteractor.addPaymentAndOperation(
-                                        OperationUiModel(
-                                            accountId = action.operation.accountId,
-                                            name = action.operation.name,
-                                            amount = action.operation.amount,
-                                            categoryId = uiState.value.selectedCategory.id,
-                                            isAddOperation = uiState.value.isAddOperation,
-                                        ),
-                                        endDate = getFormattedEndDateOrNull()
-                                    )
-                                },
-                                doOnSuccess = { closePopUp() }
-                            )
-                        }
-                        //else only add payment
-                        else {
-                            scope.launchOnIOCatchingError(
-                                block = {
-                                    addNewPaymentInteractor.addNewPayment(
-                                        action.operation
-                                    )
-                                },
-                                doOnSuccess = { closePopUp() }
-                            )
-                        }
-                    }
-                }
-            }
-        */
         }
     }
 
-    /*
-        private fun AddPopUpOptionNavigation(
-            action: AppActions.AddOperationPopUpAction.SelectOptionIcon,
-            scope: CoroutineScope
-        ) {
-            when (action.selectedIcon) {
-                is PAMIconButtons.Payment -> {
-                    this.dispatchAction(
-                        AppActions.AddOperationPopUpAction.ExpandPaymentOption,
-                        scope
-                    )
-                    this.dispatchAction(
-                        AppActions.AddOperationPopUpAction.ExpandRecurrentOption,
-                        scope
-                    )
-                }
-
-                is PAMIconButtons.Transfer -> {
-                    scope.launchOnIOCatchingError(block = {
-                        dispatchAction(
-                            AppActions.AddOperationPopUpAction.ExpandTransferOption(
-                                getAccountForIdInteractor.getAccountForId(action.selectedAccountId)
-                            ),
-                            scope
-                        )
-                    })
-
-                    this.dispatchAction(
-                        AppActions.AddOperationPopUpAction.CloseRecurrentOption,
-                        scope
-                    )
-
-                }
-                else -> {
-                    this.dispatchAction(
-                        AppActions.AddOperationPopUpAction.CollapseOptions,
-                        scope
-                    )
-                    this.dispatchAction(
-                        AppActions.AddOperationPopUpAction.CloseRecurrentOption,
-                        scope
-                    )
-                }
-
-            }
-        }
-    */
     private fun getFormattedEndDateOrNull(month: String, year: String) = try {
         SimpleDateFormat("MMMM/yyyy", Locale.FRANCE).parse(
             month
@@ -327,7 +169,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
     private fun closePopUp() {
         updateState(
             GlobalAction.UpdateAddOperationPopUpState(
-                AppActions.AddOpePopupAction.ClosePopUp
+                AppActions.AddOperationPopupAction.ClosePopUp
             )
         )
     }

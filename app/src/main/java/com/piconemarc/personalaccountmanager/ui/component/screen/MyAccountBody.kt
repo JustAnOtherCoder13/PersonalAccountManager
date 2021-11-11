@@ -1,6 +1,5 @@
 package com.piconemarc.personalaccountmanager.ui.component.screen
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -23,39 +22,19 @@ import com.piconemarc.viewmodel.viewModel.*
 import com.piconemarc.viewmodel.viewModel.utils.AppActions
 import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
 
-@Composable
-fun MyAccountsScreen(
-    myAccountViewModel: MyAccountViewModel,
-    myAccountDetailViewModel: MyAccountDetailViewModel,
-    appViewModel: AppViewModel
-) {
-    /*if (myAccountViewModel.uiState.value.isVisible) MyAccountBody(
-        myAccountViewModel,
-        myAccountDetailViewModel,
-        appViewModel,
-        myAccountUiStateValue = myAccountViewModel.uiState.value
-    )
-
-    if (myAccountDetailViewModel.uiState.value.isVisible) MyAccountDetailBody(myAccountDetailViewModel, myAccountViewModel, appViewModel)
-*/}
 
 @Composable
 fun MyAccountBody(
-    myAccountViewModel: MyAccountViewModel,
     appViewModel: AppViewModel,
     myAccountUiStateValue : ViewModelInnerStates.MyAccountScreenVMState,
     navController: NavController
-
 ) {
     VerticalDispositionSheet(
         body = {
             MyAccountBodyRecyclerView(
                 onAccountClicked = { selectedAccount ->
-                    //todo pass with navigator
                     navController.navigate("myAccountDetail/${selectedAccount.id}")
-                    /*myAccountViewModel.dispatchAction(AppActions.MyAccountScreenAction.CloseScreen)
-                    myAccountDetailViewModel.dispatchAction(AppActions.MyAccountDetailScreenAction.InitScreen(selectedAccount = selectedAccount))
-                */},
+                    },
                 onDeleteAccountButtonClicked = { accountToDelete ->
                     appViewModel.dispatchAction(
                         AppActions.DeleteAccountAction.InitPopUp(accountUiToDelete = accountToDelete)
@@ -113,7 +92,7 @@ fun MyAccountDetailBody(
             footer = {
                 BrownBackgroundAddButton(onAddButtonClicked = {
                     appViewModel.dispatchAction(
-                        AppActions.AddOpePopupAction.InitPopUp(
+                        AppActions.AddOperationPopupAction.InitPopUp(
                             selectedAccountId = myAccountDetailViewModel.uiState.value.selectedAccount.id
                         )
                     )

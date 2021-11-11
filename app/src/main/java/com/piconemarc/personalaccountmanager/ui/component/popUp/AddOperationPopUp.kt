@@ -20,45 +20,60 @@ import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
 @Composable
 fun AddOperationPopUp(
     addOperationPopUpState: ViewModelInnerStates.AddOperationPopUpVMState,
-    onAddOperationPopUpEvent: (action: AppActions.AddOpePopupAction) -> Unit
+    onAddOperationPopUpEvent: (action: AppActions.AddOperationPopupAction) -> Unit
 ) {
     //Pop up Body --------------------------------------------
     BasePopUp(
         title = addOperationPopUpState.addPopUpTitle,
         onAcceptButtonClicked = {
             val newOperation = OperationUiModel(
-                name =addOperationPopUpState.operationName,
+                name = addOperationPopUpState.operationName,
                 amount = try {
                     addOperationPopUpState.operationAmount.toDouble()
-                }catch (e:Exception){ 0.0 } ,
+                } catch (e: Exception) {
+                    0.0
+                },
                 categoryId = addOperationPopUpState.selectedCategory.id,
                 accountId = addOperationPopUpState.selectedAccountId,
             )
             onAddOperationPopUpEvent(
                 when (addOperationPopUpState.addPopUpOptionSelectedIcon) {
                     is PAMIconButtons.Operation -> {
-                        AppActions.AddOpePopupAction.AddOperation(
+                        AppActions.AddOperationPopupAction.AddOperation(
                             newOperation = newOperation,
-                            isOperationError = checkOperationNameAndAmountError(addOperationPopUpState)
+                            isOperationError = checkOperationNameAndAmountError(
+                                addOperationPopUpState
+                            )
                         )
                     }
                     is PAMIconButtons.Payment -> {
-                        AppActions.AddOpePopupAction.AddPayment(
+                        AppActions.AddOperationPopupAction.AddPayment(
                             isOnPaymentScreen = addOperationPopUpState.isOnPaymentScreen,
                             newOperation = newOperation,
-                            isOperationError = checkOperationNameAndAmountError(addOperationPopUpState),
-                            paymentEndDate = Pair(addOperationPopUpState.enDateSelectedMonth, addOperationPopUpState.endDateSelectedYear),
+                            isOperationError = checkOperationNameAndAmountError(
+                                addOperationPopUpState
+                            ),
+                            paymentEndDate = Pair(
+                                addOperationPopUpState.enDateSelectedMonth,
+                                addOperationPopUpState.endDateSelectedYear
+                            ),
                             isPaymentStartThisMonth = addOperationPopUpState.isPaymentStartThisMonth
                         )
                     }
                     else -> {
-                        AppActions.AddOpePopupAction.AddTransfer
+                        AppActions.AddOperationPopupAction.AddTransfer(
+                            newOperation = newOperation,
+                            isOperationError = checkOperationNameAndAmountError(
+                                addOperationPopUpState
+                            ) && addOperationPopUpState.beneficiaryAccount.id == 0L,
+                            beneficiaryAccount = addOperationPopUpState.beneficiaryAccount
+                        )
 
                     }
                 }
             )
         },
-        onDismiss = { onAddOperationPopUpEvent(AppActions.AddOpePopupAction.ClosePopUp) },
+        onDismiss = { onAddOperationPopUpEvent(AppActions.AddOperationPopupAction.ClosePopUp) },
         isExpanded = addOperationPopUpState.isPopUpExpanded,
         menuIconPanel = {
             //if on payment screen no need to show left side icon panel, cause could only be payment
@@ -68,7 +83,7 @@ fun AddOperationPopUp(
                         when (pamIconButton) {
                             is PAMIconButtons.Operation -> {
                                 onAddOperationPopUpEvent(
-                                    AppActions.AddOpePopupAction.OnOperationIconSelected(
+                                    AppActions.AddOperationPopupAction.OnOperationIconSelected(
                                         isAddOperation = addOperationPopUpState.isAddOperation,
                                         operationAmount = addOperationPopUpState.operationAmount
                                     )
@@ -76,7 +91,7 @@ fun AddOperationPopUp(
                             }
                             is PAMIconButtons.Payment -> {
                                 onAddOperationPopUpEvent(
-                                    AppActions.AddOpePopupAction.OnPaymentIconSelected(
+                                    AppActions.AddOperationPopupAction.OnPaymentIconSelected(
                                         isAddOperation = addOperationPopUpState.isAddOperation,
                                         operationAmount = addOperationPopUpState.operationAmount
                                     )
@@ -84,7 +99,7 @@ fun AddOperationPopUp(
                             }
                             is PAMIconButtons.Transfer -> {
                                 onAddOperationPopUpEvent(
-                                    AppActions.AddOpePopupAction.OnTransferIconSelected(
+                                    AppActions.AddOperationPopupAction.OnTransferIconSelected(
                                         operationAmount = addOperationPopUpState.operationAmount
                                     )
                                 )
@@ -109,7 +124,7 @@ fun AddOperationPopUp(
             AddOperationPopUpAddOrMinusSwitchButton(
                 onAddOrMinusClicked = { isAddClicked ->
                     onAddOperationPopUpEvent(
-                        AppActions.AddOpePopupAction.OnAddOrMinusSelected(
+                        AppActions.AddOperationPopupAction.OnAddOrMinusSelected(
                             isAddClicked,
                             addOperationPopUpState.operationAmount
                         )
@@ -123,7 +138,7 @@ fun AddOperationPopUp(
                 title = stringResource(R.string.operationName),
                 onTextChange = { operationName ->
                     onAddOperationPopUpEvent(
-                        AppActions.AddOpePopupAction.OnFillOperationName(
+                        AppActions.AddOperationPopupAction.OnFillOperationName(
                             operationName
                         )
                     )
@@ -138,7 +153,7 @@ fun AddOperationPopUp(
                 title = stringResource(R.string.operationAmount),
                 onTextChange = { operationAmount ->
                     onAddOperationPopUpEvent(
-                        AppActions.AddOpePopupAction.OnFillOperationAmount(
+                        AppActions.AddOperationPopupAction.OnFillOperationAmount(
                             operationAmount
                         )
                     )
@@ -154,7 +169,7 @@ fun AddOperationPopUp(
                 itemList = addOperationPopUpState.allCategories,
                 onItemSelected = { category ->
                     onAddOperationPopUpEvent(
-                        AppActions.AddOpePopupAction.OnSelectCategory(
+                        AppActions.AddOperationPopupAction.OnSelectCategory(
                             category
                         )
                     )
@@ -166,28 +181,28 @@ fun AddOperationPopUp(
                 isPaymentOptionExpanded = addOperationPopUpState.isPaymentExpanded,
                 onPunctualButtonSelected = {
                     onAddOperationPopUpEvent(
-                        AppActions.AddOpePopupAction.OnRecurrentOptionSelected(
+                        AppActions.AddOperationPopupAction.OnRecurrentOptionSelected(
                             false
                         )
                     )
                 },
                 onRecurrentButtonSelected = {
                     onAddOperationPopUpEvent(
-                        AppActions.AddOpePopupAction.OnRecurrentOptionSelected(
+                        AppActions.AddOperationPopupAction.OnRecurrentOptionSelected(
                             true
                         )
                     )
                 },
                 onMonthSelected = { endDateMonth ->
                     onAddOperationPopUpEvent(
-                        AppActions.AddOpePopupAction.OnPaymentEndDateSelected(
+                        AppActions.AddOperationPopupAction.OnPaymentEndDateSelected(
                             endDateMonth
                         )
                     )
                 },
                 onYearSelected = { endDateYear ->
                     onAddOperationPopUpEvent(
-                        AppActions.AddOpePopupAction.OnPaymentEndDateSelected(
+                        AppActions.AddOperationPopupAction.OnPaymentEndDateSelected(
                             endDateYear
                         )
                     )
@@ -207,7 +222,7 @@ fun AddOperationPopUp(
 
                 onBeneficiaryAccountSelected = { beneficiaryAccount ->
                     onAddOperationPopUpEvent(
-                        AppActions.AddOpePopupAction.OnBeneficiaryAccountSelected(
+                        AppActions.AddOperationPopupAction.OnBeneficiaryAccountSelected(
                             beneficiaryAccount
                         )
                     )
@@ -218,7 +233,7 @@ fun AddOperationPopUp(
                 OptionCheckBox(
                     onCheckedChange = {
                         onAddOperationPopUpEvent(
-                            AppActions.AddOpePopupAction.OnIsPaymentStartThisMonthChecked(it)
+                            AppActions.AddOperationPopupAction.OnIsPaymentStartThisMonthChecked(it)
                         )
                     },
                     isChecked = addOperationPopUpState.isPaymentStartThisMonth,

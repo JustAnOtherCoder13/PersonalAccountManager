@@ -1,8 +1,8 @@
 package com.piconemarc.viewmodel.viewModel.reducer.popUp
 
 import com.piconemarc.model.entity.AccountUiModel
-import com.piconemarc.viewmodel.viewModel.utils.Reducer
 import com.piconemarc.viewmodel.viewModel.utils.AppActions
+import com.piconemarc.viewmodel.viewModel.utils.Reducer
 import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
 
 internal val deleteAccountPopUpReducer: Reducer<ViewModelInnerStates.DeleteAccountPopUpVMState> =

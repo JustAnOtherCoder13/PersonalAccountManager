@@ -48,7 +48,7 @@ fun MyPaymentScreen(myPaymentViewModel: MyPaymentViewModel, appViewModel: AppVie
                                 PaymentPostItTitle(
                                     onAddPaymentButtonClick = {
                                         appViewModel.dispatchAction(
-                                            AppActions.AddOpePopupAction.InitPopUp(
+                                            AppActions.AddOperationPopupAction.InitPopUp(
                                                 isOnPaymentScreen = true,
                                                 selectedAccountId = accountWithRelatedPayments.account.id
                                             )

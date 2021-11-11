@@ -1,6 +1,5 @@
 package com.piconemarc.viewmodel.viewModel.reducer.popUp
 
-import android.util.Log
 import com.piconemarc.core.domain.utils.Constants
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.AccountUiModel
@@ -11,10 +10,10 @@ import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
 
 internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperationPopUpVMState> =
     { old, action ->
-        action as AppActions.AddOpePopupAction
+        action as AppActions.AddOperationPopupAction
         when (action) {
 
-            is AppActions.AddOpePopupAction.InitPopUp -> {
+            is AppActions.AddOperationPopupAction.InitPopUp -> {
                 old.copy(
                     isOnPaymentScreen = action.isOnPaymentScreen,
                     isPaymentStartThisMonth = true,
@@ -23,7 +22,7 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
                     isAddOrMinusEnable = true,
                     isTransferExpanded = false,
                     isRecurrentOptionExpanded = action.isOnPaymentScreen,
-                    addPopUpOptionSelectedIcon = if (action.isOnPaymentScreen)PAMIconButtons.Payment else PAMIconButtons.Operation,
+                    addPopUpOptionSelectedIcon = if (action.isOnPaymentScreen) PAMIconButtons.Payment else PAMIconButtons.Operation,
                     isPaymentExpanded = action.isOnPaymentScreen,
                     addPopUpTitle = when (action.isOnPaymentScreen) {
                         true -> Constants.PAYMENT
@@ -41,244 +40,149 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
                     operationName = "",
                     operationAmount = "-",
 
-                    //isPaymentStartThisMonth = true,
-
                     isBeneficiaryAccountError = false,
                     isOperationNameError = false,
                     isOperationAmountError = false,
-
-                    )
+                )
             }
-            is AppActions.AddOpePopupAction.ClosePopUp -> {
+            is AppActions.AddOperationPopupAction.ClosePopUp -> {
                 old.copy(
                     isPopUpExpanded = false
                 )
             }
-            is AppActions.AddOpePopupAction.OnOperationIconSelected -> {
+            is AppActions.AddOperationPopupAction.OnOperationIconSelected -> {
                 old.copy(
+                    addPopUpTitle = Constants.OPERATION,
+                    addPopUpOptionSelectedIcon = PAMIconButtons.Operation,
+
                     isPaymentExpanded = false,
                     isTransferExpanded = false,
                     isRecurrentOptionExpanded = false,
-                    addPopUpTitle = Constants.OPERATION,
                     isAddOrMinusEnable = true,
                     isBeneficiaryAccountError = false,
-                    beneficiaryAccount = AccountUiModel(name = Constants.BENEFICIARY_ACCOUNT),
-                    addPopUpOptionSelectedIcon = PAMIconButtons.Operation,
-                    operationAmount = getFormattedAmount(action.isAddOperation,action.operationAmount)
+
+                    operationAmount = getFormattedAmount(
+                        action.isAddOperation,
+                        action.operationAmount
+                    )
                 )
             }
-            is AppActions.AddOpePopupAction.OnPaymentIconSelected -> {
+            is AppActions.AddOperationPopupAction.OnPaymentIconSelected -> {
                 old.copy(
+                    addPopUpTitle = Constants.PAYMENT,
+                    addPopUpOptionSelectedIcon = PAMIconButtons.Payment,
+                    endDateSelectedYear = Constants.YEAR,
+                    enDateSelectedMonth = Constants.MONTH,
+                    beneficiaryAccount = AccountUiModel(name = Constants.BENEFICIARY_ACCOUNT),
+
                     isPaymentExpanded = true,
                     isTransferExpanded = false,
                     isRecurrentOptionExpanded = true,
-                    addPopUpTitle = Constants.PAYMENT,
                     isAddOrMinusEnable = true,
                     isBeneficiaryAccountError = false,
-                    beneficiaryAccount = AccountUiModel(name = Constants.BENEFICIARY_ACCOUNT),
-                    addPopUpOptionSelectedIcon = PAMIconButtons.Payment,
-                    operationAmount = getFormattedAmount(action.isAddOperation,action.operationAmount),
-                    endDateSelectedYear = Constants.YEAR,
-                    enDateSelectedMonth = Constants.MONTH,
-                    )
+
+                    operationAmount = getFormattedAmount(
+                        action.isAddOperation,
+                        action.operationAmount
+                    ),
+                )
             }
-            is AppActions.AddOpePopupAction.OnTransferIconSelected -> {
+            is AppActions.AddOperationPopupAction.OnTransferIconSelected -> {
                 old.copy(
+                    addPopUpOptionSelectedIcon = PAMIconButtons.Transfer,
+                    addPopUpTitle = Constants.TRANSFER,
+                    beneficiaryAccount = AccountUiModel(name = Constants.BENEFICIARY_ACCOUNT),
+
                     isPaymentExpanded = true,
                     isTransferExpanded = true,
                     isRecurrentOptionExpanded = false,
-                    addPopUpTitle = Constants.TRANSFER_MODEL,
-                    beneficiaryAccount = AccountUiModel(name = Constants.BENEFICIARY_ACCOUNT),
                     isAddOrMinusEnable = false,
-                    addPopUpOptionSelectedIcon = PAMIconButtons.Transfer,
-                    operationAmount = getFormattedAmount(true,action.operationAmount),
+
+                    operationAmount = getFormattedAmount(true, action.operationAmount),
                 )
             }
-            is AppActions.AddOpePopupAction.OnAddOrMinusSelected -> {
+            is AppActions.AddOperationPopupAction.OnAddOrMinusSelected -> {
                 old.copy(
                     isAddOperation = action.isAddOperation,
-                    operationAmount = getFormattedAmount(action.isAddOperation,action.operationAmount)
+                    operationAmount = getFormattedAmount(
+                        action.isAddOperation,
+                        action.operationAmount
+                    )
                 )
             }
-            is AppActions.AddOpePopupAction.OnFillOperationName -> {
+            is AppActions.AddOperationPopupAction.OnFillOperationName -> {
                 old.copy(
                     operationName = action.operationName
                 )
             }
-            is AppActions.AddOpePopupAction.OnFillOperationAmount -> {
+            is AppActions.AddOperationPopupAction.OnFillOperationAmount -> {
                 old.copy(
                     operationAmount = action.operationAmount,
                     isAddOperation = try {
                         action.operationAmount.toDouble() >= 0
-                    }catch (e:NumberFormatException){
+                    } catch (e: NumberFormatException) {
                         action.operationAmount != "-"
                     }
                 )
             }
-            is AppActions.AddOpePopupAction.OnSelectCategory -> {
+            is AppActions.AddOperationPopupAction.OnSelectCategory -> {
                 old.copy(
                     selectedCategory = action.selectedCategory
                 )
             }
-            is AppActions.AddOpePopupAction.OnPaymentEndDateSelected -> {
+            is AppActions.AddOperationPopupAction.OnPaymentEndDateSelected -> {
                 try {
                     //if string could be cast to int it's a year
                     action.selectedMonthOrYear.toInt()
-                    old.copy(endDateSelectedYear = action.selectedMonthOrYear)
-                }catch (e:java.lang.NumberFormatException){
+                    old.copy(
+                        endDateSelectedYear = action.selectedMonthOrYear
+                    )
+                } catch (e: java.lang.NumberFormatException) {
                     //else it's a month
-                    old.copy(enDateSelectedMonth = action.selectedMonthOrYear)
+                    old.copy(
+                        enDateSelectedMonth = action.selectedMonthOrYear
+                    )
                 }
             }
-            is AppActions.AddOpePopupAction.OnBeneficiaryAccountSelected -> {
+            is AppActions.AddOperationPopupAction.OnBeneficiaryAccountSelected -> {
                 old.copy(
                     beneficiaryAccount = action.beneficiaryAccount
                 )
             }
-            is AppActions.AddOpePopupAction.OnRecurrentOptionSelected -> {
+            is AppActions.AddOperationPopupAction.OnRecurrentOptionSelected -> {
                 old.copy(
                     isRecurrentOptionExpanded = action.isRecurrent,
                     isRecurrentEndDateError = action.isRecurrent,
                     endDateSelectedYear = Constants.YEAR,
                     enDateSelectedMonth = Constants.MONTH,
-                    )
-            }
-            is AppActions.AddOpePopupAction.AddOperation -> old
-            is AppActions.AddOpePopupAction.AddPayment -> old
-            is AppActions.AddOpePopupAction.AddTransfer -> old
-
-            is AppActions.AddOpePopupAction.LaunchIoThread -> {
-                old.copy(
-                    allAccounts = action.allAccounts?: listOf(),
-                    allCategories = action.allCategories?: listOf(),
-                    selectedAccount = action.selectedAccount?:AccountUiModel()
                 )
             }
-            is AppActions.AddOpePopupAction.CheckError -> {
+
+            is AppActions.AddOperationPopupAction.LaunchIoThread -> {
+                //todo find other way could become a problem
+                old.copy(
+                    allAccounts = action.allAccounts ?: listOf(),
+                    allCategories = action.allCategories ?: listOf(),
+                    selectedAccount = action.selectedAccount ?: AccountUiModel()
+                )
+            }
+            is AppActions.AddOperationPopupAction.CheckError -> {
                 old.copy(
                     isOperationNameError = action.operationName.trim().isEmpty(),
-                    isOperationAmountError = action.operationAmount.toDouble() == 0.0 ,
-                    isRecurrentEndDateError = action.isRecurrentEndDateError,
-                    isBeneficiaryAccountError = action.isBeneficiaryAccountError
+                    isOperationAmountError = action.operationAmount.toDouble() == 0.0,
+                    isRecurrentEndDateError = action.paymentEndDate.first.trim()
+                        .isNotEmpty() && action.paymentEndDate.second.trim().isNotEmpty(),
+                    isBeneficiaryAccountError = action.beneficiaryAccount.id == 0L
                 )
             }
-            is AppActions.AddOpePopupAction.OnIsPaymentStartThisMonthChecked ->{
+            is AppActions.AddOperationPopupAction.OnIsPaymentStartThisMonthChecked -> {
                 old.copy(
                     isPaymentStartThisMonth = action.isChecked
                 )
             }
-
-
-            /*
-                is AppActions.AddOperationPopUpAction.InitPopUp ->
-                    old.copy(
-                        isOnPaymentScreen = action.isOnPaymentScreen,
-                        isPopUpExpanded = true,
-                        selectedCategory = CategoryUiModel(),
-                        addPopUpTitle = if (!action.isOnPaymentScreen)Constants.OPERATION else Constants.PAYMENT,
-                        operationName = "",
-                        operationAmount = "",
-                        addPopUpOptionSelectedIcon = PAMIconButtons.Operation,
-                        isPaymentExpanded = action.isOnPaymentScreen,
-                        isPaymentStartThisMonth = true,
-                        isAddOrMinusEnable = true,
-                        isBeneficiaryAccountError = false,
-                        isOperationNameError = false,
-                        isOperationAmountError = false,
-                        selectedAccountId = action.selectedAccountId
-                    )
-
-                is AppActions.AddOperationPopUpAction.ClosePopUp -> old.copy(
-                    isPopUpExpanded = false,
-                    isPaymentExpanded = false,
-                    isRecurrentOptionExpanded = false,
-                    isTransferExpanded = false,
-                    )
-                is AppActions.AddOperationPopUpAction.ExpandPaymentOption -> old.copy(
-                    isPaymentExpanded = true,
-                    isTransferExpanded = false,
-                    addPopUpTitle = Constants.PAYMENT,
-                    isAddOrMinusEnable = true,
-                    isBeneficiaryAccountError = false,
-                )
-                is AppActions.AddOperationPopUpAction.CollapseOptions -> old.copy(
-                    isPaymentExpanded = false,
-                    isTransferExpanded = false,
-                    addPopUpTitle = Constants.OPERATION,
-                    isAddOrMinusEnable = true,
-                    isBeneficiaryAccountError = false,
-                )
-                is AppActions.AddOperationPopUpAction.ExpandRecurrentOption -> old.copy(
-                    isRecurrentOptionExpanded = true,
-                    selectableEndDateYears = Constants.SELECTABLE_YEARS_LIST,
-                    endDateSelectedYear = Constants.YEAR_MODEL,
-                    selectableEndDateMonths = Constants.SELECTABLE_MONTHS_LIST,
-                    enDateSelectedMonth = Constants.MONTH_MODEL,
-                    isRecurrentEndDateError = true
-                )
-                is AppActions.AddOperationPopUpAction.CloseRecurrentOption -> old.copy(
-                    isRecurrentOptionExpanded = false,
-                    isRecurrentEndDateError = false
-                )
-                is AppActions.AddOperationPopUpAction.ExpandTransferOption -> old.copy(
-                    isPaymentExpanded = true,
-                    isTransferExpanded = true,
-                    addPopUpTitle = Constants.TRANSFER_MODEL,
-                    beneficiaryAccount = AccountUiModel(name = Constants.BENEFICIARY_ACCOUNT),
-                    isAddOrMinusEnable = false,
-                    selectedAccount = action.selectedAccount
-                )
-                is AppActions.AddOperationPopUpAction.SelectCategory -> old.copy(
-                    selectedCategory = action.category
-                )
-                is AppActions.AddOperationPopUpAction.FillOperationName -> old.copy(
-                    operationName = action.operation
-                )
-                is AppActions.AddOperationPopUpAction.UpdateCategoriesList -> old.copy(
-                    allCategories = action.allCategories
-                )
-                is AppActions.AddOperationPopUpAction.UpdateAccountList -> {
-                    old.copy(allAccounts = action.accountList)
-                }
-                is AppActions.AddOperationPopUpAction.FillOperationAmount -> old.copy(
-                    operationAmount = action.amount,
-                    isAddOperation = try {
-                        action.amount.toDouble() >= 0
-                    }catch (e:NumberFormatException){
-                        action.amount != "-"
-                    }
-                )
-                is AppActions.AddOperationPopUpAction.SelectEndDateYear -> {
-                    old.copy(
-                        endDateSelectedYear = action.selectedEndDateYear,
-                        isRecurrentEndDateError = false //addOperationPopUpUiState.value.enDateSelectedMonth == "Month"
-                    )
-                }
-                is AppActions.AddOperationPopUpAction.UpdateIsPaymentStartThisMonth->
-                    old.copy(
-                        isPaymentStartThisMonth = action.isPaymentStartThisMonth
-                    )
-                is AppActions.AddOperationPopUpAction.SelectEndDateMonth -> old.copy(
-                    enDateSelectedMonth = action.selectedEndDateMonth,
-                    isRecurrentEndDateError = false // addOperationPopUpUiState.value.endDateSelectedYear == "Year"
-                )
-
-                is AppActions.AddOperationPopUpAction.SelectBeneficiaryAccount -> old.copy(
-                    beneficiaryAccount = action.beneficiaryAccountUi
-                )
-                is AppActions.AddOperationPopUpAction.SelectOptionIcon -> old.copy(
-                    addPopUpOptionSelectedIcon = action.selectedIcon
-                )
-                is AppActions.AddOperationPopUpAction.SelectAddOrMinus -> old.copy(
-                    isAddOperation = action.isAddOperation,
-                    operationAmount = getFormattedAmount(action.isAddOperation,action.operationAmount)
-                )
-                is AppActions.AddOperationPopUpAction.AddNewOperation<*> -> old.copy(
-                    isOperationNameError = action.operation.name.trim().isEmpty(),
-                    isOperationAmountError = action.operation.amount == 0.0,
-                    isBeneficiaryAccountError = action.isBeneficiaryAccountError
-                )
-            */
+            is AppActions.AddOperationPopupAction.AddOperation -> old
+            is AppActions.AddOperationPopupAction.AddPayment -> old
+            is AppActions.AddOperationPopupAction.AddTransfer -> old
         }
     }
 

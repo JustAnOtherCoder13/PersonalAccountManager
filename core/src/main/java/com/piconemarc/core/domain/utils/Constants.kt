@@ -20,7 +20,7 @@ object Constants {
 
     val OPERATION =  "Operation"
     val PAYMENT =  "Payment"
-    val TRANSFER_MODEL =  "Transfer"
+    val TRANSFER =  "Transfer"
 
     val CATEGORY_MODEL =  "Category"
 

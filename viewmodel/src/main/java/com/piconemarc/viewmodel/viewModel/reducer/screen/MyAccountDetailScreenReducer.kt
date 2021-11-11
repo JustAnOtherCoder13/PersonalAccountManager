@@ -1,7 +1,7 @@
 package com.piconemarc.viewmodel.viewModel.reducer.screen
 
-import com.piconemarc.viewmodel.viewModel.utils.Reducer
 import com.piconemarc.viewmodel.viewModel.utils.AppActions
+import com.piconemarc.viewmodel.viewModel.utils.Reducer
 import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
 
 internal val myAccountDetailScreenReducer: Reducer<ViewModelInnerStates.MyAccountDetailScreenVMState> =
