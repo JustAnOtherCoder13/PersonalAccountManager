@@ -1,6 +1,7 @@
 package com.piconemarc.viewmodel.viewModel
 
 import android.util.Log
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewModelScope
 import com.piconemarc.core.domain.interactor.account.GetAccountAndRelatedOperationsForAccountIdInteractor
 import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
@@ -34,6 +35,7 @@ class MyAccountDetailViewModel @Inject constructor(
     store,
     myAccountDetailScreenVMState_
 ) {
+    val myAccountDetailState by uiState
     init {
         //init state
         viewModelScope.launch(block = { state.collectLatest { uiState.value = it } })

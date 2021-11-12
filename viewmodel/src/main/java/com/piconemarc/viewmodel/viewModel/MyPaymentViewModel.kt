@@ -1,6 +1,7 @@
 package com.piconemarc.viewmodel.viewModel
 
 
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewModelScope
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
@@ -22,6 +23,7 @@ class MyPaymentViewModel @Inject constructor(
     store,
     paymentScreenVMState_
 ) {
+    val paymentState by uiState
     init {
         viewModelScope.launch(block = { state.collectLatest { uiState.value = it } })
         viewModelScope.launchOnIOCatchingError(

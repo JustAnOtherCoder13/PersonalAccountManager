@@ -14,6 +14,9 @@ import javax.inject.Inject
 class GetAllAccountsInteractor @Inject constructor(private val accountRepository: AccountRepository) :
     Constants.Interactor {
 
+    suspend fun getAllAccounts(): List<AccountUiModel> {
+        return accountRepository.getAllAccounts().map { it.toUiModel() }
+    }
     suspend fun getAllAccountsAsFlow(scope: CoroutineScope): StateFlow<List<AccountUiModel>> {
         return accountRepository.getAllAccountsAsFlow().map { allAccountDto ->
             allAccountDto.map { it.toUiModel() }
@@ -33,9 +36,5 @@ class GetAllAccountsInteractor @Inject constructor(private val accountRepository
                 relatedPayment = it.allPaymentsForAccount.map { it.toUiModel() }
             )
         }
-    }
-
-    suspend fun getAllAccounts(): List<AccountUiModel> {
-        return accountRepository.getAllAccounts().map { it.toUiModel() }
     }
 }

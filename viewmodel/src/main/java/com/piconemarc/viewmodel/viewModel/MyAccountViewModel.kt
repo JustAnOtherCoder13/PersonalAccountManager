@@ -1,5 +1,6 @@
 package com.piconemarc.viewmodel.viewModel
 
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewModelScope
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
@@ -17,6 +18,7 @@ class MyAccountViewModel @Inject constructor(
     private val getAllAccountsInteractor: GetAllAccountsInteractor,
 ) : BaseViewModel<AppActions.MyAccountScreenAction, ViewModelInnerStates.MyAccountScreenVMState>(store,myAccountScreenVMState_) {
 
+    val myAccountState by uiState
     init {
         //init state
         viewModelScope.launch(block = { state.collect {

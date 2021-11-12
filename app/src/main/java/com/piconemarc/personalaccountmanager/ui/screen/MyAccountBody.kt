@@ -1,4 +1,4 @@
-package com.piconemarc.personalaccountmanager.ui.component.screen
+package com.piconemarc.personalaccountmanager.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MyAccountBodyRecyclerView
@@ -18,35 +17,34 @@ import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.
 import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
 import com.piconemarc.personalaccountmanager.ui.theme.ThinBorder
-import com.piconemarc.viewmodel.viewModel.AppViewModel
-import com.piconemarc.viewmodel.viewModel.MyAccountDetailViewModel
 import com.piconemarc.viewmodel.viewModel.utils.AppActions
 import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
 
 
 @Composable
 fun MyAccountBody(
-    appViewModel: AppViewModel,
-    myAccountUiStateValue : ViewModelInnerStates.MyAccountScreenVMState,
-    navController: NavController
+    myAccountState: ViewModelInnerStates.MyAccountScreenVMState,
+    navController: NavController,
+    onAddAccountButtonClick : (AppActions.AddAccountPopUpAction)-> Unit,
+    onDeleteAccountButtonClick : ( AppActions.DeleteAccountAction)-> Unit
 ) {
     VerticalDispositionSheet(
         body = {
             MyAccountBodyRecyclerView(
                 onAccountClicked = { selectedAccount ->
                     navController.navigate("myAccountDetail/${selectedAccount.id}")
-                    },
+                },
                 onDeleteAccountButtonClicked = { accountToDelete ->
-                    appViewModel.dispatchAction(
+                    onDeleteAccountButtonClick(
                         AppActions.DeleteAccountAction.InitPopUp(accountUiToDelete = accountToDelete)
                     )
                 },
-                allAccounts = myAccountUiStateValue.allAccounts
+                allAccounts = myAccountState.allAccounts
             )
         },
         footer = {
             BrownBackgroundAddButton(onAddButtonClicked = {
-                appViewModel.dispatchAction(
+                onAddAccountButtonClick(
                     AppActions.AddAccountPopUpAction.InitPopUp
                 )
             })
@@ -57,46 +55,50 @@ fun MyAccountBody(
 
 @Composable
 fun MyAccountDetailBody(
-    myAccountDetailViewModel: MyAccountDetailViewModel,
-    appViewModel: AppViewModel,
     navController: NavController,
-    selectedAccountId : String?
+    selectedAccountId: String?,
+    myAccountDetailState: ViewModelInnerStates.MyAccountDetailScreenVMState,
+    onMyAccountDetailEvent: (AppActions.MyAccountDetailScreenAction) -> Unit,
+    onAddOperationButtonClick: (AppActions.AddOperationPopupAction) -> Unit,
+    onDeleteOperationButtonClick: (AppActions.DeleteOperationPopUpAction) -> Unit
 ) {
-    val state by myAccountDetailViewModel.uiState
-    myAccountDetailViewModel.dispatchAction(AppActions.MyAccountDetailScreenAction.InitScreen(selectedAccountId?:""))
+
+    onMyAccountDetailEvent(
+        AppActions.MyAccountDetailScreenAction.InitScreen(
+            selectedAccountId ?: ""
+        )
+    )
     Column {
         VerticalDispositionSheet(
             header = {
                 MyAccountDetailTitle(
                     onBackIconClick = { navController.navigate("myAccount") },
-                    accountName = myAccountDetailViewModel.uiState.value.selectedAccount.name
+                    accountName = myAccountDetailState.selectedAccount.name
                 )
             },
             body = {
                 MyAccountDetailSheet(
-                    allOperations = myAccountDetailViewModel.uiState.value.accountMonthlyOperations,
+                    allOperations = myAccountDetailState.accountMonthlyOperations,
                     onDeleteItemButtonCLick = { operationToDelete ->
-                        //todo pause vm?
-                        appViewModel.dispatchAction(
+                        onDeleteOperationButtonClick(
                             AppActions.DeleteOperationPopUpAction.InitPopUp(operationToDelete)
                         )
                     },
-                    accountBalance = myAccountDetailViewModel.uiState.value.selectedAccount.accountBalance,
-                    accountRest = myAccountDetailViewModel.uiState.value.selectedAccount.rest,
+                    accountBalance = myAccountDetailState.selectedAccount.accountBalance,
+                    accountRest = myAccountDetailState.selectedAccount.rest,
                     onOperationNameClick = {
-                        myAccountDetailViewModel.dispatchAction(
+                        onMyAccountDetailEvent(
                             AppActions.MyAccountDetailScreenAction.GetSelectedOperation(it)
                         )
                     },
-                    operationDetailMessage = state.operationDetailMessage
+                    operationDetailMessage = myAccountDetailState.operationDetailMessage
                 )
             },
             footer = {
                 BrownBackgroundAddButton(onAddButtonClicked = {
-                    //todo pause vm?
-                    appViewModel.dispatchAction(
+                    onAddOperationButtonClick(
                         AppActions.AddOperationPopupAction.InitPopUp(
-                            selectedAccountId = myAccountDetailViewModel.uiState.value.selectedAccount.id
+                            selectedAccountId = myAccountDetailState.selectedAccount.id
                         )
                     )
                 })
