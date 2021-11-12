@@ -1,6 +1,7 @@
 package com.piconemarc.core.domain.interactor.account
 
 import com.piconemarc.core.data.account.AccountRepository
+import com.piconemarc.core.domain.entityDTO.AccountWithRelatedOperations
 import com.piconemarc.core.domain.entityDTO.AccountWithRelatedPayments
 import com.piconemarc.core.domain.utils.Constants
 import com.piconemarc.model.entity.AccountUiModel

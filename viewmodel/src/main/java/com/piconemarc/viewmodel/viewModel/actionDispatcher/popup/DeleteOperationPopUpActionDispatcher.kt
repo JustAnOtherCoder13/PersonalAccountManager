@@ -87,6 +87,7 @@ class DeleteOperationPopUpActionDispatcher @Inject constructor(
             }
             is AppActions.DeleteOperationPopUpAction.DeleteOperation<*> -> {
 
+                //todo simplify else if
                 when (action.operationToDelete){
                     is OperationUiModel ->{
                         if (action.operationToDelete.paymentId != null) {

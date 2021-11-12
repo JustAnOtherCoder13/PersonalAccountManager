@@ -43,12 +43,9 @@ object AppActions {
 
         object CloseScreen : MyAccountDetailScreenAction()
 
-        data class UpdateAccountMonthlyOperations(
-            val accountMonthlyOperations: List<OperationUiModel>
-        ) : MyAccountDetailScreenAction()
-
-        data class UpdateSelectedAccount(
-            val account: AccountUiModel
+        data class UpdateAccountAndMonthlyOperations(
+            val selectedAccount : AccountUiModel ,
+            val relatedMonthlyOperations: List<OperationUiModel>
         ) : MyAccountDetailScreenAction()
 
         data class GetSelectedOperation(

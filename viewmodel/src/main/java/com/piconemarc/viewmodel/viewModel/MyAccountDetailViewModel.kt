@@ -3,10 +3,11 @@ package com.piconemarc.viewmodel.viewModel
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
-import com.piconemarc.core.domain.interactor.operation.GetAllOperationsForAccountIdInteractor
+import com.piconemarc.core.domain.interactor.account.GetAccountAndRelatedOperationsForAccountIdInteractor
 import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteractor
 import com.piconemarc.core.domain.interactor.payment.GetPaymentForIdInteractor
 import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
+import com.piconemarc.model.entity.PaymentUiModel
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import com.piconemarc.viewmodel.viewModel.reducer.myAccountDetailScreenVMState_
@@ -24,7 +25,7 @@ import javax.inject.Inject
 class MyAccountDetailViewModel @Inject constructor(
     store: DefaultStore<GlobalVmState>,
     private val getAccountForIdInteractor: GetAccountForIdInteractor,
-    private val getAllOperationsForAccountIdInteractor: GetAllOperationsForAccountIdInteractor,
+    private val GetAccountAndRelatedOperationsForAccountIdInteractor: GetAccountAndRelatedOperationsForAccountIdInteractor,
     private val getPaymentForIdInteractor: GetPaymentForIdInteractor,
     private val getTransferForIdInteractor: GetTransferForIdInteractor,
     private val getOperationForIdInteractor: GetOperationForIdInteractor
@@ -59,38 +60,23 @@ class MyAccountDetailViewModel @Inject constructor(
                 // have to pause vm?
                 viewModelScope.launchOnIOCatchingError(
                     block = {
-                        getAllOperationsForAccountIdInteractor.getAllOperationsForAccountIdFlow(
-                            id,
-                            this
-                        ).collectLatest { accountOperations ->
-                            dispatchAction(
-                                AppActions.MyAccountDetailScreenAction.UpdateAccountMonthlyOperations(
-                                    accountOperations.filter {
-                                        it.emitDate.month.compareTo(
-                                            Calendar.getInstance().get(Calendar.MONTH)
-                                        ) == 0
-                                    }
-                                )
-                            )
-                        }
-
-                    }
-                )
-                viewModelScope.launchOnIOCatchingError(
-                    block = {
-                        getAccountForIdInteractor.getAccountForIdFlow(id, this)
-                            .collectLatest {
-                                updateState(
-                                    GlobalAction.UpdateMyAccountDetailScreenState(
-                                        AppActions.MyAccountDetailScreenAction.UpdateSelectedAccount(
-                                            it
-                                        )
+                        GetAccountAndRelatedOperationsForAccountIdInteractor.getAccountForIdWithRelatedOperationsAsFlow(id, this)
+                            .collectLatest { accountWithRelatedOperations ->
+                                dispatchAction(
+                                    AppActions.MyAccountDetailScreenAction.UpdateAccountAndMonthlyOperations(
+                                        selectedAccount = accountWithRelatedOperations.account,
+                                        relatedMonthlyOperations = accountWithRelatedOperations.relatedOperations.filter {
+                                            it.emitDate.month.compareTo(
+                                                Calendar.getInstance().get(Calendar.MONTH)
+                                            ) == 0
+                                        }
                                     )
                                 )
                             }
                     }
                 )
             }
+
             is AppActions.MyAccountDetailScreenAction.GetSelectedOperation -> {
                 //todo delay cause trouble on multiple click, simplify
                 if (action.operation.paymentId != null) {
@@ -98,27 +84,7 @@ class MyAccountDetailViewModel @Inject constructor(
                         block = {
                             val relatedPayment =
                                 getPaymentForIdInteractor.getPaymentForId(action.operation.paymentId!!)
-                            updateState(
-                                GlobalAction.UpdateMyAccountDetailScreenState(
-                                    AppActions.MyAccountDetailScreenAction.UpdateOperationMessage(
-                                        if (relatedPayment.endDate != null) "This Payment will end on : ${
-                                            SimpleDateFormat(
-                                                "MMMM/yy",
-                                                Locale.FRANCE
-                                            ).format(relatedPayment.endDate!!)
-                                        }"
-                                        else "This payment don't have end date"
-                                    )
-                                )
-                            )
-                            delay(2500)
-                            updateState(
-                                GlobalAction.UpdateMyAccountDetailScreenState(
-                                    AppActions.MyAccountDetailScreenAction.UpdateOperationMessage(
-                                        ""
-                                    )
-                                )
-                            )
+                            popUpPaymentMessage(relatedPayment)
                         }
                     )
                 }
@@ -133,21 +99,7 @@ class MyAccountDetailViewModel @Inject constructor(
                                 getOperationForIdInteractor.getOperationForId(relatedOperationId)
                             val relatedAccountName =
                                 getAccountForIdInteractor.getAccountForId(relatedOperation.accountId).name
-                            updateState(
-                                GlobalAction.UpdateMyAccountDetailScreenState(
-                                    AppActions.MyAccountDetailScreenAction.UpdateOperationMessage(
-                                        "This operation is a transfer from : $relatedAccountName"
-                                    )
-                                )
-                            )
-                            delay(2500)
-                            updateState(
-                                GlobalAction.UpdateMyAccountDetailScreenState(
-                                    AppActions.MyAccountDetailScreenAction.UpdateOperationMessage(
-                                        ""
-                                    )
-                                )
-                            )
+                            popUpTransferMessage(relatedAccountName)
                         }
                     )
                 }
@@ -156,4 +108,49 @@ class MyAccountDetailViewModel @Inject constructor(
             }
         }
     }
+
+    private suspend fun popUpTransferMessage(relatedAccountName: String) {
+        updateState(
+            GlobalAction.UpdateMyAccountDetailScreenState(
+                AppActions.MyAccountDetailScreenAction.UpdateOperationMessage(
+                    "This operation is a transfer from : $relatedAccountName"
+                )
+            )
+        )
+        delay(2500)
+        updateState(
+            GlobalAction.UpdateMyAccountDetailScreenState(
+                AppActions.MyAccountDetailScreenAction.UpdateOperationMessage(
+                    ""
+                )
+            )
+        )
+    }
+
+    private suspend fun popUpPaymentMessage(relatedPayment: PaymentUiModel) {
+        updateState(
+            GlobalAction.UpdateMyAccountDetailScreenState(
+                AppActions.MyAccountDetailScreenAction.UpdateOperationMessage(
+                    getPaymentMessage(relatedPayment)
+                )
+            )
+        )
+        delay(2500)
+        updateState(
+            GlobalAction.UpdateMyAccountDetailScreenState(
+                AppActions.MyAccountDetailScreenAction.UpdateOperationMessage(
+                    ""
+                )
+            )
+        )
+    }
+
+    private fun getPaymentMessage(relatedPayment: PaymentUiModel) =
+        if (relatedPayment.endDate != null) "This Payment will end on : ${
+            SimpleDateFormat(
+                "MMMM/yy",
+                Locale.FRANCE
+            ).format(relatedPayment.endDate!!)
+        }"
+        else "This payment don't have end date"
 }

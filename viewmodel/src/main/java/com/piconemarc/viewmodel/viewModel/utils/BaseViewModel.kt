@@ -3,9 +3,9 @@ package com.piconemarc.viewmodel.viewModel.utils
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
+import com.piconemarc.viewmodel.viewModel.reducer.appStoreSubscriber
 import kotlinx.coroutines.flow.MutableStateFlow
 
 abstract class BaseViewModel<A : UiAction, S : VMState>(
@@ -13,7 +13,7 @@ abstract class BaseViewModel<A : UiAction, S : VMState>(
     val state: MutableStateFlow<S>
 ) : ViewModel() {
 
-    private val subscriber: StoreSubscriber<GlobalVmState> = AppSubscriber().appStoreSubscriber
+    private val subscriber: StoreSubscriber<GlobalVmState> = appStoreSubscriber
 
     init {
         store.add(subscriber)

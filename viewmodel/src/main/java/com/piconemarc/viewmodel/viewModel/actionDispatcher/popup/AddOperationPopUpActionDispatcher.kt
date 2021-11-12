@@ -51,7 +51,6 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
             is AppActions.AddOperationPopupAction.InitPopUp -> {
                 scope.launchOnIOCatchingError(
                     block = {
-
                         val selectedAccount =
                             getAccountForIdInteractor.getAccountForId(action.selectedAccountId)
                         val allAccounts = getAllAccountsInteractor.getAllAccounts()

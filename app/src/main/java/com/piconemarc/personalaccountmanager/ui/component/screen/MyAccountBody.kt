@@ -18,7 +18,8 @@ import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.
 import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
 import com.piconemarc.personalaccountmanager.ui.theme.ThinBorder
-import com.piconemarc.viewmodel.viewModel.*
+import com.piconemarc.viewmodel.viewModel.AppViewModel
+import com.piconemarc.viewmodel.viewModel.MyAccountDetailViewModel
 import com.piconemarc.viewmodel.viewModel.utils.AppActions
 import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
 
@@ -75,6 +76,7 @@ fun MyAccountDetailBody(
                 MyAccountDetailSheet(
                     allOperations = myAccountDetailViewModel.uiState.value.accountMonthlyOperations,
                     onDeleteItemButtonCLick = { operationToDelete ->
+                        //todo pause vm?
                         appViewModel.dispatchAction(
                             AppActions.DeleteOperationPopUpAction.InitPopUp(operationToDelete)
                         )
@@ -91,6 +93,7 @@ fun MyAccountDetailBody(
             },
             footer = {
                 BrownBackgroundAddButton(onAddButtonClicked = {
+                    //todo pause vm?
                     appViewModel.dispatchAction(
                         AppActions.AddOperationPopupAction.InitPopUp(
                             selectedAccountId = myAccountDetailViewModel.uiState.value.selectedAccount.id

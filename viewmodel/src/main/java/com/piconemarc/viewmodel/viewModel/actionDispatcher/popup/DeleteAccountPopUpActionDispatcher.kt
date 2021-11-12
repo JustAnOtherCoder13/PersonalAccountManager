@@ -18,17 +18,21 @@ class DeleteAccountPopUpActionDispatcher @Inject constructor(
     private val deleteAccountInteractor: DeleteAccountInteractor
 ) : ActionDispatcher<ViewModelInnerStates.DeleteAccountPopUpVMState> {
 
-    override val state: MutableStateFlow<ViewModelInnerStates.DeleteAccountPopUpVMState>
-        = deleteAccountVmState_
-    override val uiState: MutableState<ViewModelInnerStates.DeleteAccountPopUpVMState>
-        = mutableStateOf(state.value)
+    override val state: MutableStateFlow<ViewModelInnerStates.DeleteAccountPopUpVMState> =
+        deleteAccountVmState_
+    override val uiState: MutableState<ViewModelInnerStates.DeleteAccountPopUpVMState> =
+        mutableStateOf(state.value)
 
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
 
         updateState(GlobalAction.UpdateDeleteAccountPopUpState(action))
-        scope.launch{state.collectLatest { uiState.value = it }}
+        scope.launch { state.collectLatest { uiState.value = it } }
 
         when (action) {
+
+            //todo when delete account don't delete transfer related operation,
+            // change them to base operation
+
             is AppActions.DeleteAccountAction.InitPopUp -> {
                 updateState(
                     GlobalAction.UpdateDeleteAccountPopUpState(

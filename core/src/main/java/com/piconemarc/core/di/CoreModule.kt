@@ -12,10 +12,7 @@ import com.piconemarc.core.data.payment.PaymentDaoImpl
 import com.piconemarc.core.data.payment.PaymentRepository
 import com.piconemarc.core.data.transfer.TransferDaoImpl
 import com.piconemarc.core.data.transfer.TransferRepository
-import com.piconemarc.core.domain.interactor.account.AddNewAccountInteractor
-import com.piconemarc.core.domain.interactor.account.DeleteAccountInteractor
-import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
-import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
+import com.piconemarc.core.domain.interactor.account.*
 import com.piconemarc.core.domain.interactor.category.AddNewCategoryInteractor
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
 import com.piconemarc.core.domain.interactor.operation.*
@@ -136,8 +133,8 @@ class CoreModule {
 
     //Operation
     @Provides
-    fun provideGetAllOperationsForAccountId(operationRepository: OperationRepository):GetAllOperationsForAccountIdInteractor{
-        return GetAllOperationsForAccountIdInteractor(operationRepository)
+    fun provideGetAccountAndRelatedOperationsForAccountId(accountRepository: AccountRepository): GetAccountAndRelatedOperationsForAccountIdInteractor {
+        return GetAccountAndRelatedOperationsForAccountIdInteractor(accountRepository)
     }
 
     @Provides
