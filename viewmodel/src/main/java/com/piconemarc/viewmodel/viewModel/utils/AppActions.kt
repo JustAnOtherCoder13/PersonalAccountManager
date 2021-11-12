@@ -141,7 +141,7 @@ object AppActions {
             val beneficiaryAccount: AccountUiModel
         ) : AddOperationPopupAction()
 
-        data class LaunchIoThread(
+        data class UpdateState(
             val allCategories: List<CategoryUiModel>? = null,
             val allAccounts: List<AccountUiModel>? = null,
             val selectedAccount: AccountUiModel? = null

@@ -29,10 +29,6 @@ class DeleteAccountPopUpActionDispatcher @Inject constructor(
         scope.launch { state.collectLatest { uiState.value = it } }
 
         when (action) {
-
-            //todo when delete account don't delete transfer related operation,
-            // change them to base operation
-
             is AppActions.DeleteAccountAction.InitPopUp -> {
                 updateState(
                     GlobalAction.UpdateDeleteAccountPopUpState(

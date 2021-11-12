@@ -2,8 +2,8 @@ package com.piconemarc.viewmodel.viewModel
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
 import com.piconemarc.core.domain.interactor.account.GetAccountAndRelatedOperationsForAccountIdInteractor
+import com.piconemarc.core.domain.interactor.account.GetAccountForIdInteractor
 import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteractor
 import com.piconemarc.core.domain.interactor.payment.GetPaymentForIdInteractor
 import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
@@ -55,9 +55,6 @@ class MyAccountDetailViewModel @Inject constructor(
                     Log.e("TAG", "dispatchAction: ", e)
                     0
                 }
-                //todo cause trouble when popup is up and add or delete transfer.
-                // multiple account work make the flow in the background jumping from one account to another.
-                // have to pause vm?
                 viewModelScope.launchOnIOCatchingError(
                     block = {
                         GetAccountAndRelatedOperationsForAccountIdInteractor.getAccountForIdWithRelatedOperationsAsFlow(id, this)
@@ -78,7 +75,6 @@ class MyAccountDetailViewModel @Inject constructor(
             }
 
             is AppActions.MyAccountDetailScreenAction.GetSelectedOperation -> {
-                //todo delay cause trouble on multiple click, simplify
                 if (action.operation.paymentId != null) {
                     viewModelScope.launchOnIOCatchingError(
                         block = {
@@ -104,8 +100,7 @@ class MyAccountDetailViewModel @Inject constructor(
                     )
                 }
             }
-            else -> {
-            }
+            else -> {updateState(GlobalAction.UpdateMyAccountDetailScreenState(action))}
         }
     }
 

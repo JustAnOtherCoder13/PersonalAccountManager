@@ -158,8 +158,7 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
                 )
             }
 
-            is AppActions.AddOperationPopupAction.LaunchIoThread -> {
-                //todo find other way could become a problem
+            is AppActions.AddOperationPopupAction.UpdateState -> {
                 old.copy(
                     allAccounts = action.allAccounts ?: listOf(),
                     allCategories = action.allCategories ?: listOf(),

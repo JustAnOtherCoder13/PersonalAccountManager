@@ -19,7 +19,10 @@ import com.piconemarc.personalaccountmanager.ui.component.popUp.AddAccountPopUp
 import com.piconemarc.personalaccountmanager.ui.component.popUp.AddOperationPopUp
 import com.piconemarc.personalaccountmanager.ui.component.popUp.DeleteAccountPopUp
 import com.piconemarc.personalaccountmanager.ui.component.popUp.DeleteOperationPopUp
-import com.piconemarc.viewmodel.viewModel.*
+import com.piconemarc.viewmodel.viewModel.AppViewModel
+import com.piconemarc.viewmodel.viewModel.MyAccountDetailViewModel
+import com.piconemarc.viewmodel.viewModel.MyAccountViewModel
+import com.piconemarc.viewmodel.viewModel.MyPaymentViewModel
 import com.piconemarc.viewmodel.viewModel.utils.AppActions
 
 @Composable

@@ -58,7 +58,7 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                         getAllCategoriesInteractor.getAllCategoriesAsFlow(this)
                             .collectLatest { allCategories ->
                                 dispatchAction(
-                                    AppActions.AddOperationPopupAction.LaunchIoThread(
+                                    AppActions.AddOperationPopupAction.UpdateState(
                                         allCategories = allCategories,
                                         allAccounts = allAccounts.filter { account -> account.id != selectedAccount.id },
                                         selectedAccount = selectedAccount

@@ -15,7 +15,10 @@ import com.piconemarc.core.data.transfer.TransferRepository
 import com.piconemarc.core.domain.interactor.account.*
 import com.piconemarc.core.domain.interactor.category.AddNewCategoryInteractor
 import com.piconemarc.core.domain.interactor.category.GetAllCategoriesInteractor
-import com.piconemarc.core.domain.interactor.operation.*
+import com.piconemarc.core.domain.interactor.operation.AddNewOperationInteractor
+import com.piconemarc.core.domain.interactor.operation.DeleteOperationAndPaymentInteractor
+import com.piconemarc.core.domain.interactor.operation.DeleteOperationInteractor
+import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteractor
 import com.piconemarc.core.domain.interactor.payment.*
 import com.piconemarc.core.domain.interactor.transfer.AddNewTransferInteractor
 import com.piconemarc.core.domain.interactor.transfer.DeleteTransferInteractor
