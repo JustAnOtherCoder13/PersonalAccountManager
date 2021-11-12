@@ -40,6 +40,7 @@ class AppViewModel @Inject constructor(
     val deleteOperationPopUpState by deleteOperationPopUpActionDispatcher.uiState
     val addAccountPopUpState by addAccountPopUpActionDispatcher.uiState
     val deleteAccountPopUpState by deleteAccountPopUpActionDispatcher.uiState
+    val appUiState by uiState
 
     init {
         //init state

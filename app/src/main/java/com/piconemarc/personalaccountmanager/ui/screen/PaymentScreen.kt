@@ -1,4 +1,4 @@
-package com.piconemarc.personalaccountmanager.ui.component.screen
+package com.piconemarc.personalaccountmanager.ui.screen
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,12 +16,16 @@ import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
 import com.piconemarc.personalaccountmanager.ui.theme.paymentPostItInitialHeight
 import com.piconemarc.personalaccountmanager.ui.theme.paymentPostItItemHeight
 import com.piconemarc.personalaccountmanager.ui.theme.paymentPostItWidth
-import com.piconemarc.viewmodel.viewModel.AppViewModel
-import com.piconemarc.viewmodel.viewModel.MyPaymentViewModel
 import com.piconemarc.viewmodel.viewModel.utils.AppActions
+import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
 
 @Composable
-fun MyPaymentScreen(myPaymentViewModel: MyPaymentViewModel, appViewModel: AppViewModel) {
+fun MyPaymentScreen(
+    paymentState : ViewModelInnerStates.PaymentScreenVmState,
+    onAddPaymentButtonClick : (AppActions.AddOperationPopupAction)->Unit,
+    onDeletePaymentButtonClick : (AppActions.DeleteOperationPopUpAction)-> Unit
+
+) {
     VerticalDispositionSheet(
         body = {
             LazyColumn(
@@ -30,7 +34,7 @@ fun MyPaymentScreen(myPaymentViewModel: MyPaymentViewModel, appViewModel: AppVie
                     .padding(horizontal = RegularMarge),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                items(myPaymentViewModel.uiState.value.allAccounts)
+                items(paymentState.allAccounts)
                 { accountWithRelatedPayments ->
                     Box(
                         modifier = Modifier
@@ -47,7 +51,7 @@ fun MyPaymentScreen(myPaymentViewModel: MyPaymentViewModel, appViewModel: AppVie
                             header = {
                                 PaymentPostItTitle(
                                     onAddPaymentButtonClick = {
-                                        appViewModel.dispatchAction(
+                                        onAddPaymentButtonClick(
                                             AppActions.AddOperationPopupAction.InitPopUp(
                                                 isOnPaymentScreen = true,
                                                 selectedAccountId = accountWithRelatedPayments.account.id
@@ -61,7 +65,7 @@ fun MyPaymentScreen(myPaymentViewModel: MyPaymentViewModel, appViewModel: AppVie
                                 PaymentPostItBody(
                                     accountWithRelatedPayments = accountWithRelatedPayments,
                                     onDeletePaymentButtonClick = { paymentToDelete ->
-                                        appViewModel.dispatchAction(
+                                        onDeletePaymentButtonClick(
                                             AppActions.DeleteOperationPopUpAction.InitPopUp(
                                                 paymentToDelete
                                             )

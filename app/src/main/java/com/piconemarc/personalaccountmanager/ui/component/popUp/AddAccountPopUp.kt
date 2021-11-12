@@ -10,63 +10,64 @@ import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BrownBackgroundAmountTextFieldItem
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BrownBackgroundTextFieldItem
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
-import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.utils.AppActions
+import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
 
 
 @Composable
 fun AddAccountPopUp(
-    viewModel: AppViewModel,
+    onAddAccountPopUpEvent: (AppActions.AddAccountPopUpAction) -> Unit,
+    addAccountPopUpState: ViewModelInnerStates.AddAccountPopUpVMState
 ) {
     BasePopUp(
         title = stringResource(R.string.addAccountPopUpTitle),
         onAcceptButtonClicked = {
-            viewModel.dispatchAction(
+            onAddAccountPopUpEvent(
                 AppActions.AddAccountPopUpAction.AddNewAccount(
-                    accountName = viewModel.addAccountPopUpState.accountName,
-                    accountBalance = viewModel.addAccountPopUpState.accountBalance,
-                    accountOverdraft = viewModel.addAccountPopUpState.accountOverdraft,
+                    accountName = addAccountPopUpState.accountName,
+                    accountBalance = addAccountPopUpState.accountBalance,
+                    accountOverdraft = addAccountPopUpState.accountOverdraft,
                 )
             )
         },
-        onDismiss = { viewModel.dispatchAction(AppActions.AddAccountPopUpAction.ClosePopUp) },
-        isExpanded = viewModel.addAccountPopUpState.isPopUpExpanded
+        onDismiss = { onAddAccountPopUpEvent(AppActions.AddAccountPopUpAction.ClosePopUp) },
+        isExpanded = addAccountPopUpState.isPopUpExpanded
     ) {
         Column(modifier = Modifier.padding(vertical = RegularMarge)) {
             BrownBackgroundTextFieldItem(
                 title = stringResource(R.string.accountNameTitle),
                 onTextChange = { accountName ->
-                    viewModel.dispatchAction(
+                    onAddAccountPopUpEvent(
                         AppActions.AddAccountPopUpAction.FillAccountName(accountName = accountName)
                     )
                 },
-                textValue = viewModel.addAccountPopUpState.accountName,
-                isPopUpExpanded = viewModel.addAccountPopUpState.isPopUpExpanded,
-                isError = viewModel.addAccountPopUpState.isNameError,
+                textValue = addAccountPopUpState.accountName,
+                isPopUpExpanded = addAccountPopUpState.isPopUpExpanded,
+                isError = addAccountPopUpState.isNameError,
                 errorMsg = stringResource(R.string.nameErrorMessage)
             )
             BrownBackgroundAmountTextFieldItem(
                 title = stringResource(R.string.initialBalanceTitle),
                 onTextChange = { accountBalance ->
-                    viewModel.dispatchAction(
+                    onAddAccountPopUpEvent(
                         AppActions.AddAccountPopUpAction.FillAccountBalance(accountBalance = accountBalance)
                     )
                 },
-                amountValue = viewModel.addAccountPopUpState.accountBalance,
-                isPopUpExpanded = viewModel.addAccountPopUpState.isPopUpExpanded,
-                isError = viewModel.addAccountPopUpState.isBalanceError,
+                amountValue = addAccountPopUpState.accountBalance,
+                isPopUpExpanded = addAccountPopUpState.isPopUpExpanded,
+                isError = addAccountPopUpState.isBalanceError,
                 errorMsg = stringResource(R.string.balanceErrorMessage)
             )
             BrownBackgroundAmountTextFieldItem(
                 title = stringResource(R.string.overdraftTitle),
                 onTextChange = { accountOverdraft ->
-                    viewModel.dispatchAction(
+                    onAddAccountPopUpEvent(
                         AppActions.AddAccountPopUpAction.FillAccountOverdraft(accountOverdraft = accountOverdraft)
                     )
                 },
-                amountValue = viewModel.addAccountPopUpState.accountOverdraft,
-                isPopUpExpanded = viewModel.addAccountPopUpState.isPopUpExpanded,
-                isError = viewModel.addAccountPopUpState.isOverdraftError,
+                amountValue = addAccountPopUpState.accountOverdraft,
+                isPopUpExpanded = addAccountPopUpState.isPopUpExpanded,
+                isError = addAccountPopUpState.isOverdraftError,
                 errorMsg = stringResource(R.string.overdraftErrorMessage)
             )
         }
