@@ -7,6 +7,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.piconemarc.personalaccountmanager.ui.screen.PAMMainScreen
 import com.piconemarc.personalaccountmanager.ui.theme.PersonalAccountManagerTheme
@@ -29,9 +30,10 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.secondaryVariant,
                     modifier = Modifier.fillMaxSize()
                 ) {
+                    val appState by appViewModel.uiState
                     PAMMainScreen(
                         appViewModel = appViewModel,
-                        appUiState = appViewModel.appUiState
+                        appUiState = appState
                     )
                 }
             }

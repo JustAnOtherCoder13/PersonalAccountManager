@@ -44,7 +44,7 @@ class AppViewModel @Inject constructor(
 
     init {
         //init state
-        viewModelScope.launch(block = { state.collectLatest { uiState.value = it } })
+        viewModelScope.launch(block = { state.collect{ uiState.value = it } })
         dispatchAction(AppActions.BaseAppScreenAction.InitScreen)
     }
 

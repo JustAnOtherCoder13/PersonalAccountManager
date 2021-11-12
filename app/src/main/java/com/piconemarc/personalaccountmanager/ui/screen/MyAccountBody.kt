@@ -32,7 +32,7 @@ fun MyAccountBody(
         body = {
             MyAccountBodyRecyclerView(
                 onAccountClicked = { selectedAccount ->
-                    navController.navigate("myAccountDetail/${selectedAccount.id}")
+                    NavDestinations.myAccountDetail.doNavigation(navController = navController, argument = selectedAccount.id.toString())
                 },
                 onDeleteAccountButtonClicked = { accountToDelete ->
                     onDeleteAccountButtonClick(
@@ -72,7 +72,7 @@ fun MyAccountDetailBody(
         VerticalDispositionSheet(
             header = {
                 MyAccountDetailTitle(
-                    onBackIconClick = { navController.navigate("myAccount") },
+                    onBackIconClick = { NavDestinations.Home.doNavigation(navController = navController) },
                     accountName = myAccountDetailState.selectedAccount.name
                 )
             },
