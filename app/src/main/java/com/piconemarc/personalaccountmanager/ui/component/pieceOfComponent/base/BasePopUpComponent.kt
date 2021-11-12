@@ -30,6 +30,7 @@ fun BasePopUp(
     menuIconPanel: @Composable () -> Unit = {},
     body: @Composable () -> Unit
 ) {
+
     val transition = pAMBasePopUpEnterExitAnimation(isExpanded = isExpanded)
     if (transition.alpha > 0f)
         Column(
@@ -136,7 +137,9 @@ fun ErrorMessage(
             text = errorMsg,
             color = MaterialTheme.colors.error,
             style = MaterialTheme.typography.caption,
-            modifier = Modifier.padding(start = 16.dp).wrapContentHeight()
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .wrapContentHeight()
         )
     }
 }

@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdk 30
+    compileSdk 31
 
     defaultConfig {
         minSdk 23

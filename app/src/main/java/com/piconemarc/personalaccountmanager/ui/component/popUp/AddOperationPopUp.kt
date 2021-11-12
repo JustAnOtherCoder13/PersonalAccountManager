@@ -6,76 +6,114 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.OperationUiModel
-import com.piconemarc.model.entity.PaymentUiModel
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.animation.pAMAddOperationPopUpBackgroundColor
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.AddOperationPopUpLeftSideMenuIconPanel
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.AddOperationPopUpPunctualOrRecurrentSwitchButton
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.AddOperationPopUpTransferOptionPanel
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.*
-import com.piconemarc.viewmodel.viewModel.AppActions
-import com.piconemarc.viewmodel.viewModel.AppViewModel
-import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.addOperationPopUpUiState
-import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.myAccountDetailScreenUiState
-import java.util.*
+import com.piconemarc.viewmodel.viewModel.utils.AppActions
+import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
 
 @Composable
 fun AddOperationPopUp(
-    viewModel: AppViewModel
+    addOperationPopUpState: ViewModelInnerStates.AddOperationPopUpVMState,
+    onAddOperationPopUpEvent: (action: AppActions.AddOperationPopupAction) -> Unit
 ) {
     //Pop up Body --------------------------------------------
     BasePopUp(
-        title = addOperationPopUpUiState.addPopUpTitle,
+        title = addOperationPopUpState.addPopUpTitle,
         onAcceptButtonClicked = {
-            viewModel.dispatchAction(
-                AppActions.AddOperationPopUpAction.AddNewOperation(
-                    //if not on payment screen add operation
-                    if (!addOperationPopUpUiState.isOnPaymentScreen)
-                        OperationUiModel(
-                            name = addOperationPopUpUiState.operationName,
-                            amount = try {
-                                addOperationPopUpUiState.operationAmount.toDouble()
-                            } catch (e: NumberFormatException) {
-                                0.0
-                            },
-                            accountId = addOperationPopUpUiState.selectedAccountId,
-                            categoryId = addOperationPopUpUiState.selectedCategory.id,
-                            emitDate = Calendar.getInstance().time,
-                            isAddOperation = addOperationPopUpUiState.isAddOperation
-                        )
-                    else {
-                        //else add payment
-                        PaymentUiModel(
-                            name = addOperationPopUpUiState.operationName,
-                            amount = try {
-                                addOperationPopUpUiState.operationAmount.toDouble()
-                            } catch (e: NumberFormatException) {
-                                0.0
-                            },
-                            accountId = addOperationPopUpUiState.selectedAccountId,
+            val newOperation = OperationUiModel(
+                name = addOperationPopUpState.operationName,
+                amount = try {
+                    addOperationPopUpState.operationAmount.toDouble()
+                } catch (e: Exception) {
+                    0.0
+                },
+                categoryId = addOperationPopUpState.selectedCategory.id,
+                accountId = addOperationPopUpState.selectedAccountId,
+            )
+            onAddOperationPopUpEvent(
+                when (addOperationPopUpState.addPopUpOptionSelectedIcon) {
+                    is PAMIconButtons.Operation -> {
+                        AppActions.AddOperationPopupAction.AddOperation(
+                            newOperation = newOperation,
+                            isOperationError = checkOperationNameAndAmountError(
+                                addOperationPopUpState
+                            )
                         )
                     }
-                )
+                    is PAMIconButtons.Payment -> {
+                        AppActions.AddOperationPopupAction.AddPayment(
+                            isOnPaymentScreen = addOperationPopUpState.isOnPaymentScreen,
+                            newOperation = newOperation,
+                            isOperationError = checkOperationNameAndAmountError(
+                                addOperationPopUpState
+                            ),
+                            paymentEndDate = Pair(
+                                addOperationPopUpState.enDateSelectedMonth,
+                                addOperationPopUpState.endDateSelectedYear
+                            ),
+                            isPaymentStartThisMonth = addOperationPopUpState.isPaymentStartThisMonth
+                        )
+                    }
+                    else -> {
+                        AppActions.AddOperationPopupAction.AddTransfer(
+                            newOperation = newOperation,
+                            isOperationError = checkOperationNameAndAmountError(
+                                addOperationPopUpState
+                            ) && addOperationPopUpState.beneficiaryAccount.id == 0L,
+                            beneficiaryAccount = addOperationPopUpState.beneficiaryAccount
+                        )
+
+                    }
+                }
             )
         },
-        onDismiss = { viewModel.dispatchAction(AppActions.AddOperationPopUpAction.ClosePopUp) },
-        isExpanded = addOperationPopUpUiState.isPopUpExpanded,
+        onDismiss = { onAddOperationPopUpEvent(AppActions.AddOperationPopupAction.ClosePopUp) },
+        isExpanded = addOperationPopUpState.isPopUpExpanded,
         menuIconPanel = {
             //if on payment screen no need to show left side icon panel, cause could only be payment
-            if (!addOperationPopUpUiState.isOnPaymentScreen)
+            if (!addOperationPopUpState.isOnPaymentScreen)
                 AddOperationPopUpLeftSideMenuIconPanel(
-                    onIconButtonClicked = {
-                        viewModel.dispatchAction(
-                            AppActions.AddOperationPopUpAction.SelectOptionIcon(it)
-                        )
+                    onIconButtonClicked = { pamIconButton ->
+                        when (pamIconButton) {
+                            is PAMIconButtons.Operation -> {
+                                onAddOperationPopUpEvent(
+                                    AppActions.AddOperationPopupAction.OnOperationIconSelected(
+                                        isAddOperation = addOperationPopUpState.isAddOperation,
+                                        operationAmount = addOperationPopUpState.operationAmount
+                                    )
+                                )
+                            }
+                            is PAMIconButtons.Payment -> {
+                                onAddOperationPopUpEvent(
+                                    AppActions.AddOperationPopupAction.OnPaymentIconSelected(
+                                        isAddOperation = addOperationPopUpState.isAddOperation,
+                                        operationAmount = addOperationPopUpState.operationAmount
+                                    )
+                                )
+                            }
+                            is PAMIconButtons.Transfer -> {
+                                onAddOperationPopUpEvent(
+                                    AppActions.AddOperationPopupAction.OnTransferIconSelected(
+                                        operationAmount = addOperationPopUpState.operationAmount
+                                    )
+                                )
+                            }
+                            else -> {
+                            }
+                        }
                     },
-                    selectedIcon = addOperationPopUpUiState.addPopUpOptionSelectedIcon
+                    selectedIcon = addOperationPopUpState.addPopUpOptionSelectedIcon
                 )
         },
         popUpBackgroundColor = pAMAddOperationPopUpBackgroundColor(
-            isAddOperation = addOperationPopUpUiState.isAddOperation,
-            isAddOrMinusEnable = addOperationPopUpUiState.isAddOrMinusEnable
+            isAddOperation = addOperationPopUpState.isAddOperation,
+            isAddOrMinusEnable = addOperationPopUpState.isAddOrMinusEnable
         ).value
     ) {
         Column(
@@ -85,52 +123,53 @@ fun AddOperationPopUp(
             //add or minus switch
             AddOperationPopUpAddOrMinusSwitchButton(
                 onAddOrMinusClicked = { isAddClicked ->
-                    viewModel.dispatchAction(
-                        AppActions.AddOperationPopUpAction.SelectAddOrMinus(
-                            isAddClicked
+                    onAddOperationPopUpEvent(
+                        AppActions.AddOperationPopupAction.OnAddOrMinusSelected(
+                            isAddClicked,
+                            addOperationPopUpState.operationAmount
                         )
                     )
                 },
-                isAddOperation = addOperationPopUpUiState.isAddOperation,
-                isEnable = addOperationPopUpUiState.isAddOrMinusEnable
+                isAddOperation = addOperationPopUpState.isAddOperation,
+                isEnable = addOperationPopUpState.isAddOrMinusEnable
             )
             // operation name--------------------------
             BrownBackgroundTextFieldItem(
                 title = stringResource(R.string.operationName),
                 onTextChange = { operationName ->
-                    viewModel.dispatchAction(
-                        AppActions.AddOperationPopUpAction.FillOperationName(
+                    onAddOperationPopUpEvent(
+                        AppActions.AddOperationPopupAction.OnFillOperationName(
                             operationName
                         )
                     )
                 },
-                textValue = addOperationPopUpUiState.operationName,
-                isPopUpExpanded = addOperationPopUpUiState.isPopUpExpanded,
-                isError = addOperationPopUpUiState.isOperationNameError,
+                textValue = addOperationPopUpState.operationName,
+                isPopUpExpanded = addOperationPopUpState.isPopUpExpanded,
+                isError = addOperationPopUpState.isOperationNameError,
                 errorMsg = stringResource(R.string.AddOperationPopUpOperationNameErrorMessage)
             )
             // operation Amount--------------------------
             BrownBackgroundAmountTextFieldItem(
                 title = stringResource(R.string.operationAmount),
                 onTextChange = { operationAmount ->
-                    viewModel.dispatchAction(
-                        AppActions.AddOperationPopUpAction.FillOperationAmount(
+                    onAddOperationPopUpEvent(
+                        AppActions.AddOperationPopupAction.OnFillOperationAmount(
                             operationAmount
                         )
                     )
                 },
-                amountValue = addOperationPopUpUiState.operationAmount,
-                isPopUpExpanded = addOperationPopUpUiState.isPopUpExpanded,
-                isError = addOperationPopUpUiState.isOperationAmountError,
+                amountValue = addOperationPopUpState.operationAmount,
+                isPopUpExpanded = addOperationPopUpState.isPopUpExpanded,
+                isError = addOperationPopUpState.isOperationAmountError,
                 errorMsg = stringResource(R.string.AddOperationPopUpAmountErrorMessage)
             )
             //category drop down -----------------------------------
             PAMBaseDropDownMenuWithBackground(
-                selectedItem = addOperationPopUpUiState.selectedCategory,
-                itemList = addOperationPopUpUiState.allCategories,
+                selectedItem = addOperationPopUpState.selectedCategory,
+                itemList = addOperationPopUpState.allCategories,
                 onItemSelected = { category ->
-                    viewModel.dispatchAction(
-                        AppActions.AddOperationPopUpAction.SelectCategory(
+                    onAddOperationPopUpEvent(
+                        AppActions.AddOperationPopupAction.OnSelectCategory(
                             category
                         )
                     )
@@ -138,65 +177,74 @@ fun AddOperationPopUp(
             )
             //Payment Operation option--------------------------
             AddOperationPopUpPunctualOrRecurrentSwitchButton(
-                isRecurrentOptionExpanded = addOperationPopUpUiState.isRecurrentOptionExpanded,
-                isPaymentOptionExpanded = addOperationPopUpUiState.isPaymentExpanded,
+                isRecurrentOptionExpanded = addOperationPopUpState.isRecurrentOptionExpanded,
+                isPaymentOptionExpanded = addOperationPopUpState.isPaymentExpanded,
                 onPunctualButtonSelected = {
-                    viewModel
-                        .dispatchAction(AppActions.AddOperationPopUpAction.CloseRecurrentOption)
+                    onAddOperationPopUpEvent(
+                        AppActions.AddOperationPopupAction.OnRecurrentOptionSelected(
+                            false
+                        )
+                    )
                 },
                 onRecurrentButtonSelected = {
-                    viewModel
-                        .dispatchAction(AppActions.AddOperationPopUpAction.ExpandRecurrentOption)
+                    onAddOperationPopUpEvent(
+                        AppActions.AddOperationPopupAction.OnRecurrentOptionSelected(
+                            true
+                        )
+                    )
                 },
                 onMonthSelected = { endDateMonth ->
-                    viewModel.dispatchAction(
-                        AppActions.AddOperationPopUpAction.SelectEndDateMonth(
+                    onAddOperationPopUpEvent(
+                        AppActions.AddOperationPopupAction.OnPaymentEndDateSelected(
                             endDateMonth
                         )
                     )
                 },
                 onYearSelected = { endDateYear ->
-                    viewModel.dispatchAction(
-                        AppActions.AddOperationPopUpAction.SelectEndDateYear(
+                    onAddOperationPopUpEvent(
+                        AppActions.AddOperationPopupAction.OnPaymentEndDateSelected(
                             endDateYear
                         )
                     )
                 },
-                endDateSelectedMonth = addOperationPopUpUiState.enDateSelectedMonth,
-                endDateSelectedYear = addOperationPopUpUiState.endDateSelectedYear,
-                selectableMonthList = addOperationPopUpUiState.selectableEndDateMonths,
-                selectableYearList = addOperationPopUpUiState.selectableEndDateYears,
-                isRecurrentSwitchError = addOperationPopUpUiState.isRecurrentEndDateError
+                endDateSelectedMonth = addOperationPopUpState.enDateSelectedMonth,
+                endDateSelectedYear = addOperationPopUpState.endDateSelectedYear,
+                selectableMonthList = addOperationPopUpState.selectableEndDateMonths,
+                selectableYearList = addOperationPopUpState.selectableEndDateYears,
+                isRecurrentSwitchError = addOperationPopUpState.isRecurrentEndDateError
             )
             //Transfer Operation option---------------------------
             AddOperationPopUpTransferOptionPanel(
-                isTransferOptionExpanded = addOperationPopUpUiState.isTransferExpanded,
-                senderAccount = myAccountDetailScreenUiState.selectedAccount,
-                allAccountsList = addOperationPopUpUiState.allAccounts,
-                beneficiaryAccountUiSelectedItem = addOperationPopUpUiState.beneficiaryAccount,
+                isTransferOptionExpanded = addOperationPopUpState.isTransferExpanded,
+                senderAccount = addOperationPopUpState.selectedAccount,
+                allAccountsList = addOperationPopUpState.allAccounts,
+                beneficiaryAccountUiSelectedItem = addOperationPopUpState.beneficiaryAccount,
 
                 onBeneficiaryAccountSelected = { beneficiaryAccount ->
-                    viewModel.dispatchAction(
-                        AppActions.AddOperationPopUpAction.SelectBeneficiaryAccount(
+                    onAddOperationPopUpEvent(
+                        AppActions.AddOperationPopupAction.OnBeneficiaryAccountSelected(
                             beneficiaryAccount
                         )
                     )
                 },
-                isBeneficiaryAccountError = addOperationPopUpUiState.isBeneficiaryAccountError
+                isBeneficiaryAccountError = addOperationPopUpState.isBeneficiaryAccountError
             )
-            if (addOperationPopUpUiState.isOnPaymentScreen)
+            if (addOperationPopUpState.isOnPaymentScreen)
                 OptionCheckBox(
                     onCheckedChange = {
-                        viewModel.dispatchAction(
-                            AppActions.AddOperationPopUpAction.UpdateIsPaymentStartThisMonth(
-                                it
-                            )
+                        onAddOperationPopUpEvent(
+                            AppActions.AddOperationPopupAction.OnIsPaymentStartThisMonthChecked(it)
                         )
                     },
-                    isChecked = addOperationPopUpUiState.isPaymentStartThisMonth,
+                    isChecked = addOperationPopUpState.isPaymentStartThisMonth,
                     optionText = stringResource(R.string.AddOperationPopUpAddPaymentOptionMessage)
                 )
         }
     }
 }
 
+
+private fun checkOperationNameAndAmountError(addOperationPopUpState: ViewModelInnerStates.AddOperationPopUpVMState) =
+    (addOperationPopUpState.operationName.trim().isEmpty()
+            || (addOperationPopUpState.operationAmount.trim().isEmpty()
+            || addOperationPopUpState.operationAmount.trim() == "-"))

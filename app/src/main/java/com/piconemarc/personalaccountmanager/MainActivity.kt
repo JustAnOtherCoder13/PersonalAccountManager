@@ -1,6 +1,5 @@
 package com.piconemarc.personalaccountmanager
 
-import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,19 +17,6 @@ import dagger.hilt.android.scopes.ActivityScoped
 @ActivityScoped
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    init {
-        instance = this
-    }
-
-    companion object {
-        private var instance: MainActivity? = null
-        fun applicationContext(): Context {
-            return instance!!.applicationContext
-        }
-    }
-
-    //todo use alarm manager to update payment the first of each month
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

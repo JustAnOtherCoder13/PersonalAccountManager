@@ -24,7 +24,6 @@ import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.HomeButton
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.PaymentButton
 import com.piconemarc.personalaccountmanager.ui.theme.*
-import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.baseAppScreenUiState
 
 @Composable
 fun MainScreenHeader() {
@@ -65,10 +64,12 @@ fun MainScreenHeader() {
 @Composable
 fun MainScreenBody(
     onInterLayerButtonClick : (pamIconButton : PAMIconButtons)-> Unit,
+    selectedInterLayerButton : PAMIconButtons,
+    interlayerTitle : Int,
     body: @Composable () -> Unit
 ) {
     val transition: PAMUiDataAnimations.InterlayerAnimationData = pAMInterlayerAnimation(
-        baseAppScreenUiState.selectedInterlayerButton
+        selectedInterLayerButton
     )
     Row(Modifier.fillMaxWidth()) {
         MainScreenFolder(
@@ -76,7 +77,7 @@ fun MainScreenBody(
             interlayers = {
                 MainScreenSheet(
                     interlayerBackgroundColor = transition.interlayerColor,
-                    header = { MainScreenInterLayerTitle(title = stringResource(id = baseAppScreenUiState.interLayerTitle)) },
+                    header = { MainScreenInterLayerTitle(title = stringResource(id =interlayerTitle)) },
                     body = { body() }
                 )
             },
@@ -84,7 +85,7 @@ fun MainScreenBody(
                 MainScreenInterlayerIconPanel(
                     transition = transition,
                     onInterlayerIconClicked =  onInterLayerButtonClick,
-                    selectedInterlayerIconButton = baseAppScreenUiState.selectedInterlayerButton
+                    selectedInterlayerIconButton = selectedInterLayerButton
                 )
             },
         )

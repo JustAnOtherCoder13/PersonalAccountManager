@@ -1,10 +1,5 @@
 package com.piconemarc.viewmodel.viewModel.reducer
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import com.piconemarc.viewmodel.*
-import com.piconemarc.viewmodel.viewModel.ViewModelInnerStates
 import com.piconemarc.viewmodel.viewModel.reducer.popUp.addAccountPopUpReducer
 import com.piconemarc.viewmodel.viewModel.reducer.popUp.addOperationPopUpReducer
 import com.piconemarc.viewmodel.viewModel.reducer.popUp.deleteAccountPopUpReducer
@@ -13,48 +8,50 @@ import com.piconemarc.viewmodel.viewModel.reducer.screen.appBaseScreenReducer
 import com.piconemarc.viewmodel.viewModel.reducer.screen.myAccountDetailScreenReducer
 import com.piconemarc.viewmodel.viewModel.reducer.screen.myAccountScreenReducer
 import com.piconemarc.viewmodel.viewModel.reducer.screen.paymentScreenReducer
+import com.piconemarc.viewmodel.viewModel.utils.*
+import kotlinx.coroutines.flow.MutableStateFlow
 
 //Encapsulate each component or screen state in Mutable state-------------------------------------
 
 //SCREEN_______________________________________________________________________________________
-private val baseAppScreenVmState_: MutableState<ViewModelInnerStates.BaseAppScreenVmState> =
-    mutableStateOf(
+internal val baseAppScreenVmState_: MutableStateFlow<ViewModelInnerStates.BaseAppScreenVmState> =
+    MutableStateFlow(
         ViewModelInnerStates.BaseAppScreenVmState()
     )
-private val myAccountScreenVMState_: MutableState<ViewModelInnerStates.MyAccountScreenVMState> =
-    mutableStateOf(
+internal val myAccountScreenVMState_: MutableStateFlow<ViewModelInnerStates.MyAccountScreenVMState> =
+    MutableStateFlow(
         ViewModelInnerStates.MyAccountScreenVMState()
     )
 
-private val myAccountDetailScreenVMState_: MutableState<ViewModelInnerStates.MyAccountDetailScreenVMState> =
-    mutableStateOf(
+internal val myAccountDetailScreenVMState_: MutableStateFlow<ViewModelInnerStates.MyAccountDetailScreenVMState> =
+    MutableStateFlow(
         ViewModelInnerStates.MyAccountDetailScreenVMState()
     )
 
-private val paymentScreenVMState_ : MutableState<ViewModelInnerStates.PaymentScreenVmState> =
-    mutableStateOf(
+internal val paymentScreenVMState_: MutableStateFlow<ViewModelInnerStates.PaymentScreenVmState> =
+    MutableStateFlow(
         ViewModelInnerStates.PaymentScreenVmState()
     )
 
 //POP UP________________________________________________________________________________________
 
-private val addOperationPopUpVMState_: MutableState<ViewModelInnerStates.AddOperationPopUpVMState> =
-    mutableStateOf(
+internal val addOperationPopUpVMState_: MutableStateFlow<ViewModelInnerStates.AddOperationPopUpVMState> =
+    MutableStateFlow(
         ViewModelInnerStates.AddOperationPopUpVMState()
     )
 
-private val deleteOperationPopUpVMState_: MutableState<ViewModelInnerStates.DeleteOperationPopUpVMState> =
-    mutableStateOf(
+internal val deleteOperationPopUpVMState_: MutableStateFlow<ViewModelInnerStates.DeleteOperationPopUpVMState> =
+    MutableStateFlow(
         ViewModelInnerStates.DeleteOperationPopUpVMState()
     )
 
-private val deleteAccountVmState_: MutableState<ViewModelInnerStates.DeleteAccountPopUpVMState> =
-    mutableStateOf(
+internal val deleteAccountVmState_: MutableStateFlow<ViewModelInnerStates.DeleteAccountPopUpVMState> =
+    MutableStateFlow(
         ViewModelInnerStates.DeleteAccountPopUpVMState()
     )
 
-private val addAccountPoUpVmState_: MutableState<ViewModelInnerStates.AddAccountPopUpVMState> =
-    mutableStateOf(
+internal val addAccountPoUpVmState_: MutableStateFlow<ViewModelInnerStates.AddAccountPopUpVMState> =
+    MutableStateFlow(
         ViewModelInnerStates.AddAccountPopUpVMState()
     )
 
@@ -62,14 +59,14 @@ private val addAccountPoUpVmState_: MutableState<ViewModelInnerStates.AddAccount
 
 data class GlobalVmState(
     // state as var to be re attribute in app reducer
-    var baseAppScreenVmState: ViewModelInnerStates.BaseAppScreenVmState,
-    var addOperationPopUpVMState: ViewModelInnerStates.AddOperationPopUpVMState,
-    var deleteAccountPopUpVMState: ViewModelInnerStates.DeleteAccountPopUpVMState,
-    var addAccountPopUpVMState: ViewModelInnerStates.AddAccountPopUpVMState,
-    var myAccountScreenVmState: ViewModelInnerStates.MyAccountScreenVMState,
-    var myAccountDetailScreenVMState: ViewModelInnerStates.MyAccountDetailScreenVMState,
-    var deleteOperationPopUpVmState: ViewModelInnerStates.DeleteOperationPopUpVMState,
-    var paymentScreenVmState : ViewModelInnerStates.PaymentScreenVmState
+    val baseAppScreenVmState: ViewModelInnerStates.BaseAppScreenVmState,
+    val addOperationPopUpVMState: ViewModelInnerStates.AddOperationPopUpVMState,
+    val deleteAccountPopUpVMState: ViewModelInnerStates.DeleteAccountPopUpVMState,
+    val addAccountPopUpVMState: ViewModelInnerStates.AddAccountPopUpVMState,
+    val myAccountScreenVmState: ViewModelInnerStates.MyAccountScreenVMState,
+    val myAccountDetailScreenVMState: ViewModelInnerStates.MyAccountDetailScreenVMState,
+    val deleteOperationPopUpVmState: ViewModelInnerStates.DeleteOperationPopUpVMState,
+    val paymentScreenVmState: ViewModelInnerStates.PaymentScreenVmState
 ) : VMState
 
 
@@ -160,29 +157,17 @@ internal val appReducer: Reducer<GlobalVmState> = { old, action ->
     }
 }
 
-class AppSubscriber {
-    //Subscribe to store and update mutable state value with last updated state by app reducer
-    internal val appStoreSubscriber: StoreSubscriber<GlobalVmState> =
-        { globalVmState ->
-            baseAppScreenVmState_.value = globalVmState.baseAppScreenVmState
-            addOperationPopUpVMState_.value = globalVmState.addOperationPopUpVMState
-            deleteAccountVmState_.value = globalVmState.deleteAccountPopUpVMState
-            addAccountPoUpVmState_.value = globalVmState.addAccountPopUpVMState
-            myAccountDetailScreenVMState_.value = globalVmState.myAccountDetailScreenVMState
-            myAccountScreenVMState_.value = globalVmState.myAccountScreenVmState
-            deleteOperationPopUpVMState_.value = globalVmState.deleteOperationPopUpVmState
-            paymentScreenVMState_.value = globalVmState.paymentScreenVmState
-        }
 
-    //Expose state to view with delegate mutable state
-    object AppUiState : UiState {
-        val baseAppScreenUiState by baseAppScreenVmState_
-        val addOperationPopUpUiState by addOperationPopUpVMState_
-        val deleteAccountUiState by deleteAccountVmState_
-        val addAccountPopUpUiState by addAccountPoUpVmState_
-        val myAccountScreenUiState by myAccountScreenVMState_
-        val myAccountDetailScreenUiState by myAccountDetailScreenVMState_
-        val deleteOperationPopUpUiState by deleteOperationPopUpVMState_
-        val paymentScreenUiState by paymentScreenVMState_
+//Subscribe to store and update mutable state value with last updated state by app reducer
+internal val appStoreSubscriber: StoreSubscriber<GlobalVmState> =
+    { globalVmState ->
+        baseAppScreenVmState_.value = globalVmState.baseAppScreenVmState
+        addOperationPopUpVMState_.value = globalVmState.addOperationPopUpVMState
+        deleteAccountVmState_.value = globalVmState.deleteAccountPopUpVMState
+        addAccountPoUpVmState_.value = globalVmState.addAccountPopUpVMState
+        myAccountDetailScreenVMState_.value = globalVmState.myAccountDetailScreenVMState
+        myAccountScreenVMState_.value = globalVmState.myAccountScreenVmState
+        deleteOperationPopUpVMState_.value = globalVmState.deleteOperationPopUpVmState
+        paymentScreenVMState_.value = globalVmState.paymentScreenVmState
     }
-}
+

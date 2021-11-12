@@ -1,8 +1,8 @@
 package com.piconemarc.viewmodel.viewModel.reducer.screen
 
-import com.piconemarc.viewmodel.Reducer
-import com.piconemarc.viewmodel.viewModel.AppActions
-import com.piconemarc.viewmodel.viewModel.ViewModelInnerStates
+import com.piconemarc.viewmodel.viewModel.utils.AppActions
+import com.piconemarc.viewmodel.viewModel.utils.Reducer
+import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
 
 internal val myAccountDetailScreenReducer: Reducer<ViewModelInnerStates.MyAccountDetailScreenVMState> =
     { old, action ->
@@ -14,11 +14,9 @@ internal val myAccountDetailScreenReducer: Reducer<ViewModelInnerStates.MyAccoun
             is AppActions.MyAccountDetailScreenAction.CloseScreen -> old.copy(
                 isVisible = false
             )
-            is AppActions.MyAccountDetailScreenAction.UpdateAccountMonthlyOperations -> old.copy(
-                accountMonthlyOperations = action.accountMonthlyOperations
-            )
-            is AppActions.MyAccountDetailScreenAction.UpdateSelectedAccount -> old.copy(
-                selectedAccount = action.account
+            is AppActions.MyAccountDetailScreenAction.UpdateAccountAndMonthlyOperations -> old.copy(
+                selectedAccount = action.selectedAccount,
+                accountMonthlyOperations = action.relatedMonthlyOperations
             )
             is AppActions.MyAccountDetailScreenAction.GetSelectedOperation -> old
             is AppActions.MyAccountDetailScreenAction.UpdateOperationMessage -> old.copy(

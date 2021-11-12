@@ -1,9 +1,9 @@
 package com.piconemarc.viewmodel.di
 
-import com.piconemarc.viewmodel.DefaultStore
-import com.piconemarc.viewmodel.viewModel.ViewModelInnerStates
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import com.piconemarc.viewmodel.viewModel.reducer.appReducer
+import com.piconemarc.viewmodel.viewModel.utils.DefaultStore
+import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

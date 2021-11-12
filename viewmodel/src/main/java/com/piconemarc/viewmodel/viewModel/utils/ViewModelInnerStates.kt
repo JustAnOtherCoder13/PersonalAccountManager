@@ -1,9 +1,8 @@
-package com.piconemarc.viewmodel.viewModel
+package com.piconemarc.viewmodel.viewModel.utils
 
 import com.piconemarc.core.domain.utils.Constants
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.*
-import com.piconemarc.viewmodel.VMState
 
 object ViewModelInnerStates {
     data class BaseAppScreenVmState(
@@ -29,34 +28,41 @@ object ViewModelInnerStates {
     data class PaymentScreenVmState(
         val allAccounts: List<AccountWithRelatedPaymentUiModel> = listOf(),
         val isVisible: Boolean = false
-    )
+    ): VMState
 
     data class AddOperationPopUpVMState(
+        val addPopUpTitle: String = Constants.OPERATION,
+        val addPopUpOptionSelectedIcon: PAMIconButtons = PAMIconButtons.Operation,
+
         val isPopUpExpanded: Boolean = false,
         val isPaymentExpanded: Boolean = false,
-        val isRecurrentOptionExpanded: Boolean = false,
         val isTransferExpanded: Boolean = false,
+        val isRecurrentOptionExpanded: Boolean = false,
+        val isOnPaymentScreen : Boolean = false,
+
         val isAddOperation: Boolean = true,
         val isAddOrMinusEnable: Boolean = true,
-        val isOnPaymentScreen : Boolean = false,
         val isPaymentStartThisMonth : Boolean = false,
+
+        val selectedAccountId : Long = 0,
         val allCategories: List<CategoryUiModel> = listOf(),
         val allAccounts: List<AccountUiModel> = listOf(),
         val selectableEndDateYears: List<String> = listOf(),
         val selectableEndDateMonths: List<String> = listOf(),
         val selectedCategory: CategoryUiModel = CategoryUiModel(),
+        val selectedAccount: AccountUiModel = AccountUiModel(),
+        val beneficiaryAccount: AccountUiModel = AccountUiModel(),
+
         val operationName: String = "",
         val operationAmount: String = "",
         val enDateSelectedMonth: String = "",
         val endDateSelectedYear: String = "",
-        val beneficiaryAccount: AccountUiModel = AccountUiModel(),
-        val addPopUpTitle: String = Constants.OPERATION_MODEL,
-        val addPopUpOptionSelectedIcon: PAMIconButtons = PAMIconButtons.Operation,
+
         val isOperationNameError: Boolean = false,
         val isOperationAmountError: Boolean = false,
         val isRecurrentEndDateError: Boolean = true,
         val isBeneficiaryAccountError: Boolean = false,
-        val selectedAccountId : Long = 0,
+
     ) : VMState
 
     data class DeleteOperationPopUpVMState(

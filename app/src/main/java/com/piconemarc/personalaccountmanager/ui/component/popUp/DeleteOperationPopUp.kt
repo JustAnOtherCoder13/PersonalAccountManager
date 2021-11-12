@@ -26,19 +26,18 @@ import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
 import com.piconemarc.personalaccountmanager.ui.theme.NegativeText
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
 import com.piconemarc.personalaccountmanager.ui.theme.ThinBorder
-import com.piconemarc.viewmodel.viewModel.AppActions
 import com.piconemarc.viewmodel.viewModel.AppViewModel
-import com.piconemarc.viewmodel.viewModel.reducer.AppSubscriber.AppUiState.deleteOperationPopUpUiState
+import com.piconemarc.viewmodel.viewModel.utils.AppActions
 
 @Composable
 fun DeleteOperationPopUp(viewModel: AppViewModel) {
     BaseDeletePopUp(
-        deletePopUpTitle = if (deleteOperationPopUpUiState.operationToDelete is OperationUiModel)stringResource(R.string.deleteOperationPopUpTitle)
+        deletePopUpTitle = if (viewModel.deleteOperationPopUpState.operationToDelete is OperationUiModel)stringResource(R.string.deleteOperationPopUpTitle)
         else stringResource(R.string.deletePaymentOperationTitle),
         onAcceptButtonClicked = {
             viewModel.dispatchAction(
                 AppActions.DeleteOperationPopUpAction.DeleteOperation(
-                    deleteOperationPopUpUiState.operationToDelete
+                    viewModel.deleteOperationPopUpState.operationToDelete
                 )
             )
         },
@@ -47,32 +46,32 @@ fun DeleteOperationPopUp(viewModel: AppViewModel) {
                 AppActions.DeleteOperationPopUpAction.ClosePopUp
             )
         },
-        isExpanded = deleteOperationPopUpUiState.isPopUpExpanded,
+        isExpanded = viewModel.deleteOperationPopUpState.isPopUpExpanded,
         body = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = deleteOperationPopUpUiState.operationToDelete.name,
+                    text = viewModel.deleteOperationPopUpState.operationToDelete.name,
                     modifier = Modifier.padding(vertical = LittleMarge),
                     style = MaterialTheme.typography.h3
                 )
                 Text(
                     modifier = Modifier.padding(vertical = LittleMarge),
-                    text = "${deleteOperationPopUpUiState.operationToDelete.amount.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
+                    text = "${viewModel.deleteOperationPopUpState.operationToDelete.amount.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
                     style = MaterialTheme.typography.body1
                 )
-                when (deleteOperationPopUpUiState.operationToDelete) {
+                when (viewModel.deleteOperationPopUpState.operationToDelete) {
                     is OperationUiModel -> {
                         DeleteOperationOptionCheckBox(onCheckedChange = {isChecked ->
                             viewModel.dispatchAction(
                                 AppActions.DeleteOperationPopUpAction.UpdateIsDeletedPermanently(isChecked)
                             )
-                        })
-                        if ((deleteOperationPopUpUiState.operationToDelete as OperationUiModel).transferId != null) {
+                        },viewModel)
+                        if ((viewModel.deleteOperationPopUpState.operationToDelete as OperationUiModel).transferId != null) {
                             Text(
-                                text = "${stringResource(R.string.deleteOperationPopUpTransferInformationMessage)} ${deleteOperationPopUpUiState.transferRelatedAccount.name}",
+                                text = "${stringResource(R.string.deleteOperationPopUpTransferInformationMessage)} ${viewModel.deleteOperationPopUpState.transferRelatedAccount.name}",
                                 modifier = Modifier
                                     .padding(RegularMarge)
                                     .fillMaxWidth(),
@@ -87,7 +86,7 @@ fun DeleteOperationPopUp(viewModel: AppViewModel) {
                         viewModel.dispatchAction(
                             AppActions.DeleteOperationPopUpAction.UpdateIsDeletedPermanently(isChecked)
                         )
-                    }) }
+                    },viewModel) }
                 }
             }
 
@@ -97,20 +96,21 @@ fun DeleteOperationPopUp(viewModel: AppViewModel) {
 
 @Composable
 private fun DeleteOperationOptionCheckBox(
-    onCheckedChange: (isChecked: Boolean) -> Unit
+    onCheckedChange: (isChecked: Boolean) -> Unit,
+    viewModel: AppViewModel
 ) {
     val deleteOperationOptionText =
-    if (deleteOperationPopUpUiState.operationToDelete is OperationUiModel) stringResource(R.string.deleteOperationPopUpDeleteOperationRelatedPaymentMessage)
+    if (viewModel.deleteOperationPopUpState.operationToDelete is OperationUiModel) stringResource(R.string.deleteOperationPopUpDeleteOperationRelatedPaymentMessage)
     else stringResource(R.string.deleteOperationPopUpDeletePaymentRelatedOperationMessage)
 
-    if (deleteOperationPopUpUiState.operationToDelete is OperationUiModel &&
-        (deleteOperationPopUpUiState.operationToDelete as OperationUiModel).paymentId != null
-        || deleteOperationPopUpUiState.operationToDelete is PaymentUiModel &&
-        (deleteOperationPopUpUiState.operationToDelete as PaymentUiModel).operationId != null
+    if (viewModel.deleteOperationPopUpState.operationToDelete is OperationUiModel &&
+        (viewModel.deleteOperationPopUpState.operationToDelete as OperationUiModel).paymentId != null
+        || viewModel.deleteOperationPopUpState.operationToDelete is PaymentUiModel &&
+        (viewModel.deleteOperationPopUpState.operationToDelete as PaymentUiModel).operationId != null
     ) {
         OptionCheckBox(
             onCheckedChange = onCheckedChange,
-            isChecked = deleteOperationPopUpUiState.isRelatedOperationDeleted,
+            isChecked = viewModel.deleteOperationPopUpState.isRelatedOperationDeleted,
             optionText = deleteOperationOptionText
         )
     }
