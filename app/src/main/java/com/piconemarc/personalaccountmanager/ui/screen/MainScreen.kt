@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.piconemarc.model.PAMIconButtons
+import com.piconemarc.personalaccountmanager.NavDestinations
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.getBlackOrNegativeColor
 import com.piconemarc.personalaccountmanager.toStringWithTwoDec
@@ -101,6 +102,9 @@ fun PAMMainScreen(
                                     appViewModel.dispatchAction(
                                         initDeletePaymentPopUp
                                     )
+                                },
+                                onPaymentEvent = { paymentAction ->
+                                    myPaymentVM.dispatchAction(paymentAction)
                                 }
                             )
                         }
@@ -115,11 +119,13 @@ fun PAMMainScreen(
                         }
                         is PAMIconButtons.Home -> {
                             if (appUiState.interLayerTitle != (com.piconemarc.model.R.string.detail)
-                                && appUiState.interLayerTitle != (com.piconemarc.model.R.string.myAccountsInterLayerTitle)) {
+                                && appUiState.interLayerTitle != (com.piconemarc.model.R.string.myAccountsInterLayerTitle)
+                            ) {
                                 NavDestinations.Home.doNavigation(navController = navController)
                             }
                         }
-                        else -> {}
+                        else -> {
+                        }
                     }
                 },
                 selectedInterLayerButton = appUiState.selectedInterlayerButton,

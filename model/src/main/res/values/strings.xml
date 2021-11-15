@@ -17,5 +17,6 @@
     <string name="homeInterlayerTitle">My Accounts</string>
     <string name="chartInterlayerTitle">Chart</string>
     <string name="backIconButtonContentDescription">Back icon button</string>
+    <string name="updatePaymentContentDescription">Update payment button</string>
 
 </resources>

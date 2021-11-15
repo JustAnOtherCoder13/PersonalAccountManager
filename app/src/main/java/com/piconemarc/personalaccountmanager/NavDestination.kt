@@ -1,4 +1,4 @@
-package com.piconemarc.personalaccountmanager.ui.screen
+package com.piconemarc.personalaccountmanager
 
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavController

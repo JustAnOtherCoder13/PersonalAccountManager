@@ -23,8 +23,8 @@ import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
 fun MyPaymentScreen(
     paymentState : ViewModelInnerStates.PaymentScreenVmState,
     onAddPaymentButtonClick : (AppActions.AddOperationPopupAction)->Unit,
-    onDeletePaymentButtonClick : (AppActions.DeleteOperationPopUpAction)-> Unit
-
+    onDeletePaymentButtonClick : (AppActions.DeleteOperationPopUpAction)-> Unit,
+    onPaymentEvent : (AppActions.PaymentScreenAction)-> Unit
 ) {
     VerticalDispositionSheet(
         body = {
@@ -70,7 +70,8 @@ fun MyPaymentScreen(
                                                 paymentToDelete
                                             )
                                         )
-                                    }
+                                    },
+                                    onPaymentEvent = onPaymentEvent
                                 )
                             },
                             footer = { PaymentPostItFooter(accountWithRelatedPayments) }

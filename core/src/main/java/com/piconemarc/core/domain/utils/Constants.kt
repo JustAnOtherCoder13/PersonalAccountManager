@@ -16,21 +16,20 @@ object Constants {
     const val TRANSFER_TABLE = "transfer_table"
     const val PAYMENT_TABLE = "payment_table"
 
-    val TODAY = Calendar.getInstance().time
+    val TODAY: Date = Calendar.getInstance().time
 
-    val OPERATION =  "Operation"
-    val PAYMENT =  "Payment"
-    val TRANSFER =  "Transfer"
+    const val OPERATION =  "Operation"
+    const val PAYMENT =  "Payment"
+    const val TRANSFER =  "Transfer"
 
     val CATEGORY_MODEL =  "Category"
 
-    val SENDER_ACCOUNT_MODEL =  "Sender account"
-    val BENEFICIARY_ACCOUNT =  "Beneficiary account"
+    const val BENEFICIARY_ACCOUNT =  "Beneficiary account"
 
 
 
-    val YEAR =  "Year"
-    val MONTH =  "Month"
+    const val YEAR =  "Year"
+    const val MONTH =  "Month"
 
 
     val SELECTABLE_YEARS_LIST: List<String> =

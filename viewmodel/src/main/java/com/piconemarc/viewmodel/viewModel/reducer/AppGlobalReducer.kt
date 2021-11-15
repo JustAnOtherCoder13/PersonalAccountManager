@@ -59,7 +59,7 @@ internal val addAccountPoUpVmState_: MutableStateFlow<ViewModelInnerStates.AddAc
 
 data class GlobalVmState(
     // state as var to be re attribute in app reducer
-    var baseAppScreenVmState: ViewModelInnerStates.BaseAppScreenVmState,
+    val baseAppScreenVmState: ViewModelInnerStates.BaseAppScreenVmState,
     val addOperationPopUpVMState: ViewModelInnerStates.AddOperationPopUpVMState,
     val deleteAccountPopUpVMState: ViewModelInnerStates.DeleteAccountPopUpVMState,
     val addAccountPopUpVMState: ViewModelInnerStates.AddAccountPopUpVMState,

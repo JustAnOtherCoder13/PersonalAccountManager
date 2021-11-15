@@ -1,5 +1,6 @@
 package com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
@@ -11,22 +12,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.AccountWithRelatedPaymentUiModel
+import com.piconemarc.model.entity.OperationUiModel
 import com.piconemarc.model.entity.PaymentUiModel
 import com.piconemarc.personalaccountmanager.*
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseDeleteIconButton
+import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseIconButton
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.PostItTitle
-import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
-import com.piconemarc.personalaccountmanager.ui.theme.PastelYellowLight
-import com.piconemarc.personalaccountmanager.ui.theme.ThinBorder
+import com.piconemarc.personalaccountmanager.ui.theme.*
+import com.piconemarc.viewmodel.viewModel.utils.AppActions
 
 
 @Composable
 fun PaymentPostItBody(
     accountWithRelatedPayments: AccountWithRelatedPaymentUiModel,
-    onDeletePaymentButtonClick: (paymentTODelete: PaymentUiModel) -> Unit
+    onPaymentEvent : (AppActions.PaymentScreenAction)-> Unit,
+    onDeletePaymentButtonClick: (paymentTODelete: PaymentUiModel) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -39,6 +43,9 @@ fun PaymentPostItBody(
                 relatedPayment = relatedPayment,
                 onDeletePaymentButtonClick = { paymentToDelete ->
                     onDeletePaymentButtonClick(paymentToDelete)
+                },
+                onPassPaymentButtonClick = {
+                    onPaymentEvent(AppActions.PaymentScreenAction.PassSinglePayment(relatedPayment))
                 }
             )
         }
@@ -77,27 +84,43 @@ fun PaymentPostItFooter(accountWithRelatedPayments: AccountWithRelatedPaymentUiM
 fun RelatedPaymentItem(
     index: Int,
     relatedPayment: PaymentUiModel,
-    onDeletePaymentButtonClick: (paymentTODelete: PaymentUiModel) -> Unit
+    onDeletePaymentButtonClick: (paymentTODelete: PaymentUiModel) -> Unit,
+    onPassPaymentButtonClick : () -> Unit
+
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = LittleMarge)
+            .padding(horizontal = ThinMarge)
             .background(color = if (index % 2 == 0) PastelYellowLight else Color.Transparent),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
+        if (!relatedPayment.isPaymentPassForThisMonth)
+            Box(modifier = Modifier.size(35.dp)){
+                BaseIconButton(
+                    onIconButtonClicked = {
+                        onPassPaymentButtonClick()
+                    },
+                    iconButton = PAMIconButtons.UpdatePayment,
+                    iconColor = NegativeText,
+                    backgroundColor = Color.Transparent,
+                )
+            }
+
         Text(
             text = relatedPayment.name,
-            modifier = Modifier.weight(1.5f),
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = ThinMarge),
             style = MaterialTheme.typography.body1,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
         Text(
             text =" ${relatedPayment.amount.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(0.9f),
             style = MaterialTheme.typography.body1,
-            color = getPositiveOrNegativeColor(relatedPayment.amount)
+            color = getPositiveOrNegativeColor(relatedPayment.amount),
         )
         BaseDeleteIconButton(
             onDeleteItemButtonCLick = { paymentToDelete ->

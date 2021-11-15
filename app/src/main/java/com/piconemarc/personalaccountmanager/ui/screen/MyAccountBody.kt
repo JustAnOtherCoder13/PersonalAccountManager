@@ -9,6 +9,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import com.piconemarc.personalaccountmanager.NavDestinations
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MyAccountBodyRecyclerView
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MyAccountDetailSheet
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MyAccountDetailTitle

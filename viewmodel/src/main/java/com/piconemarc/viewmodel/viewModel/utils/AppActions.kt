@@ -66,6 +66,8 @@ object AppActions {
         data class UpdateAllAccounts(
             val allAccounts: List<AccountWithRelatedPaymentUiModel>
         ) : PaymentScreenAction()
+
+        data class PassSinglePayment(val payment : PaymentUiModel) : PaymentScreenAction()
     }
 
 
