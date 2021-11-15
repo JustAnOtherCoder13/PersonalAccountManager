@@ -19,10 +19,6 @@ abstract class BaseViewModel<A : UiAction, S : VMState>(
         store.add(subscriber)
     }
 
-    override fun onCleared() {
-        store.remove(subscriber)
-        super.onCleared()
-    }
 
     fun updateState(vararg action: GlobalAction) {
         action.forEach {

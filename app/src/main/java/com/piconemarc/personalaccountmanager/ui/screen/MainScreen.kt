@@ -1,6 +1,5 @@
 package com.piconemarc.personalaccountmanager.ui.screen
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -46,6 +45,7 @@ fun PAMMainScreen(
                         navController = navController,
                         startDestination = NavDestinations.Home.destination
                     ) {
+
                         composable(route = NavDestinations.Home.getRoute()) {
                             val myAccountVM = hiltViewModel<MyAccountViewModel>()
                             MyAccountBody(
@@ -108,16 +108,18 @@ fun PAMMainScreen(
 
                     when (appUiState.selectedInterlayerButton) {
                         is PAMIconButtons.Payment -> {
-                            Log.i("TAG", "PAMMainScreen: ")
                             NavDestinations.myPayment.doNavigation(navController = navController)
                         }
                         is PAMIconButtons.Chart -> {
+
                         }
-                        else -> {
+                        is PAMIconButtons.Home -> {
                             if (appUiState.interLayerTitle != (com.piconemarc.model.R.string.detail)
-                                && appUiState.interLayerTitle != (com.piconemarc.model.R.string.myAccountsInterLayerTitle))
+                                && appUiState.interLayerTitle != (com.piconemarc.model.R.string.myAccountsInterLayerTitle)) {
                                 NavDestinations.Home.doNavigation(navController = navController)
+                            }
                         }
+                        else -> {}
                     }
                 },
                 selectedInterLayerButton = appUiState.selectedInterlayerButton,

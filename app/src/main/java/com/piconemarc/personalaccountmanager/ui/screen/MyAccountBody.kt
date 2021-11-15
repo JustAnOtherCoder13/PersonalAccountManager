@@ -26,7 +26,7 @@ fun MyAccountBody(
     myAccountState: ViewModelInnerStates.MyAccountScreenVMState,
     navController: NavController,
     onAddAccountButtonClick : (AppActions.AddAccountPopUpAction)-> Unit,
-    onDeleteAccountButtonClick : ( AppActions.DeleteAccountAction)-> Unit
+    onDeleteAccountButtonClick : ( AppActions.DeleteAccountAction)-> Unit,
 ) {
     VerticalDispositionSheet(
         body = {
@@ -72,7 +72,7 @@ fun MyAccountDetailBody(
         VerticalDispositionSheet(
             header = {
                 MyAccountDetailTitle(
-                    onBackIconClick = { NavDestinations.Home.doNavigation(navController = navController) },
+                    onBackIconClick = { NavDestinations.Home.doNavigation(navController)},
                     accountName = myAccountDetailState.selectedAccount.name
                 )
             },

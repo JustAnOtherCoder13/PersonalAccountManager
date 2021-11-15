@@ -1,6 +1,5 @@
 package com.piconemarc.viewmodel.viewModel.reducer.screen
 
-import android.util.Log
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.viewmodel.viewModel.utils.AppActions
 import com.piconemarc.viewmodel.viewModel.utils.Reducer

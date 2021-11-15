@@ -13,7 +13,6 @@ import com.piconemarc.viewmodel.viewModel.reducer.baseAppScreenVmState_
 import com.piconemarc.viewmodel.viewModel.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -44,7 +43,7 @@ class AppViewModel @Inject constructor(
 
     init {
         //init state
-        viewModelScope.launch(block = { state.collect{ uiState.value = it } })
+        viewModelScope.launch(block = { state.collectLatest{ uiState.value = it } })
         dispatchAction(AppActions.BaseAppScreenAction.InitScreen)
     }
 
@@ -55,7 +54,7 @@ class AppViewModel @Inject constructor(
                     is AppActions.BaseAppScreenAction.InitScreen -> viewModelScope.launchOnIOCatchingError(
                         block = {
                             getAllAccountsInteractor.getAllAccountsAsFlow(this)
-                                .collect { allAccounts ->
+                                .collectLatest { allAccounts ->
                                     dispatchAction(
                                         AppActions.BaseAppScreenAction.UpdateAccounts(
                                             allAccounts
@@ -64,9 +63,7 @@ class AppViewModel @Inject constructor(
                                 }
                         }
                     )
-                    else -> {
-                        updateState(GlobalAction.UpdateBaseAppScreenVmState(action))
-                    }
+                    else -> { updateState(GlobalAction.UpdateBaseAppScreenVmState(action)) }
                 }
             }
             //launch job for each pop up when action is dispatched, cancel job on close
