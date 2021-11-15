@@ -26,13 +26,13 @@ fun MyAccountBody(
     myAccountState: ViewModelInnerStates.MyAccountScreenVMState,
     navController: NavController,
     onAddAccountButtonClick : (AppActions.AddAccountPopUpAction)-> Unit,
-    onDeleteAccountButtonClick : ( AppActions.DeleteAccountAction)-> Unit
+    onDeleteAccountButtonClick : ( AppActions.DeleteAccountAction)-> Unit,
 ) {
     VerticalDispositionSheet(
         body = {
             MyAccountBodyRecyclerView(
                 onAccountClicked = { selectedAccount ->
-                    navController.navigate("myAccountDetail/${selectedAccount.id}")
+                    NavDestinations.myAccountDetail.doNavigation(navController = navController, argument = selectedAccount.id.toString())
                 },
                 onDeleteAccountButtonClicked = { accountToDelete ->
                     onDeleteAccountButtonClick(
@@ -72,7 +72,7 @@ fun MyAccountDetailBody(
         VerticalDispositionSheet(
             header = {
                 MyAccountDetailTitle(
-                    onBackIconClick = { navController.navigate("myAccount") },
+                    onBackIconClick = { NavDestinations.Home.doNavigation(navController)},
                     accountName = myAccountDetailState.selectedAccount.name
                 )
             },

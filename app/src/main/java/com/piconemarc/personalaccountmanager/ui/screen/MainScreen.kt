@@ -30,6 +30,7 @@ fun PAMMainScreen(
     appViewModel: AppViewModel,
     appUiState: ViewModelInnerStates.BaseAppScreenVmState
 ) {
+    val navController = rememberNavController()
     BaseScreen(
         header = { MainScreenHeader() },
         body = {
@@ -40,49 +41,85 @@ fun PAMMainScreen(
                     )
                 },
                 body = {
-                    val navController = rememberNavController()
+                    NavHost(
+                        navController = navController,
+                        startDestination = NavDestinations.Home.destination
+                    ) {
 
-                    NavHost(navController = navController, startDestination = "myAccount") {
-                        composable("myAccount") {
+                        composable(route = NavDestinations.Home.getRoute()) {
                             val myAccountVM = hiltViewModel<MyAccountViewModel>()
                             MyAccountBody(
                                 myAccountState = myAccountVM.myAccountState,
                                 navController = navController,
-                                onAddAccountButtonClick = {initAddAccountPopUp -> appViewModel.dispatchAction(initAddAccountPopUp)},
-                                onDeleteAccountButtonClick = {initDeleteAccountPopUp -> appViewModel.dispatchAction(initDeleteAccountPopUp)}
+                                onAddAccountButtonClick = { initAddAccountPopUp ->
+                                    appViewModel.dispatchAction(
+                                        initAddAccountPopUp
+                                    )
+                                },
+                                onDeleteAccountButtonClick = { initDeleteAccountPopUp ->
+                                    appViewModel.dispatchAction(
+                                        initDeleteAccountPopUp
+                                    )
+                                }
                             )
                         }
-                        composable("myAccountDetail/{selectedAccountId}") {
+                        composable(
+                            route = NavDestinations.myAccountDetail.getRoute(),
+                        ) {
                             val myAccountDetailVM = hiltViewModel<MyAccountDetailViewModel>()
                             MyAccountDetailBody(
                                 myAccountDetailState = myAccountDetailVM.myAccountDetailState,
                                 navController = navController,
-                                selectedAccountId = it.arguments?.getString("selectedAccountId"),
-                                onMyAccountDetailEvent = { myAccountDetailAction -> myAccountDetailVM.dispatchAction(myAccountDetailAction) },
-                                onAddOperationButtonClick = {initAddOperationPopUp-> appViewModel.dispatchAction(initAddOperationPopUp)},
-                                onDeleteOperationButtonClick = {initDeleteOperationPopUp -> appViewModel.dispatchAction(initDeleteOperationPopUp)}
-                                )
+                                selectedAccountId = it.arguments?.getString(NavDestinations.myAccountDetail.key),
+                                onMyAccountDetailEvent = { myAccountDetailAction ->
+                                    myAccountDetailVM.dispatchAction(
+                                        myAccountDetailAction
+                                    )
+                                },
+                                onAddOperationButtonClick = { initAddOperationPopUp ->
+                                    appViewModel.dispatchAction(
+                                        initAddOperationPopUp
+                                    )
+                                },
+                                onDeleteOperationButtonClick = { initDeleteOperationPopUp ->
+                                    appViewModel.dispatchAction(
+                                        initDeleteOperationPopUp
+                                    )
+                                }
+                            )
                         }
-                        composable("myPayments") {
+                        composable(NavDestinations.myPayment.getRoute()) {
                             val myPaymentVM = hiltViewModel<MyPaymentViewModel>()
                             MyPaymentScreen(
                                 paymentState = myPaymentVM.paymentState,
-                                onAddPaymentButtonClick = {initAddPaymentPopUp -> appViewModel.dispatchAction(initAddPaymentPopUp)},
-                                onDeletePaymentButtonClick = {initDeletePaymentPopUp -> appViewModel.dispatchAction(initDeletePaymentPopUp)}
+                                onAddPaymentButtonClick = { initAddPaymentPopUp ->
+                                    appViewModel.dispatchAction(
+                                        initAddPaymentPopUp
+                                    )
+                                },
+                                onDeletePaymentButtonClick = { initDeletePaymentPopUp ->
+                                    appViewModel.dispatchAction(
+                                        initDeletePaymentPopUp
+                                    )
+                                }
                             )
                         }
                     }
 
                     when (appUiState.selectedInterlayerButton) {
                         is PAMIconButtons.Payment -> {
-                            navController.navigate("myPayments")
+                            NavDestinations.myPayment.doNavigation(navController = navController)
                         }
                         is PAMIconButtons.Chart -> {
+
                         }
-                        else -> {
-                            if (appUiState.interLayerTitle != com.piconemarc.model.R.string.detail)
-                                navController.navigate("myAccount")
+                        is PAMIconButtons.Home -> {
+                            if (appUiState.interLayerTitle != (com.piconemarc.model.R.string.detail)
+                                && appUiState.interLayerTitle != (com.piconemarc.model.R.string.myAccountsInterLayerTitle)) {
+                                NavDestinations.Home.doNavigation(navController = navController)
+                            }
                         }
+                        else -> {}
                     }
                 },
                 selectedInterLayerButton = appUiState.selectedInterlayerButton,
@@ -104,19 +141,35 @@ fun PAMMainScreen(
         }
     )
     AddOperationPopUp(
-        onAddOperationPopUpEvent = {addOperationPopUpAction -> appViewModel.dispatchAction(addOperationPopUpAction) },
+        onAddOperationPopUpEvent = { addOperationPopUpAction ->
+            appViewModel.dispatchAction(
+                addOperationPopUpAction
+            )
+        },
         addOperationPopUpState = appViewModel.addOperationPopUpState
     )
     DeleteOperationPopUp(
         deleteOperationPopUpState = appViewModel.deleteOperationPopUpState,
-        onDeleteOperationPopUpEvent = {deleteOperationPoUpAction-> appViewModel.dispatchAction(deleteOperationPoUpAction)}
+        onDeleteOperationPopUpEvent = { deleteOperationPoUpAction ->
+            appViewModel.dispatchAction(
+                deleteOperationPoUpAction
+            )
+        }
     )
     DeleteAccountPopUp(
-        onDeleteAccountPopUpEvent = {deleteAccountPopUpAction -> appViewModel.dispatchAction(deleteAccountPopUpAction) },
+        onDeleteAccountPopUpEvent = { deleteAccountPopUpAction ->
+            appViewModel.dispatchAction(
+                deleteAccountPopUpAction
+            )
+        },
         deleteAccountPopUpState = appViewModel.deleteAccountPopUpState
     )
     AddAccountPopUp(
         addAccountPopUpState = appViewModel.addAccountPopUpState,
-        onAddAccountPopUpEvent = {addAccountPopUpAction -> appViewModel.dispatchAction(addAccountPopUpAction)}
+        onAddAccountPopUpEvent = { addAccountPopUpAction ->
+            appViewModel.dispatchAction(
+                addAccountPopUpAction
+            )
+        }
     )
 }
