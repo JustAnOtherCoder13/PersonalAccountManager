@@ -29,6 +29,11 @@ class GetAllAccountsInteractor @Inject constructor(private val accountRepository
         }.stateIn(scope)
     }
 
+    suspend fun getAllAccountsWithRelatedPayment(): List<AccountWithRelatedPaymentUiModel> {
+        return mapAllAccountsWithRelatedPaymentToUiModel(accountRepository.getAllAccountsWithRelatedPayment())
+
+    }
+
     private fun mapAllAccountsWithRelatedPaymentToUiModel(accountWithRelatedPayment: List<AccountWithRelatedPayments>): List<AccountWithRelatedPaymentUiModel> {
         return accountWithRelatedPayment.map {
             AccountWithRelatedPaymentUiModel(

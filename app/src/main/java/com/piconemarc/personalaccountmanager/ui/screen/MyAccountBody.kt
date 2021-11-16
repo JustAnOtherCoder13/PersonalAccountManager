@@ -57,18 +57,11 @@ fun MyAccountBody(
 @Composable
 fun MyAccountDetailBody(
     navController: NavController,
-    selectedAccountId: String?,
     myAccountDetailState: ViewModelInnerStates.MyAccountDetailScreenVMState,
     onMyAccountDetailEvent: (AppActions.MyAccountDetailScreenAction) -> Unit,
     onAddOperationButtonClick: (AppActions.AddOperationPopupAction) -> Unit,
     onDeleteOperationButtonClick: (AppActions.DeleteOperationPopUpAction) -> Unit
 ) {
-
-    onMyAccountDetailEvent(
-        AppActions.MyAccountDetailScreenAction.InitScreen(
-            selectedAccountId ?: ""
-        )
-    )
     Column {
         VerticalDispositionSheet(
             header = {

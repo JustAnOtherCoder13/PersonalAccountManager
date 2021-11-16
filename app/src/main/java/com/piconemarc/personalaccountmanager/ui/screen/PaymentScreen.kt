@@ -3,6 +3,8 @@ package com.piconemarc.personalaccountmanager.ui.screen
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,6 +20,9 @@ import com.piconemarc.personalaccountmanager.ui.theme.paymentPostItItemHeight
 import com.piconemarc.personalaccountmanager.ui.theme.paymentPostItWidth
 import com.piconemarc.viewmodel.viewModel.utils.AppActions
 import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun MyPaymentScreen(
@@ -26,16 +31,20 @@ fun MyPaymentScreen(
     onDeletePaymentButtonClick : (AppActions.DeleteOperationPopUpAction)-> Unit,
     onPaymentEvent : (AppActions.PaymentScreenAction)-> Unit
 ) {
+    val listState = rememberLazyListState()
+    //todo remember position to stay in background.
+
     VerticalDispositionSheet(
         body = {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = RegularMarge),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                state = listState
             ) {
-                items(paymentState.allAccounts)
-                { accountWithRelatedPayments ->
+                itemsIndexed(paymentState.allAccounts)
+                {index, accountWithRelatedPayments ->
                     Box(
                         modifier = Modifier
                             .width(paymentPostItWidth)
@@ -51,6 +60,10 @@ fun MyPaymentScreen(
                             header = {
                                 PaymentPostItTitle(
                                     onAddPaymentButtonClick = {
+                                        CoroutineScope(Dispatchers.Main).launch {
+                                            listState.scrollToItem(index)
+                                        }
+
                                         onAddPaymentButtonClick(
                                             AppActions.AddOperationPopupAction.InitPopUp(
                                                 isOnPaymentScreen = true,

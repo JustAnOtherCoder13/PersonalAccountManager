@@ -20,8 +20,16 @@ class AccountDaoImpl @Inject constructor(pamDatabase: PAMDatabase) :AccountDao {
         return accountDao.getAllAccountsWithRelatedPaymentAsFlow()
     }
 
-    override fun getAccountForIdWithRelatedOperations(accountId: Long): Flow<AccountWithRelatedOperations> {
-        return accountDao.getAccountForIdWithRelatedOperations(accountId).distinctUntilChanged()
+    override suspend fun getAllAccountsWithRelatedPayment(): List<AccountWithRelatedPayments> {
+        return accountDao.getAllAccountsWithRelatedPayment()
+    }
+
+    override fun getAccountForIdWithRelatedOperationsAsFlow(accountId: Long): Flow<AccountWithRelatedOperations> {
+        return accountDao.getAccountForIdWithRelatedOperationsAsFlow(accountId).distinctUntilChanged()
+    }
+
+    override suspend fun getAccountForIdWithRelatedOperations(accountId: Long): AccountWithRelatedOperations {
+        return accountDao.getAccountForIdWithRelatedOperations(accountId)
     }
 
     override suspend fun getAllAccounts(): List<AccountDTO> {

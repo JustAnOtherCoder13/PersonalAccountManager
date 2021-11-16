@@ -17,6 +17,10 @@ class OperationRepository @Inject constructor(private val operationDaoImpl: Oper
         operationDaoImpl.addPaymentAndOperation(operation, endDate)
     }
 
+    suspend fun passPaymentForThisMonth(operation: OperationDTO, paymentId: Long) {
+        operationDaoImpl.passPaymentForThisMonth(operation, paymentId)
+    }
+
     suspend fun addTransferOperation(operation: OperationDTO, beneficiaryAccountId: Long) {
         operationDaoImpl.addTransferOperation(operation, beneficiaryAccountId)
     }

@@ -22,6 +22,10 @@ class OperationDaoImpl @Inject constructor(pamDatabase: PAMDatabase) : Operation
         super.addPaymentAndOperation(operation, endDate)
     }
 
+    override suspend fun passPaymentForThisMonth(operation: OperationDTO, paymentId: Long) {
+        super.passPaymentForThisMonth(operation, paymentId)
+    }
+
     override suspend fun addTransferOperation(operation: OperationDTO, beneficiaryAccountId: Long) {
         super.addTransferOperation(operation, beneficiaryAccountId)
     }
@@ -101,5 +105,9 @@ class OperationDaoImpl @Inject constructor(pamDatabase: PAMDatabase) : Operation
 
     override suspend fun updateOperationTransferId(transferId: Long, operationId: Long) {
         operationDao.updateOperationTransferId(transferId, operationId)
+    }
+
+    override suspend fun updatePaymentOperationId(operationId: Long, paymentId: Long) {
+        operationDao.updatePaymentOperationId(operationId, paymentId)
     }
 }

@@ -11,4 +11,8 @@ class AddPaymentAndOperationInteractor@Inject constructor(private val operationR
     suspend fun addPaymentAndOperation(operation: OperationUiModel, endDate: Date?) {
         operationRepository.addPaymentAndOperation(OperationDTO().fromUiModel(operation), endDate)
     }
+
+    suspend fun passPaymentForThisMonth(operation: OperationUiModel, paymentId: Long) {
+        operationRepository.passPaymentForThisMonth(OperationDTO().fromUiModel(operation), paymentId)
+    }
 }

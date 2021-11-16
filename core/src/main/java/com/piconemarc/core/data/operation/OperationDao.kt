@@ -44,6 +44,12 @@ interface OperationDao {
     }
 
     @Transaction
+    suspend fun passPaymentForThisMonth(operation : OperationDTO, paymentId : Long){
+        val operationId = addOperation(operation)
+        updatePaymentOperationId(operationId, paymentId )
+    }
+
+    @Transaction
     suspend fun addTransferOperation(operation: OperationDTO, beneficiaryAccountId : Long){
         val senderOperation = operation.copy(amount = operation.toUiModel().senderAmount)
         val beneficiaryOperation = operation.copy(accountId = beneficiaryAccountId, amount = operation.toUiModel().beneficiaryAmount)
@@ -145,4 +151,7 @@ interface OperationDao {
 
     @Query("UPDATE $OPERATION_TABLE SET transferId = :transferId WHERE id  = :operationId" )
     suspend fun updateOperationTransferId(transferId : Long, operationId : Long)
+
+    @Query("UPDATE $PAYMENT_TABLE SET operationId = :operationId WHERE $PAYMENT_TABLE.id = :paymentId")
+    suspend fun updatePaymentOperationId(operationId : Long, paymentId : Long)
 }

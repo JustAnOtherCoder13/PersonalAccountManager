@@ -18,8 +18,18 @@ interface AccountDao {
     fun getAllAccountsWithRelatedPaymentAsFlow(): Flow<List<AccountWithRelatedPayments>>
 
     @Transaction
+    @Query("SELECT*FROM $ACCOUNT_TABLE")
+    suspend fun getAllAccountsWithRelatedPayment(): List<AccountWithRelatedPayments>
+
+
+    @Transaction
     @Query("SELECT*FROM $ACCOUNT_TABLE WHERE $ACCOUNT_TABLE.id = :accountId")
-    fun getAccountForIdWithRelatedOperations(accountId : Long) : Flow<AccountWithRelatedOperations>
+    fun getAccountForIdWithRelatedOperationsAsFlow(accountId : Long) : Flow<AccountWithRelatedOperations>
+
+    @Transaction
+    @Query("SELECT*FROM $ACCOUNT_TABLE WHERE $ACCOUNT_TABLE.id = :accountId")
+    suspend fun getAccountForIdWithRelatedOperations(accountId : Long) : AccountWithRelatedOperations
+
 
     @Query("SELECT*FROM $ACCOUNT_TABLE")
     suspend fun getAllAccounts(): List<AccountDTO>

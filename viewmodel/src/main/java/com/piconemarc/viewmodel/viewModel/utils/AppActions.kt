@@ -58,14 +58,10 @@ object AppActions {
     }
 
     sealed class PaymentScreenAction : UiAction {
-
-        object InitScreen : PaymentScreenAction()
-
-        object CloseScreen : PaymentScreenAction()
-
         data class UpdateAllAccounts(
             val allAccounts: List<AccountWithRelatedPaymentUiModel>
         ) : PaymentScreenAction()
+        data class UpdateIsPaymentPassForThisMonth(val payment: PaymentUiModel, val relatedOperation : OperationUiModel) : PaymentScreenAction()
 
         data class PassSinglePayment(val payment : PaymentUiModel) : PaymentScreenAction()
     }

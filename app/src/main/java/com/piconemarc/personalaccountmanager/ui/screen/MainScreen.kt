@@ -1,8 +1,11 @@
 package com.piconemarc.personalaccountmanager.ui.screen
 
+import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -48,7 +51,13 @@ fun PAMMainScreen(
                     ) {
 
                         composable(route = NavDestinations.Home.getRoute()) {
+
                             val myAccountVM = hiltViewModel<MyAccountViewModel>()
+                            DisposableEffect(key1 = myAccountVM){
+                                myAccountVM.onStart()
+                                onDispose { myAccountVM.onStop() }
+                            }
+
                             MyAccountBody(
                                 myAccountState = myAccountVM.myAccountState,
                                 navController = navController,
@@ -68,10 +77,13 @@ fun PAMMainScreen(
                             route = NavDestinations.myAccountDetail.getRoute(),
                         ) {
                             val myAccountDetailVM = hiltViewModel<MyAccountDetailViewModel>()
+                            DisposableEffect(key1 = myAccountDetailVM){
+                                myAccountDetailVM.onStart(it.arguments?.getString(NavDestinations.myAccountDetail.key)?:"")
+                                onDispose { myAccountDetailVM.onStop(it.arguments?.getString(NavDestinations.myAccountDetail.key)?:"") }
+                            }
                             MyAccountDetailBody(
                                 myAccountDetailState = myAccountDetailVM.myAccountDetailState,
                                 navController = navController,
-                                selectedAccountId = it.arguments?.getString(NavDestinations.myAccountDetail.key),
                                 onMyAccountDetailEvent = { myAccountDetailAction ->
                                     myAccountDetailVM.dispatchAction(
                                         myAccountDetailAction
@@ -91,6 +103,12 @@ fun PAMMainScreen(
                         }
                         composable(NavDestinations.myPayment.getRoute()) {
                             val myPaymentVM = hiltViewModel<MyPaymentViewModel>()
+
+                            DisposableEffect(key1 = myPaymentVM){
+                                myPaymentVM.onStart()
+                                onDispose { myPaymentVM.onStop() }
+                            }
+
                             MyPaymentScreen(
                                 paymentState = myPaymentVM.paymentState,
                                 onAddPaymentButtonClick = { initAddPaymentPopUp ->

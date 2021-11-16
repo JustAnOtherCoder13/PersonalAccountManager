@@ -9,7 +9,7 @@ data class OperationUiModel(
     override val amount: Double = 0.0,
     val categoryId: Long = 1,
     val emitDate: Date = Calendar.getInstance().time,
-    var isAddOperation: Boolean = true,
+    var isAddOperation: Boolean = true,//todo is this really useful
     val paymentId: Long? = null,
     val transferId: Long? = null
 ) : BaseOperation() {

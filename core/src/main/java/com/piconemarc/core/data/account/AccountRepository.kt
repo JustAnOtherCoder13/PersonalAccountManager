@@ -16,7 +16,15 @@ class AccountRepository @Inject constructor(private val accountDaoImpl: AccountD
         return accountDaoImpl.getAllAccountsWithRelatedPaymentAsFlow()
     }
 
-    fun getAccountForIdWithRelatedOperations(accountId: Long): Flow<AccountWithRelatedOperations> {
+    suspend fun getAllAccountsWithRelatedPayment(): List<AccountWithRelatedPayments> {
+        return accountDaoImpl.getAllAccountsWithRelatedPayment()
+    }
+
+    fun getAccountForIdWithRelatedOperationAsFlow(accountId: Long): Flow<AccountWithRelatedOperations> {
+        return accountDaoImpl.getAccountForIdWithRelatedOperationsAsFlow(accountId)
+    }
+
+    suspend fun getAccountForIdWithRelatedOperations(accountId: Long): AccountWithRelatedOperations {
         return accountDaoImpl.getAccountForIdWithRelatedOperations(accountId)
     }
 

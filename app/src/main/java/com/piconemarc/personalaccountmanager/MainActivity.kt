@@ -34,6 +34,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     BackHandler(true) {
                         when(appViewModel.appUiState.selectedInterlayerButton){
+                            //todo check if pop up is open, in case close popUp
                             is PAMIconButtons.Home ->
                                 when(appViewModel.appUiState.interLayerTitle){
                                     com.piconemarc.model.R.string.detail ->{
