@@ -1,6 +1,5 @@
 package com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
@@ -15,7 +14,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.AccountWithRelatedPaymentUiModel
-import com.piconemarc.model.entity.OperationUiModel
 import com.piconemarc.model.entity.PaymentUiModel
 import com.piconemarc.personalaccountmanager.*
 import com.piconemarc.personalaccountmanager.R
@@ -136,13 +134,17 @@ fun RelatedPaymentItem(
 @Composable
 fun PaymentPostItTitle(
     onAddPaymentButtonClick: () -> Unit,
-    accountName: String
+    accountWithRelatedPayments: AccountWithRelatedPaymentUiModel,
+    onPassAllPaymentButtonClick : (AppActions.PaymentScreenAction) -> Unit,
+    areAllPaymentForAccountPassedThisMonth : Boolean
 ) {
     Column {
         PostItTitle(
-            account = accountName,
+            accountName = accountWithRelatedPayments.account.name,
             onAccountButtonClicked = { onAddPaymentButtonClick() },
-            iconButton = PAMIconButtons.Add
+            iconButton = PAMIconButtons.Add,
+            onPassAllPaymentForAccountClick = { onPassAllPaymentButtonClick(AppActions.PaymentScreenAction.PassAllPaymentsForAccount(accountWithRelatedPayments.relatedPayment)) },
+            areAllPaymentsForAccountPassedThisMonth = areAllPaymentForAccountPassedThisMonth
         )
     }
 }

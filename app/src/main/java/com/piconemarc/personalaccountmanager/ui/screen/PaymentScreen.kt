@@ -2,7 +2,6 @@ package com.piconemarc.personalaccountmanager.ui.screen
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
@@ -71,7 +70,9 @@ fun MyPaymentScreen(
                                             )
                                         )
                                     },
-                                    accountName = accountWithRelatedPayments.account.name
+                                    accountWithRelatedPayments = accountWithRelatedPayments,
+                                    areAllPaymentForAccountPassedThisMonth = arePaymentPassedThisMonth(accountWithRelatedPayments.relatedPayment.map { it.isPaymentPassForThisMonth }) ,
+                                    onPassAllPaymentButtonClick = onPaymentEvent
                                 )
                             },
                             body = {
@@ -94,4 +95,16 @@ fun MyPaymentScreen(
             }
         }
     )
+}
+
+//todo pass cleaner way
+fun arePaymentPassedThisMonth (arePaymentPassed :  List<Boolean>) : Boolean{
+    var mybol = false
+    if (arePaymentPassed.isEmpty())
+        mybol = true
+    else
+    arePaymentPassed.forEach {
+        if (it) mybol = true
+    }
+    return mybol
 }

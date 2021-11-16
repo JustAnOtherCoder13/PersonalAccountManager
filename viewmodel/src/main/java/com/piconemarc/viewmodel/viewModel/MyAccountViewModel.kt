@@ -9,7 +9,6 @@ import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import com.piconemarc.viewmodel.viewModel.reducer.myAccountScreenVMState_
 import com.piconemarc.viewmodel.viewModel.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject

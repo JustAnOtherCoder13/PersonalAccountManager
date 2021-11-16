@@ -343,7 +343,7 @@ private fun MyAccountPostIt(
                 .fillMaxWidth()
         ) {
             PostItTitle(
-                account = account.name,
+                accountName = account.name,
                 onAccountButtonClicked = { onDeleteAccountButtonClicked(account) },
                 iconButton = PAMIconButtons.Delete
             )

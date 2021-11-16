@@ -5,11 +5,8 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewModelScope
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
-import com.piconemarc.core.domain.interactor.operation.AddNewOperationInteractor
 import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteractor
 import com.piconemarc.core.domain.interactor.payment.AddPaymentAndOperationInteractor
-import com.piconemarc.core.domain.interactor.payment.DeletePaymentInteractor
-import com.piconemarc.model.entity.AccountWithRelatedPaymentUiModel
 import com.piconemarc.model.entity.CategoryUiModel
 import com.piconemarc.model.entity.OperationUiModel
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
@@ -91,7 +88,6 @@ class MyPaymentViewModel @Inject constructor(
     override fun dispatchAction(action: AppActions.PaymentScreenAction) {
         when(action){
             is AppActions.PaymentScreenAction.PassSinglePayment -> {
-                Log.d("TAG", "dispatchAction: ")
                 viewModelScope.launchOnIOCatchingError(
                     block = {
                         addPaymentAndOperationInteractor.passPaymentForThisMonth(
@@ -108,10 +104,13 @@ class MyPaymentViewModel @Inject constructor(
                     }
                 )
             }
-            //todo pass all payment for account
-
-            //todo pass all payment for all account
-
+            is AppActions.PaymentScreenAction.PassAllPaymentsForAccount -> {
+                viewModelScope.launchOnIOCatchingError(
+                    block = {
+                        addPaymentAndOperationInteractor.passAllPaymentForAccountOnThisMonth(allPaymentToPass = action.allPaymentsForAccount)
+                    }
+                )
+            }
             //todo disable payment when end date passed
             else ->updateState(GlobalAction.UpdatePaymentScreenState(action))
         }

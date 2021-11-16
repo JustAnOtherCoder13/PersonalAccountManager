@@ -1,11 +1,9 @@
 package com.piconemarc.personalaccountmanager.ui.screen
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -151,6 +149,7 @@ fun PAMMainScreen(
             )
         },
         footer = {
+            //todo footer better only show rest, global balance is useless, instead pass rest/month, rest/week, rest/day
             MainScreenFooter(
                 footerAccountBalance = Pair(
                     appUiState.footerBalance.toStringWithTwoDec(),
