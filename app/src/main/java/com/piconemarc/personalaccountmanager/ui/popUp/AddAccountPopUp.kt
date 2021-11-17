@@ -1,4 +1,4 @@
-package com.piconemarc.personalaccountmanager.ui.component.popUp
+package com.piconemarc.personalaccountmanager.ui.popUp
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding

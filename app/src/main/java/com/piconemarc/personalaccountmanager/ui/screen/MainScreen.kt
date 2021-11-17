@@ -1,7 +1,8 @@
 package com.piconemarc.personalaccountmanager.ui.screen
 
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
@@ -16,10 +17,10 @@ import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MainS
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MainScreenFooter
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MainScreenHeader
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseScreen
-import com.piconemarc.personalaccountmanager.ui.component.popUp.AddAccountPopUp
-import com.piconemarc.personalaccountmanager.ui.component.popUp.AddOperationPopUp
-import com.piconemarc.personalaccountmanager.ui.component.popUp.DeleteAccountPopUp
-import com.piconemarc.personalaccountmanager.ui.component.popUp.DeleteOperationPopUp
+import com.piconemarc.personalaccountmanager.ui.popUp.AddAccountPopUp
+import com.piconemarc.personalaccountmanager.ui.popUp.AddOperationPopUp
+import com.piconemarc.personalaccountmanager.ui.popUp.DeleteAccountPopUp
+import com.piconemarc.personalaccountmanager.ui.popUp.DeleteOperationPopUp
 import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.MyAccountDetailViewModel
 import com.piconemarc.viewmodel.viewModel.MyAccountViewModel
@@ -48,12 +49,12 @@ fun PAMMainScreen(
                         startDestination = NavDestinations.Home.destination
                     ) {
 
-                        composable(route = NavDestinations.Home.getRoute()) {
 
+                        composable(route = NavDestinations.Home.getRoute()) {
                             val myAccountVM = hiltViewModel<MyAccountViewModel>()
-                            DisposableEffect(key1 = myAccountVM){
+
+                            LaunchedEffect(key1 = myAccountVM){
                                 myAccountVM.onStart()
-                                onDispose { myAccountVM.onStop() }
                             }
 
                             MyAccountBody(
@@ -75,10 +76,11 @@ fun PAMMainScreen(
                             route = NavDestinations.myAccountDetail.getRoute(),
                         ) {
                             val myAccountDetailVM = hiltViewModel<MyAccountDetailViewModel>()
-                            DisposableEffect(key1 = myAccountDetailVM){
+
+                            LaunchedEffect(key1 = myAccountDetailVM){
                                 myAccountDetailVM.onStart(it.arguments?.getString(NavDestinations.myAccountDetail.key)?:"")
-                                onDispose { myAccountDetailVM.onStop(it.arguments?.getString(NavDestinations.myAccountDetail.key)?:"") }
                             }
+
                             MyAccountDetailBody(
                                 myAccountDetailState = myAccountDetailVM.myAccountDetailState,
                                 navController = navController,
@@ -100,11 +102,12 @@ fun PAMMainScreen(
                             )
                         }
                         composable(NavDestinations.myPayment.getRoute()) {
+                            //todo don't find why but when open add or delete popup on this screen only, it restart the composable lifecycle
+
                             val myPaymentVM = hiltViewModel<MyPaymentViewModel>()
 
-                            DisposableEffect(key1 = myPaymentVM){
+                            LaunchedEffect(key1 = myPaymentVM){
                                 myPaymentVM.onStart()
-                                onDispose { myPaymentVM.onStop() }
                             }
 
                             MyPaymentScreen(
@@ -124,6 +127,10 @@ fun PAMMainScreen(
                                 }
                             )
                         }
+
+                        composable(NavDestinations.chart.getRoute()){
+                            Text(text = "on chart")
+                        }
                     }
 
                     when (appUiState.selectedInterlayerButton) {
@@ -131,7 +138,7 @@ fun PAMMainScreen(
                             NavDestinations.myPayment.doNavigation(navController = navController)
                         }
                         is PAMIconButtons.Chart -> {
-
+                            NavDestinations.chart.doNavigation(navController = navController)
                         }
                         is PAMIconButtons.Home -> {
                             if (appUiState.interLayerTitle != (com.piconemarc.model.R.string.detail)

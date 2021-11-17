@@ -15,6 +15,7 @@ interface NavDestination {
     fun doNavigation(navController: NavController) {
             navController.navigate(destination) {
                 popUpTo(NavDestinations.Home.destination) {}
+               launchSingleTop
         }
     }
 
@@ -47,6 +48,10 @@ object NavDestinations {
 
     val myPayment = object : NavDestination {
         override val destination: String = "myPayment"
+    }
+
+    val chart = object  : NavDestination{
+        override val destination: String = "chart"
     }
 
 }

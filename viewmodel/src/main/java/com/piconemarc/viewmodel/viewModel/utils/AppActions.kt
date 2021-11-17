@@ -25,23 +25,12 @@ object AppActions {
     }
 
     sealed class MyAccountScreenAction : UiAction {
-
-        object InitScreen : MyAccountScreenAction()
-
-        object CloseScreen : MyAccountScreenAction()
-
         data class UpdateAccountList(
             val accountList: List<AccountUiModel>
         ) : MyAccountScreenAction()
     }
 
     sealed class MyAccountDetailScreenAction : UiAction {
-
-        data class InitScreen(
-            val selectedAccountId: String
-        ) : MyAccountDetailScreenAction()
-
-        object CloseScreen : MyAccountDetailScreenAction()
 
         data class UpdateAccountAndMonthlyOperations(
             val selectedAccount : AccountUiModel ,

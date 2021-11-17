@@ -1,7 +1,6 @@
 package com.piconemarc.viewmodel.viewModel
 
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewModelScope
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
@@ -57,30 +56,6 @@ class MyPaymentViewModel @Inject constructor(
                 }
             }
         )
-    }
-
-    fun onStop (){
-        //todo why on open popUp payment stop
-        Log.d("TAG", "onStop : my payment ")
-
-        /*viewModelScope.launchOnIOCatchingError(
-            block = {
-                    val accountsWithPaymentList : List<AccountWithRelatedPaymentUiModel> = getAllAccountsInteractor.getAllAccountsWithRelatedPayment()
-                        accountsWithPaymentList.forEach {accountWithPayment ->
-                        accountWithPayment.relatedPayment.forEach {payment ->
-                            var relatedOperation  = OperationUiModel()
-                            if (payment.operationId != null) {
-                                relatedOperation =
-                                    getOperationForIdInteractor.getOperationForId(payment.operationId!!)
-                            }
-                            payment.isPaymentPassForThisMonth = relatedOperation.paymentId != null && relatedOperation.emitDate.month.compareTo(Calendar.getInstance().time.month) == 0
-                        }
-                    }
-                    dispatchAction(
-                        AppActions.PaymentScreenAction.UpdateAllAccounts(accountsWithPaymentList)
-                    )
-            }
-        )*/
     }
 
 

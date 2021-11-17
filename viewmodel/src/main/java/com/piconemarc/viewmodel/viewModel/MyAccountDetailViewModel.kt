@@ -37,10 +37,12 @@ class MyAccountDetailViewModel @Inject constructor(
 ) {
     val myAccountDetailState by uiState
 
-    fun onStart(selectedAccountId : String){
-        Log.i("TAG", "onStart: my account detail ")
+    init {
         //init state
         viewModelScope.launch(block = { state.collectLatest { uiState.value = it } })
+    }
+
+    fun onStart(selectedAccountId : String){
         //update interlayer title
         updateState(
             GlobalAction.UpdateBaseAppScreenVmState(
@@ -71,62 +73,10 @@ class MyAccountDetailViewModel @Inject constructor(
             }
         )
     }
-    fun onStop(selectedAccountId : String){
-        Log.d("TAG", "onStop: my account detail ")
-
-        val id = try {
-            selectedAccountId.toLong()
-        } catch (e: ParseException) {
-            Log.e("TAG", "dispatchAction: ", e)
-            0
-        }
-        viewModelScope.launchOnIOCatchingError(
-            block = {
-                val accountWithRelatedOperations = GetAccountAndRelatedOperationsForAccountIdInteractor.getAccountForIdWithRelatedOperations(id)
-                dispatchAction(
-                    AppActions.MyAccountDetailScreenAction.UpdateAccountAndMonthlyOperations(
-                        selectedAccount = accountWithRelatedOperations.account,
-                        relatedMonthlyOperations = accountWithRelatedOperations.relatedOperations.filter {
-                            it.emitDate.month.compareTo(
-                                Calendar.getInstance().get(Calendar.MONTH)
-                            ) == 0
-                        }
-                    )
-                )
-            }
-        )
-
-    }
 
     override fun dispatchAction(action: AppActions.MyAccountDetailScreenAction) {
         updateState(GlobalAction.UpdateMyAccountDetailScreenState(action))
         when (action) {
-            is AppActions.MyAccountDetailScreenAction.InitScreen -> {
-                val id = try {
-                    action.selectedAccountId.toLong()
-                } catch (e: ParseException) {
-                    Log.e("TAG", "dispatchAction: ", e)
-                    0
-                }
-                viewModelScope.launchOnIOCatchingError(
-                    block = {
-                        GetAccountAndRelatedOperationsForAccountIdInteractor.getAccountForIdWithRelatedOperationsAsFlow(id, this)
-                            .collectLatest { accountWithRelatedOperations ->
-                                dispatchAction(
-                                    AppActions.MyAccountDetailScreenAction.UpdateAccountAndMonthlyOperations(
-                                        selectedAccount = accountWithRelatedOperations.account,
-                                        relatedMonthlyOperations = accountWithRelatedOperations.relatedOperations.filter {
-                                            it.emitDate.month.compareTo(
-                                                Calendar.getInstance().get(Calendar.MONTH)
-                                            ) == 0
-                                        }
-                                    )
-                                )
-                            }
-                    }
-                )
-            }
-
             is AppActions.MyAccountDetailScreenAction.GetSelectedOperation -> {
                 if (action.operation.paymentId != null) {
                     viewModelScope.launchOnIOCatchingError(

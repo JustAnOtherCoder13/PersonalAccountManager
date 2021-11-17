@@ -1,6 +1,5 @@
 package com.piconemarc.viewmodel.viewModel
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewModelScope
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
@@ -17,16 +16,19 @@ import javax.inject.Inject
 class MyAccountViewModel @Inject constructor(
     store: DefaultStore<GlobalVmState>,
     private val getAllAccountsInteractor: GetAllAccountsInteractor,
-) : BaseViewModel<AppActions.MyAccountScreenAction, ViewModelInnerStates.MyAccountScreenVMState>(store,myAccountScreenVMState_) {
+) : BaseViewModel<AppActions.MyAccountScreenAction, ViewModelInnerStates.MyAccountScreenVMState>(
+    store
+    ,myAccountScreenVMState_
+) {
 
     val myAccountState by uiState
+
     init {
         //init state
         viewModelScope.launch(block = { state.collect { uiState.value = it } })
     }
 
     fun onStart(){
-        Log.i("TAG", "onStart: my account ")
         //update interlayer title
         updateState(
             GlobalAction.UpdateBaseAppScreenVmState(
@@ -46,17 +48,6 @@ class MyAccountViewModel @Inject constructor(
             }
         )
     }
-    fun onStop(){
-        Log.d("TAG", "onStop: my account")
-        viewModelScope.launchOnIOCatchingError(
-            block = {
-                    dispatchAction(
-                        AppActions.MyAccountScreenAction.UpdateAccountList(getAllAccountsInteractor.getAllAccounts())
-                    )
-            }
-        )
-    }
-
 
     override fun dispatchAction(action: AppActions.MyAccountScreenAction) {
              updateState(GlobalAction.UpdateMyAccountScreenState(action))

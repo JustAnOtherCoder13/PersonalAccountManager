@@ -8,12 +8,6 @@ internal val myAccountDetailScreenReducer: Reducer<ViewModelInnerStates.MyAccoun
     { old, action ->
         action as AppActions.MyAccountDetailScreenAction
         when (action) {
-            is AppActions.MyAccountDetailScreenAction.InitScreen -> old.copy(
-                isVisible = true
-            )
-            is AppActions.MyAccountDetailScreenAction.CloseScreen -> old.copy(
-                isVisible = false
-            )
             is AppActions.MyAccountDetailScreenAction.UpdateAccountAndMonthlyOperations -> old.copy(
                 selectedAccount = action.selectedAccount,
                 accountMonthlyOperations = action.relatedMonthlyOperations

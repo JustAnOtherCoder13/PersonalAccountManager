@@ -60,7 +60,6 @@ class AddAccountPopUpActionDispatcher @Inject constructor(
                         }
                     )
             }
-            else -> updateState(GlobalAction.UpdateAddAccountPopUpState(action))
         }
     }
 }

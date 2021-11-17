@@ -27,7 +27,7 @@ import com.piconemarc.viewmodel.viewModel.utils.AppActions
 @Composable
 fun PaymentPostItBody(
     accountWithRelatedPayments: AccountWithRelatedPaymentUiModel,
-    onPaymentEvent : (AppActions.PaymentScreenAction)-> Unit,
+    onPassPaymentButtonClick : (AppActions.PaymentScreenAction)-> Unit,
     onDeletePaymentButtonClick: (paymentTODelete: PaymentUiModel) -> Unit,
 ) {
     Column(
@@ -43,7 +43,7 @@ fun PaymentPostItBody(
                     onDeletePaymentButtonClick(paymentToDelete)
                 },
                 onPassPaymentButtonClick = {
-                    onPaymentEvent(AppActions.PaymentScreenAction.PassSinglePayment(relatedPayment))
+                    onPassPaymentButtonClick(AppActions.PaymentScreenAction.PassSinglePayment(relatedPayment))
                 }
             )
         }

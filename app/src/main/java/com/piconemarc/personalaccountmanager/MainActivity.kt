@@ -33,8 +33,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize()
                 ) {
                     BackHandler(true) {
+                        //todo check if pop up is open, in case close popUp
+                        //have to pass with abstraction in function, certainly have to review
+                        // popUp Vm State
+
                         when(appViewModel.appUiState.selectedInterlayerButton){
-                            //todo check if pop up is open, in case close popUp
                             is PAMIconButtons.Home ->
                                 when(appViewModel.appUiState.interLayerTitle){
                                     com.piconemarc.model.R.string.detail ->{
@@ -50,8 +53,6 @@ class MainActivity : ComponentActivity() {
                                 AppActions.BaseAppScreenAction.SelectInterlayer(PAMIconButtons.Home)
                             )
                         }
-
-
                     }
                     PAMMainScreen(
                         appViewModel = appViewModel,

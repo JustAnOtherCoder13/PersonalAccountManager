@@ -170,4 +170,3 @@ internal val appStoreSubscriber: StoreSubscriber<GlobalVmState> =
         deleteOperationPopUpVMState_.value = globalVmState.deleteOperationPopUpVmState
         paymentScreenVMState_.value = globalVmState.paymentScreenVmState
     }
-

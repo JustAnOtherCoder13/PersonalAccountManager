@@ -39,6 +39,7 @@ class AppViewModel @Inject constructor(
     val deleteOperationPopUpState by deleteOperationPopUpActionDispatcher.uiState
     val addAccountPopUpState by addAccountPopUpActionDispatcher.uiState
     val deleteAccountPopUpState by deleteAccountPopUpActionDispatcher.uiState
+
     val appUiState by uiState
 
     init {
@@ -76,6 +77,14 @@ class AppViewModel @Inject constructor(
                 }
             }
 
+            is AppActions.DeleteOperationPopUpAction -> {
+                deleteAccountPopUpJob = viewModelScope.launch {
+                    deleteOperationPopUpActionDispatcher.dispatchAction(action, this)
+                }
+                if (action is AppActions.DeleteOperationPopUpAction.ClosePopUp)
+                    deleteOperationPopUpJob?.cancel()
+            }
+
             is AppActions.DeleteAccountAction -> {
                 deleteAccountPopUpJob = viewModelScope.launch {
                     deleteAccountPopUpActionDispatcher.dispatchAction(action, this)
@@ -90,14 +99,6 @@ class AppViewModel @Inject constructor(
                 }
                 if (action is AppActions.AddAccountPopUpAction.ClosePopUp)
                     addAccountPopUpJob?.cancel()
-            }
-
-            is AppActions.DeleteOperationPopUpAction -> {
-                deleteAccountPopUpJob = viewModelScope.launch {
-                    deleteOperationPopUpActionDispatcher.dispatchAction(action, this)
-                }
-                if (action is AppActions.DeleteOperationPopUpAction.ClosePopUp)
-                    deleteOperationPopUpJob?.cancel()
             }
         }
     }
