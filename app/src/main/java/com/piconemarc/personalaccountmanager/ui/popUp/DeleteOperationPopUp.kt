@@ -51,7 +51,7 @@ fun DeleteOperationPopUp(
                 AppActions.DeleteOperationPopUpAction.ClosePopUp
             )
         },
-        isExpanded = deleteOperationPopUpState.isPopUpExpanded,
+        isExpanded = deleteOperationPopUpState.isVisible,
         body = {
             Column(
                 modifier = Modifier.fillMaxWidth(),

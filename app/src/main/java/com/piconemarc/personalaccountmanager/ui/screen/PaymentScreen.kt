@@ -85,14 +85,7 @@ fun MyPaymentScreen(
     )
 }
 
-//todo pass cleaner way
-fun arePaymentPassedThisMonth (arePaymentPassed :  List<Boolean>) : Boolean{
-    var mybol = false
-    if (arePaymentPassed.isEmpty())
-        mybol = true
-    else
-    arePaymentPassed.forEach {
-        if (it) mybol = true
-    }
-    return mybol
-}
+fun arePaymentPassedThisMonth (arePaymentPassed :  List<Boolean>) : Boolean =
+    if (arePaymentPassed.isEmpty()) true
+    else arePaymentPassed.contains(true)
+

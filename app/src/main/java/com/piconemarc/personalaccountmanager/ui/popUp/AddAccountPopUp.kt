@@ -31,7 +31,7 @@ fun AddAccountPopUp(
             )
         },
         onDismiss = { onAddAccountPopUpEvent(AppActions.AddAccountPopUpAction.ClosePopUp) },
-        isExpanded = addAccountPopUpState.isPopUpExpanded
+        isExpanded = addAccountPopUpState.isVisible
     ) {
         Column(modifier = Modifier.padding(vertical = RegularMarge)) {
             BrownBackgroundTextFieldItem(
@@ -42,7 +42,7 @@ fun AddAccountPopUp(
                     )
                 },
                 textValue = addAccountPopUpState.accountName,
-                isPopUpExpanded = addAccountPopUpState.isPopUpExpanded,
+                isPopUpExpanded = addAccountPopUpState.isVisible,
                 isError = addAccountPopUpState.isNameError,
                 errorMsg = stringResource(R.string.nameErrorMessage)
             )
@@ -54,7 +54,7 @@ fun AddAccountPopUp(
                     )
                 },
                 amountValue = addAccountPopUpState.accountBalance,
-                isPopUpExpanded = addAccountPopUpState.isPopUpExpanded,
+                isPopUpExpanded = addAccountPopUpState.isVisible,
                 isError = addAccountPopUpState.isBalanceError,
                 errorMsg = stringResource(R.string.balanceErrorMessage)
             )
@@ -66,7 +66,7 @@ fun AddAccountPopUp(
                     )
                 },
                 amountValue = addAccountPopUpState.accountOverdraft,
-                isPopUpExpanded = addAccountPopUpState.isPopUpExpanded,
+                isPopUpExpanded = addAccountPopUpState.isVisible,
                 isError = addAccountPopUpState.isOverdraftError,
                 errorMsg = stringResource(R.string.overdraftErrorMessage)
             )

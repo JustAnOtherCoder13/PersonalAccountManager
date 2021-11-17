@@ -10,10 +10,10 @@ internal val deleteAccountPopUpReducer: Reducer<ViewModelInnerStates.DeleteAccou
         action as AppActions.DeleteAccountAction
         when (action) {
             is AppActions.DeleteAccountAction.InitPopUp -> old.copy(
-                isPopUpExpanded = true,
+                isVisible = true,
             )
             is AppActions.DeleteAccountAction.ClosePopUp -> old.copy(
-                isPopUpExpanded = false,
+                isVisible = false,
                 accountToDelete = AccountUiModel()
             )
             is AppActions.DeleteAccountAction.UpdateAccountToDelete -> old.copy(

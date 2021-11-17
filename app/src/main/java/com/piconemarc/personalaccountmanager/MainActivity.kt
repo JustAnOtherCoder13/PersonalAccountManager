@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val appViewModel : AppViewModel by viewModels()
+        val appViewModel: AppViewModel by viewModels()
 
         setContent {
             PersonalAccountManagerTheme {
@@ -33,32 +33,43 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize()
                 ) {
                     BackHandler(true) {
-                        //todo check if pop up is open, in case close popUp
-                        //have to pass with abstraction in function, certainly have to review
-                        // popUp Vm State
-
-                        when(appViewModel.appUiState.selectedInterlayerButton){
-                            is PAMIconButtons.Home ->
-                                when(appViewModel.appUiState.interLayerTitle){
-                                    com.piconemarc.model.R.string.detail ->{
-                                        appViewModel.dispatchAction(
-                                            AppActions.BaseAppScreenAction.SelectInterlayer(PAMIconButtons.Home)
-                                        )
-                                    }
-                                    com.piconemarc.model.R.string.myAccountsInterLayerTitle -> {
-                                        this.finish()
+                        when (appViewModel.popUpStates.filter { it.first.value.isVisible }.size) {
+                            //if there is no popUp visible select appropriate interlayer or finish
+                            0 -> {
+                                when (appViewModel.appUiState.selectedInterlayerButton) {
+                                    is PAMIconButtons.Home ->
+                                        when (appViewModel.appUiState.interLayerTitle) {
+                                            com.piconemarc.model.R.string.detail -> {
+                                                appViewModel.dispatchAction(
+                                                    AppActions.BaseAppScreenAction.SelectInterlayer(
+                                                        PAMIconButtons.Home
+                                                    )
+                                                )
+                                            }
+                                            com.piconemarc.model.R.string.myAccountsInterLayerTitle -> {
+                                                this.finish()
+                                            }
                                         }
+                                    else -> appViewModel.dispatchAction(
+                                        AppActions.BaseAppScreenAction.SelectInterlayer(
+                                            PAMIconButtons.Home
+                                        )
+                                    )
                                 }
-                            else -> appViewModel.dispatchAction(
-                                AppActions.BaseAppScreenAction.SelectInterlayer(PAMIconButtons.Home)
-                            )
+                            }
+                            else -> {
+                                //else close visible popUp
+                                appViewModel.dispatchAction(
+                                    appViewModel.popUpStates.filter { it.first.value.isVisible }[0].second
+                                )
+                            }
                         }
                     }
-                    PAMMainScreen(
-                        appViewModel = appViewModel,
-                        appUiState = appViewModel.appUiState
-                    )
                 }
+                PAMMainScreen(
+                    appViewModel = appViewModel,
+                    appUiState = appViewModel.appUiState
+                )
             }
         }
     }

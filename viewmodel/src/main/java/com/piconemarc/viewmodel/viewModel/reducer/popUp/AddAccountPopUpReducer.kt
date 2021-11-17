@@ -9,7 +9,7 @@ internal val addAccountPopUpReducer: Reducer<ViewModelInnerStates.AddAccountPopU
         action as AppActions.AddAccountPopUpAction
         when (action) {
             is AppActions.AddAccountPopUpAction.InitPopUp -> old.copy(
-                isPopUpExpanded = true,
+                isVisible = true,
                 accountName = "",
                 accountBalance = "",
                 accountOverdraft = "",
@@ -17,7 +17,7 @@ internal val addAccountPopUpReducer: Reducer<ViewModelInnerStates.AddAccountPopU
                 isOverdraftError = true
             )
             is AppActions.AddAccountPopUpAction.ClosePopUp -> old.copy(
-                isPopUpExpanded = false
+                isVisible = false
             )
             is AppActions.AddAccountPopUpAction.AddNewAccount -> old.copy(
                 isNameError = action.accountName.trim().isEmpty()

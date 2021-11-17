@@ -18,7 +18,7 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
                     isOnPaymentScreen = action.isOnPaymentScreen,
                     isPaymentStartThisMonth = true,
                     isAddOperation = false,
-                    isPopUpExpanded = true,
+                    isVisible = true,
                     isAddOrMinusEnable = true,
                     isTransferExpanded = false,
                     isRecurrentOptionExpanded = action.isOnPaymentScreen,
@@ -47,7 +47,7 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
             }
             is AppActions.AddOperationPopupAction.ClosePopUp -> {
                 old.copy(
-                    isPopUpExpanded = false
+                    isVisible = false
                 )
             }
             is AppActions.AddOperationPopupAction.OnOperationIconSelected -> {

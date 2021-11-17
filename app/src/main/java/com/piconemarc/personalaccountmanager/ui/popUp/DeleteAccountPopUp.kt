@@ -32,7 +32,7 @@ fun DeleteAccountPopUp(
             )
             },
         onDismiss = { onDeleteAccountPopUpEvent(AppActions.DeleteAccountAction.ClosePopUp) },
-        isExpanded = deleteAccountPopUpState.isPopUpExpanded
+        isExpanded = deleteAccountPopUpState.isVisible
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

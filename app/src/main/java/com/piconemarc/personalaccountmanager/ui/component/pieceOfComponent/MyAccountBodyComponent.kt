@@ -38,7 +38,7 @@ import java.util.*
 fun MyAccountBodyRecyclerView(
     onDeleteAccountButtonClicked: (accountToDelete: AccountUiModel) -> Unit,
     onAccountClicked: (selectedAccount: AccountUiModel) -> Unit,
-    allAccounts : List<AccountUiModel>
+    allAccounts: List<AccountUiModel>
 ) {
     LazyColumn(
         modifier = Modifier
@@ -121,7 +121,11 @@ private fun MyAccountDetailFooter(
                 style = MaterialTheme.typography.body1,
             )
             Text(
-                text = " ${accountRest.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
+                text = " ${accountRest.toStringWithTwoDec()} ${
+                    getCurrencySymbolForLocale(
+                        currentLocale
+                    )
+                }",
                 style = MaterialTheme.typography.body1,
                 color = getBlackOrNegativeColor(amount = accountRest)
             )
@@ -132,7 +136,11 @@ private fun MyAccountDetailFooter(
                 style = MaterialTheme.typography.body1,
             )
             Text(
-                text = " ${accountBalance.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
+                text = " ${accountBalance.toStringWithTwoDec()} ${
+                    getCurrencySymbolForLocale(
+                        currentLocale
+                    )
+                }",
                 style = MaterialTheme.typography.body1,
                 color = getBlackOrNegativeColor(amount = accountBalance)
             )
@@ -145,35 +153,38 @@ private fun MyAccountDetailOperationRecyclerView(
     accountMonthlyOperations: List<OperationUiModel>,
     onDeleteItemButtonCLick: (operation: OperationUiModel) -> Unit,
     onOperationNameClick: (operation: OperationUiModel) -> Unit,
-    operationDetailMessage : String,
+    operationDetailMessage: String,
 ) {
-    Box{
-
-
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .offset(y = 35.dp)
-    ) {
-        items(accountMonthlyOperations) { operation ->
-            OperationItem(
-                operation = operation,
-                onDeleteItemButtonCLick = onDeleteItemButtonCLick,
-                onOperationNameClick = onOperationNameClick
-            )
+    Box {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .offset(y = 35.dp)
+        ) {
+            items(accountMonthlyOperations) { operation ->
+                OperationItem(
+                    operation = operation,
+                    onDeleteItemButtonCLick = onDeleteItemButtonCLick,
+                    onOperationNameClick = onOperationNameClick
+                )
+            }
         }
-    }
-        //todo flow up state
-        Card (modifier = Modifier
-            .wrapContentHeight()
-            .width(if (operationDetailMessage.trim().isEmpty())0.dp else 200.dp)
-            .align(Alignment.Center),
+        Card(
+            modifier = Modifier
+                .wrapContentHeight()
+                .width(
+                    if (operationDetailMessage
+                            .trim()
+                            .isEmpty()
+                    ) 0.dp else 200.dp
+                )
+                .align(Alignment.Center),
             elevation = RegularMarge,
             backgroundColor = White,
             contentColor = Black,
             shape = RoundedCornerShape(RegularMarge),
-            border = BorderStroke(width = ThinBorder,color = Black )
-        ){
+            border = BorderStroke(width = ThinBorder, color = Black)
+        ) {
             Text(
                 text = operationDetailMessage,
                 textAlign = TextAlign.Center,
@@ -322,12 +333,20 @@ private fun MyAccountPostIt(
         ) {
             MyAccountPostItValue(
                 valueTitle = stringResource(R.string.balanceTitle),
-                value = "${account.accountBalance.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
+                value = "${account.accountBalance.toStringWithTwoDec()} ${
+                    getCurrencySymbolForLocale(
+                        currentLocale
+                    )
+                }",
                 valueColor = getBlackOrNegativeColor(account.accountBalance)
             )
             MyAccountPostItValue(
                 valueTitle = stringResource(R.string.restTitle),
-                value = "${account.rest.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
+                value = "${account.rest.toStringWithTwoDec()} ${
+                    getCurrencySymbolForLocale(
+                        currentLocale
+                    )
+                }",
                 valueColor = getBlackOrNegativeColor(account.rest)
             )
         }
@@ -356,7 +375,7 @@ private fun MyAccountPostIt(
 private fun MyAccountPostItValue(
     valueTitle: String,
     value: String,
-    valueColor : Color
+    valueColor: Color
 ) {
     Row(
         modifier = Modifier

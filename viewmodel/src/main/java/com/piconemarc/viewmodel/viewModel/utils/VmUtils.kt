@@ -17,6 +17,10 @@ interface UiAction
 
 interface VMState
 
+interface PopUpVmState : VMState {
+    val isVisible : Boolean
+}
+
 interface UiState
 
 typealias Reducer <S> = (S, UiAction) -> S

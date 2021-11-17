@@ -9,11 +9,11 @@ val deleteOperationPopUpReducer: Reducer<ViewModelInnerStates.DeleteOperationPop
         action as AppActions.DeleteOperationPopUpAction
         when (action) {
             is AppActions.DeleteOperationPopUpAction.InitPopUp<*> -> old.copy(
-                isPopUpExpanded = true,
+                isVisible = true,
                 isRelatedOperationDeleted = true
             )
             is AppActions.DeleteOperationPopUpAction.ClosePopUp -> old.copy(
-                isPopUpExpanded = false
+                isVisible = false
             )
             is AppActions.DeleteOperationPopUpAction.UpdateOperationToDelete<*> -> old.copy(
                 operationToDelete = action.operationToDelete

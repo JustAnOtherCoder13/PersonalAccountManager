@@ -42,9 +42,16 @@ class AppViewModel @Inject constructor(
 
     val appUiState by uiState
 
+    val popUpStates = listOf(
+            Pair( addAccountPopUpActionDispatcher.uiState, AppActions.AddAccountPopUpAction.ClosePopUp),
+            Pair(deleteAccountPopUpActionDispatcher.uiState, AppActions.DeleteAccountAction.ClosePopUp),
+            Pair(addOperationPopUpActionDispatcher.uiState, AppActions.AddOperationPopupAction.ClosePopUp),
+            Pair(deleteOperationPopUpActionDispatcher.uiState, AppActions.DeleteOperationPopUpAction.ClosePopUp)
+    )
+
     init {
         //init state
-        viewModelScope.launch(block = { state.collectLatest{ uiState.value = it } })
+        viewModelScope.launch(block = { state.collectLatest { uiState.value = it } })
         dispatchAction(AppActions.BaseAppScreenAction.InitScreen)
     }
 
@@ -64,7 +71,9 @@ class AppViewModel @Inject constructor(
                                 }
                         }
                     )
-                    else -> { updateState(GlobalAction.UpdateBaseAppScreenVmState(action)) }
+                    else -> {
+                        updateState(GlobalAction.UpdateBaseAppScreenVmState(action))
+                    }
                 }
             }
             //launch job for each pop up when action is dispatched, cancel job on close
