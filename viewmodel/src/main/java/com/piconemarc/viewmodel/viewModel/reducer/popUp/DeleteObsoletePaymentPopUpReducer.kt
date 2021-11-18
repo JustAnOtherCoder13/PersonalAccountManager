@@ -14,6 +14,7 @@ val deleteObsoletePaymentPopUpReducer : Reducer<ViewModelInnerStates.DeleteObsol
             is AppActions.DeleteObsoletePaymentPopUpAction.ClosePopUp -> old.copy(
                 isVisible = false
             )
+            is AppActions.DeleteObsoletePaymentPopUpAction.DeleteObsoletePayment -> old
         }
 
     }

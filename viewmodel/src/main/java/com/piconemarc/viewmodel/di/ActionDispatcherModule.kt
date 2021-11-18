@@ -102,9 +102,11 @@ class ActionDispatcherModule {
     @Provides
     fun provideDeleteObsoletePaymentPopUpActionDispatcher (
         globalStore: DefaultStore<GlobalVmState>,
+        deletePaymentInteractor: DeletePaymentInteractor
         ): DeleteObsoletePaymentPopUpActionDispatcher{
         return DeleteObsoletePaymentPopUpActionDispatcher(
-            store = globalStore
+            store = globalStore,
+            deletePaymentInteractor = deletePaymentInteractor
         )
 
     }

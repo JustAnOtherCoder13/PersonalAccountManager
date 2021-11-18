@@ -9,6 +9,10 @@ class PaymentRepository @Inject constructor(private val paymentDao: PaymentDaoIm
         paymentDao.deletePayment(paymentDTO)
     }
 
+    suspend fun deleteObsoletePayments(obsoletePayments: List<PaymentDTO>) {
+        paymentDao.deleteObsoletePayments(obsoletePayments)
+    }
+
     suspend fun getAllPaymentForAccountId(accountId: Long): List<PaymentDTO> {
         return paymentDao.getAllPaymentForAccountId(accountId)
     }

@@ -1,9 +1,18 @@
 package com.piconemarc.personalaccountmanager.ui.screen
 
 import android.widget.Toast
-import androidx.compose.material.Text
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -20,6 +29,9 @@ import com.piconemarc.personalaccountmanager.ui.popUp.AddAccountPopUp
 import com.piconemarc.personalaccountmanager.ui.popUp.AddOperationPopUp
 import com.piconemarc.personalaccountmanager.ui.popUp.DeleteAccountPopUp
 import com.piconemarc.personalaccountmanager.ui.popUp.DeleteOperationPopUp
+import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
+import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
+import com.piconemarc.personalaccountmanager.ui.theme.ThinBorder
 import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.MyAccountDetailViewModel
 import com.piconemarc.viewmodel.viewModel.MyAccountViewModel
@@ -202,12 +214,13 @@ fun PAMMainScreen(
             )
         }
     )
-    // todo pass with action dispatcher and review like other pop up
 
     BaseDeletePopUp(
         deletePopUpTitle = "Delete obsolete payments",
         onAcceptButtonClicked = {
-            //dispatch action
+            appViewModel.dispatchAction(
+                AppActions.DeleteObsoletePaymentPopUpAction.DeleteObsoletePayment(appUiState.obsoletePaymentToDelete)
+            )
         },
         onDismiss = {
             appViewModel.dispatchAction(
@@ -216,8 +229,35 @@ fun PAMMainScreen(
         },
         isExpanded = appViewModel.deleteObsoletePaymentPopUpState.isVisible
     ) {
-        appUiState.obsoletePaymentToDelete.forEach {
-            Text(text = it.name)
+
+        Column(modifier = Modifier.padding(vertical = RegularMarge)) {
+            Text(
+                text = "Those Payments finished this month, would you like to delete them ?",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(RegularMarge),
+                style = MaterialTheme.typography.body1,
+                textAlign = TextAlign.Center
+            )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(RegularMarge)
+                    .border(width = ThinBorder, color = MaterialTheme.colors.onSecondary, shape = RoundedCornerShape(
+                        RegularMarge))
+            ) {
+                appUiState.obsoletePaymentToDelete.forEach {
+                    Text(
+                        text = it.name,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = RegularMarge),
+                        style = MaterialTheme.typography.body1
+                    )
+                }
+            }
+
         }
     }
 }

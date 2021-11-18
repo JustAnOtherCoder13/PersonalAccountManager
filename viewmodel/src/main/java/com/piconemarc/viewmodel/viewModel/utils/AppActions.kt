@@ -231,5 +231,7 @@ object AppActions {
         object InitPopUp : DeleteObsoletePaymentPopUpAction()
         object ClosePopUp : DeleteObsoletePaymentPopUpAction()
 
+        data class DeleteObsoletePayment(val obsoletePayments : List<PaymentUiModel>) : DeleteObsoletePaymentPopUpAction()
+
     }
 }

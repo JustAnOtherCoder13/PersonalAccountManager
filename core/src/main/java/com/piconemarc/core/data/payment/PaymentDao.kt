@@ -20,4 +20,8 @@ interface PaymentDao {
 
     @Query("SELECT*FROM $PAYMENT_TABLE")
     suspend fun getAllPayments() : List<PaymentDTO>
+
+    @Delete
+    suspend fun deleteObsoletePayments(obsoletePayments : List<PaymentDTO>)
+
 }
