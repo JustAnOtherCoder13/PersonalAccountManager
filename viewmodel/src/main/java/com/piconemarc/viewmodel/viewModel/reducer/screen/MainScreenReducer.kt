@@ -31,8 +31,5 @@ internal val appBaseScreenReducer: Reducer<ViewModelInnerStates.BaseAppScreenVmS
             }
             is AppActions.BaseAppScreenAction.UpdateInterlayerTiTle -> old.copy(
                 interLayerTitle = action.interlayerTitle)
-            is AppActions.BaseAppScreenAction.UpdateObsoletePaymentList -> old.copy(
-                obsoletePaymentToDelete = action.obsoletePaymentList
-            )
         }
     }

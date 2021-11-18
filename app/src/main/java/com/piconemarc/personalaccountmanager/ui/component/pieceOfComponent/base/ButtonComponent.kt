@@ -77,16 +77,18 @@ private fun BaseButton(
 @Composable
 fun AcceptOrDismissButtons(
     onAcceptButtonClicked: () -> Unit,
-    onDismissButtonClicked: () -> Unit
+    onDismissButtonClicked: () -> Unit,
+    isDismissButtonVisible : Boolean = true
 ) {
     Row(
         modifier = Modifier
             .background(MaterialTheme.colors.primaryVariant, MaterialTheme.shapes.large)
             .fillMaxWidth()
             .padding(start = BigMarge, end = BigMarge, top = BigMarge),
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = if (isDismissButtonVisible) Arrangement.SpaceBetween else Arrangement.Center
     ) {
         BaseButton(text = stringResource(R.string.ok)) { onAcceptButtonClicked() }
+        if (isDismissButtonVisible)
         BaseButton(text = stringResource(R.string.cancel)) { onDismissButtonClicked() }
     }
 }

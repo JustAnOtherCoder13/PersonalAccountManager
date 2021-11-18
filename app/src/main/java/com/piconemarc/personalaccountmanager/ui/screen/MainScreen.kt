@@ -1,37 +1,23 @@
 package com.piconemarc.personalaccountmanager.ui.screen
 
-import android.widget.Toast
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.piconemarc.model.PAMIconButtons
-import com.piconemarc.personalaccountmanager.*
+import com.piconemarc.personalaccountmanager.NavDestinations
 import com.piconemarc.personalaccountmanager.R
+import com.piconemarc.personalaccountmanager.getBlackOrNegativeColor
+import com.piconemarc.personalaccountmanager.toStringWithTwoDec
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MainScreenBody
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MainScreenFooter
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MainScreenHeader
-import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseDeletePopUp
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseScreen
-import com.piconemarc.personalaccountmanager.ui.popUp.AddAccountPopUp
-import com.piconemarc.personalaccountmanager.ui.popUp.AddOperationPopUp
-import com.piconemarc.personalaccountmanager.ui.popUp.DeleteAccountPopUp
-import com.piconemarc.personalaccountmanager.ui.popUp.DeleteOperationPopUp
-import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
-import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
-import com.piconemarc.personalaccountmanager.ui.theme.ThinBorder
+import com.piconemarc.personalaccountmanager.ui.popUp.*
 import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.MyAccountDetailViewModel
 import com.piconemarc.viewmodel.viewModel.MyAccountViewModel
@@ -39,8 +25,6 @@ import com.piconemarc.viewmodel.viewModel.MyPaymentViewModel
 import com.piconemarc.viewmodel.viewModel.utils.AppActions
 import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
 
-//todo when open app check for payment arrive to end date and if exist pop up to delete
-//todo after check for payment to pass in operation and show toast "don't forget to pass your payment for this month
 @Composable
 fun PAMMainScreen(
     appViewModel: AppViewModel,
@@ -61,8 +45,6 @@ fun PAMMainScreen(
                         navController = navController,
                         startDestination = NavDestinations.Home.destination
                     ) {
-
-
                         composable(route = NavDestinations.Home.getRoute()) {
                             val myAccountVM = hiltViewModel<MyAccountViewModel>()
 
@@ -215,49 +197,12 @@ fun PAMMainScreen(
         }
     )
 
-    BaseDeletePopUp(
-        deletePopUpTitle = "Delete obsolete payments",
-        onAcceptButtonClicked = {
+    DeleteObsoletePaymentPopUp(
+        deleteObsoletePaymentPopUpState = appViewModel.deleteObsoletePaymentPopUpState,
+        onDeleteObsoletePaymentEvent = { deleteObsoletePaymentAction ->
             appViewModel.dispatchAction(
-                AppActions.DeleteObsoletePaymentPopUpAction.DeleteObsoletePayment(appUiState.obsoletePaymentToDelete)
+                deleteObsoletePaymentAction
             )
-        },
-        onDismiss = {
-            appViewModel.dispatchAction(
-                AppActions.DeleteObsoletePaymentPopUpAction.ClosePopUp
-            )
-        },
-        isExpanded = appViewModel.deleteObsoletePaymentPopUpState.isVisible
-    ) {
-
-        Column(modifier = Modifier.padding(vertical = RegularMarge)) {
-            Text(
-                text = "Those Payments finished this month, would you like to delete them ?",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(RegularMarge),
-                style = MaterialTheme.typography.body1,
-                textAlign = TextAlign.Center
-            )
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(RegularMarge)
-                    .border(width = ThinBorder, color = MaterialTheme.colors.onSecondary, shape = RoundedCornerShape(
-                        RegularMarge))
-            ) {
-                appUiState.obsoletePaymentToDelete.forEach {
-                    Text(
-                        text = it.name,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = RegularMarge),
-                        style = MaterialTheme.typography.body1
-                    )
-                }
-            }
-
         }
-    }
+    )
 }

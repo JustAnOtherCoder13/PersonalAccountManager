@@ -1,8 +1,6 @@
 package com.piconemarc.personalaccountmanager
 
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -10,15 +8,8 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.piconemarc.model.PAMIconButtons
-import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseDeletePopUp
-import com.piconemarc.personalaccountmanager.ui.popUp.DeleteOperationPopUp
 import com.piconemarc.personalaccountmanager.ui.screen.PAMMainScreen
 import com.piconemarc.personalaccountmanager.ui.theme.PersonalAccountManagerTheme
 import com.piconemarc.viewmodel.viewModel.AppViewModel

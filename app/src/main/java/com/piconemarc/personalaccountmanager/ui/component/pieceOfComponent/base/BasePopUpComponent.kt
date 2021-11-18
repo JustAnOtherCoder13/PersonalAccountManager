@@ -28,6 +28,7 @@ fun BasePopUp(
     isExpanded: Boolean,
     popUpBackgroundColor : Color = MaterialTheme.colors.secondary,
     menuIconPanel: @Composable () -> Unit = {},
+    isDismissButtonVisible : Boolean = true,
     body: @Composable () -> Unit
 ) {
 
@@ -61,7 +62,8 @@ fun BasePopUp(
                         body()
                         AcceptOrDismissButtons(
                             onAcceptButtonClicked = onAcceptButtonClicked,
-                            onDismissButtonClicked = onDismiss
+                            onDismissButtonClicked = onDismiss,
+                            isDismissButtonVisible = isDismissButtonVisible
                         )
                     }
                 }
@@ -75,6 +77,7 @@ fun BaseDeletePopUp(
     onAcceptButtonClicked: () -> Unit,
     onDismiss: () -> Unit,
     isExpanded: Boolean,
+    isDismissButtonVisible : Boolean = true,
     body: @Composable () -> Unit
 ) {
     BasePopUp(
@@ -82,7 +85,8 @@ fun BaseDeletePopUp(
         onAcceptButtonClicked = onAcceptButtonClicked,
         onDismiss = onDismiss,
         body = body,
-        isExpanded = isExpanded
+        isExpanded = isExpanded,
+        isDismissButtonVisible = isDismissButtonVisible
     )
 }
 

@@ -49,10 +49,6 @@ class AppViewModel @Inject constructor(
 
     val popUpStates = listOf(
         Pair(
-            deleteObsoletePaymentPopUpActionDispatcher.uiState,
-            AppActions.DeleteObsoletePaymentPopUpAction.ClosePopUp
-        ),
-        Pair(
             addAccountPopUpActionDispatcher.uiState,
             AppActions.AddAccountPopUpAction.ClosePopUp
         ),
@@ -104,7 +100,7 @@ class AppViewModel @Inject constructor(
                                     ) obsoletePaymentToDeleteList.add(it)
                                 }
                                 dispatchAction(
-                                    AppActions.BaseAppScreenAction.UpdateObsoletePaymentList(
+                                    AppActions.DeleteObsoletePaymentPopUpAction.UpdateObsoletePaymentList(
                                         obsoletePaymentToDeleteList
                                     )
                                 )

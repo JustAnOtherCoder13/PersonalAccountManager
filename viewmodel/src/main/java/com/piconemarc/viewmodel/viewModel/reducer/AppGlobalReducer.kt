@@ -1,9 +1,6 @@
 package com.piconemarc.viewmodel.viewModel.reducer
 
 import com.piconemarc.viewmodel.viewModel.reducer.popUp.*
-import com.piconemarc.viewmodel.viewModel.reducer.popUp.addAccountPopUpReducer
-import com.piconemarc.viewmodel.viewModel.reducer.popUp.addOperationPopUpReducer
-import com.piconemarc.viewmodel.viewModel.reducer.popUp.deleteAccountPopUpReducer
 import com.piconemarc.viewmodel.viewModel.reducer.screen.appBaseScreenReducer
 import com.piconemarc.viewmodel.viewModel.reducer.screen.myAccountDetailScreenReducer
 import com.piconemarc.viewmodel.viewModel.reducer.screen.myAccountScreenReducer
