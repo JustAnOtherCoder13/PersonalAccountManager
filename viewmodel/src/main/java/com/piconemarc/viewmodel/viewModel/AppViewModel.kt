@@ -4,10 +4,9 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewModelScope
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.core.domain.interactor.payment.GetAllPaymentForAccountIdInteractor
-import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddAccountPopUpActionDispatcher
-import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddOperationPopUpActionDispatcher
-import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.DeleteAccountPopUpActionDispatcher
-import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.DeleteOperationPopUpActionDispatcher
+import com.piconemarc.core.domain.utils.Constants.TODAY
+import com.piconemarc.model.entity.PaymentUiModel
+import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.*
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import com.piconemarc.viewmodel.viewModel.reducer.baseAppScreenVmState_
@@ -25,6 +24,8 @@ class AppViewModel @Inject constructor(
     private val deleteAccountPopUpActionDispatcher: DeleteAccountPopUpActionDispatcher,
     private val addAccountPopUpActionDispatcher: AddAccountPopUpActionDispatcher,
     private val deleteOperationPopUpActionDispatcher: DeleteOperationPopUpActionDispatcher,
+    private val deleteObsoletePaymentPopUpActionDispatcher: DeleteObsoletePaymentPopUpActionDispatcher,
+
     private val getAllAccountsInteractor: GetAllAccountsInteractor,
     private val getAllPaymentForAccountIdInteractor: GetAllPaymentForAccountIdInteractor
 ) : BaseViewModel<UiAction, ViewModelInnerStates.BaseAppScreenVmState>(
@@ -36,19 +37,37 @@ class AppViewModel @Inject constructor(
     private var deleteAccountPopUpJob: Job? = null
     private var addAccountPopUpJob: Job? = null
     private var deleteOperationPopUpJob: Job? = null
+    private var deleteObsoletePaymentPopUpJob: Job? = null
 
     val addOperationPopUpState by addOperationPopUpActionDispatcher.uiState
     val deleteOperationPopUpState by deleteOperationPopUpActionDispatcher.uiState
     val addAccountPopUpState by addAccountPopUpActionDispatcher.uiState
     val deleteAccountPopUpState by deleteAccountPopUpActionDispatcher.uiState
+    val deleteObsoletePaymentPopUpState by deleteObsoletePaymentPopUpActionDispatcher.uiState
 
     val appUiState by uiState
 
     val popUpStates = listOf(
-            Pair( addAccountPopUpActionDispatcher.uiState, AppActions.AddAccountPopUpAction.ClosePopUp),
-            Pair(deleteAccountPopUpActionDispatcher.uiState, AppActions.DeleteAccountAction.ClosePopUp),
-            Pair(addOperationPopUpActionDispatcher.uiState, AppActions.AddOperationPopupAction.ClosePopUp),
-            Pair(deleteOperationPopUpActionDispatcher.uiState, AppActions.DeleteOperationPopUpAction.ClosePopUp)
+        Pair(
+            deleteObsoletePaymentPopUpActionDispatcher.uiState,
+            AppActions.DeleteObsoletePaymentPopUpAction.ClosePopUp
+        ),
+        Pair(
+            addAccountPopUpActionDispatcher.uiState,
+            AppActions.AddAccountPopUpAction.ClosePopUp
+        ),
+        Pair(
+            deleteAccountPopUpActionDispatcher.uiState,
+            AppActions.DeleteAccountAction.ClosePopUp
+        ),
+        Pair(
+            addOperationPopUpActionDispatcher.uiState,
+            AppActions.AddOperationPopupAction.ClosePopUp
+        ),
+        Pair(
+            deleteOperationPopUpActionDispatcher.uiState,
+            AppActions.DeleteOperationPopUpAction.ClosePopUp
+        )
     )
 
     init {
@@ -76,9 +95,23 @@ class AppViewModel @Inject constructor(
                         )
                         viewModelScope.launchOnIOCatchingError(
                             block = {
+                                val obsoletePaymentToDeleteList: MutableList<PaymentUiModel> =
+                                    mutableListOf()
                                 getAllPaymentForAccountIdInteractor.getAllPayments().forEach {
-
+                                    if (it.endDate != null
+                                        && it.endDate!!.month < TODAY.month
+                                        && it.endDate!!.year <= TODAY.year
+                                    ) obsoletePaymentToDeleteList.add(it)
                                 }
+                                dispatchAction(
+                                    AppActions.BaseAppScreenAction.UpdateObsoletePaymentList(
+                                        obsoletePaymentToDeleteList
+                                    )
+                                )
+                                if (obsoletePaymentToDeleteList.isNotEmpty())
+                                    dispatchAction(
+                                        AppActions.DeleteObsoletePaymentPopUpAction.InitPopUp
+                                    )
                             }
                         )
                     }
@@ -119,6 +152,15 @@ class AppViewModel @Inject constructor(
                 }
                 if (action is AppActions.AddAccountPopUpAction.ClosePopUp)
                     addAccountPopUpJob?.cancel()
+            }
+            is AppActions.DeleteObsoletePaymentPopUpAction -> {
+                deleteObsoletePaymentPopUpJob = viewModelScope.launch {
+                    deleteObsoletePaymentPopUpActionDispatcher.dispatchAction(
+                        action, this
+                    )
+                }
+                if (action is AppActions.DeleteObsoletePaymentPopUpAction.ClosePopUp)
+                    deleteObsoletePaymentPopUpJob?.cancel()
             }
         }
     }

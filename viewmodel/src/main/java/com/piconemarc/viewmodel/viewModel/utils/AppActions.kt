@@ -22,6 +22,10 @@ object AppActions {
         data class UpdateAccounts(
             val allAccounts: List<AccountUiModel>
         ) : BaseAppScreenAction()
+
+        data class UpdateObsoletePaymentList(
+            val obsoletePaymentList : List<PaymentUiModel>
+        ) : BaseAppScreenAction()
     }
 
     sealed class MyAccountScreenAction : UiAction {
@@ -220,5 +224,12 @@ object AppActions {
         data class FillAccountOverdraft(
             val accountOverdraft: String
         ) : AddAccountPopUpAction()
+    }
+
+    sealed class DeleteObsoletePaymentPopUpAction : UiAction{
+
+        object InitPopUp : DeleteObsoletePaymentPopUpAction()
+        object ClosePopUp : DeleteObsoletePaymentPopUpAction()
+
     }
 }

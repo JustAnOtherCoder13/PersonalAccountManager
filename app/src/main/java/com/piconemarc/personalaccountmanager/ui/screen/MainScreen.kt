@@ -1,21 +1,20 @@
 package com.piconemarc.personalaccountmanager.ui.screen
 
+import android.widget.Toast
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.piconemarc.model.PAMIconButtons
-import com.piconemarc.personalaccountmanager.NavDestinations
+import com.piconemarc.personalaccountmanager.*
 import com.piconemarc.personalaccountmanager.R
-import com.piconemarc.personalaccountmanager.getBlackOrNegativeColor
-import com.piconemarc.personalaccountmanager.toStringWithTwoDec
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MainScreenBody
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MainScreenFooter
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MainScreenHeader
+import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseDeletePopUp
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseScreen
 import com.piconemarc.personalaccountmanager.ui.popUp.AddAccountPopUp
 import com.piconemarc.personalaccountmanager.ui.popUp.AddOperationPopUp
@@ -203,4 +202,22 @@ fun PAMMainScreen(
             )
         }
     )
+    // todo pass with action dispatcher and review like other pop up
+
+    BaseDeletePopUp(
+        deletePopUpTitle = "Delete obsolete payments",
+        onAcceptButtonClicked = {
+            //dispatch action
+        },
+        onDismiss = {
+            appViewModel.dispatchAction(
+                AppActions.DeleteObsoletePaymentPopUpAction.ClosePopUp
+            )
+        },
+        isExpanded = appViewModel.deleteObsoletePaymentPopUpState.isVisible
+    ) {
+        appUiState.obsoletePaymentToDelete.forEach {
+            Text(text = it.name)
+        }
+    }
 }

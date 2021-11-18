@@ -9,6 +9,7 @@ object ViewModelInnerStates {
         val selectedInterlayerButton: PAMIconButtons = PAMIconButtons.Home,
         val interLayerTitle: Int = com.piconemarc.model.R.string.myAccountsInterLayerTitle,
         val allAccountUis: List<AccountUiModel> = listOf(),
+        val obsoletePaymentToDelete : List<PaymentUiModel> = listOf(),
         val footerBalance: Double = 0.0,
         val footerRest: Double = 0.0
     ) : VMState
@@ -84,5 +85,9 @@ object ViewModelInnerStates {
         val isNameError: Boolean = false,
         val isBalanceError: Boolean = true,
         val isOverdraftError: Boolean = true
+    ) : PopUpVmState
+
+    data class DeleteObsoletePaymentPopUpVMState(
+        override val isVisible: Boolean = false
     ) : PopUpVmState
 }
