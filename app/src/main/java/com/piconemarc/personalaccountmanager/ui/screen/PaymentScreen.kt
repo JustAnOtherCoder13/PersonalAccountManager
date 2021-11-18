@@ -18,13 +18,14 @@ import com.piconemarc.personalaccountmanager.ui.theme.paymentPostItItemHeight
 import com.piconemarc.personalaccountmanager.ui.theme.paymentPostItWidth
 import com.piconemarc.viewmodel.viewModel.utils.AppActions
 import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
+import java.util.*
 
 @Composable
 fun MyPaymentScreen(
-    paymentState : ViewModelInnerStates.PaymentScreenVmState,
-    onAddPaymentButtonClick : (AppActions.AddOperationPopupAction)->Unit,
-    onDeletePaymentButtonClick : (AppActions.DeleteOperationPopUpAction)-> Unit,
-    onPaymentEvent : (AppActions.PaymentScreenAction)-> Unit
+    paymentState: ViewModelInnerStates.PaymentScreenVmState,
+    onAddPaymentButtonClick: (AppActions.AddOperationPopupAction) -> Unit,
+    onDeletePaymentButtonClick: (AppActions.DeleteOperationPopUpAction) -> Unit,
+    onPaymentEvent: (AppActions.PaymentScreenAction) -> Unit
 ) {
     VerticalDispositionSheet(
         body = {
@@ -59,7 +60,13 @@ fun MyPaymentScreen(
                                         )
                                     },
                                     accountWithRelatedPayments = accountWithRelatedPayments,
-                                    areAllPaymentForAccountPassedThisMonth = arePaymentPassedThisMonth(accountWithRelatedPayments.relatedPayment.map { it.isPaymentPassForThisMonth }) ,
+                                    areAllPaymentForAccountPassedThisMonth = arePaymentPassedThisMonth(
+                                        accountWithRelatedPayments.relatedPayment.map {
+                                            it.isPaymentPassForThisMonth && it.endDate == null
+                                                    || (it.endDate != null
+                                                    && it.endDate!!.month < Calendar.getInstance().time.month
+                                                    && it.endDate!!.year <= Calendar.getInstance().time.year)
+                                        }),
                                     onPassAllPaymentButtonClick = onPaymentEvent
                                 )
                             },
@@ -85,7 +92,6 @@ fun MyPaymentScreen(
     )
 }
 
-fun arePaymentPassedThisMonth (arePaymentPassed :  List<Boolean>) : Boolean =
+fun arePaymentPassedThisMonth(arePaymentPassed: List<Boolean>): Boolean =
     if (arePaymentPassed.isEmpty()) true
     else arePaymentPassed.contains(true)
-

@@ -17,4 +17,8 @@ class PaymentRepository @Inject constructor(private val paymentDao: PaymentDaoIm
         return paymentDao.getPaymentForId(id)
     }
 
+    suspend fun getAllPayments(): List<PaymentDTO> {
+        return paymentDao.getAllPayments()
+    }
+
 }

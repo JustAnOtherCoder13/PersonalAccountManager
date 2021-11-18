@@ -3,6 +3,7 @@ package com.piconemarc.viewmodel.viewModel
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewModelScope
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
+import com.piconemarc.core.domain.interactor.payment.GetAllPaymentForAccountIdInteractor
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddAccountPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddOperationPopUpActionDispatcher
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.DeleteAccountPopUpActionDispatcher
@@ -24,7 +25,8 @@ class AppViewModel @Inject constructor(
     private val deleteAccountPopUpActionDispatcher: DeleteAccountPopUpActionDispatcher,
     private val addAccountPopUpActionDispatcher: AddAccountPopUpActionDispatcher,
     private val deleteOperationPopUpActionDispatcher: DeleteOperationPopUpActionDispatcher,
-    private val getAllAccountsInteractor: GetAllAccountsInteractor
+    private val getAllAccountsInteractor: GetAllAccountsInteractor,
+    private val getAllPaymentForAccountIdInteractor: GetAllPaymentForAccountIdInteractor
 ) : BaseViewModel<UiAction, ViewModelInnerStates.BaseAppScreenVmState>(
     store,
     baseAppScreenVmState_
@@ -59,18 +61,27 @@ class AppViewModel @Inject constructor(
         when (action) {
             is AppActions.BaseAppScreenAction -> {
                 when (action) {
-                    is AppActions.BaseAppScreenAction.InitScreen -> viewModelScope.launchOnIOCatchingError(
-                        block = {
-                            getAllAccountsInteractor.getAllAccountsAsFlow(this)
-                                .collectLatest { allAccounts ->
-                                    dispatchAction(
-                                        AppActions.BaseAppScreenAction.UpdateAccounts(
-                                            allAccounts
+                    is AppActions.BaseAppScreenAction.InitScreen -> {
+                        viewModelScope.launchOnIOCatchingError(
+                            block = {
+                                getAllAccountsInteractor.getAllAccountsAsFlow(this)
+                                    .collectLatest { allAccounts ->
+                                        dispatchAction(
+                                            AppActions.BaseAppScreenAction.UpdateAccounts(
+                                                allAccounts
+                                            )
                                         )
-                                    )
+                                    }
+                            }
+                        )
+                        viewModelScope.launchOnIOCatchingError(
+                            block = {
+                                getAllPaymentForAccountIdInteractor.getAllPayments().forEach {
+
                                 }
-                        }
-                    )
+                            }
+                        )
+                    }
                     else -> {
                         updateState(GlobalAction.UpdateBaseAppScreenVmState(action))
                     }

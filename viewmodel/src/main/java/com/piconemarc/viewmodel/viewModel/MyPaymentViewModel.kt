@@ -86,7 +86,6 @@ class MyPaymentViewModel @Inject constructor(
                     }
                 )
             }
-            //todo disable payment when end date passed
             else ->updateState(GlobalAction.UpdatePaymentScreenState(action))
         }
 

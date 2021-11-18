@@ -28,6 +28,8 @@ import com.piconemarc.viewmodel.viewModel.MyPaymentViewModel
 import com.piconemarc.viewmodel.viewModel.utils.AppActions
 import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
 
+//todo when open app check for payment arrive to end date and if exist pop up to delete
+//todo after check for payment to pass in operation and show toast "don't forget to pass your payment for this month
 @Composable
 fun PAMMainScreen(
     appViewModel: AppViewModel,
@@ -103,7 +105,6 @@ fun PAMMainScreen(
                         }
                         composable(NavDestinations.myPayment.getRoute()) {
                             //todo don't find why but when open add or delete popup on this screen only, it restart the composable lifecycle
-
                             val myPaymentVM = hiltViewModel<MyPaymentViewModel>()
 
                             LaunchedEffect(key1 = myPaymentVM){

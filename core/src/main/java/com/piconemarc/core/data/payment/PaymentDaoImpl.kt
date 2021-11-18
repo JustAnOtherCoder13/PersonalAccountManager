@@ -19,4 +19,8 @@ class PaymentDaoImpl@Inject constructor(pamDatabase: PAMDatabase) : PaymentDao {
     override suspend fun getPaymentForId(id: Long): PaymentDTO {
         return paymentDao.getPaymentForId(id)
     }
+
+    override suspend fun getAllPayments(): List<PaymentDTO> {
+        return paymentDao.getAllPayments()
+    }
 }
