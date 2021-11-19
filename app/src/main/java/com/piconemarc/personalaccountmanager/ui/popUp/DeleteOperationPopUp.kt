@@ -1,4 +1,4 @@
-package com.piconemarc.personalaccountmanager.ui.component.popUp
+package com.piconemarc.personalaccountmanager.ui.popUp
 
 
 import androidx.compose.foundation.border
@@ -51,7 +51,7 @@ fun DeleteOperationPopUp(
                 AppActions.DeleteOperationPopUpAction.ClosePopUp
             )
         },
-        isExpanded = deleteOperationPopUpState.isPopUpExpanded,
+        isExpanded = deleteOperationPopUpState.isVisible,
         body = {
             Column(
                 modifier = Modifier.fillMaxWidth(),

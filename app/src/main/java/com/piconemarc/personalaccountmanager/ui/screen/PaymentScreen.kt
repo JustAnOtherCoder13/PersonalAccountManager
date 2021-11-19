@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.piconemarc.model.getCalendarDate
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PaymentPostItBody
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PaymentPostItFooter
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PaymentPostItTitle
@@ -18,13 +19,14 @@ import com.piconemarc.personalaccountmanager.ui.theme.paymentPostItItemHeight
 import com.piconemarc.personalaccountmanager.ui.theme.paymentPostItWidth
 import com.piconemarc.viewmodel.viewModel.utils.AppActions
 import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
+import java.util.*
 
 @Composable
 fun MyPaymentScreen(
-    paymentState : ViewModelInnerStates.PaymentScreenVmState,
-    onAddPaymentButtonClick : (AppActions.AddOperationPopupAction)->Unit,
-    onDeletePaymentButtonClick : (AppActions.DeleteOperationPopUpAction)-> Unit
-
+    paymentState: ViewModelInnerStates.PaymentScreenVmState,
+    onAddPaymentButtonClick: (AppActions.AddOperationPopupAction) -> Unit,
+    onDeletePaymentButtonClick: (AppActions.DeleteOperationPopUpAction) -> Unit,
+    onPaymentEvent: (AppActions.PaymentScreenAction) -> Unit
 ) {
     VerticalDispositionSheet(
         body = {
@@ -58,7 +60,14 @@ fun MyPaymentScreen(
                                             )
                                         )
                                     },
-                                    accountName = accountWithRelatedPayments.account.name
+                                    accountWithRelatedPayments = accountWithRelatedPayments,
+                                    areAllPaymentForAccountPassedThisMonth = arePaymentPassedThisMonth(
+                                        accountWithRelatedPayments.relatedPayment.map {
+                                            it.isPaymentPassForThisMonth && it.endDate == null ||
+                                                    ( getCalendarDate(it.endDate).get(Calendar.MONTH) < Calendar.getInstance().get(Calendar.MONTH)
+                                                    && getCalendarDate(it.endDate).get(Calendar.YEAR) <= Calendar.getInstance().get(Calendar.YEAR))
+                                        }),
+                                    onPassAllPaymentButtonClick = onPaymentEvent
                                 )
                             },
                             body = {
@@ -70,7 +79,8 @@ fun MyPaymentScreen(
                                                 paymentToDelete
                                             )
                                         )
-                                    }
+                                    },
+                                    onPassPaymentButtonClick = onPaymentEvent
                                 )
                             },
                             footer = { PaymentPostItFooter(accountWithRelatedPayments) }
@@ -81,3 +91,7 @@ fun MyPaymentScreen(
         }
     )
 }
+
+fun arePaymentPassedThisMonth(arePaymentPassed: List<Boolean>): Boolean =
+    if (arePaymentPassed.isEmpty()) true
+    else arePaymentPassed.contains(true)

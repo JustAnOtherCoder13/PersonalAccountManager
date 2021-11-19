@@ -32,7 +32,8 @@ class GlobalReducerModule {
         myAccountDetailScreenVMState: ViewModelInnerStates.MyAccountDetailScreenVMState,
         myAccountScreenVMState: ViewModelInnerStates.MyAccountScreenVMState,
         deleteOperationPopUpVMState: ViewModelInnerStates.DeleteOperationPopUpVMState,
-        paymentScreenVmState: ViewModelInnerStates.PaymentScreenVmState
+        paymentScreenVmState: ViewModelInnerStates.PaymentScreenVmState,
+        deleteObsoletePaymentPopUpVMState: ViewModelInnerStates.DeleteObsoletePaymentPopUpVMState
     ): GlobalVmState =
         GlobalVmState(
             baseAppScreenVmState = baseAppScreenVmState,
@@ -42,7 +43,8 @@ class GlobalReducerModule {
             myAccountDetailScreenVMState = myAccountDetailScreenVMState,
             myAccountScreenVmState = myAccountScreenVMState,
             deleteOperationPopUpVmState = deleteOperationPopUpVMState,
-            paymentScreenVmState = paymentScreenVmState
+            paymentScreenVmState = paymentScreenVmState,
+            deleteObsoletePaymentPopUpVMState = deleteObsoletePaymentPopUpVMState
         )
 
     //Provided states, provide each new state and and it to provideGlobalState
@@ -76,5 +78,9 @@ class GlobalReducerModule {
     @Provides
     fun providePaymentScreenVmState() : ViewModelInnerStates.PaymentScreenVmState =
         ViewModelInnerStates.PaymentScreenVmState()
+
+    @Provides
+    fun provideDeleteObsoletePaymentPopUpVmState() : ViewModelInnerStates.DeleteObsoletePaymentPopUpVMState =
+        ViewModelInnerStates.DeleteObsoletePaymentPopUpVMState()
 
 }

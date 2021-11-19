@@ -37,7 +37,7 @@ import java.util.*
             onDelete = CASCADE
         )],
     tableName = OPERATION_TABLE,
-    )
+)
 data class OperationDTO(
     @PrimaryKey(autoGenerate = true)
     override val id: Long = 0,
@@ -49,10 +49,10 @@ data class OperationDTO(
     val categoryId: Long = 1,
     val emitDate: Date? = null,
     @ColumnInfo(index = true)
-    val paymentId : Long? = null,
+    val paymentId: Long? = null,
     @ColumnInfo(index = true)
-    val transferId : Long? = null,
-) : DTO<OperationUiModel,OperationDTO> {
+    val transferId: Long? = null,
+) : DTO<OperationUiModel, OperationDTO> {
 
     override fun fromUiModel(model: OperationUiModel): OperationDTO {
         return this.copy(

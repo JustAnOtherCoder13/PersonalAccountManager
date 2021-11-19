@@ -8,7 +8,6 @@ import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import com.piconemarc.viewmodel.viewModel.reducer.myAccountScreenVMState_
 import com.piconemarc.viewmodel.viewModel.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,15 +16,19 @@ import javax.inject.Inject
 class MyAccountViewModel @Inject constructor(
     store: DefaultStore<GlobalVmState>,
     private val getAllAccountsInteractor: GetAllAccountsInteractor,
-) : BaseViewModel<AppActions.MyAccountScreenAction, ViewModelInnerStates.MyAccountScreenVMState>(store,myAccountScreenVMState_) {
+) : BaseViewModel<AppActions.MyAccountScreenAction, ViewModelInnerStates.MyAccountScreenVMState>(
+    store
+    ,myAccountScreenVMState_
+) {
 
     val myAccountState by uiState
-    var myAccountVmJob : Job? = null
 
     init {
         //init state
-        myAccountVmJob = viewModelScope.launch(block = { state.collect {
-            uiState.value = it } })
+        viewModelScope.launch(block = { state.collect { uiState.value = it } })
+    }
+
+    fun onStart(){
         //update interlayer title
         updateState(
             GlobalAction.UpdateBaseAppScreenVmState(

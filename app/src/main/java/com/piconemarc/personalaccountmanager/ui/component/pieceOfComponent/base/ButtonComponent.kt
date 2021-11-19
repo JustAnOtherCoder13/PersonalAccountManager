@@ -24,13 +24,14 @@ import com.piconemarc.personalaccountmanager.ui.theme.*
 
 @Composable
 private fun BaseCircleIcon(
+    modifier: Modifier = Modifier,
     iconButton: PAMIconButtons,
     iconColor: Color,
     backgroundColor: Color = Color.Transparent,
-    yOffset: Dp = 0.dp
+    yOffset: Dp = 0.dp,
 ) {
     Surface(
-        modifier = Modifier
+        modifier = modifier
             .background(backgroundColor, CircleShape)
             .padding(LittleMarge)
             .offset(y = yOffset),
@@ -76,23 +77,26 @@ private fun BaseButton(
 @Composable
 fun AcceptOrDismissButtons(
     onAcceptButtonClicked: () -> Unit,
-    onDismissButtonClicked: () -> Unit
+    onDismissButtonClicked: () -> Unit,
+    isDismissButtonVisible : Boolean = true
 ) {
     Row(
         modifier = Modifier
             .background(MaterialTheme.colors.primaryVariant, MaterialTheme.shapes.large)
             .fillMaxWidth()
             .padding(start = BigMarge, end = BigMarge, top = BigMarge),
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = if (isDismissButtonVisible) Arrangement.SpaceBetween else Arrangement.Center
     ) {
         BaseButton(text = stringResource(R.string.ok)) { onAcceptButtonClicked() }
-        BaseButton(text = stringResource(R.string.cancel)) { onDismissButtonClicked() }
+        if (isDismissButtonVisible)
+        BaseButton(text = stringResource(R.string.cancel).uppercase()) { onDismissButtonClicked() }
     }
 }
 
 @Composable
 fun BaseIconButton(
-    onIconButtonClicked: (iconButton : PAMIconButtons) -> Unit,
+    modifier: Modifier = Modifier,
+    onIconButtonClicked: (iconButton: PAMIconButtons) -> Unit,
     iconButton: PAMIconButtons,
     iconColor: Color = MaterialTheme.colors.onPrimary,
     backgroundColor: Color = MaterialTheme.colors.primaryVariant
@@ -102,7 +106,8 @@ fun BaseIconButton(
         BaseCircleIcon(
             iconButton = iconButton,
             iconColor = iconColor,
-            backgroundColor = backgroundColor
+            backgroundColor = backgroundColor,
+            modifier = modifier
         )
 
     }
@@ -138,7 +143,7 @@ fun BrownBackgroundAddButton(onAddButtonClicked: () -> Unit) {
 @Composable
 fun HomeButton(
     iconYOffset: Dp,
-    onHomeButtonClicked: (iconButton : PAMIconButtons) -> Unit
+    onHomeButtonClicked: (iconButton: PAMIconButtons) -> Unit
 ) = BaseInterlayerIcon(
     backGroundColor = PastelGreen,
     iconButton = PAMIconButtons.Home,
@@ -149,7 +154,7 @@ fun HomeButton(
 @Composable
 fun PaymentButton(
     iconYOffset: Dp,
-    onPaymentButtonClicked: (iconButton : PAMIconButtons) -> Unit
+    onPaymentButtonClicked: (iconButton: PAMIconButtons) -> Unit
 ) = BaseInterlayerIcon(
     backGroundColor = PastelBlue,
     iconButton = PAMIconButtons.Payment,
@@ -160,7 +165,7 @@ fun PaymentButton(
 
 @Composable
 fun ChartButton(
-    onChartButtonClicked: (iconButton : PAMIconButtons) -> Unit
+    onChartButtonClicked: (iconButton: PAMIconButtons) -> Unit
 ) = BaseInterlayerIcon(
     backGroundColor = PastelPurple,
     iconButton = PAMIconButtons.Chart,
@@ -170,11 +175,12 @@ fun ChartButton(
 
 @Composable
 fun AddOperationPopUpAddOrMinusSwitchButton(
-    onAddOrMinusClicked : (isAddClicked : Boolean)-> Unit,
+    onAddOrMinusClicked: (isAddClicked: Boolean) -> Unit,
     isAddOperation: Boolean,
-    isEnable : Boolean
+    isEnable: Boolean
 ) {
-    val transition = pAMAddPopUpAddOrMinusTransition(isAddOperation = isAddOperation, isEnable = isEnable)
+    val transition =
+        pAMAddPopUpAddOrMinusTransition(isAddOperation = isAddOperation, isEnable = isEnable)
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -184,7 +190,7 @@ fun AddOperationPopUpAddOrMinusSwitchButton(
         BaseIconButton(
             onIconButtonClicked = {
                 if (isEnable)
-                onAddOrMinusClicked(true)
+                    onAddOrMinusClicked(true)
             },
             iconButton = PAMIconButtons.Add,
             iconColor = transition.addIconColor,
@@ -193,7 +199,7 @@ fun AddOperationPopUpAddOrMinusSwitchButton(
         BaseIconButton(
             onIconButtonClicked = {
                 if (isEnable)
-                onAddOrMinusClicked(false)
+                    onAddOrMinusClicked(false)
             },
             iconButton = PAMIconButtons.Minus,
             iconColor = transition.minusIconColor,
@@ -233,7 +239,7 @@ private fun BaseInterlayerIcon(
 }
 
 @Composable
-fun <T: BaseUiModel>BaseDeleteIconButton(
+fun <T : BaseUiModel> BaseDeleteIconButton(
     onDeleteItemButtonCLick: (operation: T) -> Unit,
     uiModel: T
 ) {

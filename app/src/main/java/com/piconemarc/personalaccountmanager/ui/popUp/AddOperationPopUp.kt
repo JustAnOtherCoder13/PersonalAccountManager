@@ -1,4 +1,4 @@
-package com.piconemarc.personalaccountmanager.ui.component.popUp
+package com.piconemarc.personalaccountmanager.ui.popUp
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -74,7 +74,7 @@ fun AddOperationPopUp(
             )
         },
         onDismiss = { onAddOperationPopUpEvent(AppActions.AddOperationPopupAction.ClosePopUp) },
-        isExpanded = addOperationPopUpState.isPopUpExpanded,
+        isExpanded = addOperationPopUpState.isVisible,
         menuIconPanel = {
             //if on payment screen no need to show left side icon panel, cause could only be payment
             if (!addOperationPopUpState.isOnPaymentScreen)
@@ -144,7 +144,7 @@ fun AddOperationPopUp(
                     )
                 },
                 textValue = addOperationPopUpState.operationName,
-                isPopUpExpanded = addOperationPopUpState.isPopUpExpanded,
+                isPopUpExpanded = addOperationPopUpState.isVisible,
                 isError = addOperationPopUpState.isOperationNameError,
                 errorMsg = stringResource(R.string.AddOperationPopUpOperationNameErrorMessage)
             )
@@ -159,7 +159,7 @@ fun AddOperationPopUp(
                     )
                 },
                 amountValue = addOperationPopUpState.operationAmount,
-                isPopUpExpanded = addOperationPopUpState.isPopUpExpanded,
+                isPopUpExpanded = addOperationPopUpState.isVisible,
                 isError = addOperationPopUpState.isOperationAmountError,
                 errorMsg = stringResource(R.string.AddOperationPopUpAmountErrorMessage)
             )

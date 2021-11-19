@@ -26,17 +26,17 @@ import com.piconemarc.model.entity.TransferUiModel
 )
 data class TransferDTO(
     @PrimaryKey(autoGenerate = true)
-    override val id: Long=0,
-    override val name: String="",
+    override val id: Long = 0,
+    override val name: String = "",
     @ColumnInfo(index = true)
-    val senderOperationId: Long=0,
+    val senderOperationId: Long = 0,
     @ColumnInfo(index = true)
-    val beneficiaryOperationId: Long=0,
+    val beneficiaryOperationId: Long = 0,
     @ColumnInfo(index = true)
-    val paymentId : Long? = null
-) : DTO<TransferUiModel,TransferDTO>{
+    val paymentId: Long? = null
+) : DTO<TransferUiModel, TransferDTO> {
 
-    override fun fromUiModel(model: TransferUiModel) : TransferDTO{
+    override fun fromUiModel(model: TransferUiModel): TransferDTO {
         return this.copy(
             id = model.id,
             name = model.name,
@@ -45,7 +45,8 @@ data class TransferDTO(
             paymentId = model.paymentId
         )
     }
-    override fun toUiModel() : TransferUiModel{
+
+    override fun toUiModel(): TransferUiModel {
         return TransferUiModel(
             id = this.id,
             name = this.name,

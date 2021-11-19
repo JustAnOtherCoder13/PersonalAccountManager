@@ -1,12 +1,15 @@
 package com.piconemarc.personalaccountmanager.ui.screen
 
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.piconemarc.model.PAMIconButtons
+import com.piconemarc.personalaccountmanager.NavDestinations
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.getBlackOrNegativeColor
 import com.piconemarc.personalaccountmanager.toStringWithTwoDec
@@ -14,10 +17,7 @@ import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MainS
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MainScreenFooter
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MainScreenHeader
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseScreen
-import com.piconemarc.personalaccountmanager.ui.component.popUp.AddAccountPopUp
-import com.piconemarc.personalaccountmanager.ui.component.popUp.AddOperationPopUp
-import com.piconemarc.personalaccountmanager.ui.component.popUp.DeleteAccountPopUp
-import com.piconemarc.personalaccountmanager.ui.component.popUp.DeleteOperationPopUp
+import com.piconemarc.personalaccountmanager.ui.popUp.*
 import com.piconemarc.viewmodel.viewModel.AppViewModel
 import com.piconemarc.viewmodel.viewModel.MyAccountDetailViewModel
 import com.piconemarc.viewmodel.viewModel.MyAccountViewModel
@@ -45,9 +45,13 @@ fun PAMMainScreen(
                         navController = navController,
                         startDestination = NavDestinations.Home.destination
                     ) {
-
                         composable(route = NavDestinations.Home.getRoute()) {
                             val myAccountVM = hiltViewModel<MyAccountViewModel>()
+
+                            LaunchedEffect(key1 = myAccountVM){
+                                myAccountVM.onStart()
+                            }
+
                             MyAccountBody(
                                 myAccountState = myAccountVM.myAccountState,
                                 navController = navController,
@@ -67,10 +71,14 @@ fun PAMMainScreen(
                             route = NavDestinations.myAccountDetail.getRoute(),
                         ) {
                             val myAccountDetailVM = hiltViewModel<MyAccountDetailViewModel>()
+
+                            LaunchedEffect(key1 = myAccountDetailVM){
+                                myAccountDetailVM.onStart(it.arguments?.getString(NavDestinations.myAccountDetail.key)?:"")
+                            }
+
                             MyAccountDetailBody(
                                 myAccountDetailState = myAccountDetailVM.myAccountDetailState,
                                 navController = navController,
-                                selectedAccountId = it.arguments?.getString(NavDestinations.myAccountDetail.key),
                                 onMyAccountDetailEvent = { myAccountDetailAction ->
                                     myAccountDetailVM.dispatchAction(
                                         myAccountDetailAction
@@ -89,7 +97,13 @@ fun PAMMainScreen(
                             )
                         }
                         composable(NavDestinations.myPayment.getRoute()) {
+                            //todo don't find why but when open add or delete popup on this screen only, it restart the composable lifecycle
                             val myPaymentVM = hiltViewModel<MyPaymentViewModel>()
+
+                            LaunchedEffect(key1 = myPaymentVM){
+                                myPaymentVM.onStart()
+                            }
+
                             MyPaymentScreen(
                                 paymentState = myPaymentVM.paymentState,
                                 onAddPaymentButtonClick = { initAddPaymentPopUp ->
@@ -101,8 +115,15 @@ fun PAMMainScreen(
                                     appViewModel.dispatchAction(
                                         initDeletePaymentPopUp
                                     )
+                                },
+                                onPaymentEvent = { paymentAction ->
+                                    myPaymentVM.dispatchAction(paymentAction)
                                 }
                             )
+                        }
+
+                        composable(NavDestinations.chart.getRoute()){
+                            Text(text = "on chart")
                         }
                     }
 
@@ -111,15 +132,17 @@ fun PAMMainScreen(
                             NavDestinations.myPayment.doNavigation(navController = navController)
                         }
                         is PAMIconButtons.Chart -> {
-
+                            NavDestinations.chart.doNavigation(navController = navController)
                         }
                         is PAMIconButtons.Home -> {
                             if (appUiState.interLayerTitle != (com.piconemarc.model.R.string.detail)
-                                && appUiState.interLayerTitle != (com.piconemarc.model.R.string.myAccountsInterLayerTitle)) {
+                                && appUiState.interLayerTitle != (com.piconemarc.model.R.string.myAccountsInterLayerTitle)
+                            ) {
                                 NavDestinations.Home.doNavigation(navController = navController)
                             }
                         }
-                        else -> {}
+                        else -> {
+                        }
                     }
                 },
                 selectedInterLayerButton = appUiState.selectedInterlayerButton,
@@ -127,6 +150,7 @@ fun PAMMainScreen(
             )
         },
         footer = {
+            //todo footer better only show rest, global balance is useless, instead pass rest/month, rest/week, rest/day
             MainScreenFooter(
                 footerAccountBalance = Pair(
                     appUiState.footerBalance.toStringWithTwoDec(),
@@ -169,6 +193,15 @@ fun PAMMainScreen(
         onAddAccountPopUpEvent = { addAccountPopUpAction ->
             appViewModel.dispatchAction(
                 addAccountPopUpAction
+            )
+        }
+    )
+
+    DeleteObsoletePaymentPopUp(
+        deleteObsoletePaymentPopUpState = appViewModel.deleteObsoletePaymentPopUpState,
+        onDeleteObsoletePaymentEvent = { deleteObsoletePaymentAction ->
+            appViewModel.dispatchAction(
+                deleteObsoletePaymentAction
             )
         }
     )

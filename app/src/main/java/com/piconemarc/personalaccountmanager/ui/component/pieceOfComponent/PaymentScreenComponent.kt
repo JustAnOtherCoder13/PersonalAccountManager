@@ -11,22 +11,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.AccountWithRelatedPaymentUiModel
 import com.piconemarc.model.entity.PaymentUiModel
 import com.piconemarc.personalaccountmanager.*
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseDeleteIconButton
+import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseIconButton
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.PostItTitle
-import com.piconemarc.personalaccountmanager.ui.theme.LittleMarge
-import com.piconemarc.personalaccountmanager.ui.theme.PastelYellowLight
-import com.piconemarc.personalaccountmanager.ui.theme.ThinBorder
+import com.piconemarc.personalaccountmanager.ui.theme.*
+import com.piconemarc.viewmodel.viewModel.utils.AppActions
+import java.util.*
 
 
 @Composable
 fun PaymentPostItBody(
     accountWithRelatedPayments: AccountWithRelatedPaymentUiModel,
-    onDeletePaymentButtonClick: (paymentTODelete: PaymentUiModel) -> Unit
+    onPassPaymentButtonClick: (AppActions.PaymentScreenAction) -> Unit,
+    onDeletePaymentButtonClick: (paymentTODelete: PaymentUiModel) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -39,6 +42,13 @@ fun PaymentPostItBody(
                 relatedPayment = relatedPayment,
                 onDeletePaymentButtonClick = { paymentToDelete ->
                     onDeletePaymentButtonClick(paymentToDelete)
+                },
+                onPassPaymentButtonClick = {
+                    onPassPaymentButtonClick(
+                        AppActions.PaymentScreenAction.PassSinglePayment(
+                            relatedPayment
+                        )
+                    )
                 }
             )
         }
@@ -58,13 +68,23 @@ fun PaymentPostItFooter(accountWithRelatedPayments: AccountWithRelatedPaymentUiM
         var totalAmount = 0.0
         accountWithRelatedPayments.relatedPayment.map { payment -> payment.amount }
             .forEach { paymentAmount -> totalAmount += paymentAmount }
-        Row(modifier = Modifier.padding(start = LittleMarge, top = LittleMarge,bottom = LittleMarge)) {
+        Row(
+            modifier = Modifier.padding(
+                start = LittleMarge,
+                top = LittleMarge,
+                bottom = LittleMarge
+            )
+        ) {
             Text(
                 text = stringResource(R.string.paymentPostItTotal),
                 style = MaterialTheme.typography.body1,
             )
             Text(
-                text = " ${totalAmount.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
+                text = " ${totalAmount.toStringWithTwoDec()} ${
+                    getCurrencySymbolForLocale(
+                        currentLocale
+                    )
+                }",
                 style = MaterialTheme.typography.body1,
                 color = getBlackOrNegativeColor(amount = totalAmount)
             )
@@ -77,27 +97,62 @@ fun PaymentPostItFooter(accountWithRelatedPayments: AccountWithRelatedPaymentUiM
 fun RelatedPaymentItem(
     index: Int,
     relatedPayment: PaymentUiModel,
-    onDeletePaymentButtonClick: (paymentTODelete: PaymentUiModel) -> Unit
+    onDeletePaymentButtonClick: (paymentTODelete: PaymentUiModel) -> Unit,
+    onPassPaymentButtonClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = LittleMarge)
-            .background(color = if (index % 2 == 0) PastelYellowLight else Color.Transparent),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(horizontal = ThinMarge)
+            .background(
+                color = when (relatedPayment.endDate) {
+                    null -> if (index % 2 == 0) PastelYellowLight else Color.Transparent
+                    else -> when (relatedPayment.endDate!!.month < Calendar.getInstance().time.month
+                            && relatedPayment.endDate!!.year <= Calendar.getInstance().time.year) {
+                        true -> Gray
+                        else -> if (index % 2 == 0) PastelYellowLight else Color.Transparent
+                    }
+                }
+            ),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
+
+        if (!relatedPayment.isPaymentPassForThisMonth
+            && relatedPayment.endDate == null
+            || (!relatedPayment.isPaymentPassForThisMonth
+                    && relatedPayment.endDate != null
+                    && relatedPayment.endDate!!.month >= Calendar.getInstance().time.month
+                    && relatedPayment.endDate!!.year >= Calendar.getInstance().time.year)
+        )
+            Box(modifier = Modifier.size(35.dp)) {
+                BaseIconButton(
+                    onIconButtonClicked = {
+                        onPassPaymentButtonClick()
+                    },
+                    iconButton = PAMIconButtons.UpdatePayment,
+                    iconColor = NegativeText,
+                    backgroundColor = Color.Transparent,
+                )
+            }
+
         Text(
             text = relatedPayment.name,
-            modifier = Modifier.weight(1.5f),
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = ThinMarge),
             style = MaterialTheme.typography.body1,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
         Text(
-            text =" ${relatedPayment.amount.toStringWithTwoDec()} ${getCurrencySymbolForLocale(currentLocale)}",
-            modifier = Modifier.weight(1f),
+            text = " ${relatedPayment.amount.toStringWithTwoDec()} ${
+                getCurrencySymbolForLocale(
+                    currentLocale
+                )
+            }",
+            modifier = Modifier.weight(0.9f),
             style = MaterialTheme.typography.body1,
-            color = getPositiveOrNegativeColor(relatedPayment.amount)
+            color = getPositiveOrNegativeColor(relatedPayment.amount),
         )
         BaseDeleteIconButton(
             onDeleteItemButtonCLick = { paymentToDelete ->
@@ -113,13 +168,23 @@ fun RelatedPaymentItem(
 @Composable
 fun PaymentPostItTitle(
     onAddPaymentButtonClick: () -> Unit,
-    accountName: String
+    accountWithRelatedPayments: AccountWithRelatedPaymentUiModel,
+    onPassAllPaymentButtonClick: (AppActions.PaymentScreenAction) -> Unit,
+    areAllPaymentForAccountPassedThisMonth: Boolean
 ) {
     Column {
         PostItTitle(
-            account = accountName,
+            accountName = accountWithRelatedPayments.account.name,
             onAccountButtonClicked = { onAddPaymentButtonClick() },
-            iconButton = PAMIconButtons.Add
+            iconButton = PAMIconButtons.Add,
+            onPassAllPaymentForAccountClick = {
+                onPassAllPaymentButtonClick(
+                    AppActions.PaymentScreenAction.PassAllPaymentsForAccount(
+                        accountWithRelatedPayments.relatedPayment
+                    )
+                )
+            },
+            areAllPaymentsForAccountPassedThisMonth = areAllPaymentForAccountPassedThisMonth
         )
     }
 }

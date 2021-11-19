@@ -9,12 +9,14 @@ import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteract
 import com.piconemarc.core.domain.interactor.payment.GetPaymentForIdInteractor
 import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
 import com.piconemarc.model.entity.PaymentUiModel
+import com.piconemarc.model.getCalendarDate
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import com.piconemarc.viewmodel.viewModel.reducer.myAccountDetailScreenVMState_
 import com.piconemarc.viewmodel.viewModel.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.ParseException
@@ -36,46 +38,45 @@ class MyAccountDetailViewModel @Inject constructor(
     myAccountDetailScreenVMState_
 ) {
     val myAccountDetailState by uiState
+
     init {
         //init state
         viewModelScope.launch(block = { state.collectLatest { uiState.value = it } })
+    }
+
+    fun onStart(selectedAccountId : String){
         //update interlayer title
         updateState(
             GlobalAction.UpdateBaseAppScreenVmState(
                 AppActions.BaseAppScreenAction.UpdateInterlayerTiTle(com.piconemarc.model.R.string.detail)
             )
         )
+        val id = try {
+           selectedAccountId.toLong()
+        } catch (e: ParseException) {
+            Log.e("TAG", "dispatchAction: ", e)
+            0
+        }
+        viewModelScope.launchOnIOCatchingError(
+            block = {
+                GetAccountAndRelatedOperationsForAccountIdInteractor.getAccountForIdWithRelatedOperationsAsFlow(id, this)
+                    .collect { accountWithRelatedOperations ->
+                        dispatchAction(
+                            AppActions.MyAccountDetailScreenAction.UpdateAccountAndMonthlyOperations(
+                                selectedAccount = accountWithRelatedOperations.account,
+                                relatedMonthlyOperations = accountWithRelatedOperations.relatedOperations.filter {
+                                    getCalendarDate(it.emitDate).get(Calendar.MONTH).compareTo(Calendar.getInstance().get(Calendar.MONTH)) == 0
+                                }
+                            )
+                        )
+                    }
+            }
+        )
     }
 
     override fun dispatchAction(action: AppActions.MyAccountDetailScreenAction) {
         updateState(GlobalAction.UpdateMyAccountDetailScreenState(action))
         when (action) {
-            is AppActions.MyAccountDetailScreenAction.InitScreen -> {
-                val id = try {
-                    action.selectedAccountId.toLong()
-                } catch (e: ParseException) {
-                    Log.e("TAG", "dispatchAction: ", e)
-                    0
-                }
-                viewModelScope.launchOnIOCatchingError(
-                    block = {
-                        GetAccountAndRelatedOperationsForAccountIdInteractor.getAccountForIdWithRelatedOperationsAsFlow(id, this)
-                            .collectLatest { accountWithRelatedOperations ->
-                                dispatchAction(
-                                    AppActions.MyAccountDetailScreenAction.UpdateAccountAndMonthlyOperations(
-                                        selectedAccount = accountWithRelatedOperations.account,
-                                        relatedMonthlyOperations = accountWithRelatedOperations.relatedOperations.filter {
-                                            it.emitDate.month.compareTo(
-                                                Calendar.getInstance().get(Calendar.MONTH)
-                                            ) == 0
-                                        }
-                                    )
-                                )
-                            }
-                    }
-                )
-            }
-
             is AppActions.MyAccountDetailScreenAction.GetSelectedOperation -> {
                 if (action.operation.paymentId != null) {
                     viewModelScope.launchOnIOCatchingError(

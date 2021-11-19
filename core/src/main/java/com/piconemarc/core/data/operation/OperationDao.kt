@@ -14,8 +14,6 @@ import java.util.*
 
 @Dao
 interface OperationDao {
-
-
     //todo when delete account don't delete transfer related operation,
     // change them to base operation
 
@@ -41,6 +39,12 @@ interface OperationDao {
             )
         )
         updateOperationPaymentId(paymentId, operationId)
+    }
+
+    @Transaction
+    suspend fun passPaymentForThisMonth(operation : OperationDTO, paymentId : Long){
+        val operationId = addOperation(operation)
+        updatePaymentOperationId(operationId, paymentId )
     }
 
     @Transaction
@@ -78,7 +82,7 @@ interface OperationDao {
     @Transaction
     suspend fun deletePaymentAndRelatedOperation(paymentDTO: PaymentDTO){
         val operation = getOperationForId(paymentDTO.operationId!!)
-        deleteOperation_(operation)
+        deleteOperation(operation)
         deletePayment(paymentDTO)
     }
 
@@ -145,4 +149,7 @@ interface OperationDao {
 
     @Query("UPDATE $OPERATION_TABLE SET transferId = :transferId WHERE id  = :operationId" )
     suspend fun updateOperationTransferId(transferId : Long, operationId : Long)
+
+    @Query("UPDATE $PAYMENT_TABLE SET operationId = :operationId WHERE $PAYMENT_TABLE.id = :paymentId")
+    suspend fun updatePaymentOperationId(operationId : Long, paymentId : Long)
 }

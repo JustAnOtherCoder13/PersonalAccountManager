@@ -9,9 +9,12 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.personalaccountmanager.ui.theme.*
 
@@ -71,9 +74,11 @@ fun BaseScreen(
 
 @Composable
 fun PostItTitle(
-    account: String,
+    accountName: String,
     onAccountButtonClicked: () -> Unit,
-    iconButton : PAMIconButtons
+    iconButton : PAMIconButtons,
+    onPassAllPaymentForAccountClick : ()-> Unit = {},
+    areAllPaymentsForAccountPassedThisMonth : Boolean = true
 ) {
     Row(
         modifier = Modifier
@@ -83,11 +88,27 @@ fun PostItTitle(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = account,
-            style = MaterialTheme.typography.h3
-        )
+            text = accountName,
+            style = MaterialTheme.typography.h3,
+            modifier = Modifier.weight(0.7f),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+            )
+        if (!areAllPaymentsForAccountPassedThisMonth)
+        Box(modifier = Modifier.height(35.dp).weight(0.15f), contentAlignment = Alignment.CenterEnd){
+            BaseIconButton(
+                onIconButtonClicked = {
+                    onPassAllPaymentForAccountClick()
+                },
+                iconButton = PAMIconButtons.UpdatePayment,
+                iconColor = NegativeText,
+                backgroundColor = Color.Transparent,
+            )
+        }
+
         IconButton(
             onClick = onAccountButtonClicked,
+            modifier = Modifier.weight(0.15f)
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(id = iconButton.vectorIcon),

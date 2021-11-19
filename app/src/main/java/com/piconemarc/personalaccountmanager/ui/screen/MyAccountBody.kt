@@ -1,5 +1,6 @@
 package com.piconemarc.personalaccountmanager.ui.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -8,7 +9,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
+import com.piconemarc.personalaccountmanager.NavDestinations
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MyAccountBodyRecyclerView
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MyAccountDetailSheet
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MyAccountDetailTitle
@@ -19,7 +22,6 @@ import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
 import com.piconemarc.personalaccountmanager.ui.theme.ThinBorder
 import com.piconemarc.viewmodel.viewModel.utils.AppActions
 import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
-
 
 @Composable
 fun MyAccountBody(
@@ -56,18 +58,11 @@ fun MyAccountBody(
 @Composable
 fun MyAccountDetailBody(
     navController: NavController,
-    selectedAccountId: String?,
     myAccountDetailState: ViewModelInnerStates.MyAccountDetailScreenVMState,
     onMyAccountDetailEvent: (AppActions.MyAccountDetailScreenAction) -> Unit,
     onAddOperationButtonClick: (AppActions.AddOperationPopupAction) -> Unit,
     onDeleteOperationButtonClick: (AppActions.DeleteOperationPopUpAction) -> Unit
 ) {
-
-    onMyAccountDetailEvent(
-        AppActions.MyAccountDetailScreenAction.InitScreen(
-            selectedAccountId ?: ""
-        )
-    )
     Column {
         VerticalDispositionSheet(
             header = {
@@ -91,7 +86,6 @@ fun MyAccountDetailBody(
                             AppActions.MyAccountDetailScreenAction.GetSelectedOperation(it)
                         )
                     },
-                    operationDetailMessage = myAccountDetailState.operationDetailMessage
                 )
             },
             footer = {
@@ -119,4 +113,6 @@ fun MyAccountDetailBody(
                 )
         )
     }
+    if (myAccountDetailState.operationDetailMessage.isNotEmpty())
+        Toast.makeText(LocalContext.current,myAccountDetailState.operationDetailMessage,Toast.LENGTH_SHORT).show()
 }

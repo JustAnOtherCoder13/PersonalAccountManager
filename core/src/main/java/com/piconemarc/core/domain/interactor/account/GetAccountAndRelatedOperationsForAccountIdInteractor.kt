@@ -10,13 +10,15 @@ import javax.inject.Inject
 
 class GetAccountAndRelatedOperationsForAccountIdInteractor @Inject constructor(private val accountRepository: AccountRepository) {
 
-    suspend fun getAccountForIdWithRelatedOperationsAsFlow(accountId: Long, scope: CoroutineScope): StateFlow<AccountWithRelatedOperationsUiModel> {
-        return accountRepository.getAccountForIdWithRelatedOperations(accountId).map {
+    suspend fun getAccountForIdWithRelatedOperationsAsFlow(
+        accountId: Long,
+        scope: CoroutineScope
+    ): StateFlow<AccountWithRelatedOperationsUiModel> {
+        return accountRepository.getAccountForIdWithRelatedOperationAsFlow(accountId).map {
             AccountWithRelatedOperationsUiModel(
                 account = it.accountDTO.toUiModel(),
-                relatedOperations = it.allOperationsForAccount.map {operationDto -> operationDto.toUiModel() }
+                relatedOperations = it.allOperationsForAccount.map { operationDto -> operationDto.toUiModel() }
             )
-        }
-            .stateIn(scope)
+        }.stateIn(scope)
     }
 }

@@ -1,4 +1,4 @@
-package com.piconemarc.personalaccountmanager.ui.component.popUp
+package com.piconemarc.personalaccountmanager.ui.popUp
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -32,7 +32,7 @@ fun DeleteAccountPopUp(
             )
             },
         onDismiss = { onDeleteAccountPopUpEvent(AppActions.DeleteAccountAction.ClosePopUp) },
-        isExpanded = deleteAccountPopUpState.isPopUpExpanded
+        isExpanded = deleteAccountPopUpState.isVisible
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

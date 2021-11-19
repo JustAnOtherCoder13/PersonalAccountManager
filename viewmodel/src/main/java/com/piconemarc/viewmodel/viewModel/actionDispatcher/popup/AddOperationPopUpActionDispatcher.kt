@@ -43,16 +43,13 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
         )
 
     override fun dispatchAction(action: UiAction, scope: CoroutineScope) {
-
         updateState(GlobalAction.UpdateAddOperationPopUpState(action))
         scope.launch { state.collectLatest { uiState.value = it } }
-
         when (action) {
             is AppActions.AddOperationPopupAction.InitPopUp -> {
                 scope.launchOnIOCatchingError(
                     block = {
-                        val selectedAccount =
-                            getAccountForIdInteractor.getAccountForId(action.selectedAccountId)
+                        val selectedAccount = getAccountForIdInteractor.getAccountForId(action.selectedAccountId)
                         val allAccounts = getAllAccountsInteractor.getAllAccounts()
 
                         getAllCategoriesInteractor.getAllCategoriesAsFlow(this)
@@ -152,14 +149,14 @@ class AddOperationPopUpActionDispatcher @Inject constructor(
                     )
                 }
             }
+            else -> updateState(GlobalAction.UpdateAddOperationPopUpState(action))
 
         }
     }
 
     private fun getFormattedEndDateOrNull(month: String, year: String) = try {
         SimpleDateFormat("MMMM/yyyy", Locale.FRANCE).parse(
-            month
-                    + "/" + year,
+            "$month/$year",
         )
     } catch (e: ParseException) {
         null

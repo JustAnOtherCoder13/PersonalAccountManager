@@ -11,7 +11,7 @@ data class AccountWithRelatedPayments(
         entityColumn = "accountId",
         entity = PaymentDTO::class
     )
-    val allPaymentsForAccount: List<PaymentDTO>
+    val allPaymentsForAccount: List<PaymentWithRelatedOperation>
 )
 
 

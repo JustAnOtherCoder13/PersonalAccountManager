@@ -1,9 +1,6 @@
 package com.piconemarc.viewmodel.viewModel.reducer
 
-import com.piconemarc.viewmodel.viewModel.reducer.popUp.addAccountPopUpReducer
-import com.piconemarc.viewmodel.viewModel.reducer.popUp.addOperationPopUpReducer
-import com.piconemarc.viewmodel.viewModel.reducer.popUp.deleteAccountPopUpReducer
-import com.piconemarc.viewmodel.viewModel.reducer.popUp.deleteOperationPopUpReducer
+import com.piconemarc.viewmodel.viewModel.reducer.popUp.*
 import com.piconemarc.viewmodel.viewModel.reducer.screen.appBaseScreenReducer
 import com.piconemarc.viewmodel.viewModel.reducer.screen.myAccountDetailScreenReducer
 import com.piconemarc.viewmodel.viewModel.reducer.screen.myAccountScreenReducer
@@ -55,18 +52,23 @@ internal val addAccountPoUpVmState_: MutableStateFlow<ViewModelInnerStates.AddAc
         ViewModelInnerStates.AddAccountPopUpVMState()
     )
 
+internal val deleteObsoletePaymentPopUpVMState_: MutableStateFlow<ViewModelInnerStates.DeleteObsoletePaymentPopUpVMState> =
+    MutableStateFlow(
+        ViewModelInnerStates.DeleteObsoletePaymentPopUpVMState()
+    )
+
 //Encapsulate each state in GlobalVMState to be modifiable in reducer--------------------------------------
 
 data class GlobalVmState(
-    // state as var to be re attribute in app reducer
-    var baseAppScreenVmState: ViewModelInnerStates.BaseAppScreenVmState,
+    val baseAppScreenVmState: ViewModelInnerStates.BaseAppScreenVmState,
     val addOperationPopUpVMState: ViewModelInnerStates.AddOperationPopUpVMState,
     val deleteAccountPopUpVMState: ViewModelInnerStates.DeleteAccountPopUpVMState,
     val addAccountPopUpVMState: ViewModelInnerStates.AddAccountPopUpVMState,
     val myAccountScreenVmState: ViewModelInnerStates.MyAccountScreenVMState,
     val myAccountDetailScreenVMState: ViewModelInnerStates.MyAccountDetailScreenVMState,
     val deleteOperationPopUpVmState: ViewModelInnerStates.DeleteOperationPopUpVMState,
-    val paymentScreenVmState: ViewModelInnerStates.PaymentScreenVmState
+    val paymentScreenVmState: ViewModelInnerStates.PaymentScreenVmState,
+    val deleteObsoletePaymentPopUpVMState: ViewModelInnerStates.DeleteObsoletePaymentPopUpVMState
 ) : VMState
 
 
@@ -81,6 +83,7 @@ sealed class GlobalAction : UiAction {
     data class UpdateMyAccountScreenState(val baseAction: UiAction) : GlobalAction()
     data class UpdateDeleteOperationPopUpState(val baseAction: UiAction) : GlobalAction()
     data class UpdatePaymentScreenState(val baseAction: UiAction) : GlobalAction()
+    data class UpdateDeleteObsoletePaymentPopUpState(val baseAction: UiAction) : GlobalAction()
 }
 
 //Declare app reducer, for each component, copy old state,
@@ -154,6 +157,14 @@ internal val appReducer: Reducer<GlobalVmState> = { old, action ->
                 )
             )
         }
+        is GlobalAction.UpdateDeleteObsoletePaymentPopUpState -> {
+            old.copy(
+                deleteObsoletePaymentPopUpVMState = deleteObsoletePaymentPopUpReducer(
+                    old.deleteObsoletePaymentPopUpVMState,
+                    action.baseAction
+                )
+            )
+        }
     }
 }
 
@@ -169,5 +180,5 @@ internal val appStoreSubscriber: StoreSubscriber<GlobalVmState> =
         myAccountScreenVMState_.value = globalVmState.myAccountScreenVmState
         deleteOperationPopUpVMState_.value = globalVmState.deleteOperationPopUpVmState
         paymentScreenVMState_.value = globalVmState.paymentScreenVmState
+        deleteObsoletePaymentPopUpVMState_.value = globalVmState.deleteObsoletePaymentPopUpVMState
     }
-

@@ -9,17 +9,11 @@ import com.piconemarc.core.domain.interactor.operation.AddNewOperationInteractor
 import com.piconemarc.core.domain.interactor.operation.DeleteOperationAndPaymentInteractor
 import com.piconemarc.core.domain.interactor.operation.DeleteOperationInteractor
 import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteractor
-import com.piconemarc.core.domain.interactor.payment.AddNewPaymentInteractor
-import com.piconemarc.core.domain.interactor.payment.AddPaymentAndOperationInteractor
-import com.piconemarc.core.domain.interactor.payment.DeletePaymentAndRelatedOperationInteractor
-import com.piconemarc.core.domain.interactor.payment.DeletePaymentInteractor
+import com.piconemarc.core.domain.interactor.payment.*
 import com.piconemarc.core.domain.interactor.transfer.AddNewTransferInteractor
 import com.piconemarc.core.domain.interactor.transfer.DeleteTransferInteractor
 import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
-import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddAccountPopUpActionDispatcher
-import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.AddOperationPopUpActionDispatcher
-import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.DeleteAccountPopUpActionDispatcher
-import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.DeleteOperationPopUpActionDispatcher
+import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.*
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import com.piconemarc.viewmodel.viewModel.utils.DefaultStore
 import dagger.Module
@@ -100,5 +94,19 @@ class ActionDispatcherModule {
             deleteOperationAndPaymentInteractor = deleteOperationAndPaymentInteractor,
             deletePaymentAndRelatedOperationInteractor = deletePaymentAndRelatedOperationInteractor
         )
+    }
+
+    @Provides
+    fun provideDeleteObsoletePaymentPopUpActionDispatcher (
+        globalStore: DefaultStore<GlobalVmState>,
+        deletePaymentInteractor: DeletePaymentInteractor,
+        deleteObsoletePaymentsInteractor: DeleteObsoletePaymentsInteractor
+        ): DeleteObsoletePaymentPopUpActionDispatcher{
+        return DeleteObsoletePaymentPopUpActionDispatcher(
+            store = globalStore,
+            deletePaymentInteractor = deletePaymentInteractor,
+            deleteObsoletePaymentsInteractor = deleteObsoletePaymentsInteractor
+        )
+
     }
 }

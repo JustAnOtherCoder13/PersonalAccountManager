@@ -25,23 +25,12 @@ object AppActions {
     }
 
     sealed class MyAccountScreenAction : UiAction {
-
-        object InitScreen : MyAccountScreenAction()
-
-        object CloseScreen : MyAccountScreenAction()
-
         data class UpdateAccountList(
             val accountList: List<AccountUiModel>
         ) : MyAccountScreenAction()
     }
 
     sealed class MyAccountDetailScreenAction : UiAction {
-
-        data class InitScreen(
-            val selectedAccountId: String
-        ) : MyAccountDetailScreenAction()
-
-        object CloseScreen : MyAccountDetailScreenAction()
 
         data class UpdateAccountAndMonthlyOperations(
             val selectedAccount : AccountUiModel ,
@@ -58,14 +47,13 @@ object AppActions {
     }
 
     sealed class PaymentScreenAction : UiAction {
-
-        object InitScreen : PaymentScreenAction()
-
-        object CloseScreen : PaymentScreenAction()
-
         data class UpdateAllAccounts(
             val allAccounts: List<AccountWithRelatedPaymentUiModel>
         ) : PaymentScreenAction()
+
+        data class PassSinglePayment(val payment : PaymentUiModel) : PaymentScreenAction()
+
+        data class PassAllPaymentsForAccount(val allPaymentsForAccount : List<PaymentUiModel>) : PaymentScreenAction()
     }
 
 
@@ -232,5 +220,18 @@ object AppActions {
         data class FillAccountOverdraft(
             val accountOverdraft: String
         ) : AddAccountPopUpAction()
+    }
+
+    sealed class DeleteObsoletePaymentPopUpAction : UiAction{
+
+        object InitPopUp : DeleteObsoletePaymentPopUpAction()
+        object ClosePopUp : DeleteObsoletePaymentPopUpAction()
+
+        data class UpdateObsoletePaymentList(
+            val obsoletePaymentList : List<PaymentUiModel>
+        ) : DeleteObsoletePaymentPopUpAction()
+
+        data class DeleteObsoletePayment(val obsoletePayments : List<PaymentUiModel>) : DeleteObsoletePaymentPopUpAction()
+
     }
 }

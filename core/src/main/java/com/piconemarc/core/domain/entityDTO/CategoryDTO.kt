@@ -7,12 +7,12 @@ import com.piconemarc.core.domain.utils.Constants.CATEGORY_TABLE
 import com.piconemarc.model.entity.CategoryUiModel
 
 @Entity(tableName = CATEGORY_TABLE)
-data class CategoryDTO (
+data class CategoryDTO(
     @PrimaryKey(autoGenerate = true)
-    override var id : Long = 0,
-    override val name : String = "",
-    val color : Int = Color.TRANSPARENT
-) : DTO<CategoryUiModel,CategoryDTO> {
+    override var id: Long = 0,
+    override val name: String = "",
+    val color: Int = Color.TRANSPARENT
+) : DTO<CategoryUiModel, CategoryDTO> {
 
     override fun fromUiModel(model: CategoryUiModel): CategoryDTO {
         return this.copy(

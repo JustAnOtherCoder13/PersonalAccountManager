@@ -9,7 +9,6 @@ data class OperationUiModel(
     override val amount: Double = 0.0,
     val categoryId: Long = 1,
     val emitDate: Date = Calendar.getInstance().time,
-    var isAddOperation: Boolean = true,
     val paymentId: Long? = null,
     val transferId: Long? = null
 ) : BaseOperation() {
@@ -21,7 +20,6 @@ data class OperationUiModel(
             name = this.name,
             categoryId = this.categoryId,
             emitDate = this.emitDate,
-            isAddOperation = this.isAddOperation,
             amount = this.amount * -1
         )
     }

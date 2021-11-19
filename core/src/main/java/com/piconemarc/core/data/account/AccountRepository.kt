@@ -16,7 +16,11 @@ class AccountRepository @Inject constructor(private val accountDaoImpl: AccountD
         return accountDaoImpl.getAllAccountsWithRelatedPaymentAsFlow()
     }
 
-    fun getAccountForIdWithRelatedOperations(accountId: Long): Flow<AccountWithRelatedOperations> {
+    fun getAccountForIdWithRelatedOperationAsFlow(accountId: Long): Flow<AccountWithRelatedOperations> {
+        return accountDaoImpl.getAccountForIdWithRelatedOperationsAsFlow(accountId)
+    }
+
+    suspend fun getAccountForIdWithRelatedOperations(accountId: Long): AccountWithRelatedOperations {
         return accountDaoImpl.getAccountForIdWithRelatedOperations(accountId)
     }
 
@@ -26,10 +30,6 @@ class AccountRepository @Inject constructor(private val accountDaoImpl: AccountD
 
      suspend fun getAccountForId(id:Long):AccountDTO{
         return accountDaoImpl.getAccountForId(id)
-    }
-
-     fun getAccountForIdFlow(id: Long): Flow<AccountDTO> {
-        return accountDaoImpl.getAccountForIdFlow(id)
     }
 
     suspend fun addNewAccount(accountDTO: AccountDTO){

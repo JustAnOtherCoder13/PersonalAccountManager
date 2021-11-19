@@ -53,4 +53,8 @@ sealed class PAMIconButtons {
         override val iconContentDescription: Int = R.string.backIconButtonContentDescription
         override val vectorIcon: Int = R.drawable.ic_outline_arrow_back_24
     }
+    object UpdatePayment : PAMIconButtons(){
+        override val iconContentDescription: Int = R.string.updatePaymentContentDescription
+        override val vectorIcon: Int = R.drawable.ic_payment_sync_24
+    }
 }

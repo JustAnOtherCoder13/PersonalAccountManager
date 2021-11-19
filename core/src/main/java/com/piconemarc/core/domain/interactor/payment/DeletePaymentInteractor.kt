@@ -10,4 +10,5 @@ class DeletePaymentInteractor @Inject constructor(private val paymentRepository:
     suspend fun deletePayment(payment: PaymentUiModel){
         paymentRepository.deletePayment(PaymentDTO().fromUiModel(payment))
     }
+
 }

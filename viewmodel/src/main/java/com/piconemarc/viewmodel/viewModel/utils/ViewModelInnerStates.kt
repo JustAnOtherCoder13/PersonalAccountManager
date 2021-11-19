@@ -22,29 +22,29 @@ object ViewModelInnerStates {
         val selectedAccount: AccountUiModel = AccountUiModel(),
         val accountMonthlyOperations: List<OperationUiModel> = listOf(),
         val isVisible: Boolean = false,
-        val operationDetailMessage : String = ""
+        val operationDetailMessage: String = ""
     ) : VMState
 
     data class PaymentScreenVmState(
         val allAccounts: List<AccountWithRelatedPaymentUiModel> = listOf(),
-        val isVisible: Boolean = false
-    ): VMState
+        val areAllPaymentForAccountPassedForThisMonth: Boolean = true
+    ) : VMState
 
     data class AddOperationPopUpVMState(
         val addPopUpTitle: String = Constants.OPERATION,
         val addPopUpOptionSelectedIcon: PAMIconButtons = PAMIconButtons.Operation,
 
-        val isPopUpExpanded: Boolean = false,
+        override val isVisible: Boolean = false,
         val isPaymentExpanded: Boolean = false,
         val isTransferExpanded: Boolean = false,
         val isRecurrentOptionExpanded: Boolean = false,
-        val isOnPaymentScreen : Boolean = false,
+        val isOnPaymentScreen: Boolean = false,
 
         val isAddOperation: Boolean = true,
         val isAddOrMinusEnable: Boolean = true,
-        val isPaymentStartThisMonth : Boolean = false,
+        val isPaymentStartThisMonth: Boolean = false,
 
-        val selectedAccountId : Long = 0,
+        val selectedAccountId: Long = 0,
         val allCategories: List<CategoryUiModel> = listOf(),
         val allAccounts: List<AccountUiModel> = listOf(),
         val selectableEndDateYears: List<String> = listOf(),
@@ -62,28 +62,32 @@ object ViewModelInnerStates {
         val isOperationAmountError: Boolean = false,
         val isRecurrentEndDateError: Boolean = true,
         val isBeneficiaryAccountError: Boolean = false,
-
-    ) : VMState
+    ) : PopUpVmState
 
     data class DeleteOperationPopUpVMState(
-        val isPopUpExpanded: Boolean = false,
+        override val isVisible: Boolean = false,
         val operationToDelete: BaseOperation = BaseOperation(),
         val isRelatedOperationDeleted: Boolean = true,
         val transferRelatedAccount: AccountUiModel = AccountUiModel(),
-    ) : VMState
+    ) : PopUpVmState
 
     data class DeleteAccountPopUpVMState(
-        val isPopUpExpanded: Boolean = false,
+        override val isVisible: Boolean = false,
         val accountToDelete: AccountUiModel = AccountUiModel()
-    ) : VMState
+    ) : PopUpVmState
 
     data class AddAccountPopUpVMState(
-        val isPopUpExpanded: Boolean = false,
+        override val isVisible: Boolean = false,
         val accountName: String = "",
         val accountBalance: String = "",
         val accountOverdraft: String = "",
         val isNameError: Boolean = false,
         val isBalanceError: Boolean = true,
         val isOverdraftError: Boolean = true
-    ) : VMState
+    ) : PopUpVmState
+
+    data class DeleteObsoletePaymentPopUpVMState(
+        override val isVisible: Boolean = false,
+        val obsoletePaymentToDelete : List<PaymentUiModel> = listOf(),
+        ) : PopUpVmState
 }
