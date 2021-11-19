@@ -4,6 +4,7 @@ import com.piconemarc.core.data.PAMDatabase
 import com.piconemarc.core.domain.entityDTO.AccountDTO
 import com.piconemarc.core.domain.entityDTO.AccountWithRelatedOperations
 import com.piconemarc.core.domain.entityDTO.AccountWithRelatedPayments
+import com.piconemarc.core.domain.entityDTO.PaymentWithRelatedOperation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import javax.inject.Inject
@@ -20,8 +21,8 @@ class AccountDaoImpl @Inject constructor(pamDatabase: PAMDatabase) :AccountDao {
         return accountDao.getAllAccountsWithRelatedPaymentAsFlow()
     }
 
-    override suspend fun getAllAccountsWithRelatedPayment(): List<AccountWithRelatedPayments> {
-        return accountDao.getAllAccountsWithRelatedPayment()
+    override suspend fun getAllPaymentWithRelatedOperation(): List<PaymentWithRelatedOperation> {
+        return accountDao.getAllPaymentWithRelatedOperation()
     }
 
     override fun getAccountForIdWithRelatedOperationsAsFlow(accountId: Long): Flow<AccountWithRelatedOperations> {
@@ -47,9 +48,4 @@ class AccountDaoImpl @Inject constructor(pamDatabase: PAMDatabase) :AccountDao {
     override suspend fun getAccountForId(id:Long) : AccountDTO{
         return accountDao.getAccountForId(id)
     }
-
-    override  fun getAccountForIdFlow(id: Long): Flow<AccountDTO> {
-        return accountDao.getAccountForIdFlow(id)
-    }
-
 }

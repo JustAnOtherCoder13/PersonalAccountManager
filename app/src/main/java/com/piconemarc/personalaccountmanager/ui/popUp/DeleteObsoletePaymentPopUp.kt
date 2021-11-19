@@ -9,7 +9,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseDeletePopUp
 import com.piconemarc.personalaccountmanager.ui.theme.NegativeText
 import com.piconemarc.personalaccountmanager.ui.theme.RegularMarge
@@ -23,7 +25,7 @@ fun DeleteObsoletePaymentPopUp(
     onDeleteObsoletePaymentEvent: (AppActions.DeleteObsoletePaymentPopUpAction) -> Unit
 ) {
     BaseDeletePopUp(
-        deletePopUpTitle = "Delete obsolete payments",
+        deletePopUpTitle = stringResource(R.string.deleteObsoletePaymentPopUpTitle),
         onAcceptButtonClicked = {
             onDeleteObsoletePaymentEvent(
                 AppActions.DeleteObsoletePaymentPopUpAction.DeleteObsoletePayment(
@@ -38,7 +40,7 @@ fun DeleteObsoletePaymentPopUp(
 
         Column(modifier = Modifier.padding(vertical = RegularMarge)) {
             Text(
-                text = "You have finished to pay this :",
+                text = stringResource(R.string.deleteObsoletePaymentFinishMessage),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(RegularMarge),
@@ -71,8 +73,8 @@ fun DeleteObsoletePaymentPopUp(
             Column(modifier = Modifier.padding(vertical = RegularMarge)) {
                 Text(
                     text = if (deleteObsoletePaymentPopUpState.obsoletePaymentToDelete.size == 1)
-                        "this payment is now deleted "
-                    else "those payments are now deleted",
+                        stringResource(R.string.deleteObsoletePaymentSinglePaymentDeletedMessage)
+                    else stringResource(R.string.deleteObsoletePaymentMultiplePaymentDeletedMessage),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(RegularMarge),

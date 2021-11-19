@@ -2,6 +2,7 @@ package com.piconemarc.viewmodel.viewModel.actionDispatcher.popup
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import com.piconemarc.core.domain.interactor.payment.DeleteObsoletePaymentsInteractor
 import com.piconemarc.core.domain.interactor.payment.DeletePaymentInteractor
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 class DeleteObsoletePaymentPopUpActionDispatcher @Inject constructor(
     override val store: DefaultStore<GlobalVmState>,
-    private val deletePaymentInteractor: DeletePaymentInteractor
+    private val deletePaymentInteractor: DeletePaymentInteractor,
+    private val deleteObsoletePaymentsInteractor: DeleteObsoletePaymentsInteractor
 ) : ActionDispatcher<ViewModelInnerStates.DeleteObsoletePaymentPopUpVMState> {
 
     override val state: MutableStateFlow<ViewModelInnerStates.DeleteObsoletePaymentPopUpVMState>
@@ -31,7 +33,7 @@ class DeleteObsoletePaymentPopUpActionDispatcher @Inject constructor(
             is AppActions.DeleteObsoletePaymentPopUpAction.DeleteObsoletePayment -> {
                 scope.launchOnIOCatchingError(
                     block = {
-                        deletePaymentInteractor.deleteObsoletePayments(action.obsoletePayments)
+                        deleteObsoletePaymentsInteractor.deleteObsoletePayments(action.obsoletePayments)
                     },
                     doOnSuccess = {
                         dispatchAction(AppActions.DeleteObsoletePaymentPopUpAction.ClosePopUp,scope)

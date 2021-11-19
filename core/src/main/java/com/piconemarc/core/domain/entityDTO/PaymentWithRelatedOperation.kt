@@ -3,13 +3,14 @@ package com.piconemarc.core.domain.entityDTO
 import androidx.room.Embedded
 import androidx.room.Relation
 
-data class AccountWithRelatedOperations(
+data class PaymentWithRelatedOperation(
     @Embedded
-    val accountDTO: AccountDTO,
+    val paymentDTO: PaymentDTO,
+
     @Relation(
         parentColumn = "id",
-        entityColumn = "accountId",
+        entityColumn = "paymentId",
         entity = OperationDTO::class
     )
-    val allOperationsForAccount: List<OperationDTO>
+    val relatedOperation: OperationDTO?
 )

@@ -1,7 +1,6 @@
 package com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -19,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.AccountUiModel
@@ -61,7 +58,6 @@ fun MyAccountDetailSheet(
     accountRest: Double,
     accountBalance: Double,
     onOperationNameClick: (operation: OperationUiModel) -> Unit,
-    operationDetailMessage: String
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
 
@@ -83,7 +79,6 @@ fun MyAccountDetailSheet(
                     accountMonthlyOperations = allOperations,
                     onDeleteItemButtonCLick = onDeleteItemButtonCLick,
                     onOperationNameClick = onOperationNameClick,
-                    operationDetailMessage = operationDetailMessage
                 )
             }
         }
@@ -152,8 +147,7 @@ private fun MyAccountDetailFooter(
 private fun MyAccountDetailOperationRecyclerView(
     accountMonthlyOperations: List<OperationUiModel>,
     onDeleteItemButtonCLick: (operation: OperationUiModel) -> Unit,
-    onOperationNameClick: (operation: OperationUiModel) -> Unit,
-    operationDetailMessage: String,
+    onOperationNameClick: (operation: OperationUiModel) -> Unit
 ) {
     Box {
         LazyColumn(
@@ -168,29 +162,6 @@ private fun MyAccountDetailOperationRecyclerView(
                     onOperationNameClick = onOperationNameClick
                 )
             }
-        }
-        Card(
-            modifier = Modifier
-                .wrapContentHeight()
-                .width(
-                    if (operationDetailMessage
-                            .trim()
-                            .isEmpty()
-                    ) 0.dp else 200.dp
-                )
-                .align(Alignment.Center),
-            elevation = RegularMarge,
-            backgroundColor = White,
-            contentColor = Black,
-            shape = RoundedCornerShape(RegularMarge),
-            border = BorderStroke(width = ThinBorder, color = Black)
-        ) {
-            Text(
-                text = operationDetailMessage,
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.body1,
-                modifier = Modifier.padding(RegularMarge)
-            )
         }
     }
 }
@@ -299,7 +270,7 @@ fun MyAccountDetailTitle(
                     style = MaterialTheme.typography.h2
                 )
                 Text(
-                    text = DateFormatSymbols(Locale.FRENCH).months[Calendar.getInstance().time.month],
+                    text = DateFormatSymbols(Locale.FRENCH).months[Calendar.getInstance().get(Calendar.MONTH)],
                     style = MaterialTheme.typography.body1
                 )
             }

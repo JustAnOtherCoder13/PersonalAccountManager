@@ -6,6 +6,7 @@ import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
 import com.piconemarc.core.domain.interactor.payment.GetAllPaymentForAccountIdInteractor
 import com.piconemarc.core.domain.utils.Constants.TODAY
 import com.piconemarc.model.entity.PaymentUiModel
+import com.piconemarc.model.getCalendarDate
 import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.*
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
@@ -15,6 +16,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -47,6 +49,7 @@ class AppViewModel @Inject constructor(
 
     val appUiState by uiState
 
+    //List pop up to close them on back press if opened
     val popUpStates = listOf(
         Pair(
             addAccountPopUpActionDispatcher.uiState,
@@ -66,10 +69,13 @@ class AppViewModel @Inject constructor(
         )
     )
 
+
+
     init {
         //init state
         viewModelScope.launch(block = { state.collectLatest { uiState.value = it } })
         dispatchAction(AppActions.BaseAppScreenAction.InitScreen)
+
     }
 
     override fun dispatchAction(action: UiAction) {
@@ -89,16 +95,15 @@ class AppViewModel @Inject constructor(
                                     }
                             }
                         )
+
                         viewModelScope.launchOnIOCatchingError(
                             block = {
-                                val obsoletePaymentToDeleteList: MutableList<PaymentUiModel> =
-                                    mutableListOf()
-                                getAllPaymentForAccountIdInteractor.getAllPayments().forEach {
-                                    if (it.endDate != null
-                                        && it.endDate!!.month < TODAY.month
-                                        && it.endDate!!.year <= TODAY.year
-                                    ) obsoletePaymentToDeleteList.add(it)
-                                }
+                                val obsoletePaymentToDeleteList: List<PaymentUiModel> =
+                                    getAllPaymentForAccountIdInteractor.getAllPayments().filter {
+                                        it.endDate != null
+                                                && getCalendarDate(it.endDate).get(Calendar.MONTH) < getCalendarDate(TODAY).get(Calendar.MONTH)
+                                                && getCalendarDate(it.endDate).get(Calendar.YEAR) <= getCalendarDate(TODAY).get(Calendar.YEAR)
+                                    }
                                 dispatchAction(
                                     AppActions.DeleteObsoletePaymentPopUpAction.UpdateObsoletePaymentList(
                                         obsoletePaymentToDeleteList
@@ -149,11 +154,10 @@ class AppViewModel @Inject constructor(
                 if (action is AppActions.AddAccountPopUpAction.ClosePopUp)
                     addAccountPopUpJob?.cancel()
             }
+
             is AppActions.DeleteObsoletePaymentPopUpAction -> {
                 deleteObsoletePaymentPopUpJob = viewModelScope.launch {
-                    deleteObsoletePaymentPopUpActionDispatcher.dispatchAction(
-                        action, this
-                    )
+                    deleteObsoletePaymentPopUpActionDispatcher.dispatchAction(action, this)
                 }
                 if (action is AppActions.DeleteObsoletePaymentPopUpAction.ClosePopUp)
                     deleteObsoletePaymentPopUpJob?.cancel()

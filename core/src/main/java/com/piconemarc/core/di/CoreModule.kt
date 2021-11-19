@@ -109,6 +109,11 @@ class CoreModule {
     }
 
     @Provides
+    fun provideGetAllAccountsWithRelatedPayments(accountRepository: AccountRepository) : GetAllAccountsWithRelatedPaymentsInteractor{
+        return GetAllAccountsWithRelatedPaymentsInteractor(accountRepository)
+    }
+
+    @Provides
     fun provideGetAccountForId(accountRepository: AccountRepository) :GetAccountForIdInteractor{
         return GetAccountForIdInteractor(accountRepository)
     }
@@ -191,6 +196,21 @@ class CoreModule {
         return DeletePaymentAndRelatedOperationInteractor(operationRepository)
     }
 
+    @Provides
+    fun providePassSinglePaymentForThisMonth(operationRepository: OperationRepository): PassSinglePaymentForThisMonthInteractor{
+        return PassSinglePaymentForThisMonthInteractor(operationRepository)
+    }
+
+    @Provides
+    fun providePassAllPaymentsForThisMonth(operationRepository: OperationRepository): PassAllPaymentsForThisMonthInteractor{
+        return PassAllPaymentsForThisMonthInteractor(operationRepository)
+    }
+
+    @Provides
+    fun provideDeleteObsoletePayments(paymentRepository: PaymentRepository) : DeleteObsoletePaymentsInteractor{
+        return DeleteObsoletePaymentsInteractor(paymentRepository)
+    }
+
 
     //TRANSFER
     @Provides
@@ -207,5 +227,4 @@ class CoreModule {
     fun provideDeleteTransfer(operationRepository: OperationRepository) : DeleteTransferInteractor{
         return DeleteTransferInteractor(operationRepository)
     }
-
 }

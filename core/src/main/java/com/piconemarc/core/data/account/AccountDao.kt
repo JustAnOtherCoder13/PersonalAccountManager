@@ -4,6 +4,8 @@ import androidx.room.*
 import com.piconemarc.core.domain.entityDTO.AccountDTO
 import com.piconemarc.core.domain.entityDTO.AccountWithRelatedOperations
 import com.piconemarc.core.domain.entityDTO.AccountWithRelatedPayments
+import com.piconemarc.core.domain.entityDTO.PaymentWithRelatedOperation
+import com.piconemarc.core.domain.utils.Constants
 import com.piconemarc.core.domain.utils.Constants.ACCOUNT_TABLE
 import kotlinx.coroutines.flow.Flow
 
@@ -18,9 +20,8 @@ interface AccountDao {
     fun getAllAccountsWithRelatedPaymentAsFlow(): Flow<List<AccountWithRelatedPayments>>
 
     @Transaction
-    @Query("SELECT*FROM $ACCOUNT_TABLE")
-    suspend fun getAllAccountsWithRelatedPayment(): List<AccountWithRelatedPayments>
-
+    @Query("SELECT*FROM ${Constants.PAYMENT_TABLE}")
+    suspend fun getAllPaymentWithRelatedOperation(): List<PaymentWithRelatedOperation>
 
     @Transaction
     @Query("SELECT*FROM $ACCOUNT_TABLE WHERE $ACCOUNT_TABLE.id = :accountId")
@@ -36,9 +37,6 @@ interface AccountDao {
 
     @Query("SELECT*FROM $ACCOUNT_TABLE WHERE $ACCOUNT_TABLE.id = :id")
     suspend fun getAccountForId(id: Long): AccountDTO
-
-    @Query("SELECT*FROM $ACCOUNT_TABLE WHERE $ACCOUNT_TABLE.id = :id")
-    fun getAccountForIdFlow(id: Long): Flow<AccountDTO>
 
     @Insert
     suspend fun addNewAccount(accountDTO: AccountDTO)

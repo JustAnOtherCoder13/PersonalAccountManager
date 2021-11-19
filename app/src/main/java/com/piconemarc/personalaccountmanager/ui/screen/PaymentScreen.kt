@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.piconemarc.model.getCalendarDate
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PaymentPostItBody
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PaymentPostItFooter
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PaymentPostItTitle
@@ -62,10 +63,9 @@ fun MyPaymentScreen(
                                     accountWithRelatedPayments = accountWithRelatedPayments,
                                     areAllPaymentForAccountPassedThisMonth = arePaymentPassedThisMonth(
                                         accountWithRelatedPayments.relatedPayment.map {
-                                            it.isPaymentPassForThisMonth && it.endDate == null
-                                                    || (it.endDate != null
-                                                    && it.endDate!!.month < Calendar.getInstance().time.month
-                                                    && it.endDate!!.year <= Calendar.getInstance().time.year)
+                                            it.isPaymentPassForThisMonth && it.endDate == null ||
+                                                    ( getCalendarDate(it.endDate).get(Calendar.MONTH) < Calendar.getInstance().get(Calendar.MONTH)
+                                                    && getCalendarDate(it.endDate).get(Calendar.YEAR) <= Calendar.getInstance().get(Calendar.YEAR))
                                         }),
                                     onPassAllPaymentButtonClick = onPaymentEvent
                                 )

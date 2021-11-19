@@ -14,8 +14,6 @@ import java.util.*
 
 @Dao
 interface OperationDao {
-
-
     //todo when delete account don't delete transfer related operation,
     // change them to base operation
 

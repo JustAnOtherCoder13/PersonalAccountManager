@@ -9,12 +9,14 @@ import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteract
 import com.piconemarc.core.domain.interactor.payment.GetPaymentForIdInteractor
 import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
 import com.piconemarc.model.entity.PaymentUiModel
+import com.piconemarc.model.getCalendarDate
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import com.piconemarc.viewmodel.viewModel.reducer.myAccountDetailScreenVMState_
 import com.piconemarc.viewmodel.viewModel.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.ParseException
@@ -58,14 +60,12 @@ class MyAccountDetailViewModel @Inject constructor(
         viewModelScope.launchOnIOCatchingError(
             block = {
                 GetAccountAndRelatedOperationsForAccountIdInteractor.getAccountForIdWithRelatedOperationsAsFlow(id, this)
-                    .collectLatest { accountWithRelatedOperations ->
+                    .collect { accountWithRelatedOperations ->
                         dispatchAction(
                             AppActions.MyAccountDetailScreenAction.UpdateAccountAndMonthlyOperations(
                                 selectedAccount = accountWithRelatedOperations.account,
                                 relatedMonthlyOperations = accountWithRelatedOperations.relatedOperations.filter {
-                                    it.emitDate.month.compareTo(
-                                        Calendar.getInstance().get(Calendar.MONTH)
-                                    ) == 0
+                                    getCalendarDate(it.emitDate).get(Calendar.MONTH).compareTo(Calendar.getInstance().get(Calendar.MONTH)) == 0
                                 }
                             )
                         )

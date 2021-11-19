@@ -89,7 +89,7 @@ fun AcceptOrDismissButtons(
     ) {
         BaseButton(text = stringResource(R.string.ok)) { onAcceptButtonClicked() }
         if (isDismissButtonVisible)
-        BaseButton(text = stringResource(R.string.cancel)) { onDismissButtonClicked() }
+        BaseButton(text = stringResource(R.string.cancel).uppercase()) { onDismissButtonClicked() }
     }
 }
 

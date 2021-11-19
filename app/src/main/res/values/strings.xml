@@ -13,7 +13,7 @@
     <string name="endDate">End Date</string>
     <string name="senderAccount">Sender account</string>
     <string name="beneficiaryAccount">Beneficiary account</string>
-    <string name="cancel">CANCEL</string>
+    <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
     <string name="myPaymentInterlayerTitle">My Payment</string>
     <string name="chartInterlayerTitle">Chart</string>
@@ -44,4 +44,8 @@
     <string name="deleteOperationPopUpDeleteOperationRelatedPaymentMessage">Delete permanently?</string>
     <string name="deleteOperationPopUpDeletePaymentRelatedOperationMessage">Delete associated Operation?</string>
     <string name="deletePaymentOperationTitle">DeletePayment</string>
+    <string name="deleteObsoletePaymentPopUpTitle">Delete obsolete payments</string>
+    <string name="deleteObsoletePaymentFinishMessage">You have finished to pay :</string>
+    <string name="deleteObsoletePaymentSinglePaymentDeletedMessage">this payment is now deleted</string>
+    <string name="deleteObsoletePaymentMultiplePaymentDeletedMessage">those payments are now deleted</string>
 </resources>

@@ -9,5 +9,5 @@ data class PaymentUiModel(
     override val amount : Double = 0.0,
     val accountId: Long = 0,
     val endDate: Date? = null,
-    var isPaymentPassForThisMonth : Boolean = true
+    val isPaymentPassForThisMonth : Boolean = true
 ):BaseOperation()

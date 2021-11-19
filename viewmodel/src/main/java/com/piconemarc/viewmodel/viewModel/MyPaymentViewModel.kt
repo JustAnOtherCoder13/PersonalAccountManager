@@ -3,9 +3,10 @@ package com.piconemarc.viewmodel.viewModel
 
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewModelScope
-import com.piconemarc.core.domain.interactor.account.GetAllAccountsInteractor
-import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteractor
+import com.piconemarc.core.domain.interactor.account.GetAllAccountsWithRelatedPaymentsInteractor
 import com.piconemarc.core.domain.interactor.payment.AddPaymentAndOperationInteractor
+import com.piconemarc.core.domain.interactor.payment.PassAllPaymentsForThisMonthInteractor
+import com.piconemarc.core.domain.interactor.payment.PassSinglePaymentForThisMonthInteractor
 import com.piconemarc.model.entity.CategoryUiModel
 import com.piconemarc.model.entity.OperationUiModel
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
@@ -22,9 +23,10 @@ import javax.inject.Inject
 @HiltViewModel
 class MyPaymentViewModel @Inject constructor(
     store: DefaultStore<GlobalVmState>,
-    private val getAllAccountsInteractor: GetAllAccountsInteractor,
-    private val getOperationForIdInteractor: GetOperationForIdInteractor,
     private val addPaymentAndOperationInteractor: AddPaymentAndOperationInteractor,
+    private val getAllAccountsWithRelatedPaymentsInteractor: GetAllAccountsWithRelatedPaymentsInteractor,
+    private val passSinglePaymentForThisMonthInteractor: PassSinglePaymentForThisMonthInteractor,
+    private val passAllPaymentsForThisMonthInteractor: PassAllPaymentsForThisMonthInteractor
 ) : BaseViewModel<AppActions.PaymentScreenAction, ViewModelInnerStates.PaymentScreenVmState>(
     store,
     paymentScreenVMState_
@@ -38,18 +40,7 @@ class MyPaymentViewModel @Inject constructor(
     fun onStart (){
         viewModelScope.launchOnIOCatchingError(
             block = {
-                //todo have to pass cleaner way
-                getAllAccountsInteractor.getAllAccountsWithRelatedPaymentAsFlow(this).collect {accountsWithPaymentList ->
-                    accountsWithPaymentList.forEach {accountWithPayment ->
-                        accountWithPayment.relatedPayment.forEach {payment ->
-                            var relatedOperation  = OperationUiModel()
-                            if (payment.operationId != null) {
-                                relatedOperation =
-                                    getOperationForIdInteractor.getOperationForId(payment.operationId!!)
-                            }
-                            payment.isPaymentPassForThisMonth = relatedOperation.paymentId != null && relatedOperation.emitDate.month.compareTo(Calendar.getInstance().time.month) == 0
-                        }
-                    }
+                getAllAccountsWithRelatedPaymentsInteractor.getAllAccountsWithRelatedPaymentAsFlow(this).collect {accountsWithPaymentList ->
                     dispatchAction(
                         AppActions.PaymentScreenAction.UpdateAllAccounts(accountsWithPaymentList)
                     )
@@ -59,13 +50,12 @@ class MyPaymentViewModel @Inject constructor(
     }
 
 
-
     override fun dispatchAction(action: AppActions.PaymentScreenAction) {
         when(action){
             is AppActions.PaymentScreenAction.PassSinglePayment -> {
                 viewModelScope.launchOnIOCatchingError(
                     block = {
-                        addPaymentAndOperationInteractor.passPaymentForThisMonth(
+                        passSinglePaymentForThisMonthInteractor.passPaymentForThisMonth(
                             OperationUiModel(
                                 accountId = action.payment.accountId,
                                 name = action.payment.name,
@@ -82,12 +72,11 @@ class MyPaymentViewModel @Inject constructor(
             is AppActions.PaymentScreenAction.PassAllPaymentsForAccount -> {
                 viewModelScope.launchOnIOCatchingError(
                     block = {
-                        addPaymentAndOperationInteractor.passAllPaymentForAccountOnThisMonth(allPaymentToPass = action.allPaymentsForAccount)
+                        passAllPaymentsForThisMonthInteractor.passAllPaymentForAccountOnThisMonth(allPaymentToPass = action.allPaymentsForAccount)
                     }
                 )
             }
             else ->updateState(GlobalAction.UpdatePaymentScreenState(action))
         }
-
     }
 }

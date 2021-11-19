@@ -9,10 +9,7 @@ import com.piconemarc.core.domain.interactor.operation.AddNewOperationInteractor
 import com.piconemarc.core.domain.interactor.operation.DeleteOperationAndPaymentInteractor
 import com.piconemarc.core.domain.interactor.operation.DeleteOperationInteractor
 import com.piconemarc.core.domain.interactor.operation.GetOperationForIdInteractor
-import com.piconemarc.core.domain.interactor.payment.AddNewPaymentInteractor
-import com.piconemarc.core.domain.interactor.payment.AddPaymentAndOperationInteractor
-import com.piconemarc.core.domain.interactor.payment.DeletePaymentAndRelatedOperationInteractor
-import com.piconemarc.core.domain.interactor.payment.DeletePaymentInteractor
+import com.piconemarc.core.domain.interactor.payment.*
 import com.piconemarc.core.domain.interactor.transfer.AddNewTransferInteractor
 import com.piconemarc.core.domain.interactor.transfer.DeleteTransferInteractor
 import com.piconemarc.core.domain.interactor.transfer.GetTransferForIdInteractor
@@ -102,11 +99,13 @@ class ActionDispatcherModule {
     @Provides
     fun provideDeleteObsoletePaymentPopUpActionDispatcher (
         globalStore: DefaultStore<GlobalVmState>,
-        deletePaymentInteractor: DeletePaymentInteractor
+        deletePaymentInteractor: DeletePaymentInteractor,
+        deleteObsoletePaymentsInteractor: DeleteObsoletePaymentsInteractor
         ): DeleteObsoletePaymentPopUpActionDispatcher{
         return DeleteObsoletePaymentPopUpActionDispatcher(
             store = globalStore,
-            deletePaymentInteractor = deletePaymentInteractor
+            deletePaymentInteractor = deletePaymentInteractor,
+            deleteObsoletePaymentsInteractor = deleteObsoletePaymentsInteractor
         )
 
     }

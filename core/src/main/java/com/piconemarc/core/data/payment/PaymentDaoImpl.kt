@@ -16,10 +16,6 @@ class PaymentDaoImpl@Inject constructor(pamDatabase: PAMDatabase) : PaymentDao {
         paymentDao.deleteObsoletePayments(obsoletePayments)
     }
 
-    override suspend fun getAllPaymentForAccountId(accountId: Long): List<PaymentDTO> {
-        return paymentDao.getAllPaymentForAccountId(accountId)
-    }
-
     override suspend fun getPaymentForId(id: Long): PaymentDTO {
         return paymentDao.getPaymentForId(id)
     }

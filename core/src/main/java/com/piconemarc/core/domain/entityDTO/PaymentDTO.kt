@@ -11,34 +11,34 @@ import com.piconemarc.model.entity.PaymentUiModel
 import java.util.*
 
 
-@Entity(foreignKeys = [
-    ForeignKey(
-        entity = OperationDTO::class,
-        parentColumns = arrayOf("id"),
-        childColumns = arrayOf("operationId"),
-        onDelete = SET_NULL
-    ),
-    ForeignKey(
-        entity = AccountDTO::class,
-        parentColumns = arrayOf("id"),
-        childColumns = arrayOf("accountId"),
-        onDelete = CASCADE
-    )
-]
-, tableName = PAYMENT_TABLE
+@Entity(
+    foreignKeys = [
+        ForeignKey(
+            entity = OperationDTO::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("operationId"),
+            onDelete = SET_NULL
+        ),
+        ForeignKey(
+            entity = AccountDTO::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("accountId"),
+            onDelete = CASCADE
+        )
+    ], tableName = PAYMENT_TABLE
 )
 data class PaymentDTO(
     @PrimaryKey(autoGenerate = true)
-    override val id : Long = 0,
-    override val name : String = "",
+    override val id: Long = 0,
+    override val name: String = "",
     @ColumnInfo(index = true)
-    var operationId : Long? = null,
-    val operationAmount : Double = 0.0,
+    var operationId: Long? = null,
+    val operationAmount: Double = 0.0,
     @ColumnInfo(index = true)
-    val accountId : Long = 0,
+    val accountId: Long = 0,
     val endDate: Date? = null
-) : DTO<PaymentUiModel,PaymentDTO>{
-    override fun fromUiModel(model: PaymentUiModel): PaymentDTO{
+) : DTO<PaymentUiModel, PaymentDTO> {
+    override fun fromUiModel(model: PaymentUiModel): PaymentDTO {
         return this.copy(
             id = model.id,
             name = model.name,
@@ -48,7 +48,8 @@ data class PaymentDTO(
             operationAmount = model.amount
         )
     }
-    override fun toUiModel() : PaymentUiModel{
+
+    override fun toUiModel(): PaymentUiModel {
         return PaymentUiModel(
             id = this.id,
             name = this.name,
