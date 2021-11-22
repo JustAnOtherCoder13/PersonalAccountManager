@@ -5,9 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.personalaccountmanager.NavDestinations
 import com.piconemarc.personalaccountmanager.R
@@ -26,9 +26,9 @@ import com.piconemarc.viewmodel.viewModel.utils.ViewModelInnerStates
 @Composable
 fun PAMMainScreen(
     appViewModel: AppViewModel,
-    appUiState: ViewModelInnerStates.BaseAppScreenVmState
+    appUiState: ViewModelInnerStates.BaseAppScreenVmState,
+    navController: NavHostController
 ) {
-    val navController = rememberNavController()
     BaseScreen(
         header = { MainScreenHeader() },
         body = {

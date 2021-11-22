@@ -16,6 +16,8 @@ import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.AccountWithRelatedPaymentUiModel
 import com.piconemarc.model.entity.PaymentUiModel
 import com.piconemarc.model.getCalendarDate
+import com.piconemarc.model.getDateMonth
+import com.piconemarc.model.getDateYear
 import com.piconemarc.personalaccountmanager.*
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseDeleteIconButton
@@ -116,7 +118,7 @@ fun RelatedPaymentItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (isPaymentNotPassedThisMonthAndEndDateIsNull(relatedPayment)
-            || isPaymentNotPassedThisMonthAndEndDateisNotPast(relatedPayment)
+            || isPaymentNotPassedThisMonthAndEndDateIsNotPast(relatedPayment)
         )
             Box(modifier = Modifier.size(35.dp)) {
                 BaseIconButton(
@@ -192,12 +194,14 @@ private fun isPaymentEndDatePast(relatedPayment: PaymentUiModel) =
         .get(Calendar.YEAR))
 
 @Composable
-private fun isPaymentNotPassedThisMonthAndEndDateisNotPast(relatedPayment: PaymentUiModel) =
-    (!relatedPayment.isPaymentPassForThisMonth && relatedPayment.endDate != null
-            && (getCalendarDate(relatedPayment.endDate).get(Calendar.MONTH) >= Calendar.getInstance()
-        .get(Calendar.MONTH)
-            || getCalendarDate(relatedPayment.endDate).get(Calendar.YEAR) >= Calendar.getInstance()
-        .get(Calendar.YEAR)))
+private fun isPaymentNotPassedThisMonthAndEndDateIsNotPast(relatedPayment: PaymentUiModel) =
+
+    (!relatedPayment.isPaymentPassForThisMonth  && relatedPayment.endDate != null
+            && relatedPayment.endDate!!.getDateYear() > Calendar.getInstance().get(Calendar.YEAR))
+
+            || (relatedPayment.endDate != null
+            && relatedPayment.endDate!!.getDateYear() == Calendar.getInstance().time.getDateYear()
+            && relatedPayment.endDate!!.getDateMonth() >= Calendar.getInstance().get(Calendar.MONTH))
 
 @Composable
 private fun isPaymentNotPassedThisMonthAndEndDateIsNull(relatedPayment: PaymentUiModel) =

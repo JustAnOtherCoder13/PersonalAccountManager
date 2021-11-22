@@ -142,10 +142,10 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
 
                     old.copy(
                         endDateSelectedYear = action.selectedMonthOrYear,
+                        // if year is already selected drop month to prevent past date selection
                         selectableEndDateMonths = if (action.selectedMonthOrYear.toInt()
                                 .compareTo(Calendar.getInstance().get(Calendar.YEAR)) == 0
-                        )
-                            SELECTABLE_MONTHS_LIST.toMutableList()
+                        ) SELECTABLE_MONTHS_LIST.toMutableList()
                                 .drop(Calendar.getInstance().get(Calendar.MONTH) + 1)
                         else SELECTABLE_MONTHS_LIST
                     )
@@ -155,6 +155,7 @@ internal val addOperationPopUpReducer: Reducer<ViewModelInnerStates.AddOperation
                         SimpleDateFormat("MMMM", Locale.FRANCE).parse(action.selectedMonthOrYear)
                     old.copy(
                         enDateSelectedMonth = action.selectedMonthOrYear,
+                        // if month is already selected drop year to prevent past date selection
                         selectableEndDateYears = if (getCalendarDate(month).get(Calendar.MONTH) <= (Calendar.getInstance()
                                 .get(Calendar.MONTH))
                         )
