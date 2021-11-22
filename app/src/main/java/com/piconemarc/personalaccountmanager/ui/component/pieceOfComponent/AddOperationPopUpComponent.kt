@@ -33,7 +33,7 @@ fun AddOperationPopUpLeftSideMenuIconPanel(
     onIconButtonClicked : (iconButton : PAMIconButtons)-> Unit,
     selectedIcon : PAMIconButtons
 ) {
-    Box() {
+    Box {
         Box(
             modifier = Modifier
                 .offset(

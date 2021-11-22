@@ -54,6 +54,8 @@ object AppActions {
         data class PassSinglePayment(val payment : PaymentUiModel) : PaymentScreenAction()
 
         data class PassAllPaymentsForAccount(val allPaymentsForAccount : List<PaymentUiModel>) : PaymentScreenAction()
+
+        data class UpdatePassPaymentToastMessage(val toastMessage : String) : PaymentScreenAction()
     }
 
 

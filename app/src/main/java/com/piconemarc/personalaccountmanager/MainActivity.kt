@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.rememberNavController
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.personalaccountmanager.ui.screen.PAMMainScreen
 import com.piconemarc.personalaccountmanager.ui.theme.PersonalAccountManagerTheme
@@ -29,6 +30,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
 
+            val navController = rememberNavController()
+
             PersonalAccountManagerTheme {
                 Surface(
                     color = MaterialTheme.colors.secondaryVariant,
@@ -36,7 +39,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     BackHandler(true) {
                         when (appViewModel.popUpStates.filter { it.first.value.isVisible }.size) {
-                            //if there is no popUp visible select appropriate interlayer or finish
+                            //if there is no popUp visible select appropriate interlayer and nav to screen or finish
                             0 -> {
                                 when (appViewModel.appUiState.selectedInterlayerButton) {
                                     is PAMIconButtons.Home ->
@@ -47,16 +50,20 @@ class MainActivity : ComponentActivity() {
                                                         PAMIconButtons.Home
                                                     )
                                                 )
+                                                NavDestinations.Home.doNavigation(navController)
                                             }
                                             com.piconemarc.model.R.string.myAccountsInterLayerTitle -> {
                                                 this.finish()
                                             }
                                         }
-                                    else -> appViewModel.dispatchAction(
-                                        AppActions.BaseAppScreenAction.SelectInterlayer(
-                                            PAMIconButtons.Home
+                                    else -> {
+                                        appViewModel.dispatchAction(
+                                            AppActions.BaseAppScreenAction.SelectInterlayer(
+                                                PAMIconButtons.Home
+                                            )
                                         )
-                                    )
+                                        NavDestinations.Home.doNavigation(navController)
+                                    }
                                 }
                             }
                             else -> {
@@ -70,7 +77,8 @@ class MainActivity : ComponentActivity() {
                 }
                 PAMMainScreen(
                     appViewModel = appViewModel,
-                    appUiState = appViewModel.appUiState
+                    appUiState = appViewModel.appUiState,
+                    navController = navController
                 )
             }
         }

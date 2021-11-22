@@ -18,12 +18,14 @@ import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.currentLocale
 import com.piconemarc.personalaccountmanager.getCurrencySymbolForLocale
+import com.piconemarc.personalaccountmanager.toStringWithTwoDec
 import com.piconemarc.personalaccountmanager.ui.animation.PAMUiDataAnimations
 import com.piconemarc.personalaccountmanager.ui.animation.pAMInterlayerAnimation
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.ChartButton
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.HomeButton
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.PaymentButton
 import com.piconemarc.personalaccountmanager.ui.theme.*
+import java.util.*
 
 @Composable
 fun MainScreenHeader() {
@@ -63,9 +65,9 @@ fun MainScreenHeader() {
 
 @Composable
 fun MainScreenBody(
-    onInterLayerButtonClick : (pamIconButton : PAMIconButtons)-> Unit,
-    selectedInterLayerButton : PAMIconButtons,
-    interlayerTitle : Int,
+    onInterLayerButtonClick: (pamIconButton: PAMIconButtons) -> Unit,
+    selectedInterLayerButton: PAMIconButtons,
+    interlayerTitle: Int,
     body: @Composable () -> Unit
 ) {
     val transition: PAMUiDataAnimations.InterlayerAnimationData = pAMInterlayerAnimation(
@@ -77,14 +79,14 @@ fun MainScreenBody(
             interlayers = {
                 MainScreenSheet(
                     interlayerBackgroundColor = transition.interlayerColor,
-                    header = { MainScreenInterLayerTitle(title = stringResource(id =interlayerTitle)) },
+                    header = { MainScreenInterLayerTitle(title = stringResource(id = interlayerTitle)) },
                     body = { body() }
                 )
             },
             interLayerIconPanel = {
                 MainScreenInterlayerIconPanel(
                     transition = transition,
-                    onInterlayerIconClicked =  onInterLayerButtonClick,
+                    onInterlayerIconClicked = onInterLayerButtonClick,
                     selectedInterlayerIconButton = selectedInterLayerButton
                 )
             },
@@ -95,8 +97,7 @@ fun MainScreenBody(
 @Composable
 fun MainScreenFooter(
     mainScreenFooterTitle: String,
-    footerAccountBalance: Pair<String,Color>,
-    footerAccountRest: Pair<String,Color>
+    footerAccountRest: Double
 ) {
     Column(
         modifier = Modifier
@@ -125,7 +126,7 @@ fun MainScreenFooter(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         MainScreenFooterTitle(mainScreenFooterTitle)
-        MainScreenFooterInformation(footerAccountRest, footerAccountBalance)
+        MainScreenFooterInformation(footerAccountRest)
     }
 }
 
@@ -142,8 +143,7 @@ private fun MainScreenFooterTitle(mainScreenFooterTitle: String) {
 
 @Composable
 private fun MainScreenFooterInformation(
-    footerAccountRest: Pair<String,Color>,
-    footerAccountBalance: Pair<String,Color>
+    footerAccountRest: Double,
 ) {
     Row(
         modifier = Modifier
@@ -158,29 +158,47 @@ private fun MainScreenFooterInformation(
             )
             .padding(horizontal = RegularMarge, vertical = LittleMarge)
             .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
         Row {
             Text(
-                text = stringResource(R.string.restTitle),
-                style = MaterialTheme.typography.body1,
+                text = footerAccountRest.toStringWithTwoDec() + getCurrencySymbolForLocale(
+                    currentLocale
+                ),
+                style = MaterialTheme.typography.body2,
             )
             Text(
-                text = " ${footerAccountRest.first} ${getCurrencySymbolForLocale(currentLocale)}",
-                style = MaterialTheme.typography.body1,
-                color = footerAccountRest.second
+                text = "/Month",
+                style = MaterialTheme.typography.body2,
+            )
+        }
+        Row {
+            Text(
+                text = (footerAccountRest / (Calendar.getInstance()
+                    .get(Calendar.WEEK_OF_MONTH) - Calendar.getInstance()
+                    .getActualMaximum(Calendar.WEEK_OF_MONTH)) * -1).toStringWithTwoDec() + getCurrencySymbolForLocale(
+                    currentLocale
+                ),
+                style = MaterialTheme.typography.body2,
+            )
+            Text(
+                text = "/Week",
+                style = MaterialTheme.typography.body2,
             )
         }
 
         Row {
             Text(
-                text = stringResource(R.string.balanceTitle),
-                style = MaterialTheme.typography.body1,
+                text = (footerAccountRest / (Calendar.getInstance()
+                    .get(Calendar.DAY_OF_MONTH) - Calendar.getInstance()
+                    .getActualMaximum(Calendar.DAY_OF_MONTH)) * -1).toStringWithTwoDec() + getCurrencySymbolForLocale(
+                    currentLocale
+                ),
+                style = MaterialTheme.typography.body2,
             )
             Text(
-                text = " ${footerAccountBalance.first} ${getCurrencySymbolForLocale(currentLocale)}",
-                style = MaterialTheme.typography.body1,
-                color = footerAccountBalance.second
+                text = "/Day",
+                style = MaterialTheme.typography.body2,
             )
         }
     }
@@ -215,6 +233,7 @@ private fun MainScreenInterlayerIconPanel(
         }
     }
 }
+
 @Composable
 private fun MainScreenInterLayerTitle(title: String) {
     Text(
@@ -277,7 +296,7 @@ private fun MainScreenFolder(
             .padding(LittleMarge)
 
     ) {
-        Column() {
+        Column {
             sheetHole()
         }
         Column(
@@ -286,7 +305,7 @@ private fun MainScreenFolder(
         ) {
             interlayers()
         }
-        Column() {
+        Column {
             interLayerIconPanel()
         }
 

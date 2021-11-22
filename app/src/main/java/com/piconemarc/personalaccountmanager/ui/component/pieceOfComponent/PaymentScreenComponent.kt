@@ -15,6 +15,9 @@ import androidx.compose.ui.unit.dp
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.AccountWithRelatedPaymentUiModel
 import com.piconemarc.model.entity.PaymentUiModel
+import com.piconemarc.model.getCalendarDate
+import com.piconemarc.model.getDateMonth
+import com.piconemarc.model.getDateYear
 import com.piconemarc.personalaccountmanager.*
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseDeleteIconButton
@@ -23,7 +26,6 @@ import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.
 import com.piconemarc.personalaccountmanager.ui.theme.*
 import com.piconemarc.viewmodel.viewModel.utils.AppActions
 import java.util.*
-
 
 @Composable
 fun PaymentPostItBody(
@@ -107,8 +109,7 @@ fun RelatedPaymentItem(
             .background(
                 color = when (relatedPayment.endDate) {
                     null -> if (index % 2 == 0) PastelYellowLight else Color.Transparent
-                    else -> when (relatedPayment.endDate!!.month < Calendar.getInstance().time.month
-                            && relatedPayment.endDate!!.year <= Calendar.getInstance().time.year) {
+                    else -> when (isPaymentEndDatePast(relatedPayment)) {
                         true -> Gray
                         else -> if (index % 2 == 0) PastelYellowLight else Color.Transparent
                     }
@@ -116,13 +117,8 @@ fun RelatedPaymentItem(
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-
-        if (!relatedPayment.isPaymentPassForThisMonth
-            && relatedPayment.endDate == null
-            || (!relatedPayment.isPaymentPassForThisMonth
-                    && relatedPayment.endDate != null
-                    && relatedPayment.endDate!!.month >= Calendar.getInstance().time.month
-                    && relatedPayment.endDate!!.year >= Calendar.getInstance().time.year)
+        if (isPaymentNotPassedThisMonthAndEndDateIsNull(relatedPayment)
+            || isPaymentNotPassedThisMonthAndEndDateIsNotPast(relatedPayment)
         )
             Box(modifier = Modifier.size(35.dp)) {
                 BaseIconButton(
@@ -188,3 +184,26 @@ fun PaymentPostItTitle(
         )
     }
 }
+
+@Composable
+private fun isPaymentEndDatePast(relatedPayment: PaymentUiModel) =
+    (getCalendarDate(relatedPayment.endDate).get(Calendar.MONTH) < Calendar
+        .getInstance().get(Calendar.MONTH)
+            && getCalendarDate(relatedPayment.endDate).get(Calendar.YEAR) <= Calendar
+        .getInstance()
+        .get(Calendar.YEAR))
+
+@Composable
+private fun isPaymentNotPassedThisMonthAndEndDateIsNotPast(relatedPayment: PaymentUiModel) =
+
+    (!relatedPayment.isPaymentPassForThisMonth  && relatedPayment.endDate != null
+            && relatedPayment.endDate!!.getDateYear() > Calendar.getInstance().get(Calendar.YEAR))
+
+            || (relatedPayment.endDate != null
+            && relatedPayment.endDate!!.getDateYear() == Calendar.getInstance().time.getDateYear()
+            && relatedPayment.endDate!!.getDateMonth() >= Calendar.getInstance().get(Calendar.MONTH))
+
+@Composable
+private fun isPaymentNotPassedThisMonthAndEndDateIsNull(relatedPayment: PaymentUiModel) =
+    (!relatedPayment.isPaymentPassForThisMonth
+            && relatedPayment.endDate == null)

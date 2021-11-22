@@ -7,7 +7,7 @@ import com.piconemarc.core.domain.interactor.payment.GetAllPaymentForAccountIdIn
 import com.piconemarc.core.domain.utils.Constants.TODAY
 import com.piconemarc.model.entity.PaymentUiModel
 import com.piconemarc.model.getCalendarDate
-import com.piconemarc.viewmodel.viewModel.actionDispatcher.popup.*
+import com.piconemarc.viewmodel.viewModel.popup.*
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalAction
 import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import com.piconemarc.viewmodel.viewModel.reducer.baseAppScreenVmState_
