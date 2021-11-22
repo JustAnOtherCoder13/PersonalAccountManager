@@ -8,3 +8,10 @@ fun getCalendarDate(date : Date?) : Calendar {
         calendar.time = date
     return calendar
 }
+fun Date.getDateMonth(): Int {
+    return getCalendarDate(this).get(Calendar.MONTH)
+}
+
+fun Date.getDateYear(): Int {
+    return getCalendarDate(this).get(Calendar.YEAR)
+}

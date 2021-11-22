@@ -141,14 +141,16 @@ fun PAMMainScreen(
             )
         }
     )
+
     AddOperationPopUp(
+        addOperationPopUpState = appViewModel.addOperationPopUpState,
         onAddOperationPopUpEvent = { addOperationPopUpAction ->
             appViewModel.dispatchAction(
                 addOperationPopUpAction
             )
-        },
-        addOperationPopUpState = appViewModel.addOperationPopUpState
+        }
     )
+
     DeleteOperationPopUp(
         deleteOperationPopUpState = appViewModel.deleteOperationPopUpState,
         onDeleteOperationPopUpEvent = { deleteOperationPoUpAction ->
@@ -157,14 +159,16 @@ fun PAMMainScreen(
             )
         }
     )
+
     DeleteAccountPopUp(
+        deleteAccountPopUpState = appViewModel.deleteAccountPopUpState,
         onDeleteAccountPopUpEvent = { deleteAccountPopUpAction ->
             appViewModel.dispatchAction(
                 deleteAccountPopUpAction
             )
-        },
-        deleteAccountPopUpState = appViewModel.deleteAccountPopUpState
+        }
     )
+
     AddAccountPopUp(
         addAccountPopUpState = appViewModel.addAccountPopUpState,
         onAddAccountPopUpEvent = { addAccountPopUpAction ->

@@ -107,12 +107,7 @@ fun RelatedPaymentItem(
             .background(
                 color = when (relatedPayment.endDate) {
                     null -> if (index % 2 == 0) PastelYellowLight else Color.Transparent
-                    else -> when (getCalendarDate(relatedPayment.endDate).get(Calendar.MONTH) < Calendar
-                        .getInstance()
-                        .get(Calendar.MONTH)
-                            && getCalendarDate(relatedPayment.endDate).get(Calendar.YEAR) <= Calendar
-                        .getInstance()
-                        .get(Calendar.YEAR)) {
+                    else -> when (isPaymentEndDatePast(relatedPayment)) {
                         true -> Gray
                         else -> if (index % 2 == 0) PastelYellowLight else Color.Transparent
                     }
@@ -120,14 +115,8 @@ fun RelatedPaymentItem(
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (!relatedPayment.isPaymentPassForThisMonth
-            && relatedPayment.endDate == null
-            || (!relatedPayment.isPaymentPassForThisMonth
-                    && relatedPayment.endDate != null
-                    && (getCalendarDate(relatedPayment.endDate).get(Calendar.MONTH) >= Calendar.getInstance()
-                .get(Calendar.MONTH)
-                    || getCalendarDate(relatedPayment.endDate).get(Calendar.YEAR) >= Calendar.getInstance()
-                .get(Calendar.YEAR)))
+        if (isPaymentNotPassedThisMonthAndEndDateIsNull(relatedPayment)
+            || isPaymentNotPassedThisMonthAndEndDateisNotPast(relatedPayment)
         )
             Box(modifier = Modifier.size(35.dp)) {
                 BaseIconButton(
@@ -193,3 +182,24 @@ fun PaymentPostItTitle(
         )
     }
 }
+
+@Composable
+private fun isPaymentEndDatePast(relatedPayment: PaymentUiModel) =
+    (getCalendarDate(relatedPayment.endDate).get(Calendar.MONTH) < Calendar
+        .getInstance().get(Calendar.MONTH)
+            && getCalendarDate(relatedPayment.endDate).get(Calendar.YEAR) <= Calendar
+        .getInstance()
+        .get(Calendar.YEAR))
+
+@Composable
+private fun isPaymentNotPassedThisMonthAndEndDateisNotPast(relatedPayment: PaymentUiModel) =
+    (!relatedPayment.isPaymentPassForThisMonth && relatedPayment.endDate != null
+            && (getCalendarDate(relatedPayment.endDate).get(Calendar.MONTH) >= Calendar.getInstance()
+        .get(Calendar.MONTH)
+            || getCalendarDate(relatedPayment.endDate).get(Calendar.YEAR) >= Calendar.getInstance()
+        .get(Calendar.YEAR)))
+
+@Composable
+private fun isPaymentNotPassedThisMonthAndEndDateIsNull(relatedPayment: PaymentUiModel) =
+    (!relatedPayment.isPaymentPassForThisMonth
+            && relatedPayment.endDate == null)

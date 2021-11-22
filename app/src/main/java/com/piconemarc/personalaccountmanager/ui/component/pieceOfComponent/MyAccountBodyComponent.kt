@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.model.entity.AccountUiModel
 import com.piconemarc.model.entity.OperationUiModel
+import com.piconemarc.model.getDateMonth
 import com.piconemarc.personalaccountmanager.*
 import com.piconemarc.personalaccountmanager.R
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.base.BaseDeleteIconButton
@@ -281,8 +282,7 @@ fun MyAccountDetailTitle(
                     style = MaterialTheme.typography.h2
                 )
                 Text(
-                    text = DateFormatSymbols(Locale.FRENCH).months[Calendar.getInstance()
-                        .get(Calendar.MONTH)],
+                    text = DateFormatSymbols(Locale.FRENCH).months[Calendar.getInstance().time.getDateMonth()],
                     style = MaterialTheme.typography.body1
                 )
             }

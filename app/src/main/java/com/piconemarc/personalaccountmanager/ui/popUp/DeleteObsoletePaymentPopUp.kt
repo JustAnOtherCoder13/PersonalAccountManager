@@ -33,7 +33,9 @@ fun DeleteObsoletePaymentPopUp(
                 )
             )
         },
-        onDismiss = { },
+        onDismiss = {
+                    //don't dismiss to force deletion of obsolete payment
+        },
         isExpanded = deleteObsoletePaymentPopUpState.isVisible,
         isDismissButtonVisible = false
     ) {

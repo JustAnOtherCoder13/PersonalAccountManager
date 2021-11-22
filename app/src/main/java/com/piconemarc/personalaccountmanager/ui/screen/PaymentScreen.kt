@@ -12,7 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.piconemarc.model.getCalendarDate
+import com.piconemarc.model.entity.PaymentUiModel
+import com.piconemarc.model.getDateMonth
+import com.piconemarc.model.getDateYear
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PaymentPostItBody
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PaymentPostItFooter
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.PaymentPostItTitle
@@ -74,13 +76,7 @@ fun MyPaymentScreen(
                                     accountWithRelatedPayments = accountWithRelatedPayments,
                                     areAllPaymentForAccountPassedThisMonth = arePaymentPassedThisMonth(
                                         accountWithRelatedPayments.relatedPayment.map {
-                                            it.isPaymentPassForThisMonth && it.endDate == null ||
-                                                    it.isPaymentPassForThisMonth &&
-                                                    (getCalendarDate(it.endDate).get(Calendar.MONTH) < Calendar.getInstance()
-                                                        .get(Calendar.MONTH)
-                                                            || getCalendarDate(it.endDate).get(
-                                                        Calendar.YEAR
-                                                    ) <= Calendar.getInstance().get(Calendar.YEAR))
+                                            paymentIsPassedAndHaveNoEndDate(it) || paymentIsPassedAndEndDateIsNotPast(it)
                                         }),
                                     onPassAllPaymentButtonClick = onPaymentEvent
                                 )
@@ -107,6 +103,17 @@ fun MyPaymentScreen(
     )
 }
 
+@Composable
+private fun paymentIsPassedAndEndDateIsNotPast(it: PaymentUiModel) =
+    it.isPaymentPassForThisMonth &&
+            (it.endDate?.getDateMonth()!! < Calendar.getInstance().time.getDateMonth()
+                    || it.endDate?.getDateYear()!! <= Calendar.getInstance().time.getDateYear())
+
+@Composable
+private fun paymentIsPassedAndHaveNoEndDate(it: PaymentUiModel) =
+    it.isPaymentPassForThisMonth && it.endDate == null
+
 fun arePaymentPassedThisMonth(arePaymentPassed: List<Boolean>): Boolean =
     if (arePaymentPassed.isEmpty()) true
     else arePaymentPassed.contains(true)
+
