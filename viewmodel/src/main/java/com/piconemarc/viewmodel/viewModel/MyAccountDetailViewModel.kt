@@ -98,7 +98,7 @@ class MyAccountDetailViewModel @Inject constructor(
                                 getOperationForIdInteractor.getOperationForId(relatedOperationId)
                             val relatedAccountName =
                                 getAccountForIdInteractor.getAccountForId(relatedOperation.accountId).name
-                            popUpTransferMessage(relatedAccountName)
+                            popUpTransferMessage(relatedAccountName, action.operation.amount)
                         }
                     )
                 }
@@ -107,15 +107,17 @@ class MyAccountDetailViewModel @Inject constructor(
         }
     }
 
-    private suspend fun popUpTransferMessage(relatedAccountName: String) {
+    private suspend fun popUpTransferMessage(relatedAccountName: String, operationValue : Double) {
         updateState(
             GlobalAction.UpdateMyAccountDetailScreenState(
                 AppActions.MyAccountDetailScreenAction.UpdateOperationMessage(
-                    "This operation is a transfer from : $relatedAccountName"
+                    "This operation is a transfer ${
+                        if (operationValue > 0 ) "from" else "to"
+                    } : $relatedAccountName"
                 )
             )
         )
-        delay(2500)
+        delay(1000)
         updateState(
             GlobalAction.UpdateMyAccountDetailScreenState(
                 AppActions.MyAccountDetailScreenAction.UpdateOperationMessage(
@@ -133,7 +135,7 @@ class MyAccountDetailViewModel @Inject constructor(
                 )
             )
         )
-        delay(2500)
+        delay(1000)
         updateState(
             GlobalAction.UpdateMyAccountDetailScreenState(
                 AppActions.MyAccountDetailScreenAction.UpdateOperationMessage(

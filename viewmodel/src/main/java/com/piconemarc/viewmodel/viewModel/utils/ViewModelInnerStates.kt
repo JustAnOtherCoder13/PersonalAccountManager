@@ -27,7 +27,8 @@ object ViewModelInnerStates {
 
     data class PaymentScreenVmState(
         val allAccounts: List<AccountWithRelatedPaymentUiModel> = listOf(),
-        val areAllPaymentForAccountPassedForThisMonth: Boolean = true
+        val areAllPaymentForAccountPassedForThisMonth: Boolean = true,
+        val passPaymentToastMessage : String = ""
     ) : VMState
 
     data class AddOperationPopUpVMState(

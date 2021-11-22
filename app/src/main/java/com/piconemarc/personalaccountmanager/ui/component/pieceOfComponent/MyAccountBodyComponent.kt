@@ -7,11 +7,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -149,11 +151,20 @@ private fun MyAccountDetailOperationRecyclerView(
     onDeleteItemButtonCLick: (operation: OperationUiModel) -> Unit,
     onOperationNameClick: (operation: OperationUiModel) -> Unit
 ) {
+    val lazyColumnState = rememberLazyListState()
+
+    LaunchedEffect(
+        key1 = accountMonthlyOperations,
+        block = {
+            if (accountMonthlyOperations.isNotEmpty())
+            lazyColumnState.scrollToItem(accountMonthlyOperations.size - 1) })
+
     Box {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .offset(y = 35.dp)
+                .offset(y = 35.dp),
+            state = lazyColumnState
         ) {
             items(accountMonthlyOperations) { operation ->
                 OperationItem(
@@ -270,7 +281,8 @@ fun MyAccountDetailTitle(
                     style = MaterialTheme.typography.h2
                 )
                 Text(
-                    text = DateFormatSymbols(Locale.FRENCH).months[Calendar.getInstance().get(Calendar.MONTH)],
+                    text = DateFormatSymbols(Locale.FRENCH).months[Calendar.getInstance()
+                        .get(Calendar.MONTH)],
                     style = MaterialTheme.typography.body1
                 )
             }
@@ -292,38 +304,12 @@ private fun MyAccountPostIt(
     account: AccountUiModel,
     onDeleteAccountButtonClicked: (accountUi: AccountUiModel) -> Unit,
     onAccountClicked: (accountUi: AccountUiModel) -> Unit,
-    postItModifier: Modifier = Modifier
-        .size(width = AccountPostItWidth, height = AccountPostItHeight)
-        .padding(bottom = BigMarge),
-    accountBody: @Composable () -> Unit = {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = XlMarge, start = RegularMarge),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            MyAccountPostItValue(
-                valueTitle = stringResource(R.string.balanceTitle),
-                value = "${account.accountBalance.toStringWithTwoDec()} ${
-                    getCurrencySymbolForLocale(
-                        currentLocale
-                    )
-                }",
-                valueColor = getBlackOrNegativeColor(account.accountBalance)
-            )
-            MyAccountPostItValue(
-                valueTitle = stringResource(R.string.restTitle),
-                value = "${account.rest.toStringWithTwoDec()} ${
-                    getCurrencySymbolForLocale(
-                        currentLocale
-                    )
-                }",
-                valueColor = getBlackOrNegativeColor(account.rest)
-            )
-        }
-    }
 ) {
-    Box(modifier = postItModifier
+    Box(modifier = Modifier
+        .padding(horizontal = RegularMarge)
+        .fillMaxWidth()
+        .height(AccountPostItHeight)
+        .padding(bottom = BigMarge)
         .clickable { onAccountClicked(account) }
     ) {
         PostItBackground(this)
@@ -337,7 +323,31 @@ private fun MyAccountPostIt(
                 onAccountButtonClicked = { onDeleteAccountButtonClicked(account) },
                 iconButton = PAMIconButtons.Delete
             )
-            accountBody()
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = XlMarge, start = RegularMarge),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                MyAccountPostItValue(
+                    valueTitle = stringResource(R.string.balanceTitle),
+                    value = "${account.accountBalance.toStringWithTwoDec()} ${
+                        getCurrencySymbolForLocale(
+                            currentLocale
+                        )
+                    }",
+                    valueColor = getBlackOrNegativeColor(account.accountBalance)
+                )
+                MyAccountPostItValue(
+                    valueTitle = stringResource(R.string.restTitle),
+                    value = "${account.rest.toStringWithTwoDec()} ${
+                        getCurrencySymbolForLocale(
+                            currentLocale
+                        )
+                    }",
+                    valueColor = getBlackOrNegativeColor(account.rest)
+                )
+            }
         }
     }
 }

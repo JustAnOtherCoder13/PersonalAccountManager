@@ -11,8 +11,6 @@ import androidx.navigation.compose.rememberNavController
 import com.piconemarc.model.PAMIconButtons
 import com.piconemarc.personalaccountmanager.NavDestinations
 import com.piconemarc.personalaccountmanager.R
-import com.piconemarc.personalaccountmanager.getBlackOrNegativeColor
-import com.piconemarc.personalaccountmanager.toStringWithTwoDec
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MainScreenBody
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MainScreenFooter
 import com.piconemarc.personalaccountmanager.ui.component.pieceOfComponent.MainScreenHeader
@@ -36,6 +34,12 @@ fun PAMMainScreen(
         body = {
             MainScreenBody(
                 onInterLayerButtonClick = { selectedIconButton ->
+                    when (selectedIconButton) {
+                        is PAMIconButtons.Payment -> { NavDestinations.myPayment.doNavigation(navController = navController) }
+                        is PAMIconButtons.Chart -> { NavDestinations.chart.doNavigation(navController = navController) }
+                        is PAMIconButtons.Home -> { NavDestinations.Home.doNavigation(navController = navController) }
+                        else -> { }
+                    }
                     appViewModel.dispatchAction(
                         AppActions.BaseAppScreenAction.SelectInterlayer(selectedIconButton)
                     )
@@ -97,7 +101,6 @@ fun PAMMainScreen(
                             )
                         }
                         composable(NavDestinations.myPayment.getRoute()) {
-                            //todo don't find why but when open add or delete popup on this screen only, it restart the composable lifecycle
                             val myPaymentVM = hiltViewModel<MyPaymentViewModel>()
 
                             LaunchedEffect(key1 = myPaymentVM){
@@ -126,41 +129,15 @@ fun PAMMainScreen(
                             Text(text = "on chart")
                         }
                     }
-
-                    when (appUiState.selectedInterlayerButton) {
-                        is PAMIconButtons.Payment -> {
-                            NavDestinations.myPayment.doNavigation(navController = navController)
-                        }
-                        is PAMIconButtons.Chart -> {
-                            NavDestinations.chart.doNavigation(navController = navController)
-                        }
-                        is PAMIconButtons.Home -> {
-                            if (appUiState.interLayerTitle != (com.piconemarc.model.R.string.detail)
-                                && appUiState.interLayerTitle != (com.piconemarc.model.R.string.myAccountsInterLayerTitle)
-                            ) {
-                                NavDestinations.Home.doNavigation(navController = navController)
-                            }
-                        }
-                        else -> {
-                        }
-                    }
                 },
                 selectedInterLayerButton = appUiState.selectedInterlayerButton,
                 interlayerTitle = appUiState.interLayerTitle
             )
         },
         footer = {
-            //todo footer better only show rest, global balance is useless, instead pass rest/month, rest/week, rest/day
             MainScreenFooter(
-                footerAccountBalance = Pair(
-                    appUiState.footerBalance.toStringWithTwoDec(),
-                    getBlackOrNegativeColor(amount = appUiState.footerBalance)
-                ),
                 mainScreenFooterTitle = stringResource(R.string.mainScreenFooterTitle),
-                footerAccountRest = Pair(
-                    appUiState.footerRest.toStringWithTwoDec(),
-                    getBlackOrNegativeColor(amount = appUiState.footerRest)
-                )
+                footerAccountRest = appUiState.footerRest
             )
         }
     )

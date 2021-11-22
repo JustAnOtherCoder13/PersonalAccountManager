@@ -4,7 +4,6 @@ package com.piconemarc.viewmodel.viewModel
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewModelScope
 import com.piconemarc.core.domain.interactor.account.GetAllAccountsWithRelatedPaymentsInteractor
-import com.piconemarc.core.domain.interactor.payment.AddPaymentAndOperationInteractor
 import com.piconemarc.core.domain.interactor.payment.PassAllPaymentsForThisMonthInteractor
 import com.piconemarc.core.domain.interactor.payment.PassSinglePaymentForThisMonthInteractor
 import com.piconemarc.model.entity.CategoryUiModel
@@ -14,6 +13,7 @@ import com.piconemarc.viewmodel.viewModel.reducer.GlobalVmState
 import com.piconemarc.viewmodel.viewModel.reducer.paymentScreenVMState_
 import com.piconemarc.viewmodel.viewModel.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -23,7 +23,6 @@ import javax.inject.Inject
 @HiltViewModel
 class MyPaymentViewModel @Inject constructor(
     store: DefaultStore<GlobalVmState>,
-    private val addPaymentAndOperationInteractor: AddPaymentAndOperationInteractor,
     private val getAllAccountsWithRelatedPaymentsInteractor: GetAllAccountsWithRelatedPaymentsInteractor,
     private val passSinglePaymentForThisMonthInteractor: PassSinglePaymentForThisMonthInteractor,
     private val passAllPaymentsForThisMonthInteractor: PassAllPaymentsForThisMonthInteractor
@@ -37,10 +36,12 @@ class MyPaymentViewModel @Inject constructor(
         viewModelScope.launch(block = { state.collectLatest { uiState.value = it } })
     }
 
-    fun onStart (){
+    fun onStart() {
         viewModelScope.launchOnIOCatchingError(
             block = {
-                getAllAccountsWithRelatedPaymentsInteractor.getAllAccountsWithRelatedPaymentAsFlow(this).collect {accountsWithPaymentList ->
+                getAllAccountsWithRelatedPaymentsInteractor.getAllAccountsWithRelatedPaymentAsFlow(
+                    this
+                ).collect { accountsWithPaymentList ->
                     dispatchAction(
                         AppActions.PaymentScreenAction.UpdateAllAccounts(accountsWithPaymentList)
                     )
@@ -49,9 +50,8 @@ class MyPaymentViewModel @Inject constructor(
         )
     }
 
-
     override fun dispatchAction(action: AppActions.PaymentScreenAction) {
-        when(action){
+        when (action) {
             is AppActions.PaymentScreenAction.PassSinglePayment -> {
                 viewModelScope.launchOnIOCatchingError(
                     block = {
@@ -59,24 +59,57 @@ class MyPaymentViewModel @Inject constructor(
                             OperationUiModel(
                                 accountId = action.payment.accountId,
                                 name = action.payment.name,
-                                amount = action.payment.amount ,
+                                amount = action.payment.amount,
                                 categoryId = CategoryUiModel().id,//todo replace with real category
-                                emitDate = Calendar.getInstance().time ,
+                                emitDate = Calendar.getInstance().time,
                                 paymentId = action.payment.id
                             ),
                             action.payment.id
                         )
+                    },
+                    doOnSuccess = {
+                        viewModelScope.launch {
+                            dispatchAction(
+                                AppActions.PaymentScreenAction.UpdatePassPaymentToastMessage(
+                                    "this payment have been passed  : ${action.payment.name}"
+                                )
+                            )
+                            delay(1000)
+                            dispatchAction(
+                                AppActions.PaymentScreenAction.UpdatePassPaymentToastMessage(
+                                    ""
+                                )
+                            )
+                        }
+
                     }
                 )
             }
             is AppActions.PaymentScreenAction.PassAllPaymentsForAccount -> {
                 viewModelScope.launchOnIOCatchingError(
                     block = {
-                        passAllPaymentsForThisMonthInteractor.passAllPaymentForAccountOnThisMonth(allPaymentToPass = action.allPaymentsForAccount)
+                        passAllPaymentsForThisMonthInteractor.passAllPaymentForAccountOnThisMonth(
+                            allPaymentToPass = action.allPaymentsForAccount
+                        )
+                    },
+                    doOnSuccess = {
+                        viewModelScope.launch {
+                            dispatchAction(
+                                AppActions.PaymentScreenAction.UpdatePassPaymentToastMessage(
+                                    "those payments have been passed  : ${action.allPaymentsForAccount.map { it.name }}"
+                                )
+                            )
+                            delay(1000)
+                            dispatchAction(
+                                AppActions.PaymentScreenAction.UpdatePassPaymentToastMessage(
+                                    ""
+                                )
+                            )
+                        }
                     }
                 )
             }
-            else ->updateState(GlobalAction.UpdatePaymentScreenState(action))
+            else -> updateState(GlobalAction.UpdatePaymentScreenState(action))
         }
     }
 }

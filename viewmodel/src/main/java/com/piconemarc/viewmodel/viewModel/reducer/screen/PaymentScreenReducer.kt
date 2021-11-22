@@ -14,6 +14,10 @@ val paymentScreenReducer : Reducer<ViewModelInnerStates.PaymentScreenVmState> = 
         is AppActions.PaymentScreenAction.PassSinglePayment -> old
 
         is AppActions.PaymentScreenAction.PassAllPaymentsForAccount -> old
+
+        is AppActions.PaymentScreenAction.UpdatePassPaymentToastMessage -> old.copy(
+            passPaymentToastMessage = action.toastMessage
+        )
     }
 
 }

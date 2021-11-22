@@ -32,7 +32,7 @@
     <string name="paymentPostItTotal">Total = </string>
     <string name="myAccountDetailPaymentIndicator">P</string>
     <string name="myAccountDetailTransferIndicator">T</string>
-    <string name="mainScreenFooterTitle">All Accounts</string>
+    <string name="mainScreenFooterTitle">All Accounts Rest</string>
     <string name="addPopUpRecurenceErrorMessage">Please, choose end date or recurrence will be forever</string>
     <string name="AddOperationPopUpBeneficiaryAccountErrorMessage">Please select Beneficiary account for transfer</string>
     <string name="AddOperationPopUpOperationNameErrorMessage">Please, fill operation name</string>

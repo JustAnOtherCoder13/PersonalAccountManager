@@ -15,7 +15,7 @@ interface NavDestination {
     fun doNavigation(navController: NavController) {
             navController.navigate(destination) {
                 popUpTo(NavDestinations.Home.destination) {}
-               launchSingleTop
+               launchSingleTop = true
         }
     }
 

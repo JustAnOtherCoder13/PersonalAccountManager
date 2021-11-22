@@ -1,4 +1,4 @@
-package com.piconemarc.viewmodel.viewModel.actionDispatcher.popup
+package com.piconemarc.viewmodel.viewModel.popup
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf

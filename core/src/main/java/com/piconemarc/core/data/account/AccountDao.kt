@@ -41,6 +41,8 @@ interface AccountDao {
     @Insert
     suspend fun addNewAccount(accountDTO: AccountDTO)
 
+    //todo when delete account don't delete transfer related operation,
+    // change them to base operation
     @Delete
     suspend fun deleteAccount(accountDTO: AccountDTO)
 

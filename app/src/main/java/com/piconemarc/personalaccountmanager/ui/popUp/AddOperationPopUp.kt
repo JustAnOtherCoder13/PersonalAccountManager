@@ -180,13 +180,14 @@ fun AddOperationPopUp(
                 isRecurrentOptionExpanded = addOperationPopUpState.isRecurrentOptionExpanded,
                 isPaymentOptionExpanded = addOperationPopUpState.isPaymentExpanded,
                 onPunctualButtonSelected = {
+                    if (addOperationPopUpState.addPopUpOptionSelectedIcon != PAMIconButtons.Payment)
                     onAddOperationPopUpEvent(
                         AppActions.AddOperationPopupAction.OnRecurrentOptionSelected(
                             false
                         )
                     )
                 },
-                onRecurrentButtonSelected = {
+                onRecurrentButtonSelected = {//todo manage case where transfer is recurrent
                     onAddOperationPopUpEvent(
                         AppActions.AddOperationPopupAction.OnRecurrentOptionSelected(
                             true
